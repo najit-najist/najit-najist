@@ -14,12 +14,13 @@
   },
   "devDependencies": {
     "eslint-config-custom": "*",
-    "prettier": "latest",
+    "prettier": "^2.7.1",
+    "prettier-plugin-astro": "^0.5.4",
+    "tsup": "^6.2.3",
     "turbo": "latest"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "dependencies": {},
   "packageManager": "npm@8.19.2"
 }
