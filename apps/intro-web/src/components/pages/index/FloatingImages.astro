@@ -1,0 +1,39 @@
+---
+import { Image } from '@astrojs/image/components';
+
+import breadUrl from '../../../assets/bread.webp';
+import cheeseUrl from '../../../assets/cheese.webp';
+import cupcakeUrl from '../../../assets/cupcake.webp';
+import milkUrl from '../../../assets/milk.webp';
+---
+
+<Image
+  class="absolute left-[5%] hidden sm:block"
+  alt=""
+  width={312}
+  height={221}
+  src={cheeseUrl}
+/>
+<div>
+  <Image
+    class="absolute rotate-45 left-[35%]"
+    alt=""
+    width={367}
+    height={322}
+    src={cupcakeUrl}
+  />
+</div>
+<Image
+  class="absolute -left-[10%] sm:left-[58%]"
+  alt=""
+  width={368}
+  height={260}
+  src={breadUrl}
+/>
+<Image
+  class="absolute left-[75%] hidden sm:block"
+  alt=""
+  width={357}
+  height={252}
+  src={milkUrl}
+/>

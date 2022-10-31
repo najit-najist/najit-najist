@@ -1,0 +1,23 @@
+---
+import { Image } from '@astrojs/image/components';
+import type { ImageMetadata } from '@astrojs/image/dist/vite-plugin-astro-image';
+
+interface Props {
+  image: ImageMetadata;
+  name: string;
+  position: string;
+  className?: string;
+}
+---
+
+<div class:list={['text-center', Astro.props.className]}>
+  <Image
+    alt=""
+    height={225}
+    width={225}
+    src={Astro.props.image}
+    class="rounded-full"
+  />
+  <h3 class="text-xl">{Astro.props.name}</h3>
+  <p>{Astro.props.position}</p>
+</div>
