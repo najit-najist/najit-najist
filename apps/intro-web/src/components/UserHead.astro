@@ -6,6 +6,7 @@ interface Props {
   image: ImageMetadata;
   name: string;
   position: string;
+  imagePosition?: string;
   className?: string;
 }
 ---
@@ -16,6 +17,8 @@ interface Props {
     height={225}
     width={225}
     src={Astro.props.image}
+    format="webp"
+    position={Astro.props.imagePosition ?? 'top'}
     class="rounded-full"
   />
   <h3 class="text-xl">{Astro.props.name}</h3>
