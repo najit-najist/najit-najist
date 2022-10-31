@@ -1,0 +1,123 @@
+---
+import { ContactForm } from '../components/ContactForm';
+import Layout from '../components/layout/Layout.astro';
+import UserHead from '../components/UserHead.astro';
+import Video from '../components/pages/index/Video.astro';
+import Title from '../components/Title.astro';
+import { Image } from '@astrojs/image/components';
+
+// Import of assets
+import arnostZizkaUrl from '../assets/arnost-zizka.webp';
+import bgImageUrl from '../assets/bg-image.jpg';
+import FloatingImages from '../components/pages/index/FloatingImages.astro';
+
+const teamMembers = [
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+  {
+    name: 'Arnošt Žižka',
+    title: 'Systém administrátor',
+    imageUrl: arnostZizkaUrl,
+  },
+];
+---
+
+<Layout>
+  <div class="relative">
+    <Image
+      class="w-full h-3/5 sm:h-[85%] max-w-[1900px] absolute left-1/2 -translate-x-1/2 top-0 object-cover object-center"
+      alt=""
+      src={bgImageUrl}
+    />
+    <div class="relative">
+      <h1
+        class="text-center text-5xl sm:text-8xl font-bold leading-[4rem] sm:leading-[6.5rem] text-deep-green-700"
+      >
+        Vítejte na Stránce <br /> Najít & Najíst
+      </h1>
+      <hr
+        class="m-0 h-1 bg-deep-green-500 mx-auto w-[40%] sm:w-full sm:max-w-[700px] my-10 border-none"
+      />
+      <p class="text-3xl sm:text-[42px] font-bold text-center">
+        Jsi tu správně pokud hledáš řešení na:
+      </p>
+      <ul
+        class="list-none max-w-5xl px-4 mx-auto font-bold w-full mt-5 text-2xl sm:text-3xl flex flex-col gap-7"
+      >
+        <li>{'>'}Intoleranci / Alergii na Lepek</li>
+        <li>{'>'}Intoleranci / Alergii na Laktózu</li>
+        <li>
+          {'>'}jiný zdravotní důvod nebo doporučení lékaře se lepku a laktóze
+          vyhýbat
+        </li>
+      </ul>
+      <ContactForm client:visible />
+    </div>
+  </div>
+
+  <Video />
+  <FloatingImages />
+
+  <div class="max-w-5xl px-4 mx-auto text-center mt-20 leading-7">
+    <p class="font-bold text-xl opacity-80">
+      Právě se vší vervou programujeme krásné moderní stránky s aplikací pro
+      mobily s Android i iOS systémy. Pro vás registrované uživatele jsme
+      připravili koncept odměňovacího systému, hodnocení spolupracujících
+      podniků, které navštívíte, výměnu receptů, naši vlastní (první) prodejnu
+      pečiva s objednávkovým systémem, prostor pro rozhovory s námi a webináře
+      se zajímavými lidmi z oblasti zdravé výživy, a to vše budeme postupně
+      aktivovat na této adrese. Zkušební provoz plánujeme spustit na konci října
+      a příští rok spustíme i vlastní e-shop.
+    </p>
+    <p class="font-bold mt-3 text-xl opacity-80">
+      Pokud nám necháte už nyní na sebe kontakt vyplněním formuláře výše,
+      pošleme vám zprávu, jakmile budou stránky aktivní.
+    </p>
+    <p class="text-2xl font-bold mt-5">Tak co, zkusíte to s námi?</p>
+  </div>
+
+  <div class="px-4">
+    <div class="mx-auto text-center">
+      <Title>Náš tým</Title>
+    </div>
+    <div class="flex flex-wrap items-center justify-center gap-5">
+      {
+        teamMembers.map((memberInfo) => (
+          <UserHead
+            image={memberInfo.imageUrl}
+            name={memberInfo.name}
+            position={memberInfo.title}
+          />
+        ))
+      }
+    </div>
+  </div>
+</Layout>
