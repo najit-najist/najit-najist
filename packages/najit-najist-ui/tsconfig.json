@@ -1,5 +1,5 @@
 {
-  "extends": "@najit-jist/tsconfig/react-library.json",
+  "extends": "@najit-najist/tsconfig/react-library.json",
   "include": ["."],
   "exclude": ["dist", "build", "node_modules"]
 }
