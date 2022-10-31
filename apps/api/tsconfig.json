@@ -1,0 +1,35 @@
+{
+  "extends": "@najit-najist/tsconfig/base.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "removeComments": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "target": "ESNext",
+    "baseUrl": "./src",
+    "outDir": "./dist",
+    "incremental": true,
+    "strictNullChecks": true,
+    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
+    "paths": {
+      "@custom-types": ["./types"],
+      "@schemas": ["./schemas"],
+      "@middleware": ["./middleware"],
+      "@errors": ["./errors"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
+      "@config": ["./config"],
+      "@constants": ["./constants"],
+      "@plugins": ["./plugins"],
+      "@services/*": ["./services/*"],
+      "@lib": ["./lib"],
+    }
+  },
+  "include": [
+    "src",
+    "tests",
+    "jest.config.js",
+    "tsup.config.ts"
+  ],
+  "exclude": ["out", "build", "node_modules"]
+}
