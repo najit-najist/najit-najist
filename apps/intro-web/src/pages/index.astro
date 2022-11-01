@@ -7,15 +7,26 @@ import Title from '../components/Title.astro';
 import { Image } from '@astrojs/image/components';
 
 // Import of assets
-import arnostZizkaUrl from '../assets/arnost-zizka.webp';
 import bgImageUrl from '../assets/bg-image.jpg';
 import FloatingImages from '../components/pages/index/FloatingImages.astro';
+import ondrejLangrUrl from '../assets/ondrej-langr.png';
+import arnostZizkaUrl from '../assets/arnost-zizka.webp';
+import martinStaryUrl from '../assets/martin-stary.jpg';
+import terezaZizkovaUrl from '../assets/tereza-zizkova.jpg';
+import vojtechZizkaUrl from '../assets/vojtech-zizka.jpg';
+import lenkaCernouskovaUrl from '../assets/lenka-cernouskova.jpg';
+import kristynaZizkovaUrl from '../assets/kristyna-zizkova.jpg';
 
 const teamMembers = [
   {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
+    name: 'Martin Starý',
+    title: 'Marketing',
+    imageUrl: martinStaryUrl,
+  },
+  {
+    name: 'Ondřej Langr',
+    title: 'Programátor',
+    imageUrl: ondrejLangrUrl,
   },
   {
     name: 'Arnošt Žižka',
@@ -23,43 +34,40 @@ const teamMembers = [
     imageUrl: arnostZizkaUrl,
   },
   {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
+    name: 'Tereza Žižková',
+    title: 'Grafik',
+    imageUrl: terezaZizkovaUrl,
   },
   {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
+    name: 'Vojtěch Žižka',
+    title: 'Grafik',
+    imageUrl: vojtechZizkaUrl,
   },
   {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
+    name: 'Lenka Černoušková',
+    title: 'Finance',
+    imageUrl: lenkaCernouskovaUrl,
+    imagePosition: 'center',
   },
   {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
-  },
-  {
-    name: 'Arnošt Žižka',
-    title: 'Systém administrátor',
-    imageUrl: arnostZizkaUrl,
+    name: 'Kristýna Žižková',
+    title: 'Prodejna Fénix',
+    imageUrl: kristynaZizkovaUrl,
+    imagePosition: 'center',
   },
 ];
 ---
 
 <Layout>
-  <div class="relative">
+  <div class="relative" id="uvod">
     <Image
-      class="w-full h-3/5 sm:h-[85%] max-w-[1900px] absolute left-1/2 -translate-x-1/2 top-0 object-cover object-center"
+      class="w-full h-3/5 sm:h-[85%] max-w-[1900px] absolute left-1/2 -translate-x-1/2 top-0 object-cover object-top"
       alt=""
       src={bgImageUrl}
     />
     <div class="relative">
       <h1
-        class="text-center text-5xl sm:text-8xl font-bold leading-[4rem] sm:leading-[6.5rem] text-deep-green-700"
+        class="text-center text-5xl sm:text-8xl font-bold leading-[4rem] sm:leading-[6.5rem] text-deep-green-700 pt-32"
       >
         Vítejte na Stránce <br /> Najít & Najíst
       </h1>
@@ -104,7 +112,7 @@ const teamMembers = [
     <p class="text-2xl font-bold mt-5">Tak co, zkusíte to s námi?</p>
   </div>
 
-  <div class="px-4">
+  <div class="px-4 mt-20" id="nas-team">
     <div class="mx-auto text-center">
       <Title>Náš tým</Title>
     </div>
@@ -115,6 +123,7 @@ const teamMembers = [
             image={memberInfo.imageUrl}
             name={memberInfo.name}
             position={memberInfo.title}
+            imagePosition={memberInfo.imagePosition}
           />
         ))
       }

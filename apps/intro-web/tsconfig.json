@@ -5,5 +5,9 @@
   },
   "include": [
     "./scripts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
   ]
 }

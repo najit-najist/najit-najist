@@ -51,3 +51,14 @@ const navLinks = [
 
   observer.observe(stickyElm);
 </script>
+
+<script>
+  const stickyElm = document.querySelector('header')!;
+
+  const observer = new IntersectionObserver(
+    ([e]) => e.target.classList.toggle('bg-white', e.intersectionRatio < 1),
+    { threshold: [1] }
+  );
+
+  observer.observe(stickyElm);
+</script>
