@@ -34,6 +34,7 @@ export const config = {
     secrets: {
       session: sessionSecret,
       jwt: jwtSecret,
+      saltRounds: 10,
     },
     cors: {
       allowed: [domain],

@@ -1,0 +1,68 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserStates {
+  ACTIVE
+  INVITED
+  PASSWORD_RESET
+  DEACTIVATED
+  DELETED
+  BANNED
+}
+
+enum UserRoles {
+  ADMIN
+  NORMAL
+  PREMIUM
+}
+
+model User {
+  id                Int         @default(autoincrement()) @id
+  firstName         String
+  lastName          String
+  email             String      @unique
+  newsletter        Boolean     @default(false)
+  createdAt         DateTime    @default(now())
+  status            UserStates  @default(INVITED)
+  password          String?     
+  telephoneNumber   String?
+  newsletterUuid    String?
+  lastLoggedId      DateTime?
+  address           Address?
+  notes             String?
+  role              UserRoles   @default(NORMAL)
+}
+
+model Region {
+  name              String    @unique @id
+  towns             Town[]
+}
+
+model Town {
+  id                Int       @default(autoincrement()) @id
+  name              String 
+  
+  addresses         Address[]
+
+  region            Region    @relation(fields: [regionId], references: [name])
+  regionId          String 
+}
+
+model Address {
+  id                Int       @default(autoincrement()) @id
+
+  ownerId           Int       @unique
+  owner             User      @relation(fields: [ownerId], references: [id])
+
+  townId            Int?
+  town              Town?     @relation(fields: [townId], references: [id])
+}
