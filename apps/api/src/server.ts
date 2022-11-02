@@ -4,8 +4,13 @@ import { config } from './config';
 (async () => {
   const server = await bootstrap();
 
+  console.log(import.meta);
+
   server.listen(
-    { port: config.server.port, host: '0.0.0.0' },
+    {
+      port: config.server.port,
+      host: import.meta.env.DEV ? 'localhost' : '0.0.0.0',
+    },
     function (err, address) {
       if (err) {
         server.log.error(err);
