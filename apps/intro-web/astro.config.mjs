@@ -8,6 +8,7 @@ export default defineConfig({
   site: 'http://najitnajit.cz',
   server: {
     host: '0.0.0.0',
+    port: process.env.NODE_ENV === 'production' ? 3000 : 3001,
   },
   integrations: [
     react(),
