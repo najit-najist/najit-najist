@@ -16,6 +16,8 @@
     "dev:package": "tsup --watch",
     "start": "node dist/server.cjs",
     "prebuild": "rimraf dist",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
     "build": "tsup"
   },
   "devDependencies": {
@@ -43,6 +45,7 @@
     "@fastify/session": "^10.0.2",
     "@prisma/client": "^4.5.0",
     "@trpc/server": "^9.27.4",
+    "@faker-js/faker": "^7.3.0",
     "bcrypt": "^5.1.0",
     "concurrently": "",
     "email-templates": "^10.0.1",
@@ -53,6 +56,7 @@
     "passport-local": "^1.0.0",
     "pino-pretty": "^9.1.1",
     "zod": "^3.19.1",
+    "vitest": "^0.24.5",
     "zod-to-json-schema": "^3.18.1"
   }
 }
