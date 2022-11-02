@@ -9,8 +9,8 @@ const navLinks = [
 ];
 ---
 
-<div class="bg-white">
-  <div class="container mx-auto flex py-1">
+<div>
+  <div class="container mx-auto flex py-1 px-4">
     <div class="ml-auto">
       <a
         class="inline-flex items-center text-lg"
@@ -22,7 +22,7 @@ const navLinks = [
   </div>
 </div>
 
-<header class="sticky top-[-1px] left-0 z-20">
+<header class="sticky top-[-1px] left-0 z-20 bg-white">
   <nav class="container flex mx-auto">
     <ul class="ml-auto flex items-center gap-2 text-lg">
       {
@@ -42,23 +42,12 @@ const navLinks = [
 </header>
 
 <script>
-  const stickyElm = document.querySelector('header')!;
+  /*const stickyElm = document.querySelector('header')!;
 
   const observer = new IntersectionObserver(
     ([e]) => e.target.classList.toggle('bg-white', e.intersectionRatio < 1),
     { threshold: [1] }
   );
 
-  observer.observe(stickyElm);
-</script>
-
-<script>
-  const stickyElm = document.querySelector('header')!;
-
-  const observer = new IntersectionObserver(
-    ([e]) => e.target.classList.toggle('bg-white', e.intersectionRatio < 1),
-    { threshold: [1] }
-  );
-
-  observer.observe(stickyElm);
+  observer.observe(stickyElm);*/
 </script>

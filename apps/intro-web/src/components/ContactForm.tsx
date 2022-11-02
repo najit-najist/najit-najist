@@ -8,9 +8,9 @@ export const ContactForm: FC = () => {
   const { register } = useForm();
 
   return (
-    <div className="mx-auto max-w-5xl mt-16 px-10 sm:px-0" id="kontakt">
+    <div className="mx-auto max-w-5xl mt-16 px-4 sm:px-0" id="kontakt">
       <div className="mx-auto p-10 sm:p-12 bg-white rounded-xl ">
-        <h3 className="text-center text-4xl font-semibold ">
+        <h3 className="text-center text-4xl font-semibold font-fancy">
           Kontaktovat nás můžeš už teď
         </h3>
         <hr className="border-none h-2 bg-deep-green-500 max-w-xs mx-auto mt-8" />
@@ -19,11 +19,13 @@ export const ContactForm: FC = () => {
             <Input
               wrapperClassName="w-full"
               label="Jméno"
+              placeholder="Tomáš"
               {...register('firstName', {})}
             />
             <Input
               wrapperClassName="w-full"
               label="Příjmení"
+              placeholder="Bezlepek"
               {...register('lastName', {})}
             />
           </div>
@@ -31,18 +33,20 @@ export const ContactForm: FC = () => {
             <div className="flex flex-col gap-4">
               <Input
                 wrapperClassName="w-full"
-                label="Jméno"
-                {...register('firstName', {})}
+                label="Email"
+                placeholder="tomas.bezlepek@ukazka.cz"
+                {...register('email', {})}
               />
               <Input
                 wrapperClassName="w-full"
-                label="Příjmení"
-                {...register('lastName', {})}
+                label="Telefon"
+                placeholder="+420 123456789"
+                {...register('telephone', {})}
               />
             </div>
             <Textarea
               wrapperClassName="w-full"
-              label="Příjmení"
+              label="Zpráva"
               rows={4}
               {...register('lastName', {})}
             />

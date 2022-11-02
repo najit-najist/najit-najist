@@ -1,14 +1,16 @@
 ---
 import Title from '../../Title.astro';
 import ourStoryUrl from '../../../assets/our-story.webm';
+import FloatingImages from './FloatingImages.astro';
 ---
 
 <div class="max-w-5xl px-4 mx-auto mt-20" id="nas-pribeh">
   <div class="mx-auto text-center">
     <Title>Náš příběh</Title>
   </div>
-  <div>
-    <video controls width="100%" class="sm:aspect-video bg-black">
+  <div class="relative">
+    <FloatingImages />
+    <video controls width="100%" class="sm:aspect-video bg-black relative">
       <source src={ourStoryUrl} type="video/webm" />
     </video>
   </div>
