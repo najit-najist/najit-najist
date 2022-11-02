@@ -8,6 +8,7 @@ import {
   mailPlugin,
   rateLimitPlugin,
   sessionPlugin,
+  prismaPlugin,
 } from '@plugins';
 import { routes } from 'routes';
 
@@ -34,6 +35,7 @@ export const bootstrap = async (
   }
 
   //await server.register(jwtPlugin);
+  await server.register(prismaPlugin, { mode });
   await server.register(mailPlugin);
 
   // Do not init routes and passport on seeding
