@@ -14,6 +14,7 @@
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:package\"",
     "dev:server": "vite-node src/server.ts",
     "dev:package": "tsup --watch",
+    "prestart": "prisma generate",
     "start": "node dist/server.cjs",
     "prebuild": "rimraf dist",
     "test": "vitest",

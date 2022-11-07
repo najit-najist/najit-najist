@@ -2,7 +2,7 @@ import { APP_NAME, SESSION_NAME } from '@constants';
 
 // Server
 const domain = 'najit-najist.cz';
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(import.meta.env.PORT ?? 3000);
 
 // Environment
 const isDev = process.env.NODE_ENV !== 'production';
