@@ -48,6 +48,7 @@ ENV NODE_ENV production
 ENV PORT 3030
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+RUN npx prisma generate
 
 COPY --from=builder /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
