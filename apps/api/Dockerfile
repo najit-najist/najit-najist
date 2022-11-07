@@ -22,7 +22,6 @@ ENV PRISMA_CLI_BINARY_TARGETS=linux-musl
 
 RUN npm install
 
-
 ###################################################################
 # Stage 2: Build the app                                          #
 ###################################################################
@@ -48,20 +47,20 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV PORT 3030
 
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 apiuser
+
 RUN npx prisma generate
 
 COPY --from=builder /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
+                    /app/apps/api/prisma \
+                    /app/apps/api/dist \
                     ./apps/api/
-
-COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
-COPY --from=builder --chown=nextjs:nodejs /app/apps/api/dist ./apps/api/dist
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-USER nextjs
+USER apiuser
 
 EXPOSE 3030
 
