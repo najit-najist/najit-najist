@@ -1,4 +1,4 @@
-name: 'Intro Web Prod'
+name: 'Production release'
 
 on:
   push:
@@ -6,9 +6,9 @@ on:
       - main
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
-    steps:
+    steps: 
       - name: 🚙 Checkout 
         uses: actions/checkout@v2
         with:
@@ -24,14 +24,32 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
-      
-      - name: Install Dependencies
+
+      - name: 🐞 Install Dependencies
         run: npm ci
 
-      - name: Test
+      - name: 🏗️ Build
+        run: npm run build
+
+      - name: 🧪 Test
         run: npm run test
 
-      - name: 📍 Push to dokku
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: 🚙 Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 📍 Push API app to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@najitnajist.cz:22/api'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📍 Push Intro-web app to dokku
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/intro-web'
