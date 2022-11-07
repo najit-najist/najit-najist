@@ -53,7 +53,7 @@ COPY --from=builder /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
                     ./apps/api/
 
-COPY --from=builder /app/apps/api/public ./apps/api/public
+COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 COPY --from=builder --chown=nextjs:nodejs /app/apps/api/dist ./apps/api/dist
 
 COPY --from=builder /app/node_modules ./node_modules
