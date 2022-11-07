@@ -49,11 +49,10 @@ ENV PORT 3030
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 apiuser
 
-RUN npx prisma generate
-
 COPY --from=builder /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
                     /app/apps/api/prisma \
+                    /app/apps/api/prisma/schema.prisma \
                     /app/apps/api/dist \
                     ./apps/api/
 
@@ -61,9 +60,9 @@ COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
 USER apiuser
-
 EXPOSE 3030
 
 WORKDIR /app/apps/api
+RUN npx prisma generate
 
 CMD ["npm", "run", "start"]
