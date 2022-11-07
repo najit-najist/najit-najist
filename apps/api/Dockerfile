@@ -49,7 +49,7 @@ ENV PORT 3030
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 apiuser
 
-COPY --from=builder /app/apps/api/vite.config.ts \
+COPY --from=builder --chown=nextjs:nodejs /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
                     /app/apps/api/prisma \
                     /app/apps/api/prisma/schema.prisma \
