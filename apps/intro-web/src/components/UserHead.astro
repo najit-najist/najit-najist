@@ -19,8 +19,8 @@ interface Props {
     src={Astro.props.image}
     format="webp"
     position={Astro.props.imagePosition ?? 'top'}
-    class="rounded-full"
+    class="rounded-full shadow-md"
   />
-  <h3 class="text-xl">{Astro.props.name}</h3>
+  <h3 class="text-xl mt-4">{Astro.props.name}</h3>
   <p>{Astro.props.position}</p>
 </div>

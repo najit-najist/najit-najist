@@ -1,9 +1,30 @@
 ---
+import { Image } from '@astrojs/image/components';
+import instagramIcon from '../../assets/icons/instagram.svg';
+
+const instagramIconSize = 30;
 ---
 
 <footer class="grid mt-20">
-  <div class="mx-auto">
-    <a href="https://www.instagram.com/najitnajist/">instagram icon</a>
+  <div class="mx-auto text-center">
+    <a
+      class="block"
+      title="Instagram page"
+      href="https://www.instagram.com/najitnajist/"
+      ><Image
+        src={instagramIcon}
+        alt="Instagram icon"
+        width={instagramIconSize}
+        height={instagramIconSize}
+        class="mx-auto"
+      />
+    </a>
+
+    <a href="mailto:info@najitnajist.cz" title="Napsat email" class="block mt-2"
+      >info@najitnajist.cz</a
+    >
   </div>
-  <div class="mx-auto">2022 @ NajitNajist.cz</div>
+  <div class="mx-auto mt-7 opacity-70 my-2">
+    2022 @ <a href="https://najitnajist.cz">NajitNajist.cz</a>
+  </div>
 </footer>

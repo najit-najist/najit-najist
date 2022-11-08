@@ -9,7 +9,7 @@ export const ContactForm: FC = () => {
 
   return (
     <div className="mx-auto max-w-5xl mt-16 px-4 sm:px-0" id="kontakt">
-      <div className="mx-auto p-10 sm:p-12 bg-white rounded-xl ">
+      <div className="mx-auto p-10 sm:p-12 bg-white rounded-xl shadow-xl">
         <h3 className="text-center text-4xl font-semibold font-fancy">
           Kontaktovat nás můžeš už teď
         </h3>
