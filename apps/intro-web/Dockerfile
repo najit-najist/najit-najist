@@ -55,6 +55,9 @@ COPY --from=builder /app/apps/intro-web/astro.config.mjs \
 COPY --from=builder /app/apps/intro-web/public ./apps/intro-web/public
 COPY --from=builder --chown=nextjs:nodejs /app/apps/intro-web/dist ./apps/intro-web/dist
 
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/apps/api/dist ./apps/api/dist
+
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 

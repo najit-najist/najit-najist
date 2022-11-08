@@ -4,7 +4,8 @@
     "types": ["@astrojs/image/client"],
   },
   "include": [
-    "./scripts"
+    "./scripts",
+    "./src",
   ],
   "exclude": [
     "node_modules",
