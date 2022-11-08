@@ -4,7 +4,7 @@ export default defineConfig({
   entry: ['src/index.ts', 'src/server.ts'],
   splitting: false,
   sourcemap: true,
-  target: 'es5',
+  target: 'esnext',
   clean: true,
   dts: true,
   tsconfig: './tsconfig.json',
