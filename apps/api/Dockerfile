@@ -59,8 +59,6 @@ COPY --from=builder --chown=apiuser:nodejs /app/apps/api/vite.config.ts \
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-RUN chown -R node_modules/.prisma apiuser:nodejs
-
 USER apiuser
 EXPOSE 3030
 
