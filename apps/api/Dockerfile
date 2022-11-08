@@ -47,19 +47,19 @@ WORKDIR /app
 ENV NODE_ENV production
 ENV PORT 3030
 
-RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 apiuser
+RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 app
 
-COPY --from=builder --chown=apiuser:nodejs /app/apps/api/vite.config.ts \
+COPY --from=builder --chown=app:app /app/apps/api/vite.config.ts \
                     /app/apps/api/package.json \
                     /app/apps/api/prisma \
                     /app/apps/api/prisma/schema.prisma \
                     /app/apps/api/dist \
                     ./apps/api/
 
-COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder --chown=app:app /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-USER apiuser
+USER app
 EXPOSE 3030
 
 WORKDIR /app/apps/api
