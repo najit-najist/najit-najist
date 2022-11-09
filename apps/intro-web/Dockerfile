@@ -34,7 +34,7 @@ WORKDIR /app
 COPY . .
 COPY --from=deps /workspace-install ./
 
-RUN npm run build
+RUN npm run build:intro-web
 
 ###################################################################
 # Stage 3: Extract a minimal image from the build                 #
