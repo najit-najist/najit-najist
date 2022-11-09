@@ -7,12 +7,5 @@ import { Context } from '../plugins/trpc/context';
  */
 export const createTrpcRouter = () =>
   trpc.router<Context>().middleware(async ({ ctx, next }) => {
-    if (
-      !ctx.user ||
-      (ctx.user.role !== 'ADMIN' && ctx.user.role !== 'BROKER')
-    ) {
-      throw new TRPCError({ code: 'UNAUTHORIZED' });
-    }
-
     return next();
   });

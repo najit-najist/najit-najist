@@ -4,10 +4,7 @@ import { FastifyInstance } from 'fastify';
 
 export const createContext = (server: FastifyInstance) => {
   return ({ req }: CreateFastifyContextOptions) => {
-    // TODO
-    //return { services: server.services, user: req.loggedUser };
-
-    return {};
+    return { services: server.services };
   };
 };
 

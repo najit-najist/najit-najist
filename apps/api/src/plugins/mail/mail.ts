@@ -16,7 +16,7 @@ export const mailPlugin = fp(async (server) => {
     send: !config.env.isDev,
     preview: config.env.isDev,
     message: {
-      from: '"Najít&Najist pošťák" <postmaster@najitnajist.cz>',
+      from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
     },
     views: {
       root: path.join(__dirname, 'templates'),
