@@ -15,10 +15,11 @@ const jwtSecret =
 const sessionLength = 84000;
 
 // Email
-const mailUser = '';
-const mailPass = '';
-const mailHost = '';
-const mailPort = Number('');
+const mailUser = String(process.env.MAIL_USERNAME);
+const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
+const mailPass = process.env.MAIL_PASSWORD;
+const mailHost = process.env.MAIL_HOST;
+const mailPort = Number(process.env.MAIL_PORT);
 
 export const config = {
   app: {
@@ -37,11 +38,12 @@ export const config = {
       saltRounds: 10,
     },
     cors: {
-      allowed: [domain],
+      allowed: isDev ? '*' : [domain],
     },
   },
   mail: {
     user: mailUser,
+    baseEmail: mailBaseEmail,
     password: mailPass,
     host: mailHost,
     port: mailPort,

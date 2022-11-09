@@ -1,0 +1,56 @@
+name: 'Production release'
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - name: 🚙 Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/cache@v2
+        name: Cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Setup node 16
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+
+      - name: 🐞 Install Dependencies
+        run: npm ci
+
+      - name: 🏗️ Build
+        run: npm run build
+
+      - name: 🧪 Test
+        run: npm run test
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: 🚙 Checkout 
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: 📍 Push API app to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@najitnajist.cz:22/api'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: 📍 Push Intro-web app to dokku
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: 'ssh://dokku@najitnajist.cz:22/intro-web'
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}

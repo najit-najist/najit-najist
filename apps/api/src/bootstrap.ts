@@ -9,6 +9,8 @@ import {
   rateLimitPlugin,
   sessionPlugin,
   prismaPlugin,
+  tRPCPlugin,
+  servicesPlugin,
 } from '@plugins';
 import { routes } from 'routes';
 
@@ -38,10 +40,13 @@ export const bootstrap = async (
   await server.register(prismaPlugin, { mode });
   await server.register(mailPlugin);
 
+  await server.register(servicesPlugin);
+
   // Do not init routes and passport on seeding
   if (mode !== 'seeding') {
     // this needs to be initialized after services
     await server.register(routes);
+    await server.register(tRPCPlugin);
   }
 
   server.log.info('All plugins initialized!');

@@ -27,7 +27,7 @@ export const FormControlWrapper: FC<
         </label>
       )}
       {children}
-      {description && <small className={classNames.error}>{error}</small>}
+      {error && <small className={classNames.error}>{error}</small>}
     </div>
   );
 };
