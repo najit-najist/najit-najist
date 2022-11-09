@@ -2,8 +2,6 @@ import { FC, PropsWithChildren, useState } from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { trpc } from '../lib/trpc';
 
-console.log(import.meta.env.PUBLIC_API_ORIGIN, process.env.PUBLIC_API_ORIGIN);
-
 export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>

@@ -1,5 +1,6 @@
 ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.15
+ARG PUBLIC_API_ORIGIN=http://localhost:3000
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS deps
 RUN apk add --no-cache rsync
@@ -28,6 +29,7 @@ RUN npm install
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
 ENV NODE_ENV=production
+ENV PUBLIC_API_ORIGIN ${PUBLIC_API_ORIGIN}
 
 WORKDIR /app
 
