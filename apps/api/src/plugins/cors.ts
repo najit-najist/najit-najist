@@ -6,7 +6,7 @@ export const corsPlugin = fp(async (server) => {
   const corsOrigins = config.server.cors.allowed;
 
   server.log.info(
-    `[Cors plugin]: Initialize - allowed cors on ${corsOrigins.join(', ')}`
+    `[Cors plugin]: Initialize - allowed cors on ${corsOrigins.toString()}`
   );
 
   await server.register(fastifyCorsPlugin, {
