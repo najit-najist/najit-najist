@@ -1,7 +1,8 @@
 import { APP_NAME, SESSION_NAME } from '@constants';
 
 // Server
-const domain = 'najitnajist.cz';
+const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
+const domains = (process.env.CORS_ALLOW ?? baseDomain).split(',');
 const port = Number(process.env.PORT ?? 3000);
 
 // Environment
@@ -27,7 +28,7 @@ export const config = {
   },
   server: {
     port,
-    domain,
+    domain: baseDomain,
     session: {
       maxAge: sessionLength,
       name: SESSION_NAME,
@@ -38,7 +39,7 @@ export const config = {
       saltRounds: 10,
     },
     cors: {
-      allowed: isDev ? '*' : [domain],
+      allowed: isDev ? '*' : domains,
     },
   },
   mail: {
