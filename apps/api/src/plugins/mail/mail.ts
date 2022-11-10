@@ -36,6 +36,16 @@ export const mailPlugin = fp(async (server) => {
         extension: 'ejs',
       },
     },
+    transport: {
+      jsonTransport: true,
+      host: config.mail.host,
+      port: config.mail.port,
+
+      auth: {
+        user: config.mail.user,
+        pass: config.mail.password,
+      },
+    },
     juiceResources: {
       webResources: {
         relativeTo: APP_ROOT,
