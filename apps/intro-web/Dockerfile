@@ -28,6 +28,7 @@ RUN npm install
 ###################################################################
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
+ARG PUBLIC_API_ORIGIN
 ENV NODE_ENV=production
 ENV PUBLIC_API_ORIGIN=${PUBLIC_API_ORIGIN}
 
