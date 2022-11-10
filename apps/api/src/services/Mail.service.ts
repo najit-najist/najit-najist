@@ -1,5 +1,6 @@
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import Email from 'email-templates';
+import { config } from '@config';
 
 export class MailService {
   private logger: FastifyBaseLogger;
@@ -31,6 +32,7 @@ export class MailService {
         },
         locals: payload,
       });
+      console.log({ ...config.mail, password: undefined });
       this.logger.info(
         `MailService: Mail has been sent to email: ${to} -- ${JSON.stringify({
           rejected: result?.rejected,
