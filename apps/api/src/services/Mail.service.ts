@@ -31,10 +31,12 @@ export class MailService {
         },
         locals: payload,
       });
-      this.logger.info('MailService: Mail has been sent to email: ' + to, {
-        rejected: result?.rejected,
-        response: result?.response,
-      });
+      this.logger.info(
+        `MailService: Mail has been sent to email: ${to} -- ${JSON.stringify({
+          rejected: result?.rejected,
+          response: result?.response,
+        })}`
+      );
     } catch (e) {
       this.logger.error('Mail sending has error', e);
 
