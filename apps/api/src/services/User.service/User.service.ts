@@ -8,6 +8,7 @@ import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import { prisma } from '@constants';
 import { formatErrorMessage } from '@utils';
+import { PasswordService } from '@services/Password.service';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -38,12 +39,17 @@ export class UserService {
     this.tokenService = server.services.token;
   }
 
-  async create(params: User) {
+  async create(
+    params: Omit<User, 'password' | 'newsletterUuid' | 'id' | 'createdAt'> &
+      Partial<Pick<User, 'password'>>
+  ) {
     try {
       const user = await prisma.user.create({
         data: {
           ...params,
-          password: params.password || faker.internet.password(15),
+          password: await PasswordService.hash(
+            params.password || faker.internet.password(15)
+          ),
           newsletterUuid: randomUUID(),
         },
       });
