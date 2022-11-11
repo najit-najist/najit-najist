@@ -40,8 +40,9 @@ export const mailPlugin = fp(async (server) => {
       jsonTransport: true,
       host: config.mail.host,
       port: config.mail.port,
-
+      secure: true,
       auth: {
+        type: 'login',
         user: config.mail.user,
         pass: config.mail.password,
       },
