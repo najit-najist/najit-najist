@@ -18,7 +18,7 @@ const sessionLength = 84000;
 // Email
 const mailUser = String(process.env.MAIL_USERNAME);
 const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
-const mailPass = process.env.MAIL_PASSWORD;
+const mailPass = String(process.env.MAIL_PASSWORD);
 const mailHost = process.env.MAIL_HOST;
 const mailPort = Number(process.env.MAIL_PORT);
 

@@ -10,7 +10,7 @@ declare module 'fastify' {
 }
 
 export const mailPlugin = fp(async (server) => {
-  server.log.info('[Mail plugin]: Initialize');
+  server.log.info(`[Mail plugin]: Initialize (${config.env.isDev})`);
 
   const email = new Email({
     send: !config.env.isDev,
@@ -28,8 +28,9 @@ export const mailPlugin = fp(async (server) => {
       jsonTransport: true,
       host: config.mail.host,
       port: config.mail.port,
-
+      secure: true,
       auth: {
+        type: 'login',
         user: config.mail.user,
         pass: config.mail.password,
       },
