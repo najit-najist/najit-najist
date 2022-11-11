@@ -36,6 +36,11 @@ export const mailPlugin = fp(async (server) => {
         extension: 'ejs',
       },
     },
+    juiceResources: {
+      webResources: {
+        relativeTo: APP_ROOT,
+      },
+    },
     transport: transporter,
   });
 
