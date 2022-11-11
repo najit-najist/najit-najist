@@ -16,8 +16,9 @@
     "dev:server": "vite-node src/server.ts",
     "dev:package": "tsup --watch",
     "prestart": "prisma migrate deploy",
+    "generate:prisma": "prisma generate --schema=./prisma/schema.prisma",
     "start": "node dist/server.cjs",
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf dist && npm run generate:prisma",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "build": "tsup"
