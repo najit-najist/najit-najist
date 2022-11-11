@@ -6,7 +6,7 @@ import {
 } from 'react';
 import { FormControlWrapper } from './FormControlWrapper';
 import { useFormClassNames } from './hooks';
-import { CheckIcon } from '@heroicons/react/20/solid';
+import { CheckIcon } from '@heroicons/react/24/solid/esm/index.js';
 import clsx from 'clsx';
 
 type ParentProps = Omit<
