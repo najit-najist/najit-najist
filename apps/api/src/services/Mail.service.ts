@@ -40,6 +40,7 @@ export class MailService {
       );
     } catch (e) {
       this.logger.error('Mail sending has error', e);
+      this.logger.error(e);
 
       throw Error('Posílání emailu nebylo úspěšné.');
     }
