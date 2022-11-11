@@ -32,7 +32,6 @@ export class MailService {
         },
         locals: payload,
       });
-      console.log({ ...config.mail, password: undefined });
       this.logger.info(
         `MailService: Mail has been sent to email: ${to} -- ${JSON.stringify({
           rejected: result?.rejected,
