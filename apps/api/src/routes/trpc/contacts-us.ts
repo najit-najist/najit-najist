@@ -17,7 +17,6 @@ export const contactUsRoutes = () =>
 
       ctx.services.mail.send({
         to: input.email,
-        subject: 'Děkujeme za Váš zájem!',
         payload: input,
         template: 'contact-us/user',
       });
