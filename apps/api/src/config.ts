@@ -1,4 +1,4 @@
-import { APP_NAME, SESSION_NAME } from '@constants';
+import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
 
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
@@ -25,6 +25,7 @@ const mailPort = Number(process.env.MAIL_PORT);
 export const config = {
   app: {
     name: APP_NAME,
+    root: APP_ROOT,
   },
   server: {
     port,
