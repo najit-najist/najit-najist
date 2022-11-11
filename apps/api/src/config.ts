@@ -1,7 +1,8 @@
-import { APP_NAME, SESSION_NAME } from '@constants';
+import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
 
 // Server
-const domain = 'najitnajist.cz';
+const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
+const domains = (process.env.CORS_ALLOW ?? baseDomain).split(',');
 const port = Number(process.env.PORT ?? 3000);
 
 // Environment
@@ -17,17 +18,18 @@ const sessionLength = 84000;
 // Email
 const mailUser = String(process.env.MAIL_USERNAME);
 const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
-const mailPass = process.env.MAIL_PASSWORD;
+const mailPass = String(process.env.MAIL_PASSWORD);
 const mailHost = process.env.MAIL_HOST;
 const mailPort = Number(process.env.MAIL_PORT);
 
 export const config = {
   app: {
     name: APP_NAME,
+    root: APP_ROOT,
   },
   server: {
     port,
-    domain,
+    domain: baseDomain,
     session: {
       maxAge: sessionLength,
       name: SESSION_NAME,
@@ -38,7 +40,7 @@ export const config = {
       saltRounds: 10,
     },
     cors: {
-      allowed: isDev ? '*' : [domain],
+      allowed: isDev ? '*' : domains,
     },
   },
   mail: {

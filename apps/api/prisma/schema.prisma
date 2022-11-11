@@ -17,6 +17,7 @@ enum UserStates {
   DEACTIVATED
   DELETED
   BANNED
+  SUBSCRIBED
 }
 
 enum UserRoles {
@@ -31,15 +32,15 @@ model User {
   lastName          String
   email             String      @unique
   newsletter        Boolean     @default(false)
-  createdAt         DateTime    @default(now())
-  status            UserStates  @default(INVITED)
+  createdAt         DateTime?    @default(now())
+  status            UserStates?  @default(INVITED)
   password          String?     
   telephoneNumber   String?
   newsletterUuid    String?
-  lastLoggedId      DateTime?
+  lastLoggedIn      DateTime?
   address           Address?
   notes             String?
-  role              UserRoles   @default(NORMAL)
+  role              UserRoles?   @default(NORMAL)
 }
 
 model Region {

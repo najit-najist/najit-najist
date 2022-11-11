@@ -7,10 +7,10 @@ import { Input } from './form/Input';
 import { Textarea } from './form/Textarea';
 import { contactUsSchema } from '@najit-najist/api';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import type { z } from 'zod';
 
 export const ContactFormBase: FC = () => {
-  const { register, handleSubmit, formState } = useForm<
+  const { register, handleSubmit, formState, reset } = useForm<
     z.infer<typeof contactUsSchema>
   >({
     resolver: zodResolver(contactUsSchema),
@@ -74,8 +74,19 @@ export const ContactFormBase: FC = () => {
               error={errors['message']?.message?.toString()}
               {...register('message', {})}
             />
+            <Input
+              wrapperClassName="w-full"
+              label="Chci být informován o spuštění a novinkách"
+              type="checkbox"
+              error={errors['subscribeToNewsletter']?.message?.toString()}
+              {...register('subscribeToNewsletter', {})}
+            />
           </div>
-          <Button className="mt-12 w-full" disabled={isSubmitSuccessful}>
+          <Button
+            className="mt-12 w-full"
+            type="submit"
+            disabled={isSubmitSuccessful}
+          >
             {isSubmitting ? 'Odesílám...' : 'Odeslat'}
           </Button>
           {error ? (
@@ -87,10 +98,13 @@ export const ContactFormBase: FC = () => {
           )}
         </form>
         {isSubmitSuccessful && (
-          <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center bg-white px-10">
-            <h3 className="text-center text-4xl font-semibold font-fancy leading-loose">
+          <div className="absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center bg-white px-10">
+            <h3 className="text-center text-4xl font-semibold font-fancy leading-relaxed">
               Děkujeme za Váš zájem. <br /> Zanedlouho Vás budeme kontaktovat.
             </h3>
+            <Button className="mt-10" onClick={() => reset()}>
+              Zavřít
+            </Button>
           </div>
         )}
       </div>

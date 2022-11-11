@@ -7,7 +7,7 @@ export type ButtonProps = DetailedHTMLProps<
 > & {};
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ children, className }, ref) {
+  function Button({ children, className, ...rest }, ref) {
     return (
       <button
         ref={ref}
@@ -15,6 +15,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'text-white bg-deep-green-500 rounded-lg py-2 px-8 active:scale-95 duration-100',
           className
         )}
+        {...rest}
       >
         {children}
       </button>
