@@ -11,6 +11,10 @@
     "dev": "tsup --watch",
     "build": "tsup"
   },
+  "dependencies": {
+    "clsx": "^1.2.1",
+    "class-variance-authority": "^0.3.0"
+  },
   "devDependencies": {
     "@types/react": "^17.0.37",
     "@types/react-dom": "^17.0.11",
