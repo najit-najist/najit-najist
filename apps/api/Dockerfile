@@ -51,6 +51,7 @@ RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 app
 
 COPY --from=builder --chown=app:app /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder --chown=app:app /app/apps/api/dist ./apps/api/dist
+COPY --from=builder --chown=app:app /app/apps/api/email-templates ./apps/api/email-templates
 COPY --from=builder --chown=app:app /app/apps/api/prisma ./apps/api/prisma
 
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
