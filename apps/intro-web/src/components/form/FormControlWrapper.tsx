@@ -17,9 +17,19 @@ export const FormControlWrapper: FC<
       id: string;
       required?: boolean;
       type?: HTMLInputTypeAttribute;
+      disabled?: boolean;
     }
   >
-> = ({ children, title, id, description, error, required, ...rest }) => {
+> = ({
+  children,
+  title,
+  id,
+  description,
+  error,
+  required,
+  disabled,
+  ...rest
+}) => {
   const classNames = useFormClassNames();
   const isCheckbox = rest.type === 'checkbox';
   const content = (
@@ -39,7 +49,10 @@ export const FormControlWrapper: FC<
       // @ts-ignore
       <label
         htmlFor={id}
-        className={clsx(rest.className, 'cursor-pointer')}
+        className={clsx(
+          rest.className,
+          disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+        )}
         {...rest}
       >
         {content}
