@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { ConsentForm, ConsentFormProps } from './ConsentForm';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { ShieldCheckIcon } from '@heroicons/react/24/outline/index.js';
 
 const ANALYTICS_CONSENT_COOKIE_NAME = 'enable-najit-najist-analytics';
 let wasInitialized = false;
