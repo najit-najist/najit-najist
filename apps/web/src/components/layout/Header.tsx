@@ -1,10 +1,7 @@
 'use client';
 
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
-import {
-  Bars3Icon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline/esm/index.js';
+import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
 
 const navLinks = [

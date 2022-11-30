@@ -1,8 +1,7 @@
 import { FC, PropsWithChildren } from 'react';
-import Image from 'next/image';
 import { ADMIN_EMAIL } from '@constants';
 
-import instagramIcon from '../../../public/icons/instagram.svg';
+import InstagramIcon from '../../../public/icons/instagram.svg';
 
 const instagramIconSize = 30;
 
@@ -15,12 +14,11 @@ export const Footer: FC<PropsWithChildren> = () => {
           title="Instagram page"
           href="https://www.instagram.com/najitnajist/"
         >
-          <Image
-            src={instagramIcon}
+          <InstagramIcon
             alt="Instagram icon"
+            className="mx-auto"
             width={instagramIconSize}
             height={instagramIconSize}
-            className="mx-auto"
           />
         </a>
 
