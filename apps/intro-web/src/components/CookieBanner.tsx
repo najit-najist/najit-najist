@@ -5,6 +5,8 @@ import { ConsentForm, ConsentFormProps } from './ConsentForm';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline/index.js';
 
 const ANALYTICS_CONSENT_COOKIE_NAME = 'enable-najit-najist-analytics';
+const MARKETING_CONSENT_COOKIE_NAME = 'enable-najit-najist-marketing';
+const COOKIE_CONSENT_SHOWN = 'najit-najist-cookie-consent-shown';
 let wasInitialized = false;
 
 const initGoogleAnalytics = async () => {
@@ -24,28 +26,42 @@ const initGoogleAnalytics = async () => {
 };
 
 export const CookieBanner: FC = () => {
-  const [{ 'enable-najit-najist-analytics': analyticsCookie }, setCookie] =
-    useCookies([ANALYTICS_CONSENT_COOKIE_NAME]);
+  const [
+    {
+      'enable-najit-najist-analytics': analyticsCookie,
+      'najit-najist-cookie-consent-shown': consentShown,
+      'enable-najit-najist-marketing': marketingCookie,
+    },
+    setCookie,
+  ] = useCookies([
+    ANALYTICS_CONSENT_COOKIE_NAME,
+    MARKETING_CONSENT_COOKIE_NAME,
+    COOKIE_CONSENT_SHOWN,
+  ]);
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleCookieNotice = () => setIsOpen((prev) => !prev);
 
   useEffect(() => {
-    if (analyticsCookie === undefined) {
+    if (consentShown === undefined) {
       setIsOpen(true);
       return;
     }
 
+    setIsOpen(false);
+  }, [consentShown]);
+
+  useEffect(() => {
     if (analyticsCookie === 'true') {
       initGoogleAnalytics();
     }
-
-    setIsOpen(false);
   }, [analyticsCookie]);
 
   const onFormSubmit = useCallback<ConsentFormProps['onSubmit']>(
-    ({ analytics }) => {
+    ({ analytics, marketing }) => {
       setCookie(ANALYTICS_CONSENT_COOKIE_NAME, analytics ? 'true' : 'false');
+      setCookie(MARKETING_CONSENT_COOKIE_NAME, marketing ? 'true' : 'false');
+      setCookie(COOKIE_CONSENT_SHOWN, 'true');
 
       setIsOpen(false);
     },
@@ -76,7 +92,16 @@ export const CookieBanner: FC = () => {
 
             <ConsentForm
               onSubmit={onFormSubmit}
-              initialValues={{ analytics: analyticsCookie === 'true' }}
+              initialValues={{
+                analytics:
+                  analyticsCookie === undefined
+                    ? true
+                    : analyticsCookie === 'true',
+                marketing:
+                  marketingCookie === undefined
+                    ? true
+                    : marketingCookie === 'true',
+              }}
             />
           </div>
         </section>

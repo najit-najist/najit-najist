@@ -5,6 +5,7 @@ import { Input } from './form/Input';
 
 interface FormState {
   analytics: boolean;
+  marketing: boolean;
 }
 
 export type ConsentFormProps = {
@@ -17,7 +18,7 @@ export const ConsentForm: FC<ConsentFormProps> = ({
   initialValues,
 }) => {
   const form = useForm<FormState>({
-    defaultValues: initialValues ?? { analytics: true },
+    defaultValues: initialValues ?? { analytics: true, marketing: true },
   });
   const {
     register,
@@ -41,6 +42,13 @@ export const ConsentForm: FC<ConsentFormProps> = ({
           type="checkbox"
           error={errors['analytics']?.message?.toString()}
           {...register('analytics', {})}
+        />
+        <div className="h-4 w-[2px] bg-gray-200 mx-2 hidden md:block" />
+        <Input
+          label="Marketingové cookies"
+          type="checkbox"
+          error={errors['marketing']?.message?.toString()}
+          {...register('marketing', {})}
         />
       </div>
 
