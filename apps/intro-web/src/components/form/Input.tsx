@@ -31,6 +31,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     <FormControlWrapper
       className={clsx(
         wrapperClassName,
+        restProps.disabled && 'opacity-40 cursor-not-allowed',
         isCheckbox &&
           'flex flex-row-reverse justify-end items-center cursor-pointer'
       )}
@@ -39,6 +40,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       required={required}
       id={inputId}
       type={restProps.type}
+      disabled={restProps.disabled}
     >
       <input
         className={clsx(

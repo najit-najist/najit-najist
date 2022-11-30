@@ -1,6 +1,7 @@
 ---
 import Footer from './Footer.astro';
 import Header from './Header.astro';
+import { CookieBanner } from '../CookieBanner';
 ---
 
 <html lang="cs">
@@ -13,6 +14,10 @@ import Header from './Header.astro';
     <meta name="generator" content={Astro.generator} />
     <link rel="stylesheet" href="https://use.typekit.net/pct3thf.css" />
     <title>Najít Najíst</title>
+
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DB0JE2EGYH"
+    ></script>
   </head>
   <body class="bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container">
     <Header />
@@ -20,5 +25,6 @@ import Header from './Header.astro';
       <slot />
     </main>
     <Footer />
+    <CookieBanner client:load />
   </body>
 </html>
