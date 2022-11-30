@@ -2,7 +2,7 @@ import { FC, PropsWithChildren } from 'react';
 
 const Head: FC<PropsWithChildren> = () => {
   return (
-    <>
+    <head>
       <meta charSet="utf-8" />
       <link
         rel="apple-touch-icon"
@@ -24,7 +24,7 @@ const Head: FC<PropsWithChildren> = () => {
       <meta name="viewport" content="width=device-width" />
       <link rel="stylesheet" href="https://use.typekit.net/pct3thf.css" />
       <title>Najít Najíst</title>
-    </>
+    </head>
   );
 };
 
