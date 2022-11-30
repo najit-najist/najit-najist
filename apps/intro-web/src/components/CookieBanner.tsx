@@ -24,15 +24,16 @@ const initGoogleAnalytics = async () => {
 };
 
 export const CookieBanner: FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [{ 'enable-najit-najist-analytics': analyticsCookie }, setCookie] =
     useCookies([ANALYTICS_CONSENT_COOKIE_NAME]);
+  const [isOpen, setIsOpen] = useState(false);
 
   const toggleCookieNotice = () => setIsOpen((prev) => !prev);
 
   useEffect(() => {
     if (analyticsCookie === undefined) {
       setIsOpen(true);
+      return;
     }
 
     if (analyticsCookie === 'true') {
@@ -50,6 +51,8 @@ export const CookieBanner: FC = () => {
     },
     [setCookie]
   );
+
+  console.log({ isOpen });
 
   return (
     <>
