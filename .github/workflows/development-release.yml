@@ -51,8 +51,8 @@ jobs:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-api'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-      - name: 📍 Push Intro-web app to dokku
+      - name: 📍 Push web app to dokku
         uses: dokku/github-action@master
         with:
-          git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-intro-web'
+          git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-web'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
