@@ -20,7 +20,7 @@
     "@trpc/server": "^9.27.4",
     "clsx": "^1.2.1",
     "locomotive-scroll": "^4.1.4",
-    "next": "^13.0.5",
+    "next": "^13.0.6",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.37.0",
