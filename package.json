@@ -9,7 +9,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:api": "turbo run build --filter=@najit-najist/api",
-    "build:intro-web": "turbo run build --filter=@najit-najist/intro-web",
+    "build:web": "turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
