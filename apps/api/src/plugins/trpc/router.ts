@@ -5,5 +5,3 @@ export const appRouter = createTrpcRouter().merge(
   'contact-us.',
   contactUsRoutes()
 );
-
-export type AppRouter = typeof appRouter;
