@@ -6,8 +6,8 @@ import { PasswordService } from './Password.service';
 import { UserService } from './User.service/User.service';
 
 export class AuthService {
-  private userService: UserService;
-  private server: FastifyInstance;
+  #userService: UserService;
+  #server: FastifyInstance;
 
   constructor(server: FastifyInstance) {
     if (!server.services.user) {
@@ -17,8 +17,8 @@ export class AuthService {
         origin: 'UserService.constructor',
       });
     }
-    this.userService = server.services.user;
-    this.server = server;
+    this.#userService = server.services.user;
+    this.#server = server;
   }
 
   async validateUser(
@@ -26,7 +26,7 @@ export class AuthService {
     pass: string
   ): Promise<Omit<User, 'password'> | null> {
     try {
-      const user = await this.userService.getBy('email', email);
+      const user = await this.#userService.getBy('email', email);
 
       if (await PasswordService.validate(user.password!, pass)) {
         // remove password
@@ -35,7 +35,7 @@ export class AuthService {
         return result;
       }
     } catch (e) {
-      this.server.log.error(
+      this.#server.log.error(
         {},
         `validateUser: validation failed because: ${(e as Error).message}`
       );
