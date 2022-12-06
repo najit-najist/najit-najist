@@ -13,10 +13,12 @@ import { PasswordService } from '@services/Password.service';
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
-  #logger: FastifyInstance['log'];
+  private logger: FastifyInstance['log'];
+  private mailService: MailService;
+  private tokenService: TokenService;
 
   constructor(server: FastifyInstance) {
-    this.#logger = server.log;
+    this.logger = server.log;
     if (!server.services.mail) {
       throw new ApplicationError({
         code: ErrorCodes.GENERIC,
@@ -24,6 +26,17 @@ export class UserService {
         origin: 'UserService.constructor',
       });
     }
+    this.mailService = server.services.mail;
+
+    if (!server.services.token) {
+      throw new ApplicationError({
+        code: ErrorCodes.GENERIC,
+        message: 'Email service missing',
+        origin: 'UserService.constructor',
+      });
+    }
+
+    this.tokenService = server.services.token;
   }
 
   async create(
@@ -41,7 +54,7 @@ export class UserService {
         },
       });
 
-      this.#logger.info(
+      this.logger.info(
         `UserService: Create: created user under email: ${params.email}`
       );
 

@@ -37,7 +37,7 @@ WORKDIR /app
 COPY . .
 COPY --from=deps /workspace-install ./
 
-RUN npm run build:web
+RUN npm run build:intro-web
 
 ###################################################################
 # Stage 3: Extract a minimal image from the build                 #
@@ -51,21 +51,15 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/web/next.config.mjs \
-                    /app/apps/web/package.json \
-                    /app/apps/web/next-env.d.ts \
-                    ./apps/web/
+COPY --from=builder /app/apps/intro-web/astro.config.mjs \
+                    /app/apps/intro-web/package.json \
+                    ./apps/intro-web/
 
-COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next ./apps/web/.next
+COPY --from=builder /app/apps/intro-web/public ./apps/intro-web/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/intro-web/dist ./apps/intro-web/dist
 
-# Include api package as it its a monorepo dependency 
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
-
-# Include ui package as it its a monorepo dependency 
-COPY --from=builder /app/packages/najit-najist-ui/package.json ./packages/najit-najist-ui/package.json
-COPY --from=builder /app/packages/najit-najist-ui/dist ./packages/najit-najist-ui/dist
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
@@ -74,6 +68,6 @@ USER nextjs
 
 EXPOSE 3000
 
-WORKDIR /app/apps/web
+WORKDIR /app/apps/intro-web
 
 CMD ["npm", "run", "start"]
