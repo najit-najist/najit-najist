@@ -1,15 +1,15 @@
 import { config } from '@config';
-import { t } from '@lib';
 import { UserRoles, UserStates } from '@prisma/client';
 import { NotFoundError } from '@prisma/client/runtime';
 import { contactUsSchema } from '@schemas';
+import { createTrpcRouter } from '@utils';
 import { z } from 'zod';
 
-export const contactUsRoutes = t.router({
-  contactSend: t.procedure
-    .input(contactUsSchema)
-    .output(z.boolean())
-    .mutation(async ({ ctx, input }) => {
+export const contactUsRoutes = () =>
+  createTrpcRouter().mutation('send', {
+    input: contactUsSchema,
+    output: z.boolean(),
+    async resolve({ ctx, input }) {
       let user;
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
@@ -50,5 +50,5 @@ export const contactUsRoutes = t.router({
         .catch(() => {});
 
       return true;
-    }),
-});
+    },
+  });

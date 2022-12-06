@@ -42,7 +42,6 @@
     "vite-tsconfig-paths": "^3.5.2"
   },
   "dependencies": {
-    "superjson": "^1.11.0",
     "@fastify/auth": "^4.1.0",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.1.0",
@@ -52,7 +51,7 @@
     "@fastify/rate-limit": "^7.5.0",
     "@fastify/session": "^10.0.2",
     "@prisma/client": "^4.5.0",
-    "@trpc/server": "^10.4.3",
+    "@trpc/server": "^9.27.4",
     "@faker-js/faker": "^7.3.0",
     "bcrypt": "^5.1.0",
     "concurrently": "^7.5.0",

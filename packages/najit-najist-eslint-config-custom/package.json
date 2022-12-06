@@ -1,7 +1,7 @@
 {
   "name": "@najit-najist/eslint-config-custom",
   "version": "0.0.0",
-  "main": "index.cjs",
+  "main": "index.js",
   "type": "module",
   "license": "MIT",
   "dependencies": {
