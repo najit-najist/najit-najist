@@ -6,39 +6,8 @@ on:
       - develop
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps: 
-      - name: 🚙 Checkout 
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - uses: actions/cache@v2
-        name: Cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
-
-      - name: Setup node 16
-        uses: actions/setup-node@v1
-        with:
-          node-version: 16
-
-      - name: 🐞 Install Dependencies
-        run: npm install
-
-      - name: 🏗️ Build
-        run: npm run build
-        env:
-          PUBLIC_API_ORIGIN: http://localhost:3000
-
-      - name: 🧪 Test
-        run: npm run test
-
   deploy:
     runs-on: ubuntu-latest
-    needs: test
     steps:
       - name: 🚙 Checkout 
         uses: actions/checkout@v2

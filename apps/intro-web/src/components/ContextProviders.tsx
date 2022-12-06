@@ -6,7 +6,7 @@ export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
   const [queryClient] = useState(() => new QueryClient());
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      url: new URL('/trpc', import.meta.env.PUBLIC_API_ORIGIN).toString(),
+      url: new URL('/trpc', import.meta.env.NEXT_PUBLIC_API_ORIGIN).toString(),
     })
   );
 
