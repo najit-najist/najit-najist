@@ -15,5 +15,6 @@
     "test": {
       "cache": false
     }
-  }
+  },
+  "globalDependencies": ["**/.env"]
 }
