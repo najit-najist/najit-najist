@@ -14,11 +14,11 @@ const navLinks = [
 export const TopHeader: FC<{ onBurgerClick: () => void }> = ({
   onBurgerClick,
 }) => (
-  <div className="bg-white sm:bg-transparent">
-    <div className="container mx-auto flex py-5 sm:py-1 px-4">
+  <div className="bg-white sm:bg-transparent relative z-20">
+    <div className="container flex py-5 sm:py-1">
       <div className="ml-auto flex items-center">
         <a
-          className="inline-flex items-center text-lg"
+          className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
           href="https://portal.najitnajist.cz"
         >
           <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
@@ -48,7 +48,7 @@ export const Header: FC<PropsWithChildren> = () => {
           !mobileMenuOpen && 'hidden'
         )}
       >
-        <nav className="container flex mx-auto">
+        <nav className="container flex">
           <ul className="ml-auto sm:flex text-right sm:text-left items-center gap-2 text-lg">
             {navLinks.map(({ text, href }) => (
               <li key={href}>

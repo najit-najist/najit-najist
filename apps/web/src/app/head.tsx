@@ -34,6 +34,24 @@ const Head: FC<PropsWithChildren> = () => {
         // @ts-ignore
         precedence="default"
       />
+      <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+        // @ts-ignore
+        precedence="default"
+      />
+      <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        // @ts-ignore
+        precedence="default"
+      />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Suez+One&display=swap"
+        rel="stylesheet"
+        // @ts-ignore
+        precedence="default"
+      />
       <title>Najít Najíst</title>
     </>
   );
