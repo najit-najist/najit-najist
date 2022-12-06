@@ -58,10 +58,16 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/intro-web/dist ./apps/intro-
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
-COPY --from=builder /app/apps/pb/package.json ./apps/pb/package.json
-COPY --from=builder /app/apps/pb/dist ./apps/pb/dist
 
+# Include ui package as it its a monorepo dependency 
+COPY --from=builder /app/packages/najit-najist-ui/package.json ./packages/najit-najist-ui/package.json
+COPY --from=builder /app/packages/najit-najist-ui/dist ./packages/najit-najist-ui/dist
+
+# Copy node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
 COPY --from=builder /app/node_modules ./node_modules
+
 COPY --from=builder /app/package.json ./package.json
 
 USER nextjs
