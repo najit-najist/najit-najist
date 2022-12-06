@@ -54,6 +54,8 @@ COPY --from=builder --chown=app:app /app/apps/api/dist ./apps/api/dist
 COPY --from=builder --chown=app:app /app/apps/api/email-templates ./apps/api/email-templates
 COPY --from=builder --chown=app:app /app/apps/api/prisma ./apps/api/prisma
 
+# Copy node_modules
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
