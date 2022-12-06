@@ -20,15 +20,28 @@ const items: Item[] = [
 ];
 
 const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
-  <a className="shadow-inner">
-    <Image src={imageSrc} alt={`Obrázek pro ${title}`} />
-    <p>{title}</p>
+  <a
+    href={href}
+    className="w-full hover:scale-[1.02] duration-100 hover:shadow-2xl"
+  >
+    <div className="rounded-xl overflow-hidden relative w-full h-[400px]">
+      <Image
+        className="absolute top-0 left-0 w-full h-full object-cover content-center"
+        src={imageSrc}
+        alt={`Obrázek pro ${title}`}
+      />
+      <div className="absolute inset-0 from-transparent to-black bg-gradient-to-b opacity-70" />
+      <div className="absolute inset-0 bg-[#ffcccc] opacity-20" />
+      <p className="absolute left-0 bottom-0 ml-14 mb-14 text-4xl text-white font-suez">
+        {title}
+      </p>
+    </div>
   </a>
 );
 
-export const ExportLinks: FC = () => {
+export const QuickLinks: FC = () => {
   return (
-    <section className="container">
+    <section className="container flex gap-5 -mt-32">
       {items.map((data) => (
         <LinkItem key={data.title} {...data} />
       ))}
