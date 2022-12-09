@@ -3,7 +3,7 @@ import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
 const domains = (process.env.CORS_ALLOW ?? baseDomain).split(',');
-const port = Number(process.env.PORT ?? 3000);
+const port = Number(process.env.PORT ?? 3001);
 
 // Environment
 const isDev = process.env.NODE_ENV !== 'production';
