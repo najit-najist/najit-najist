@@ -17,8 +17,10 @@
     "dev:package": "tsup --watch",
     "prestart": "prisma migrate deploy",
     "generate:prisma": "prisma generate --schema=./prisma/schema.prisma",
+    "generate:version": "node scripts/version.mjs",
     "start": "node dist/server.cjs",
     "prebuild": "rimraf dist && npm run generate:prisma",
+    "postbuild": "npm run generate:version",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
     "build": "tsup"
