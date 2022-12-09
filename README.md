@@ -5,7 +5,8 @@
 ### Ports
 
 - web: 
-  - dev, prod: `3000`
+  - dev: `3000`
+  - prod: `4000`
   - can be changed in [package.json](./apps/web/package.json)
 
 - api: 
