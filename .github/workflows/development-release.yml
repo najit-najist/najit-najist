@@ -1,6 +1,7 @@
 name: 'Development release'
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - develop
@@ -14,13 +15,27 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 📍 Enable filter
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            web:
+              - 'apps/web/**'
+            api:
+              - 'apps/api/**'
+            ui:
+              - 'packages/ui/**'
+
       - name: 📍 Push API app to dokku
+        if: steps.filter.outputs.api == 'true'
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-api'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
 
       - name: 📍 Push web app to dokku
+        if: steps.filter.outputs.web == 'true' || steps.filter.outputs.ui == 'true'
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-web'
