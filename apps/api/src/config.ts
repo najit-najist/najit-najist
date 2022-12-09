@@ -29,6 +29,7 @@ export const config = {
   app: {
     name: APP_NAME,
     root: APP_ROOT,
+    version: 'dev123',
   },
   server: {
     port,

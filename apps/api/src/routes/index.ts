@@ -1,13 +1,8 @@
 import { FastifyPluginAsync } from 'fastify';
-import { lifeRoute } from './info/life';
+import { infoRoutes } from './info';
 
 export const routes: FastifyPluginAsync = async (server) => {
-  await server.register(
-    async (server) => {
-      await server.register(lifeRoute, { prefix: '/life' });
-    },
-    {
-      prefix: '/info',
-    }
-  );
+  await server.register(async (server) => {
+    await server.register(infoRoutes);
+  });
 };
