@@ -8,7 +8,7 @@ export type ButtonProps = DetailedHTMLProps<
   VariantProps<typeof buttonStyles>;
 
 const buttonStyles = cva(
-  'text-white bg-deep-green-500 rounded-lg active:scale-95 duration-100',
+  'text-white bg-deep-green-500 rounded-lg duration-100 focus:ring-deep-green-400 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-lg',
   {
     variants: {
       size: {
