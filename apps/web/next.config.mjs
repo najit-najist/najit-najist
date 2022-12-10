@@ -18,6 +18,7 @@ const nextConfig = {
       {
         source: '/github',
         destination: 'https://github.com/najit-najist/najit-najist',
+        permanent: false,
       },
     ];
   },
