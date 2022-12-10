@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,svelte,ts,tsx,vue}'],
+  safelist: ['instagram_svg__feather'],
   theme: {
     extend: {
       colors: {
@@ -31,8 +32,8 @@ module.exports = {
         DEFAULT: '1rem',
         sm: '0.5rem',
         lg: '1rem',
-        xl: '1rem',
-        '2xl': '2rem',
+        xl: '4rem',
+        '2xl': '6rem',
       },
     },
   },
@@ -52,6 +53,10 @@ module.exports = {
         addBase({
           'input[type=checkbox]:not(:checked) ~ .checkmark svg': {
             display: 'none!important',
+          },
+          '.instagram_svg__feather': {
+            scale: '0.865',
+            marginTop: '-2px',
           },
         });
       },
