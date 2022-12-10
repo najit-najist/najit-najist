@@ -13,6 +13,14 @@ const nextConfig = {
 
     return config;
   },
+  async redirects() {
+    return [
+      {
+        source: '/github',
+        destination: 'https://github.com/najit-najist/najit-najist',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
