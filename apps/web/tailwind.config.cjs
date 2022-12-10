@@ -33,7 +33,7 @@ module.exports = {
         sm: '0.5rem',
         lg: '1rem',
         xl: '4rem',
-        '2xl': '6rem',
+        '2xl': '8rem',
       },
     },
   },
