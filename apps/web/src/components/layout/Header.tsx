@@ -3,6 +3,7 @@
 import { FC, PropsWithChildren, useCallback, useState } from 'react';
 import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline';
 import { clsx } from 'clsx';
+import { Logo } from '@components/common/Logo';
 
 const navLinks = [
   { text: 'Úvod', href: '#uvod' },
@@ -48,7 +49,8 @@ export const Header: FC<PropsWithChildren> = () => {
           !mobileMenuOpen && 'hidden'
         )}
       >
-        <nav className="container flex">
+        <nav className="container flex items-center">
+          <Logo className="h-16 w-auto" />
           <ul className="ml-auto sm:flex text-right sm:text-left items-center gap-2 text-lg">
             {navLinks.map(({ text, href }) => (
               <li key={href}>
