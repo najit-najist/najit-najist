@@ -1,3 +1,4 @@
+import { Button, Input } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -17,25 +18,26 @@ export const NewsletterSubscribe: FC = () => {
         </div>
         <div className="mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
           <form className="sm:flex">
-            <label htmlFor="email-address" className="sr-only">
-              Email address
-            </label>
-            <input
+            <Input
               id="email-address"
               name="email-address"
               type="email"
+              placeholder="Váš email"
               autoComplete="email"
-              required
-              className="w-full rounded-md border-white px-5 py-3 placeholder-warm-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-700"
-              placeholder="Enter your email"
+              size="md"
+              label="Emailová adresa"
+              rootClassName="w-full"
+              hideLabel
             />
-            <button
+            <Button
               type="submit"
-              className="mt-3 flex w-full items-center justify-center rounded-md border border-transparent bg-green-400 px-5 py-3 text-base font-medium text-white hover:bg-green-500 focus:outline-none focus:ring-2 focus:ring-green-400 focus:ring-offset-2 focus:ring-offset-cyan-700 sm:mt-0 sm:ml-3 sm:w-auto sm:flex-shrink-0"
+              color="sweet"
+              className="whitespace-nowrap ml-3"
             >
-              Notify me
-            </button>
+              Přihlásit se
+            </Button>
           </form>
+
           <p className="mt-3 text-sm text-cyan-100">
             Záleží nám na vašich dat a jejich ochranu. Přečtě si naše{' '}
             <Link href="/gdpr" className="font-medium text-white underline">

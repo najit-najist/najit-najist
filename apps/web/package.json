@@ -30,6 +30,8 @@
   },
   "devDependencies": {
     "@najit-najist/eslint-config-custom": "*",
+    "@najit-najist/config": "*",
+    "@najit-najist/tailwind-plugin": "*",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.13",

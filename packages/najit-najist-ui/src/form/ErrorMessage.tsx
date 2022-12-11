@@ -10,7 +10,7 @@ export interface ErrorMessageProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLElement>, HTMLElement>,
     VariantProps<typeof rootStyles> {}
 
-const rootStyles = cva('text-red-500');
+const rootStyles = cva('mt-2 text-sm text-red-600');
 
 export const ErrorMessage: FC<PropsWithChildren<ErrorMessageProps>> = ({
   children,
