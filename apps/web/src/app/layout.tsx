@@ -3,12 +3,16 @@
 import { Header, Footer } from '@components/layout';
 
 import '../globals.css';
-import { LayoutComponent } from '../../.next/types/app/layout';
 import { usePathname } from 'next/navigation';
 import { useMemo } from 'react';
+import { LayoutComponent } from '@custom-types';
+import { ContextProviders } from '@contexts';
+import { LeftSidebar } from '@components/layout/LeftSidebar';
+import { useIsInPortal } from '@hooks';
 
 const RootLayout: LayoutComponent = ({ children }) => {
   const pathname = usePathname();
+  const isInPortal = useIsInPortal();
 
   const isHeaderShown = useMemo(() => {
     return !pathname?.startsWith('/login');
@@ -20,10 +24,15 @@ const RootLayout: LayoutComponent = ({ children }) => {
 
   return (
     <html lang="cs">
-      <body className="bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container min-h-screen">
-        {isHeaderShown ? <Header /> : null}
-        <main>{children}</main>
-        {isFooterShown ? <Footer /> : null}
+      <body className="bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container min-h-screen flex">
+        <ContextProviders>
+          {isInPortal ? <LeftSidebar /> : null}
+          <div className="w-full">
+            {isHeaderShown ? <Header /> : null}
+            <main>{children}</main>
+            {isFooterShown ? <Footer /> : null}
+          </div>
+        </ContextProviders>
       </body>
     </html>
   );

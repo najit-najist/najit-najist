@@ -1,11 +1,24 @@
 'use client';
 
-import { FC, PropsWithChildren, useCallback, useMemo, useState } from 'react';
-import { Bars3Icon, UserCircleIcon } from '@heroicons/react/24/outline';
+import {
+  FC,
+  PropsWithChildren,
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  Bars3Icon,
+  PresentationChartLineIcon,
+  UserCircleIcon,
+} from '@heroicons/react/24/outline';
+import { Skeleton } from '@najit-najist/ui';
 import { clsx } from 'clsx';
 import { Logo } from '@components/common/Logo';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useCurrentUser } from '@hooks';
 
 const navLinks = [
   { text: 'Úvod', href: '/' },
@@ -14,25 +27,71 @@ const navLinks = [
   { text: 'Náš Team', href: '/#nas-team' },
 ];
 
+const ProfileButton: FC<{
+  user: ReturnType<typeof useCurrentUser>['data'];
+}> = ({ user }) => {
+  if (!user) {
+    return (
+      <Link
+        className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
+        href="/portal"
+      >
+        <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      className="inline-flex items-center text-lg bg-deep-green-400 text-white rounded-full py-1.5 px-3"
+      href="/profil"
+    >
+      <UserCircleIcon width={25} height={25} className="mr-3" />{' '}
+      <span>
+        {data.firstName} {data.lastName}
+      </span>
+    </Link>
+  );
+};
+
+const PortalLink: FC<{ user: ReturnType<typeof useCurrentUser>['data'] }> = ({
+  user,
+}) => {
+  if (!user) {
+    return null;
+  }
+
+  return (
+    <Link
+      className="inline-flex items-center text-lg p-2 mr-3 bg-white rounded-full"
+      href="/portal"
+    >
+      <PresentationChartLineIcon width={22} height={22} />
+    </Link>
+  );
+};
+
 export const TopHeader: FC<{ onBurgerClick: () => void }> = ({
   onBurgerClick,
-}) => (
-  <div className="bg-white sm:bg-transparent relative z-20">
-    <div className="container flex py-5 sm:py-1">
-      <div className="ml-auto flex items-center">
-        <Link
-          className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
-          href="/portal"
-        >
-          <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
-        </Link>
-        <button onClick={onBurgerClick} className="block sm:hidden ml-6">
-          <Bars3Icon width={35} height={35} />
-        </button>
+}) => {
+  const { data } = useCurrentUser();
+
+  return (
+    <div className="bg-white sm:bg-transparent relative z-20">
+      <div className="container flex py-5 sm:py-1">
+        <div className="ml-auto flex items-center">
+          <PortalLink user={data} />
+          <Suspense fallback={<Skeleton className="h-10 rounded-full w-28" />}>
+            <ProfileButton user={data} />
+          </Suspense>
+          <button onClick={onBurgerClick} className="block sm:hidden ml-6">
+            <Bars3Icon width={35} height={35} />
+          </button>
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 export const Header: FC<PropsWithChildren> = () => {
   const pathname = usePathname();
