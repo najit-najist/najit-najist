@@ -4,7 +4,14 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "types": "dist/index.d.ts",
-  "source": "src/index.tsx",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
   "license": "MIT",
   "type": "module",
   "scripts": {
