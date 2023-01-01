@@ -8,8 +8,9 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:packages": "turbo run build --filter=./packages/*",
     "build:api": "turbo run build --filter=@najit-najist/api",
-    "build:intro-web": "turbo run build --filter=@najit-najist/intro-web",
+    "build:web": "turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
     "test": "turbo run test",
@@ -20,6 +21,7 @@
     "prettier": "^2.7.1",
     "prettier-plugin-astro": "^0.5.5",
     "tsup": "^6.3.0",
+    "rimraf": "^3.0.2",
     "turbo": "latest"
   },
   "engines": {
