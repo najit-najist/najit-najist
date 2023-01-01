@@ -4,7 +4,7 @@ import { FastifyInstance } from 'fastify';
 
 export const createContext = (server: FastifyInstance) => {
   return ({ req }: CreateFastifyContextOptions) => {
-    return { services: server.services };
+    return { services: server.services, pb: server.pb, log: server.log };
   };
 };
 

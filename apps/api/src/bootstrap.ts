@@ -11,6 +11,7 @@ import {
   prismaPlugin,
   tRPCPlugin,
   servicesPlugin,
+  pocketBasePlugin,
 } from '@plugins';
 import { routes } from 'routes';
 
@@ -37,6 +38,7 @@ export const bootstrap = async (
   }
 
   //await server.register(jwtPlugin);
+  await server.register(pocketBasePlugin);
   await server.register(prismaPlugin, { mode });
   await server.register(mailPlugin);
 
