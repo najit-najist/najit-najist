@@ -1,14 +1,33 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { DetailedHTMLProps, FC, forwardRef, InputHTMLAttributes } from 'react';
+import {
+  DetailedHTMLProps,
+  forwardRef,
+  InputHTMLAttributes,
+  ReactNode,
+  useId,
+} from 'react';
+import { FieldError } from 'react-hook-form';
+import { ErrorMessage } from '../ErrorMessage';
+
+import { Label } from '../Label';
 
 type InputVariantProps = VariantProps<typeof inputStyles>;
 
 export interface InputProps
-  extends DetailedHTMLProps<
-      InputHTMLAttributes<HTMLInputElement>,
-      HTMLInputElement
+  extends Omit<
+      DetailedHTMLProps<
+        InputHTMLAttributes<HTMLInputElement>,
+        HTMLInputElement
+      >,
+      'size' | 'color'
     >,
-    Omit<InputVariantProps, 'type'> {}
+    Omit<InputVariantProps, 'type'> {
+  label?: string;
+  hideLabel?: boolean;
+  error?: FieldError;
+  description?: ReactNode;
+  rootClassName?: string;
+}
 
 const inputTypeToStyleType = (
   type: InputProps['type']
@@ -28,28 +47,73 @@ const inputTypeToStyleType = (
   return res;
 };
 
-export const inputStyles = cva('', {
-  variants: {
-    type: {
-      normal: '',
-      checkbox: '',
+export const inputStyles = cva(
+  'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm focus:outline-none',
+  {
+    variants: {
+      type: {
+        normal: '',
+        checkbox: '',
+      },
+      size: {
+        normal: 'py-2 px-3',
+        md: 'py-3 px-5',
+      },
+      color: {
+        default:
+          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-700 placeholder-warm-gray-500',
+      },
     },
-  },
-  defaultVariants: {
-    type: 'normal',
-  },
-});
+    defaultVariants: {
+      type: 'normal',
+      size: 'normal',
+      color: 'default',
+    },
+  }
+);
 
-export const Input = forwardRef<HTMLInputElement, InputProps>(function Input({
-  type,
-  className,
-  ...rest
-}) {
+export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
+  {
+    type,
+    className,
+    label,
+    hideLabel,
+    error,
+    description,
+    size,
+    color,
+    rootClassName,
+    ...rest
+  },
+  ref
+) {
+  const id = useId();
+
   return (
-    <input
-      className={inputStyles({ className, type: inputTypeToStyleType(type) })}
-      type={type}
-      {...rest}
-    />
+    <div className={rootClassName}>
+      {label && (
+        <Label htmlFor={id} type={hideLabel ? 'invisible' : null}>
+          {label}
+        </Label>
+      )}
+
+      <input
+        ref={ref}
+        className={inputStyles({
+          className,
+          type: inputTypeToStyleType(type),
+          size,
+          color,
+        })}
+        type={type}
+        id={id}
+        {...rest}
+      />
+
+      {error && <ErrorMessage>{error.message}</ErrorMessage>}
+      {description && (
+        <p className="mt-3 text-sm text-cyan-100">{description}</p>
+      )}
+    </div>
   );
 });

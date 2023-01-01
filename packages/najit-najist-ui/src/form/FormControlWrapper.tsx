@@ -6,7 +6,7 @@ import type {
   HTMLInputTypeAttribute,
   PropsWithChildren,
 } from 'react';
-import { ErrorMessage } from './Input/ErrorMessage';
+import { ErrorMessage } from './ErrorMessage';
 import { Label } from './Label';
 
 export interface FormControlWrapperProps

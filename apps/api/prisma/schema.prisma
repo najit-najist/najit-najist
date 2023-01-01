@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// IMPORTANT NOTICE: As a start we will be using api package as api gateway to pocketbase/pb
+// If pocketbase wont be enough we will be replacing it with custom solution
 
 generator client {
   provider = "prisma-client-js"

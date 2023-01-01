@@ -1,7 +1,5 @@
 import { ErrorCodes, ErrorMessages } from '@custom-types';
 import { ApplicationError } from '@errors';
-import { MailService } from '@services/Mail.service';
-import { TokenService } from '@services/Token.service';
 import { Prisma, User } from '@prisma/client';
 import { FastifyInstance } from 'fastify';
 import { randomUUID } from 'crypto';

@@ -13,9 +13,20 @@ export interface LabelProps
     >,
     VariantProps<typeof labelStyles> {}
 
-const labelStyles = cva('block text-sm');
+const labelStyles = cva('block text-sm font-medium text-gray-700', {
+  variants: {
+    type: {
+      invisible: 'sr-only',
+    },
+  },
+});
 
 export const Label: FC<PropsWithChildren<LabelProps>> = ({
   children,
   className,
-}) => <label className={labelStyles({ className })}>{children}</label>;
+  ...rest
+}) => (
+  <label className={labelStyles({ className, ...rest })} {...rest}>
+    {children}
+  </label>
+);

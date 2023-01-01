@@ -18,6 +18,16 @@ import path from 'node:path';
     }
   }
 
+  if (import.meta.hot) {
+    import.meta.hot.on('vite:beforeFullReload', () => {
+      server.close();
+    });
+
+    import.meta.hot.dispose(() => {
+      server.close();
+    });
+  }
+
   server.listen(
     {
       port: config.server.port,

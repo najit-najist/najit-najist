@@ -43,6 +43,18 @@ export const config = {
     cors: {
       allowed: isDev ? '*' : domains,
     },
+    /**
+     * Pocketbase config
+     */
+    pb: {
+      origin: String(process.env.POCKETBASE_ORIGIN),
+      users: {
+        contactForm: {
+          user: String(process.env.POCKETBASE_CONTACT_FORM_USER),
+          password: String(process.env.POCKETBASE_CONTACT_FORM_PASS),
+        },
+      },
+    },
   },
   mail: {
     user: mailUser,
