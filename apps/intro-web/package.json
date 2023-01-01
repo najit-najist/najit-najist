@@ -3,7 +3,13 @@
   "type": "module",
   "version": "0.0.1",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "dev": "astro dev",
+    "start": "serve dist/",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
   "dependencies": {
     "@astrojs/image": "^0.9.2",
     "react-cookie": "^4.1.1",

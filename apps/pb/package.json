@@ -1,0 +1,9 @@
+{
+  "name": "@najit-najist/pb",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "docker compose up"
+  }
+}
