@@ -15,7 +15,7 @@
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:package\"",
     "dev:server": "vite-node -w src/server.ts",
     "dev:package": "tsup --watch",
-    "start": "node dist/server.cjs",
+    "start": "node dist/server.js",
     "prebuild": "rimraf dist",
     "test": "vitest",
     "test:coverage": "vitest run --coverage",
