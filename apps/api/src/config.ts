@@ -1,4 +1,7 @@
 import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';

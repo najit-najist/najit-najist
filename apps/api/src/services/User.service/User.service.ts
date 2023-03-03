@@ -2,13 +2,14 @@ import {
   ErrorCodes,
   ErrorMessages,
   PocketbaseCollections,
+  PocketbaseErrorCodes,
   User,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { FastifyInstance } from 'fastify';
 import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
-import { formatErrorMessage } from '@utils';
+import { formatErrorMessage, removeDiacritics } from '@utils';
 import { PasswordService } from '@services/Password.service';
 import { ClientResponseError } from 'pocketbase';
 
@@ -44,13 +45,17 @@ export class UserService {
       const password = await PasswordService.hash(
         params.password || faker.internet.password(15)
       );
+      let username = removeDiacritics(
+        faker.internet.userName(params.firstName, params.lastName).toLowerCase()
+      );
 
       const user = await this.pocketbase
         .collection(PocketbaseCollections.USERS)
         .create<User>({
-          username: params.email.split('@')[0],
+          username,
           lastLoggedIn: null,
           notes: null,
+          emailVisibility: true,
           ...params,
           // Override some stuff
           password,
@@ -71,15 +76,20 @@ export class UserService {
       return user;
     } catch (error) {
       // The "validation_invalid_email" error code does not entirely mean that its a duplicate, but we already check input in API
-      if (
-        error instanceof ClientResponseError &&
-        error.data.email.code === 'validation_invalid_email'
-      ) {
-        throw new ApplicationError({
-          code: ErrorCodes.ENTITY_DUPLICATE,
-          message: formatErrorMessage(ErrorMessages.USER_EXISTS, params),
-          origin: 'UserService',
-        });
+      if (error instanceof ClientResponseError) {
+        const data = error.data.data;
+
+        if (
+          data.email?.code === PocketbaseErrorCodes.INVALID_EMAIL ||
+          // TODO
+          data.username?.code === 'validation_invalid_email'
+        ) {
+          throw new ApplicationError({
+            code: ErrorCodes.ENTITY_DUPLICATE,
+            message: formatErrorMessage(ErrorMessages.USER_EXISTS, params),
+            origin: 'UserService',
+          });
+        }
       }
 
       throw error;
@@ -90,7 +100,7 @@ export class UserService {
     try {
       return this.pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getFirstListItem<User>(`${type}=${value}`);
+        .getFirstListItem<User>(`${type}="${value}"`);
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({

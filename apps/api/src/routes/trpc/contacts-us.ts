@@ -31,9 +31,7 @@ export const contactUsRoutes = () =>
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
         try {
-          user = await ctx.pb
-            .collection(PocketbaseCollections.USERS)
-            .getFirstListItem<User>(`email="${input.email}"`);
+          user = await ctx.services.user.getBy('email', input.email);
 
           if (!user.newsletter) {
             user = await ctx.pb
@@ -67,14 +65,16 @@ export const contactUsRoutes = () =>
         }
       }
 
-      await ctx.pb.collection('contact_form_replies').create({
-        email: user!.email,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        message: input.message,
-        telephone: input.telephone,
-        subscribeToNewsletter: input.subscribeToNewsletter,
-      });
+      const createdResponse = await ctx.pb
+        .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
+        .create({
+          email: user!.email,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          message: input.message,
+          telephone: input.telephone,
+          subscribeToNewsletter: input.subscribeToNewsletter,
+        });
 
       ctx.services.mail
         .send({
@@ -83,7 +83,12 @@ export const contactUsRoutes = () =>
           payload: input,
           template: 'contact-us/admin',
         })
-        .catch(() => {});
+        .catch((error) => {
+          ctx.log.error(
+            error,
+            `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
+          );
+        });
 
       ctx.services.mail
         .send({
@@ -91,7 +96,9 @@ export const contactUsRoutes = () =>
           payload: input,
           template: 'contact-us/user',
         })
-        .catch(() => {});
+        .catch((error) => {
+          ctx.log.error(error, `Failed to send email to user`);
+        });
 
       ctx.pb.authStore.clear();
 

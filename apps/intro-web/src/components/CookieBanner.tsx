@@ -68,8 +68,6 @@ export const CookieBanner: FC = () => {
     [setCookie]
   );
 
-  console.log({ isOpen });
-
   return (
     <>
       {isOpen ? (

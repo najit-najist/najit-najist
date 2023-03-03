@@ -10,10 +10,10 @@ enum ERROR_MESSAGES {
 export const contactUsSchema = z.object({
   firstName: z
     .string({ required_error: ERROR_MESSAGES.MISSING_NAME })
-    .min(1, ERROR_MESSAGES.MISSING_NAME),
+    .min(2, ERROR_MESSAGES.MISSING_NAME),
   lastName: z
     .string({ required_error: ERROR_MESSAGES.MISSING_SURNAME })
-    .min(1, ERROR_MESSAGES.MISSING_SURNAME),
+    .min(2, ERROR_MESSAGES.MISSING_SURNAME),
   telephone: z.string().optional().nullable(),
   email: z
     .string({ required_error: ERROR_MESSAGES.MISSING_MAIL })
