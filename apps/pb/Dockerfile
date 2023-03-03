@@ -6,7 +6,7 @@ RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/
     && unzip pocketbase_${VERSION}_linux_amd64.zip \
     && chmod +x /pocketbase
 
-COPY /migrations /pocketbase-migrations
+COPY migrations /pocketbase-migrations
 
 FROM alpine:3
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
