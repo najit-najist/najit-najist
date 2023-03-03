@@ -10,4 +10,11 @@ export const tRPCPlugin = fp(async (server) => {
     prefix: '/trpc',
     trpcOptions: { router: appRouter, createContext: createContext(server) },
   });
+
+  server.addHook('onResponse', (request, reply, done) => {
+    console.log({ re: request.routerPath });
+
+    // Some code
+    done();
+  });
 });

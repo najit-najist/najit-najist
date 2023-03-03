@@ -5,7 +5,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import superjson from 'superjson';
 
-import { TRPC_API_URL } from '@constants';
 import { trpc } from '../trpc';
 
 export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
@@ -24,7 +23,7 @@ export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
       transformer: superjson,
       links: [
         httpBatchLink({
-          url: TRPC_API_URL.toString(),
+          url: '/api/trpc',
         }),
       ],
     })

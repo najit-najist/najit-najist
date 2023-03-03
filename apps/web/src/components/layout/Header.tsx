@@ -27,14 +27,20 @@ const navLinks = [
   { text: 'Náš Team', href: '/#nas-team' },
 ];
 
-const ProfileButton: FC<{
-  user: ReturnType<typeof useCurrentUser>['data'];
-}> = ({ user }) => {
+const useUser = () =>
+  useCurrentUser({
+    useErrorBoundary: false,
+    retry: false,
+  });
+
+const ProfileButton: FC = () => {
+  const { data: user } = useUser();
+
   if (!user) {
     return (
       <Link
         className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
-        href="/portal"
+        href="/login"
       >
         <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
       </Link>
@@ -48,15 +54,15 @@ const ProfileButton: FC<{
     >
       <UserCircleIcon width={25} height={25} className="mr-3" />{' '}
       <span>
-        {data.firstName} {data.lastName}
+        {user.firstName} {user.lastName}
       </span>
     </Link>
   );
 };
 
-const PortalLink: FC<{ user: ReturnType<typeof useCurrentUser>['data'] }> = ({
-  user,
-}) => {
+const PortalLink: FC = () => {
+  const { data: user } = useUser();
+
   if (!user) {
     return null;
   }
@@ -74,15 +80,15 @@ const PortalLink: FC<{ user: ReturnType<typeof useCurrentUser>['data'] }> = ({
 export const TopHeader: FC<{ onBurgerClick: () => void }> = ({
   onBurgerClick,
 }) => {
-  const { data } = useCurrentUser();
-
   return (
     <div className="bg-white sm:bg-transparent relative z-20">
       <div className="container flex py-5 sm:py-1">
         <div className="ml-auto flex items-center">
-          <PortalLink user={data} />
-          <Suspense fallback={<Skeleton className="h-10 rounded-full w-28" />}>
-            <ProfileButton user={data} />
+          <Suspense fallback={<Skeleton className="h-10 rounded-full w-32" />}>
+            <PortalLink />
+          </Suspense>
+          <Suspense fallback={<></>}>
+            <ProfileButton />
           </Suspense>
           <button onClick={onBurgerClick} className="block sm:hidden ml-6">
             <Bars3Icon width={35} height={35} />

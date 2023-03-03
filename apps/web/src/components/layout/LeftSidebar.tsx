@@ -1,3 +1,5 @@
+'use client';
+
 import { Logo } from '@components/common/Logo';
 import { HomeIcon, UserGroupIcon } from '@heroicons/react/24/outline';
 import clsx from 'clsx';

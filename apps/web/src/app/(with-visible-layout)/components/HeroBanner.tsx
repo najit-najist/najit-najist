@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import { FC } from 'react';
 
-import heroBannerImage from '../../../public/images/pages/main-page/hero-banner-picture.png';
+import heroBannerImage from '/public/images/pages/main-page/hero-banner-picture.png';
 
 export const HeroBanner: FC = () => {
   return (

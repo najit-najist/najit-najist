@@ -13,7 +13,6 @@ RUN --mount=type=bind,target=/docker-context \
           --exclude='node_modules' \
           --exclude='*/node_modules' \
           --include='package.json' \
-          --include='schema.prisma' \
           --include='*/' --exclude='*' \
           /docker-context/ /workspace-install/;
 
@@ -52,7 +51,6 @@ RUN addgroup --system --gid 1001 app && adduser --system --uid 1001 app
 COPY --from=builder --chown=app:app /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder --chown=app:app /app/apps/api/dist ./apps/api/dist
 COPY --from=builder --chown=app:app /app/apps/api/email-templates ./apps/api/email-templates
-COPY --from=builder --chown=app:app /app/apps/api/prisma ./apps/api/prisma
 
 # Copy node_modules
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
@@ -63,6 +61,5 @@ USER app
 EXPOSE 3030
 
 WORKDIR /app/apps/api
-RUN npx prisma generate
 
 CMD ["npm", "run", "start"]

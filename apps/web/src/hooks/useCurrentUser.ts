@@ -5,6 +5,4 @@ export type UseCurrentUserOptions = Parameters<
 >[1];
 
 export const useCurrentUser = (options?: UseCurrentUserOptions) =>
-  trpc.profile.me.useQuery(undefined, {
-    enabled: false,
-  });
+  trpc.profile.me.useQuery(undefined, options);

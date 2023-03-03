@@ -1,9 +1,12 @@
-/** @type {import('next').NextConfig} */
+const apiOrigin = process.env.NEXT_PUBLIC_API_ORIGIN;
+
+/** @typedef {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   experimental: {
     appDir: true,
+    typedRoutes: true,
   },
   webpack(config) {
     config.module.rules.push({
@@ -19,6 +22,14 @@ const nextConfig = {
         source: '/github',
         destination: 'https://github.com/najit-najist/najit-najist',
         permanent: false,
+      },
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: `${apiOrigin}/:path*`,
       },
     ];
   },

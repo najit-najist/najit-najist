@@ -1,10 +1,10 @@
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 
-import bakeryImage from '../../../public/images/pages/main-page/bakery.jpg';
-import eventsImage from '../../../public/images/pages/main-page/events.jpg';
-import shoppingImage from '../../../public/images/pages/main-page/shopping.jpg';
-import waitressImage from '../../../public/images/pages/main-page/waitress.jpg';
+import bakeryImage from '/public/images/pages/main-page/bakery.jpg';
+import eventsImage from '/public/images/pages/main-page/events.jpg';
+import shoppingImage from '/public/images/pages/main-page/shopping.jpg';
+import waitressImage from '/public/images/pages/main-page/waitress.jpg';
 
 type Item = {
   title: string;

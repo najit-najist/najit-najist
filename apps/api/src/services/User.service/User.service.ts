@@ -1,79 +1,74 @@
-import { ErrorCodes, ErrorMessages } from '@custom-types';
+import { ErrorCodes, User, UserRoles, UserStates } from '@custom-types';
 import { ApplicationError } from '@errors';
-import { Prisma, User } from '@prisma/client';
 import { FastifyInstance } from 'fastify';
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
-import { prisma } from '@constants';
-import { formatErrorMessage } from '@utils';
-import { PasswordService } from '@services/Password.service';
+import { PocketBase } from '@najit-najist/pb';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
   #logger: FastifyInstance['log'];
+  #pb: PocketBase;
 
   constructor(server: FastifyInstance) {
     this.#logger = server.log;
-    if (!server.services.mail) {
-      throw new ApplicationError({
-        code: ErrorCodes.GENERIC,
-        message: 'Email service missing',
-        origin: 'UserService.constructor',
-      });
-    }
+    this.#pb = server.pb;
   }
 
   async create(
-    params: Omit<User, 'password' | 'newsletterUuid' | 'id' | 'createdAt'> &
-      Partial<Pick<User, 'password'>>
+    params: Omit<
+      User,
+      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'status' | 'role'
+    > &
+      Partial<Pick<User, 'password' | 'status' | 'role'>>
   ) {
     try {
-      const user = await prisma.user.create({
-        data: {
-          ...params,
-          password: await PasswordService.hash(
-            params.password || faker.internet.password(15)
-          ),
-          newsletterUuid: randomUUID(),
-        },
+      const password = params.password || faker.internet.password(12);
+      const user = await this.#pb.collection('users').create<User>({
+        email: params.email,
+        firstName: params.firstName,
+        lastName: params.lastName,
+        username: params.email.split('@')[0],
+        telephoneNumber: params.telephoneNumber ?? null,
+        status: UserStates.SUBSCRIBED,
+        role: params.role ?? UserRoles.NORMAL,
+        newsletter: true,
+        newsletterUuid: crypto.randomUUID(),
+        lastLoggedIn: null,
+        password,
+        passwordConfirm: password,
+        notes: null,
       });
 
       this.#logger.info(
-        `UserService: Create: created user under email: ${params.email}`
+        `UserService: Create: created user under email: ${user.email}`
       );
 
       return user;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
-        throw new ApplicationError({
-          code: ErrorCodes.ENTITY_DUPLICATE,
-          message: formatErrorMessage(ErrorMessages.USER_EXISTS, params),
-          origin: 'UserService',
-        });
-      } else {
-        throw error;
-      }
+      // TODO: handle duplicates differently
+
+      throw error;
     }
   }
 
-  async getBy(type: GetByType, value: any) {
-    try {
-      return prisma.user.findFirstOrThrow({
-        where: {
-          [type]: value,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientValidationError) {
-        throw new ApplicationError({
-          code: ErrorCodes.ENTITY_MISSING,
-          message: `Uživatel pod daným ${type} nebyl nalezen`,
-          origin: 'UserService',
-        });
-      }
-
-      throw e;
-    }
+  async getBy(type: GetByType, value: any): Promise<User> {
+    //TODO: Implement this
+    // try {
+    //   return prisma.user.findFirstOrThrow({
+    //     where: {
+    //       [type]: value,
+    //     },
+    //   });
+    // } catch (e) {
+    //   // if (e instanceof Prisma.PrismaClientValidationError) {
+    //   //   throw new ApplicationError({
+    //   //     code: ErrorCodes.ENTITY_MISSING,
+    //   //     message: `Uživatel pod daným ${type} nebyl nalezen`,
+    //   //     origin: 'UserService',
+    //   //   });
+    //   // }
+    //   throw e;
+    // }
   }
 }

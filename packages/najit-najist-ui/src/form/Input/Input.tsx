@@ -19,7 +19,7 @@ export interface InputProps
         InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
       >,
-      'size' | 'color'
+      'size' | 'color' | 'disabled'
     >,
     Omit<InputVariantProps, 'type'> {
   label?: string;
@@ -63,6 +63,10 @@ export const inputStyles = cva(
         default:
           'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-700 placeholder-warm-gray-500',
       },
+      disabled: {
+        true: 'opacity-60 bg-gray-100',
+        false: '',
+      },
     },
     defaultVariants: {
       type: 'normal',
@@ -83,6 +87,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     size,
     color,
     rootClassName,
+    disabled,
     ...rest
   },
   ref
@@ -104,9 +109,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           type: inputTypeToStyleType(type),
           size,
           color,
+          disabled,
+          ...rest,
         })}
         type={type}
         id={id}
+        disabled={disabled ?? false}
         {...rest}
       />
 
