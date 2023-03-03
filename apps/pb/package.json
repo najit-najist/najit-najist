@@ -1,0 +1,23 @@
+{
+  "name": "@najit-najist/pb",
+  "type": "module",
+  "version": "0.0.1",
+  "private": true,
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "source": "src/index.ts",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "concurrently \"npm:dev:server\" \"npm:dev:package\"",
+    "dev:server": "docker compose up",
+    "dev:package": "tsup --watch",
+    "prebuild": "rimraf dist",
+    "build": "tsup"
+  },
+  "dependencies": {
+    "pocketbase": "^0.9.1"
+  },
+  "devDependencies": {
+    "@najit-najist/tsconfig": "*"
+  }
+}
