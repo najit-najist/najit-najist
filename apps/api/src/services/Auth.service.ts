@@ -1,6 +1,5 @@
-import { ErrorCodes } from '@custom-types';
+import { ErrorCodes, User } from '@custom-types';
 import { ApplicationError } from '@errors';
-import type { User } from '@prisma/client';
 import { FastifyInstance } from 'fastify';
 import { PasswordService } from './Password.service';
 import { UserService } from './User.service/User.service';

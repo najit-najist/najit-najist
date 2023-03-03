@@ -8,9 +8,10 @@ import {
   mailPlugin,
   rateLimitPlugin,
   sessionPlugin,
-  prismaPlugin,
   tRPCPlugin,
   servicesPlugin,
+  pocketBasePlugin,
+  jwtPlugin,
 } from '@plugins';
 import { routes } from 'routes';
 
@@ -36,8 +37,10 @@ export const bootstrap = async (
     await server.register(corsPlugin);
   }
 
-  //await server.register(jwtPlugin);
-  await server.register(prismaPlugin, { mode });
+  await server.register(jwtPlugin);
+  if (mode !== 'testing') {
+    await server.register(pocketBasePlugin);
+  }
   await server.register(mailPlugin);
 
   await server.register(servicesPlugin);

@@ -3,7 +3,7 @@ export * from './trpc';
 export * from './cookie';
 export * from './cors';
 export * from './jwt';
-export * from './prisma';
+export * from './pb';
 export * from './rateLimit';
 export * from './services';
 export * from './session';

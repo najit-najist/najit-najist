@@ -4,6 +4,17 @@ import { config } from './config';
 (async () => {
   const server = await bootstrap();
 
+  // Take care of server in vite-node dev mode
+  if (import.meta.hot) {
+    import.meta.hot.on('vite:beforeFullReload', () => {
+      server.close();
+    });
+
+    import.meta.hot.dispose(() => {
+      server.close();
+    });
+  }
+
   server.listen(
     {
       port: config.server.port,

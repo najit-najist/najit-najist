@@ -1,0 +1,9 @@
+version: '3'
+services:
+  najit-najist-pocketbase:
+    build: .
+    ports:
+      - 8080:8090
+    volumes:
+      - ./pb_data:/pb_data
+      - ./migrations:/migrations
