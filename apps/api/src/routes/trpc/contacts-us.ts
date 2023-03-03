@@ -74,6 +74,14 @@ export const contactUsRoutes = () =>
           message: input.message,
           telephone: input.telephone,
           subscribeToNewsletter: input.subscribeToNewsletter,
+        })
+        .catch((error) => {
+          ctx.log.error(
+            error,
+            `Failed to save a reponse from form to database`
+          );
+
+          throw new Error('Error happened');
         });
 
       ctx.services.mail

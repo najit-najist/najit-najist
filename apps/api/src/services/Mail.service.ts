@@ -1,6 +1,7 @@
 import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import Email from 'email-templates';
-import { config } from '@config';
+
+export type AvailableTemplates = 'contact-us/admin' | 'contact-us/user';
 
 export class MailService {
   private logger: FastifyBaseLogger;
@@ -20,7 +21,7 @@ export class MailService {
     payload: Record<string, any>;
     subject?: string;
     to: string | string[];
-    template: string;
+    template: AvailableTemplates;
   }) {
     let result;
     try {
