@@ -1,94 +1,106 @@
-import { ErrorCodes, ErrorMessages } from '@custom-types';
+import {
+  ErrorCodes,
+  ErrorMessages,
+  PocketbaseCollections,
+  User,
+} from '@custom-types';
 import { ApplicationError } from '@errors';
-import { MailService } from '@services/Mail.service';
-import { TokenService } from '@services/Token.service';
-import { Prisma, User } from '@prisma/client';
 import { FastifyInstance } from 'fastify';
 import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
-import { prisma } from '@constants';
 import { formatErrorMessage } from '@utils';
 import { PasswordService } from '@services/Password.service';
+import { ClientResponseError } from 'pocketbase';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
   private logger: FastifyInstance['log'];
-  private mailService: MailService;
-  private tokenService: TokenService;
+  private pocketbase: FastifyInstance['pb'];
 
   constructor(server: FastifyInstance) {
     this.logger = server.log;
-    if (!server.services.mail) {
-      throw new ApplicationError({
-        code: ErrorCodes.GENERIC,
-        message: 'Email service missing',
-        origin: 'UserService.constructor',
-      });
-    }
-    this.mailService = server.services.mail;
 
     if (!server.services.token) {
       throw new ApplicationError({
         code: ErrorCodes.GENERIC,
-        message: 'Email service missing',
+        message: 'Token service missing',
         origin: 'UserService.constructor',
       });
     }
 
-    this.tokenService = server.services.token;
+    this.pocketbase = server.pb;
   }
 
   async create(
-    params: Omit<User, 'password' | 'newsletterUuid' | 'id' | 'createdAt'> &
-      Partial<Pick<User, 'password'>>
+    params: Omit<
+      User,
+      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'username'
+    > &
+      Partial<Pick<User, 'password' | 'username'>>,
+    requestVerification?: boolean
   ) {
     try {
-      const user = await prisma.user.create({
-        data: {
+      const password = await PasswordService.hash(
+        params.password || faker.internet.password(15)
+      );
+
+      const user = await this.pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .create<User>({
+          username: params.email.split('@')[0],
+          lastLoggedIn: null,
+          notes: null,
           ...params,
-          password: await PasswordService.hash(
-            params.password || faker.internet.password(15)
-          ),
+          // Override some stuff
+          password,
+          passwordConfirm: password,
           newsletterUuid: randomUUID(),
-        },
-      });
+        });
 
       this.logger.info(
         `UserService: Create: created user under email: ${params.email}`
       );
 
+      if (requestVerification) {
+        await this.pocketbase
+          .collection(PocketbaseCollections.USERS)
+          .requestVerification(user.email);
+      }
+
       return user;
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientValidationError) {
+      // The "validation_invalid_email" error code does not entirely mean that its a duplicate, but we already check input in API
+      if (
+        error instanceof ClientResponseError &&
+        error.data.email.code === 'validation_invalid_email'
+      ) {
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_DUPLICATE,
           message: formatErrorMessage(ErrorMessages.USER_EXISTS, params),
           origin: 'UserService',
         });
-      } else {
-        throw error;
       }
+
+      throw error;
     }
   }
 
   async getBy(type: GetByType, value: any) {
     try {
-      return prisma.user.findFirstOrThrow({
-        where: {
-          [type]: value,
-        },
-      });
-    } catch (e) {
-      if (e instanceof Prisma.PrismaClientValidationError) {
+      return this.pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .getFirstListItem<User>(`${type}=${value}`);
+    } catch (error) {
+      if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
-          message: `Uživatel pod daným ${type} nebyl nalezen`,
+          message: `Uživatel pod daným polem '${type}' nebyl nalezen`,
           origin: 'UserService',
         });
       }
 
-      throw e;
+      throw error;
     }
   }
 }

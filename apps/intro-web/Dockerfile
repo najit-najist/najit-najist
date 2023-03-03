@@ -17,9 +17,6 @@ RUN --mount=type=bind,target=/docker-context \
           --include='*/' --exclude='*' \
           /docker-context/ /workspace-install/;
 
-# @see https://www.prisma.io/docs/reference/api-reference/environment-variables-reference#cli-binary-targets
-ENV PRISMA_CLI_BINARY_TARGETS=linux-musl
-
 RUN npm install
 
 
@@ -60,6 +57,9 @@ COPY --from=builder --chown=nextjs:nodejs /app/apps/intro-web/dist ./apps/intro-
 
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+
+COPY --from=builder /app/apps/pb/package.json ./apps/pb/package.json
+COPY --from=builder /app/apps/pb/dist ./apps/pb/dist
 
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json

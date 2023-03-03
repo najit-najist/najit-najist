@@ -43,6 +43,29 @@ export const config = {
       allowed: isDev ? '*' : domains,
     },
   },
+  /**
+   * Pocketbase config
+   */
+  pb: {
+    origin: String(process.env.POCKETBASE_ORIGIN),
+    /**
+     * Pocketbase accounts for different purposes. We use this to minify attack by creating different users for each action to make access more granular
+     */
+    accounts: new Map(
+      String(process.env.POCKETBASE_ACCOUNTS ?? '')
+        .split('|')
+        .filter((item) => !!item)
+        .map((item) => {
+          const [key, email, password] = item.split(';');
+
+          if (!key || !email || !password) {
+            throw new Error('Invalid POCKETBASE_ACCOUNTS env variable');
+          }
+
+          return [key, { password, email }];
+        })
+    ),
+  },
   mail: {
     user: mailUser,
     baseEmail: mailBaseEmail,
