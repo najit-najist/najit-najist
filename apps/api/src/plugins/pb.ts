@@ -1,6 +1,6 @@
 import { config } from '@config';
 import { ApplicationMode } from '@custom-types';
-import { PocketBase } from '@najit-najist/pb';
+import type { PocketBase } from '@najit-najist/pb';
 import fp from 'fastify-plugin';
 
 import 'cross-fetch/polyfill';
@@ -12,9 +12,9 @@ declare module 'fastify' {
 }
 
 export const pocketBasePlugin = fp<{ mode: ApplicationMode }>(
-  async (server, { mode }) => {
-    if (mode !== 'testing') {
-      await server.decorate('pb', new PocketBase(config.pb.origin));
-    }
+  async (server) => {
+    const { PocketBase } = await import('@najit-najist/pb');
+
+    await server.decorate('pb', new PocketBase(config.pb.origin));
   }
 );

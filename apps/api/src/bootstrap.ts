@@ -38,7 +38,9 @@ export const bootstrap = async (
   }
 
   await server.register(jwtPlugin);
-  await server.register(pocketBasePlugin);
+  if (mode !== 'testing') {
+    await server.register(pocketBasePlugin);
+  }
   await server.register(mailPlugin);
 
   await server.register(servicesPlugin);
