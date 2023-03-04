@@ -1,4 +1,5 @@
 import { config } from '@config';
+import { t } from '@lib';
 import {
   PocketbaseCollections,
   User,
@@ -6,14 +7,13 @@ import {
   UserStates,
 } from '@custom-types';
 import { contactUsSchema } from '@schemas';
-import { createTrpcRouter } from '@utils';
 import { z } from 'zod';
 
-export const contactUsRoutes = () =>
-  createTrpcRouter().mutation('send', {
-    input: contactUsSchema,
-    output: z.boolean(),
-    async resolve({ ctx, input }) {
+export const contactUsRoutes = t.router({
+  contactSend: t.procedure
+    .input(contactUsSchema)
+    .output(z.boolean())
+    .mutation(async ({ ctx, input }) => {
       let user: User | undefined = undefined;
       const contactFormAccount = config.pb.accounts.get('contactForm');
 
@@ -111,5 +111,5 @@ export const contactUsRoutes = () =>
       ctx.pb.authStore.clear();
 
       return true;
-    },
-  });
+    }),
+});

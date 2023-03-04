@@ -38,6 +38,6 @@ jobs:
         if: steps.filter.outputs.web == 'true' || steps.filter.outputs.ui == 'true'
         uses: dokku/github-action@master
         with:
-          git_remote_url: 'ssh://dokku@najitnajist.cz:22/intro-web'
+          git_remote_url: 'ssh://dokku@najitnajist.cz:22/web'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'main'

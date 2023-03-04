@@ -34,7 +34,7 @@ WORKDIR /app
 COPY . .
 COPY --from=deps /workspace-install ./
 
-RUN npm run build:intro-web
+RUN npm run build:web
 
 ###################################################################
 # Stage 3: Extract a minimal image from the build                 #
@@ -48,13 +48,15 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/intro-web/astro.config.mjs \
-                    /app/apps/intro-web/package.json \
-                    ./apps/intro-web/
+COPY --from=builder /app/apps/web/next.config.mjs \
+                    /app/apps/web/package.json \
+                    /app/apps/web/next-env.d.ts \
+                    ./apps/web/
 
-COPY --from=builder /app/apps/intro-web/public ./apps/intro-web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/intro-web/dist ./apps/intro-web/dist
+COPY --from=builder /app/apps/web/public ./apps/web/public
+COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next ./apps/web/.next
 
+# Include api package as it its a monorepo dependency 
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 
@@ -74,6 +76,6 @@ USER nextjs
 
 EXPOSE 4000
 
-WORKDIR /app/apps/intro-web
+WORKDIR /app/apps/web
 
 CMD ["npm", "run", "start"]

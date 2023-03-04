@@ -63,7 +63,7 @@ export class UserService {
           newsletterUuid: randomUUID(),
         });
 
-      this.logger.info(
+      this.#logger.info(
         `UserService: Create: created user under email: ${params.email}`
       );
 

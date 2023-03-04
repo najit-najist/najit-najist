@@ -39,6 +39,7 @@
     "vite-tsconfig-paths": "^3.5.2"
   },
   "dependencies": {
+    "superjson": "^1.11.0",
     "@fastify/auth": "^4.1.0",
     "@fastify/cookie": "^8.3.0",
     "@fastify/cors": "^8.1.0",
