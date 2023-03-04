@@ -3,11 +3,10 @@ FROM alpine:3 as downloader
 ARG VERSION=0.13.0
 
 RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/pocketbase_${VERSION}_linux_amd64.zip \
-    && unzip pocketbase_${VERSION}_linux_amd64.zip -d /pb/ \
-    && chmod +x /pb/pocketbase
+    && unzip pocketbase_${VERSION}_linux_amd64.zip \
+    && chmod +x /pocketbase
 
-WORKDIR /pb
-COPY . .
+COPY /apps/pb/migrations /migrations
 
 FROM alpine:3
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
@@ -16,6 +15,7 @@ EXPOSE 8090
 
 WORKDIR /usr/local/bin/
 
-COPY --from=downloader /pb/pocketbase /pocketbase
-COPY --from=downloader /pb/migrations /migrations
+COPY --from=downloader /pocketbase /pocketbase
+COPY --from=downloader /migrations /migrations
+
 ENTRYPOINT ["/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb_data", "--publicDir=/pb_public", "--migrationsDir=/migrations", "--encryptionEnv=SESSION_SECRET"]
