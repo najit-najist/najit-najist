@@ -12,17 +12,19 @@ jobs:
       - uses: amannn/action-semantic-pull-request@v4
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        types: |
-          fix
-          feature
-          internal
-          release
-          breaking
-        types: |
-          ui
-          web
-          api
-          config
+        with:
+          types: |
+            fix
+            feature
+            internal
+            release
+            breaking
+          scopes: |
+            ui
+            web
+            pb
+            api
+            config
 
   check-build:
     name: Check project build
