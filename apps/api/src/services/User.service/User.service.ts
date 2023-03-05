@@ -16,11 +16,11 @@ import { ClientResponseError } from 'pocketbase';
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
-  private logger: FastifyInstance['log'];
-  private pocketbase: FastifyInstance['pb'];
+  #logger: FastifyInstance['log'];
+  #pocketbase: FastifyInstance['pb'];
 
   constructor(server: FastifyInstance) {
-    this.logger = server.log;
+    this.#logger = server.log;
 
     if (!server.services.token) {
       throw new ApplicationError({
@@ -30,7 +30,7 @@ export class UserService {
       });
     }
 
-    this.pocketbase = server.pb;
+    this.#pocketbase = server.pb;
   }
 
   async create(
@@ -49,7 +49,7 @@ export class UserService {
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
 
-      const user = await this.pocketbase
+      const user = await this.#pocketbase
         .collection(PocketbaseCollections.USERS)
         .create<User>({
           username,
@@ -68,7 +68,7 @@ export class UserService {
       );
 
       if (requestVerification) {
-        await this.pocketbase
+        await this.#pocketbase
           .collection(PocketbaseCollections.USERS)
           .requestVerification(user.email);
       }
@@ -98,7 +98,7 @@ export class UserService {
 
   async getBy(type: GetByType, value: any) {
     try {
-      return this.pocketbase
+      return this.#pocketbase
         .collection(PocketbaseCollections.USERS)
         .getFirstListItem<User>(`${type}="${value}"`);
     } catch (error) {

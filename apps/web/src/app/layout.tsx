@@ -1,11 +1,11 @@
 'use client';
 
 import { Header, Footer, NewsletterSubscribe } from '@components/layout';
+import { FC, PropsWithChildren } from 'react';
 
 import '../globals.css';
-import { LayoutComponent } from '../../.next/types/app/layout';
 
-const RootLayout: LayoutComponent = ({ children }) => {
+const RootLayout: FC<PropsWithChildren> = ({ children }) => {
   return (
     <html lang="cs">
       <body className="bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container">

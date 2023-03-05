@@ -3,9 +3,6 @@ import { config } from './config';
 import fs from 'fs-extra';
 import url from 'node:url';
 import path from 'node:path';
-import fs from 'fs-extra';
-import url from 'node:url';
-import path from 'node:path';
 
 (async () => {
   const server = await bootstrap();
@@ -43,9 +40,7 @@ import path from 'node:path';
         throw err;
       } else {
         server.log.info(
-          
           `Server (version:${config.app.version}) (version:${config.app.version}) up and running and listening on: ${address}`
-        
         );
       }
     }
