@@ -52,9 +52,6 @@ COPY --from=builder --chown=app:app /app/apps/api/email-templates ./apps/api/ema
 COPY --from=builder /app/apps/pb/package.json ./apps/pb/package.json
 COPY --from=builder /app/apps/pb/dist ./apps/pb/dist
 
-# Copy node_modules
-COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
-
 COPY --from=builder --chown=app:app /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
