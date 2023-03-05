@@ -2,6 +2,12 @@ import { config } from '@config';
 import { User, UserRoles, UserStates } from '@custom-types';
 import { faker } from '@faker-js/faker';
 import { t } from '@lib';
+import {
+  PocketbaseCollections,
+  User,
+  UserRoles,
+  UserStates,
+} from '@custom-types';
 import { contactUsSchema } from '@schemas';
 import crypto from 'crypto';
 import { z } from 'zod';
@@ -12,24 +18,27 @@ export const contactUsRoutes = t.router({
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
       let user: User | undefined = undefined;
+      const contactFormAccount = config.pb.accounts.get('contactForm');
+
+      if (!contactFormAccount) {
+        throw new Error('Missing account for contactForm');
+      }
 
       await ctx.pb
-        .collection('api_controllers')
+        .collection(PocketbaseCollections.API_CONTROLLERS)
         .authWithPassword(
-          config.server.pb.users.contactForm.user,
-          config.server.pb.users.contactForm.password
+          contactFormAccount.email,
+          contactFormAccount.password
         );
 
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
         try {
-          user = await ctx.pb
-            .collection('users')
-            .getFirstListItem<User>(`email="${input.email}"`);
+          user = await ctx.services.user.getBy('email', input.email);
 
           if (!user.newsletter) {
             user = await ctx.pb
-              .collection('users')
+              .collection(PocketbaseCollections.USERS)
               .update(String(user.id), { newsletter: true });
           }
         } catch (e) {
@@ -39,8 +48,7 @@ export const contactUsRoutes = t.router({
           );
 
           try {
-            const password = faker.internet.password(12);
-            user = await ctx.pb.collection('users').create({
+            user = await ctx.services.user.create({
               email: input.email,
               firstName: input.firstName,
               lastName: input.lastName,
@@ -49,11 +57,6 @@ export const contactUsRoutes = t.router({
               status: UserStates.SUBSCRIBED,
               role: UserRoles.NORMAL,
               newsletter: true,
-              newsletterUuid: crypto.randomUUID(),
-              lastLoggedIn: null,
-              password,
-              passwordConfirm: password,
-              notes: null,
             });
           } catch (error) {
             ctx.log.error(
@@ -66,14 +69,24 @@ export const contactUsRoutes = t.router({
         }
       }
 
-      await ctx.pb.collection('contact_form_replies').create({
-        email: user!.email,
-        firstName: user?.firstName,
-        lastName: user?.lastName,
-        message: input.message,
-        telephone: input.telephone,
-        subscribeToNewsletter: input.subscribeToNewsletter,
-      });
+      const createdResponse = await ctx.pb
+        .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
+        .create({
+          email: user!.email,
+          firstName: user?.firstName,
+          lastName: user?.lastName,
+          message: input.message,
+          telephone: input.telephone,
+          subscribeToNewsletter: input.subscribeToNewsletter,
+        })
+        .catch((error) => {
+          ctx.log.error(
+            error,
+            `Failed to save a reponse from form to database`
+          );
+
+          throw new Error('Error happened');
+        });
 
       ctx.services.mail
         .send({
@@ -82,7 +95,12 @@ export const contactUsRoutes = t.router({
           payload: input,
           template: 'contact-us/admin',
         })
-        .catch(() => {});
+        .catch((error) => {
+          ctx.log.error(
+            error,
+            `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
+          );
+        });
 
       ctx.services.mail
         .send({
@@ -90,7 +108,9 @@ export const contactUsRoutes = t.router({
           payload: input,
           template: 'contact-us/user',
         })
-        .catch(() => {});
+        .catch((error) => {
+          ctx.log.error(error, `Failed to send email to user`);
+        });
 
       ctx.pb.authStore.clear();
 

@@ -18,6 +18,7 @@ import path from 'node:path';
     }
   }
 
+  // Take care of server in vite-node dev mode
   if (import.meta.hot) {
     import.meta.hot.on('vite:beforeFullReload', () => {
       server.close();
@@ -39,7 +40,7 @@ import path from 'node:path';
         throw err;
       } else {
         server.log.info(
-          `Server (version:${config.app.version}) up and running and listening on: ${address}`
+          `Server (version:${config.app.version}) (version:${config.app.version}) up and running and listening on: ${address}`
         );
       }
     }

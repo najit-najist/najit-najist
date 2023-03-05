@@ -18,15 +18,15 @@ export interface User {
   id: string;
   firstName: string;
   lastName: string;
+  username: string;
   email: string;
   newsletter: boolean;
-  createdAt?: Date;
-  status: UserStates;
-  password?: string;
-  telephoneNumber?: string;
   newsletterUuid: string;
-  lastLoggedIn?: Date;
-  notes?: string;
-  username?: string;
+  status: UserStates;
   role: UserRoles;
+  lastLoggedIn?: Date;
+  password?: string;
+  telephoneNumber?: string | null;
+  notes?: string;
+  createdAt?: Date;
 }

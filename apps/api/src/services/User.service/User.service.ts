@@ -1,74 +1,115 @@
-import { ErrorCodes, User, UserRoles, UserStates } from '@custom-types';
+import {
+  ErrorCodes,
+  ErrorMessages,
+  PocketbaseCollections,
+  PocketbaseErrorCodes,
+  User,
+} from '@custom-types';
 import { ApplicationError } from '@errors';
 import { FastifyInstance } from 'fastify';
 import { faker } from '@faker-js/faker';
-import { PocketBase } from '@najit-najist/pb';
+import { formatErrorMessage, removeDiacritics } from '@utils';
+import { PasswordService } from '@services/Password.service';
+import { ClientResponseError } from 'pocketbase';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
   #logger: FastifyInstance['log'];
-  #pb: PocketBase;
+  #pocketbase: FastifyInstance['pb'];
 
   constructor(server: FastifyInstance) {
     this.#logger = server.log;
-    this.#pb = server.pb;
+
+    if (!server.services.token) {
+      throw new ApplicationError({
+        code: ErrorCodes.GENERIC,
+        message: 'Token service missing',
+        origin: 'UserService.constructor',
+      });
+    }
+
+    this.#pocketbase = server.pb;
   }
 
   async create(
     params: Omit<
       User,
-      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'status' | 'role'
+      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'username'
     > &
-      Partial<Pick<User, 'password' | 'status' | 'role'>>
+      Partial<Pick<User, 'password' | 'username'>>,
+    requestVerification?: boolean
   ) {
     try {
-      const password = params.password || faker.internet.password(12);
-      const user = await this.#pb.collection('users').create<User>({
-        email: params.email,
-        firstName: params.firstName,
-        lastName: params.lastName,
-        username: params.email.split('@')[0],
-        telephoneNumber: params.telephoneNumber ?? null,
-        status: UserStates.SUBSCRIBED,
-        role: params.role ?? UserRoles.NORMAL,
-        newsletter: true,
-        newsletterUuid: crypto.randomUUID(),
-        lastLoggedIn: null,
-        password,
-        passwordConfirm: password,
-        notes: null,
-      });
+      const password = await PasswordService.hash(
+        params.password || faker.internet.password(15)
+      );
+      let username = removeDiacritics(
+        faker.internet.userName(params.firstName, params.lastName).toLowerCase()
+      );
+
+      const user = await this.#pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .create<User>({
+          username,
+          lastLoggedIn: null,
+          notes: null,
+          emailVisibility: true,
+          ...params,
+          // Override some stuff
+          password,
+          passwordConfirm: password,
+          newsletterUuid: randomUUID(),
+        });
 
       this.#logger.info(
         `UserService: Create: created user under email: ${user.email}`
       );
 
+      if (requestVerification) {
+        await this.#pocketbase
+          .collection(PocketbaseCollections.USERS)
+          .requestVerification(user.email);
+      }
+
       return user;
     } catch (error) {
-      // TODO: handle duplicates differently
+      // The "validation_invalid_email" error code does not entirely mean that its a duplicate, but we already check input in API
+      if (error instanceof ClientResponseError) {
+        const data = error.data.data;
+
+        if (
+          data.email?.code === PocketbaseErrorCodes.INVALID_EMAIL ||
+          // TODO
+          data.username?.code === 'validation_invalid_email'
+        ) {
+          throw new ApplicationError({
+            code: ErrorCodes.ENTITY_DUPLICATE,
+            message: formatErrorMessage(ErrorMessages.USER_EXISTS, params),
+            origin: 'UserService',
+          });
+        }
+      }
 
       throw error;
     }
   }
 
-  async getBy(type: GetByType, value: any): Promise<User> {
-    //TODO: Implement this
-    // try {
-    //   return prisma.user.findFirstOrThrow({
-    //     where: {
-    //       [type]: value,
-    //     },
-    //   });
-    // } catch (e) {
-    //   // if (e instanceof Prisma.PrismaClientValidationError) {
-    //   //   throw new ApplicationError({
-    //   //     code: ErrorCodes.ENTITY_MISSING,
-    //   //     message: `Uživatel pod daným ${type} nebyl nalezen`,
-    //   //     origin: 'UserService',
-    //   //   });
-    //   // }
-    //   throw e;
-    // }
+  async getBy(type: GetByType, value: any) {
+    try {
+      return this.#pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .getFirstListItem<User>(`${type}="${value}"`);
+    } catch (error) {
+      if (error instanceof ClientResponseError && error.status === 400) {
+        throw new ApplicationError({
+          code: ErrorCodes.ENTITY_MISSING,
+          message: `Uživatel pod daným polem '${type}' nebyl nalezen`,
+          origin: 'UserService',
+        });
+      }
+
+      throw error;
+    }
   }
 }

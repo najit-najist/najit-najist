@@ -15,11 +15,8 @@
     "dev": "concurrently \"npm:dev:server\" \"npm:dev:package\"",
     "dev:server": "vite-node -w src/server.ts",
     "dev:package": "tsup --watch",
-    "generate:version": "node scripts/version.mjs",
-    "start": "node dist/server.cjs",
+    "start": "node dist/server.js",
     "prebuild": "rimraf dist",
-    "build": "tsup",
-    "postbuild": "npm run generate:version",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
@@ -48,11 +45,13 @@
     "cross-fetch": "^3.1.5",
     "@fastify/cors": "^8.1.0",
     "@fastify/jwt": "^6.3.2",
+    "@najit-najist/pb": "*",
     "@fastify/passport": "^2.2.0",
     "nodemailer": "^6.8.0",
     "@fastify/rate-limit": "^7.5.0",
     "@fastify/session": "^10.0.2",
-    "@trpc/server": "^10.13.2",
+    "cross-fetch": "^3.1.5",
+    "@trpc/server": "^10.14.0",
     "@faker-js/faker": "^7.3.0",
     "bcrypt": "^5.1.0",
     "concurrently": "^7.5.0",
@@ -65,7 +64,8 @@
     "passport-local": "^1.0.0",
     "pino-pretty": "^9.1.1",
     "zod": "^3.19.1",
-    "vitest": "^0.29.2",
+    "vitest": "^0.24.5",
+    "dotenv": "^16.0.3",
     "zod-to-json-schema": "^3.18.1"
   }
 }

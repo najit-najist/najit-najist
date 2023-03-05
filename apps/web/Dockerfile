@@ -17,9 +17,6 @@ RUN --mount=type=bind,target=/docker-context \
           --include='*/' --exclude='*' \
           /docker-context/ /workspace-install/;
 
-# @see https://www.prisma.io/docs/reference/api-reference/environment-variables-reference#cli-binary-targets
-ENV PRISMA_CLI_BINARY_TARGETS=linux-musl
-
 RUN npm install
 
 
