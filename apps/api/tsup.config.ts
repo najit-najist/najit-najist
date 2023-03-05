@@ -10,4 +10,11 @@ export default defineConfig({
   clean: true,
   dts: true,
   treeshake: true,
+  async onSuccess() {
+    const { execa } = await import('execa');
+
+    await execa('tsc', ['--emitDeclarationOnly'], {
+      cwd: process.cwd(),
+    });
+  },
 });

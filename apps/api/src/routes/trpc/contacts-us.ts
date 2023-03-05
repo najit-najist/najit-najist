@@ -1,6 +1,4 @@
 import { config } from '@config';
-import { User, UserRoles, UserStates } from '@custom-types';
-import { faker } from '@faker-js/faker';
 import { t } from '@lib';
 import {
   PocketbaseCollections,
@@ -9,7 +7,6 @@ import {
   UserStates,
 } from '@custom-types';
 import { contactUsSchema } from '@schemas';
-import crypto from 'crypto';
 import { z } from 'zod';
 
 export const contactUsRoutes = t.router({

@@ -10,7 +10,8 @@ import { FastifyInstance } from 'fastify';
 import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
 import { PasswordService } from '@services/Password.service';
-import { ClientResponseError } from 'pocketbase';
+import { ClientResponseError } from '@najit-najist/pb';
+import { randomUUID } from 'crypto';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -35,9 +36,15 @@ export class UserService {
   async create(
     params: Omit<
       User,
-      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'username'
+      | 'password'
+      | 'newsletterUuid'
+      | 'id'
+      | 'createdAt'
+      | 'username'
+      | 'status'
+      | 'role'
     > &
-      Partial<Pick<User, 'password' | 'username'>>,
+      Partial<Pick<User, 'password' | 'username' | 'status' | 'role'>>,
     requestVerification?: boolean
   ) {
     try {

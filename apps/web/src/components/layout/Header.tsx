@@ -50,7 +50,7 @@ const ProfileButton: FC = () => {
   return (
     <Link
       className="inline-flex items-center text-lg bg-deep-green-400 text-white rounded-full py-1.5 px-3"
-      href="/profil"
+      href="/portal/profil"
     >
       <UserCircleIcon width={25} height={25} className="mr-3" />{' '}
       <span>
