@@ -16,15 +16,7 @@ const INVALID_CREDENTIALS_ERROR = new TRPCError({
 
 export const profileRouter = t.router({
   me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
-    const rsu = await ctx.pb
-      .collection('users')
-      .getOne<User>(ctx.sessionData.userId, {});
-
-    console.log({ rsu });
-
-    ctx.pb.authStore.clear();
-
-    return rsu;
+    return ctx.pb.collection('users').getOne<User>(ctx.sessionData.userId, {});
   }),
   login: t.procedure
     .input(loginInputSchema)
@@ -34,7 +26,7 @@ export const profileRouter = t.router({
       let user: User | undefined = undefined;
 
       try {
-        // Login
+        // Try to log in
         const { record } = await pb
           .collection('users')
           .authWithPassword<User>(input.email, input.password);
@@ -52,9 +44,6 @@ export const profileRouter = t.router({
 
       // add user token to session
       ctx.session.userToken = token;
-
-      // "logout" the last authenticated account to prevent impersonation
-      pb.authStore.clear();
 
       return {
         token,
