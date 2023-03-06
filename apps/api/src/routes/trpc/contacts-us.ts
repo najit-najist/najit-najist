@@ -18,15 +18,25 @@ export const contactUsRoutes = () =>
       const contactFormAccount = config.pb.accounts.get('contactForm');
 
       if (!contactFormAccount) {
+        ctx.log.error('Missing account for contactForm in accounts');
         throw new Error('Missing account for contactForm');
       }
 
-      await ctx.pb
-        .collection(PocketbaseCollections.API_CONTROLLERS)
-        .authWithPassword(
-          contactFormAccount.email,
-          contactFormAccount.password
+      try {
+        await ctx.pb
+          .collection(PocketbaseCollections.API_CONTROLLERS)
+          .authWithPassword(
+            contactFormAccount.email,
+            contactFormAccount.password
+          );
+      } catch (error) {
+        ctx.log.error(
+          error,
+          'Failed to login with contactForm account in api controllers'
         );
+
+        throw new Error('Error happened');
+      }
 
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
