@@ -2,6 +2,7 @@
 
 import { Logo } from '@components/common/Logo';
 import { HomeIcon, UserGroupIcon } from '@heroicons/react/24/outline';
+import { useCurrentUser } from '@hooks';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,10 +22,11 @@ const links = [
 
 export const LeftSidebar = () => {
   const pathname = usePathname();
+  const { data: user } = useCurrentUser();
 
   return (
-    <aside className="flex-none w-64 bg-white border-r-2 border-r-gray-100">
-      <Link href="/portal" className="p-5 block">
+    <aside className="flex-none w-64 bg-white border-r-2 border-r-gray-100 flex flex-col">
+      <Link href="/" className="p-5 block">
         <Logo className="h-14 w-auto" />
       </Link>
       <div className="mt-5 flex flex-grow flex-col">
@@ -59,6 +61,30 @@ export const LeftSidebar = () => {
             })}
           </div>
         </nav>
+        <div className="flex flex-shrink-0 border-t border-gray-200 p-4 mt-auto">
+          <div className="block w-full flex-shrink-0">
+            <div className="flex items-center">
+              <Link
+                href="/portal/profil"
+                className="h-9 w-9 bg-gray-100 rounded-full inline-block"
+              ></Link>
+              <div className="ml-3">
+                <Link
+                  href="/portal/profil"
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900 hover:underline"
+                >
+                  {user?.firstName} {user?.lastName}
+                </Link>
+                <Link
+                  href="/logout"
+                  className="text-xs font-medium text-red-500 hover:text-red-700 hover:underline block"
+                >
+                  Odhlásit se
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </aside>
   );

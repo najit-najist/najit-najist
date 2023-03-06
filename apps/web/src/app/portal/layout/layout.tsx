@@ -15,15 +15,6 @@ const PortalLayout: LayoutComponent = ({ children }) => {
     redirect(`/login`);
   }
 
-  // useEffect(() => {
-  //   // IF not logged in
-  //   if (true) {
-  //     router.replace('/login');
-  //   } else {
-  //     setIsLoaded(true);
-  //   }
-  // }, []);
-
   return (
     <>
       <LeftSidebar />
