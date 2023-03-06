@@ -18,7 +18,7 @@
     "@trpc/client": "^10.14.0",
     "@trpc/react-query": "^10.14.0",
     "@trpc/server": "^10.14.0",
-    "@tanstack/react-query": "^4.19.1",
+    "@tanstack/react-query": "^4.26.0",
     "clsx": "^1.2.1",
     "locomotive-scroll": "^4.1.4",
     "next": "^13.2.3",
