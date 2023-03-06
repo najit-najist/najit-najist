@@ -1,6 +1,8 @@
 import { bootstrap } from './bootstrap';
 import { config } from './config';
 
+import 'cross-fetch/dist/node-polyfill.js';
+
 (async () => {
   const server = await bootstrap();
 
