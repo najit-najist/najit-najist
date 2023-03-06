@@ -1,4 +1,4 @@
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva, cx, VariantProps } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
   forwardRef,
@@ -19,14 +19,16 @@ export interface InputProps
         InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
       >,
-      'size' | 'color' | 'disabled'
+      'size' | 'color' | 'disabled' | 'prefix'
     >,
-    Omit<InputVariantProps, 'type'> {
+    Omit<InputVariantProps, 'type' | 'withPrefix'> {
   label?: string;
   hideLabel?: boolean;
   error?: FieldError;
   description?: ReactNode;
   rootClassName?: string;
+  prefix?: ReactNode;
+  wrapperClassName?: string;
 }
 
 const inputTypeToStyleType = (
@@ -48,7 +50,7 @@ const inputTypeToStyleType = (
 };
 
 export const inputStyles = cva(
-  'block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm focus:outline-none',
+  'block w-full rounded-r-md border border-gray-300 shadow-sm sm:text-sm focus:outline-none',
   {
     variants: {
       type: {
@@ -61,11 +63,15 @@ export const inputStyles = cva(
       },
       color: {
         default:
-          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-cyan-700 placeholder-warm-gray-500',
+          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400 focus:border-green-400 placeholder-warm-gray-500',
       },
       disabled: {
         true: 'opacity-60 bg-gray-100',
         false: '',
+      },
+      withPrefix: {
+        true: '',
+        false: 'rounded-l-md',
       },
     },
     defaultVariants: {
@@ -88,6 +94,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     color,
     rootClassName,
     disabled,
+    prefix,
+    wrapperClassName,
     ...rest
   },
   ref
@@ -102,21 +110,29 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
         </Label>
       )}
 
-      <input
-        ref={ref}
-        className={inputStyles({
-          className,
-          type: inputTypeToStyleType(type),
-          size,
-          color,
-          disabled,
-          ...rest,
-        })}
-        type={type}
-        id={id}
-        disabled={disabled ?? false}
-        {...rest}
-      />
+      <div className={cx(['flex rounded-md shadow-sm', wrapperClassName])}>
+        {prefix ? (
+          <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
+            {prefix}
+          </span>
+        ) : null}
+        <input
+          ref={ref}
+          className={inputStyles({
+            className,
+            type: inputTypeToStyleType(type),
+            size,
+            color,
+            disabled,
+            withPrefix: !!prefix,
+            ...rest,
+          })}
+          type={type}
+          id={id}
+          disabled={disabled ?? false}
+          {...rest}
+        />
+      </div>
 
       {error && <ErrorMessage>{error.message}</ErrorMessage>}
       {description && (

@@ -18,6 +18,8 @@ const buttonStyles = cva(
       },
       color: {
         normal: 'bg-deep-green-500 focus:ring-deep-green-400 text-white',
+        white:
+          'bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 font-semibold',
         sweet:
           'bg-green-300 hover:bg-green-400 focus:ring-bg-green-400 text-white',
       },

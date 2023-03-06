@@ -23,6 +23,7 @@
   "dependencies": {
     "clsx": "^1.2.1",
     "@heroicons/react": "^2.0.12",
+    "@headlessui/react": "^1.7.13",
     "class-variance-authority": "^0.3.0"
   },
   "devDependencies": {

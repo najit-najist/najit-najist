@@ -1,3 +1,5 @@
+'use client';
+
 import { Button, Input } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
