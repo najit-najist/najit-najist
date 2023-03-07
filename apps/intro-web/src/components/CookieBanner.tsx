@@ -59,9 +59,25 @@ export const CookieBanner: FC = () => {
 
   const onFormSubmit = useCallback<ConsentFormProps['onSubmit']>(
     ({ analytics, marketing }) => {
-      setCookie(ANALYTICS_CONSENT_COOKIE_NAME, analytics ? 'true' : 'false');
-      setCookie(MARKETING_CONSENT_COOKIE_NAME, marketing ? 'true' : 'false');
-      setCookie(COOKIE_CONSENT_SHOWN, 'true');
+      const nextYear = new Date();
+      // Set expiry to next year
+      nextYear.setFullYear(nextYear.getFullYear() + 1);
+
+      const cookieOptions: Parameters<typeof setCookie>[2] = {
+        expires: nextYear,
+      };
+
+      setCookie(
+        ANALYTICS_CONSENT_COOKIE_NAME,
+        analytics ? 'true' : 'false',
+        cookieOptions
+      );
+      setCookie(
+        MARKETING_CONSENT_COOKIE_NAME,
+        marketing ? 'true' : 'false',
+        cookieOptions
+      );
+      setCookie(COOKIE_CONSENT_SHOWN, 'true', cookieOptions);
 
       setIsOpen(false);
     },
