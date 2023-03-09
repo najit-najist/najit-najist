@@ -3,8 +3,6 @@ import { ApplicationMode } from '@custom-types';
 import { PocketBase } from '@najit-najist/pb';
 import fp from 'fastify-plugin';
 
-import 'cross-fetch/dist/node-polyfill.js';
-
 declare module 'fastify' {
   interface FastifyInstance {
     pb: PocketBase;
