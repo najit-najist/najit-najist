@@ -4,6 +4,8 @@ import fs from 'fs-extra';
 import url from 'node:url';
 import path from 'node:path';
 
+import 'cross-fetch/dist/node-polyfill.js';
+
 (async () => {
   const server = await bootstrap();
 
