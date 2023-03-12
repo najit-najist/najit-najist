@@ -24,7 +24,7 @@ const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
   { text: 'Kontakt', href: '/kontakt' },
-  { text: 'Náš Team', href: '/#nas-team' },
+  { text: 'Náš Team', href: '/kontakt#nas-team' },
 ];
 
 const useUser = () =>
