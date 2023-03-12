@@ -1,6 +1,6 @@
 const apiOrigin = process.env.NEXT_PUBLIC_API_ORIGIN;
 
-/** @typedef {import('next').NextConfig} */
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
@@ -8,11 +8,26 @@ const nextConfig = {
     appDir: true,
     typedRoutes: true,
   },
-  webpack(config) {
-    config.module.rules.push({
-      test: /\.svg$/,
-      use: ['@svgr/webpack'],
-    });
+  webpack(config, { isServer }) {
+    config.module.rules.push(
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack'],
+      },
+      {
+        test: /\.(mp4|webm|ogg|swf|ogv)$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              publicPath: `/_next/static/videos/`,
+              outputPath: `${isServer ? '../' : ''}static/videos/`,
+              name: '[name]-[hash].[ext]',
+            },
+          },
+        ],
+      }
+    );
 
     return config;
   },
