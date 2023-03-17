@@ -8,7 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { trpc } from 'trpc';
 import { z } from 'zod';
 
-import { BottomLinks } from './components/BottomLinks';
+import { BottomLinks } from './components/Links';
 import { Title } from './components/Title';
 import { CheckboxWrapper } from '@najit-najist/ui';
 import { Checkbox } from '@najit-najist/ui';
