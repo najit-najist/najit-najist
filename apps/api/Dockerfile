@@ -25,6 +25,7 @@ RUN npm install
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
 ENV NODE_ENV=production
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
