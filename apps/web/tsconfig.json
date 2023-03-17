@@ -17,6 +17,9 @@
       "@utils": [
         "./utils"
       ],
+      "@hooks": [
+        "./hooks"
+      ],
       "@utils/*": [
         "./utils/*"
       ],
@@ -28,6 +31,9 @@
       ],
       "@components/*": [
         "./components/*"
+      ],
+      "@vanilla-trpc": [
+        "./vanilla-trpc"
       ]
     },
     "plugins": [

@@ -4,14 +4,16 @@ import {
   PocketbaseCollections,
   PocketbaseErrorCodes,
   User,
+  UserRoles,
+  UserStates,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { FastifyInstance } from 'fastify';
-import { randomUUID } from 'crypto';
 import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
 import { PasswordService } from '@services/Password.service';
-import { ClientResponseError } from 'pocketbase';
+import { ClientResponseError } from '@najit-najist/pb';
+import { randomUUID } from 'crypto';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -36,15 +38,19 @@ export class UserService {
   async create(
     params: Omit<
       User,
-      'password' | 'newsletterUuid' | 'id' | 'createdAt' | 'username'
+      | 'password'
+      | 'newsletterUuid'
+      | 'id'
+      | 'createdAt'
+      | 'username'
+      | 'status'
+      | 'role'
     > &
-      Partial<Pick<User, 'password' | 'username'>>,
+      Partial<Pick<User, 'password' | 'username' | 'status' | 'role'>>,
     requestVerification?: boolean
   ) {
     try {
-      const password = await PasswordService.hash(
-        params.password || faker.internet.password(15)
-      );
+      const password = params.password || faker.internet.password(15);
       let username = removeDiacritics(
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
@@ -56,6 +62,9 @@ export class UserService {
           lastLoggedIn: null,
           notes: null,
           emailVisibility: true,
+          role: UserRoles.NORMAL,
+          // User first have to finish registration
+          status: UserStates.ACTIVE,
           ...params,
           // Override some stuff
           password,
@@ -64,7 +73,7 @@ export class UserService {
         });
 
       this.#logger.info(
-        `UserService: Create: created user under email: ${params.email}`
+        `UserService: Create: created user under email: ${user.email}`
       );
 
       if (requestVerification) {

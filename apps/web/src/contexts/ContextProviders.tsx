@@ -2,28 +2,35 @@
 
 import { FC, PropsWithChildren, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { httpBatchLink } from '@trpc/client';
-import superjson from 'superjson';
 
 import { trpc } from '../trpc';
+import SuperJSON from 'superjson';
+import { httpBatchLink } from '@trpc/client';
 
-export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
-  const [queryClient] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            suspense: true,
-          },
-        },
-      })
-  );
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+    },
+  },
+});
+
+export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
+  children,
+  cookies,
+}) => {
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      transformer: superjson,
+      transformer: SuperJSON,
       links: [
         httpBatchLink({
-          url: '/api/trpc',
+          url:
+            typeof window === 'undefined'
+              ? new URL('/trpc', process.env.API_ORIGIN).toString()
+              : '/api/trpc',
+          headers: {
+            cookie: cookies,
+          },
         }),
       ],
     })

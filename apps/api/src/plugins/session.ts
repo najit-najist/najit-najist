@@ -5,7 +5,7 @@ import { SESSION_NAME } from '@constants';
 
 declare module 'fastify' {
   interface Session {
-    mfaLoggedIn?: boolean;
+    userToken?: string;
   }
 }
 

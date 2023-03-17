@@ -17,7 +17,7 @@ export const ContactFormBase: FC = () => {
   });
   const { errors, isSubmitting, isSubmitSuccessful } = formState;
 
-  const { error, mutateAsync: mutate } = trpc.useMutation('contact-us.send');
+  const { error, mutateAsync: mutate } = trpc.contactSend.useMutation();
 
   const onSubmit = handleSubmit(async (values) => {
     await mutate(values);

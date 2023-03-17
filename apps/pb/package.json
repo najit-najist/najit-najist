@@ -23,9 +23,10 @@
     "build": "tsup"
   },
   "dependencies": {
-    "pocketbase": "^0.12.0"
+    "pocketbase": "^0.9.1"
   },
   "devDependencies": {
-    "@najit-najist/tsconfig": "*"
+    "@najit-najist/tsconfig": "*",
+    "tsup": "^6.6.3"
   }
 }

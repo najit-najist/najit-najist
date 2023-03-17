@@ -1,3 +1,3 @@
-export * from './Footer';
-export * from './Header';
-export * from './NewsletterSubscribe';
+export { Footer } from './Footer';
+export { Header, TopHeader } from './Header';
+export { NewsletterSubscribe } from './NewsletterSubscribe';
