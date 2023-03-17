@@ -35,9 +35,9 @@
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tsconfig": "*",
     "react": "^18.2.0",
-    "tsup": "^6.3.0",
+    "tsup": "^6.6.3",
     "react-dom": "^18.2.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "react": "^18.2.0",

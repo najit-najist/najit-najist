@@ -8,10 +8,16 @@ export const Title: FC = () => (
       <Logo className="h-16 w-auto mx-auto" />
     </Link>
     <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
-      Zapomenuté heslo
+      Registrace nového účtu
     </h2>
     <p className="mt-2 text-center text-sm text-gray-600">
-      Pro obnovu Vašeho hesla zadejte Váš email
+      Nebo{' '}
+      <Link
+        href="/login"
+        className="font-medium text-indigo-600 hover:text-indigo-500"
+      >
+        přihlásit se
+      </Link>
     </p>
   </div>
 );

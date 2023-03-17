@@ -10,21 +10,6 @@ export const BottomLinks: FC = () => {
       >
         Domů
       </Link>
-
-      <Link
-        href="/login"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
-      >
-        Přihlášení
-      </Link>
-
-      <Link
-        href="/registrace"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
-      >
-        Registrace
-      </Link>
-
       <Link
         href="/kontakt"
         className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"

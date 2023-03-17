@@ -34,6 +34,8 @@ const ProfilePage: FC = () => {
           <Input
             label="Telefon"
             prefix="+420"
+            inputMode="numeric"
+            autoComplete="tel-local"
             {...register('telephoneNumber')}
           />
 

@@ -1,6 +1,6 @@
 'use client';
 import { registerInputSchema } from '@najit-najist/api';
-import { Button } from '@najit-najist/ui';
+import { Button, Input } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,88 +20,39 @@ const schema = registerInputSchema.extend({
 });
 
 const PortalPage: FC = () => {
-  const { mutateAsync: doRegister } = trpc.profile.register.useMutation();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(schema),
   });
   const router = useRouter();
-  const { register, handleSubmit } = formMethods;
+  const { register, handleSubmit, formState } = formMethods;
+  const fieldsAreDisabled =
+    formState.isSubmitSuccessful || formState.isSubmitting;
 
   const onSubmit = handleSubmit(async (values) => {
-    const result = await doRegister(values);
-
-    console.log({ result });
-
-    router.push('/login');
+    router.push('/login?passwordResetCallback');
   });
 
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto">
+    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto w-full">
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={onSubmit}>
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Email address
-              </label>
-              <div className="mt-1">
-                <input
-                  id="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  {...register('email')}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  {...register('password')}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Password again
-              </label>
-              <div className="mt-1">
-                <input
-                  id="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                  {...register('passwordAgain')}
-                />
-              </div>
-            </div>
+            <Input
+              required
+              label="Emailová adresa"
+              id="email"
+              type="email"
+              autoComplete="email"
+              error={formState.errors.email}
+              disabled={fieldsAreDisabled}
+              {...register('email')}
+            />
 
             <div>
               <Button type="submit" size="normal" className="shadow-sm w-full">
-                Register
+                Odeslat
               </Button>
             </div>
           </form>

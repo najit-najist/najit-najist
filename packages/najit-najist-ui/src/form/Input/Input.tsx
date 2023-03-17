@@ -96,6 +96,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     disabled,
     prefix,
     wrapperClassName,
+    required,
     ...rest
   },
   ref
@@ -104,16 +105,23 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
   return (
     <div className={rootClassName}>
-      {label && (
+      {label ? (
         <Label htmlFor={id} type={hideLabel ? 'invisible' : null}>
-          {label}
+          {label}{' '}
+          {required ? <span className="text-bold text-red-600">*</span> : ''}
         </Label>
-      )}
+      ) : null}
 
-      <div className={cx(['flex rounded-md shadow-sm', wrapperClassName])}>
+      <div
+        className={cx([
+          'flex rounded-md shadow-sm',
+          label ? 'mt-1' : '',
+          wrapperClassName,
+        ])}
+      >
         {prefix ? (
           <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
-            {prefix}
+            {prefix}{' '}
           </span>
         ) : null}
         <input
@@ -130,6 +138,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           type={type}
           id={id}
           disabled={disabled ?? false}
+          required={required}
           {...rest}
         />
       </div>

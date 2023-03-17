@@ -10,14 +10,17 @@ import { BottomLinks } from './components/BottomLInks';
 import { Title } from './components/Title';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { trpc } from 'trpc';
-import { TRPCError } from '@trpc/server';
-import { useRouter } from 'next/navigation';
+import type { TRPCError } from '@trpc/server';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { Alert } from '@najit-najist/ui';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
 
 type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
 
 const PortalPage: FC = () => {
   const { mutateAsync: doLogin } = trpc.profile.login.useMutation();
+  const searchParams = useSearchParams();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(loginInputSchema),
   });
@@ -28,6 +31,7 @@ const PortalPage: FC = () => {
     formState: { isSubmitting, errors, isSubmitSuccessful },
   } = formMethods;
   const router = useRouter();
+  const isRegistrationCallback = searchParams.has('registrationCallback');
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (values) => {
@@ -40,8 +44,12 @@ const PortalPage: FC = () => {
 
         // TODO: Unify error code
         if (message == 'Invalid credentials') {
-          setError('email', { message: 'Invalid credentials' });
-          setError('password', { message: 'Invalid credentials' });
+          setError('email', { message: 'Nesprávné přihlašovací údaje' });
+          setError('password', { message: 'Nesprávné přihlašovací údaje' });
+        } else if ((error as TRPCError).code === 'FORBIDDEN') {
+          setError('errorPot', {
+            message,
+          });
         } else {
           setError('errorPot', {
             message: `Nečekaná chyba: ${message}`,
@@ -53,10 +61,20 @@ const PortalPage: FC = () => {
   );
 
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto">
+    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto w-full">
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        {isRegistrationCallback ? (
+          <Alert
+            icon={InformationCircleIcon}
+            color="success"
+            className="mb-8 shadow-md"
+            heading="Úspěšná registrace!"
+          >
+            Nyní dokončete registraci přes link, který Vám byl zaslán na email.
+          </Alert>
+        ) : null}
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
             <div>
@@ -139,7 +157,9 @@ const PortalPage: FC = () => {
               </Button>
             </div>
             {errors.errorPot?.message ? (
-              <ErrorMessage>{errors.errorPot?.message}</ErrorMessage>
+              <ErrorMessage className="!mt-1.5 font-semibold block text-center">
+                {errors.errorPot?.message}
+              </ErrorMessage>
             ) : null}
           </form>
 

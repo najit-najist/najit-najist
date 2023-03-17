@@ -1,4 +1,6 @@
 import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
+import { PocketbaseCollections } from '@custom-types';
+import { PocketBase } from '@najit-najist/pb';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -81,6 +83,25 @@ export const config = {
           return [key, { password, email }];
         })
     ),
+    async loginWithAccount(pb: PocketBase, userName: string) {
+      const account = this.accounts.get(userName);
+
+      if (!account) {
+        throw new Error('Missing account for contactForm');
+      }
+
+      try {
+        await pb
+          .collection(PocketbaseCollections.API_CONTROLLERS)
+          .authWithPassword(account.email, account.password);
+      } catch (error) {
+        console.log(
+          'Failed to login with contactForm account in api controllers'
+        );
+
+        throw new Error('Error happened');
+      }
+    },
   },
   mail: {
     user: mailUser,

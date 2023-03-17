@@ -8,6 +8,7 @@ const nextConfig = {
     appDir: true,
     typedRoutes: true,
   },
+  transpilePackages: ['@najitnajist/ui', '@najitnajist/api'],
   webpack(config, { isServer }) {
     config.module.rules.push(
       {

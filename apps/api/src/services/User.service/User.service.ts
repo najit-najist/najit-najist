@@ -4,6 +4,8 @@ import {
   PocketbaseCollections,
   PocketbaseErrorCodes,
   User,
+  UserRoles,
+  UserStates,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { FastifyInstance } from 'fastify';
@@ -48,9 +50,7 @@ export class UserService {
     requestVerification?: boolean
   ) {
     try {
-      const password = await PasswordService.hash(
-        params.password || faker.internet.password(15)
-      );
+      const password = params.password || faker.internet.password(15);
       let username = removeDiacritics(
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
@@ -62,6 +62,9 @@ export class UserService {
           lastLoggedIn: null,
           notes: null,
           emailVisibility: true,
+          role: UserRoles.NORMAL,
+          // User first have to finish registration
+          status: UserStates.ACTIVE,
           ...params,
           // Override some stuff
           password,
