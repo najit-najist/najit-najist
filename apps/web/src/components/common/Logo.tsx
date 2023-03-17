@@ -6,5 +6,5 @@ import logoImage from '../../../public/logo.webp';
 export interface LogoProps extends Omit<ImageProps, 'src' | 'alt'> {}
 
 export const Logo: FC<LogoProps> = ({ ...props }) => {
-  return <Image src={logoImage} alt="Logo najitnajist.cz" {...props} />;
+  return <Image src={logoImage} alt="Logo stránky najitnajist.cz" {...props} />;
 };
