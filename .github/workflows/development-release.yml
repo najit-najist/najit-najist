@@ -22,12 +22,16 @@ jobs:
           filters: |
             web:
               - 'apps/web/**'
+              - 'package-lock.json'
             api:
               - 'apps/api/**'
+              - 'package-lock.json'
             ui:
               - 'packages/ui/**'
+              - 'package-lock.json'
             pb:
               - 'apps/pb/**'
+              - 'package-lock.json'
 
       - name: 📍 Push Pocketbase to dokku
         if: steps.filter.outputs.pb == 'true'
