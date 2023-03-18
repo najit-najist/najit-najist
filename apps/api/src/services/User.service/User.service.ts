@@ -11,7 +11,6 @@ import { ApplicationError } from '@errors';
 import { FastifyInstance } from 'fastify';
 import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
-import { PasswordService } from '@services/Password.service';
 import { ClientResponseError } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
 
