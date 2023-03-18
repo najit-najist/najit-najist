@@ -1,11 +1,10 @@
 import { Section } from '@components/portal';
 import { FC } from 'react';
-import { WelcomeMessage } from './components/WelcomeMessage';
 
-const PortalPage: FC = () => {
+const PortalPage: FC<{ params: { userId: string } }> = ({ params }) => {
   return (
     <Section>
-      <WelcomeMessage />
+      Toto je stránka pro úpravu uživatele pod id {params.userId}
     </Section>
   );
 };

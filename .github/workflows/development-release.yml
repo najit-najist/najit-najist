@@ -48,6 +48,7 @@ jobs:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-api'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'develop'
+          git_push_flags: '--force'
 
       - name: 📍 Push web app to dokku
         if: steps.filter.outputs.web == 'true' || steps.filter.outputs.ui == 'true'
@@ -56,3 +57,4 @@ jobs:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-web'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'develop'
+          git_push_flags: '--force'

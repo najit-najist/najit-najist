@@ -13,6 +13,7 @@ import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
 import { ClientResponseError } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
+import { GetManyUsersOptions } from '@schemas';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -118,6 +119,18 @@ export class UserService {
         });
       }
 
+      throw error;
+    }
+  }
+
+  async getMany(options?: GetManyUsersOptions) {
+    const { page = 1, perPage = 40 } = options ?? {};
+
+    try {
+      return this.#pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .getList<User>(page, perPage);
+    } catch (error) {
       throw error;
     }
   }

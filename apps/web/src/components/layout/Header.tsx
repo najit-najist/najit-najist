@@ -31,6 +31,9 @@ const useUser = () =>
   useCurrentUser({
     useErrorBoundary: false,
     retry: false,
+    trpc: {
+      ssr: false,
+    },
   });
 
 const ProfileButton: FC = () => {

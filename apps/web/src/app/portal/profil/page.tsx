@@ -5,6 +5,7 @@ import { FC, useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Input } from './components/Input';
 import { Section } from './components/Section';
+import { Section as PortalSection } from '@components/portal';
 
 const ProfilePage: FC = () => {
   const { data: user } = useCurrentUser();
@@ -19,11 +20,8 @@ const ProfilePage: FC = () => {
   );
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="w-full bg-white rounded-lg border-2 border-gray-100"
-    >
-      <div className="px-10 sm:px-20 py-5 w-full space-y-8 divide-y divide-gray-200 sm:space-y-5">
+    <PortalSection>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Section
           title="Profil"
           description="Toto jsou Vaše informace o Vašem profilu."
@@ -84,13 +82,13 @@ const ProfilePage: FC = () => {
             </div>
           </div>
         </Section>
-      </div>
-      <div className="px-10 sm:px-20 py-5 border-t border-gray-200">
-        <div className="flex justify-end gap-x-3">
-          <Button type="submit">Uložit</Button>
+        <div className="mt-14 py-5 border-t border-gray-200">
+          <div className="flex justify-end gap-x-3">
+            <Button type="submit">Uložit</Button>
+          </div>
         </div>
-      </div>
-    </form>
+      </form>
+    </PortalSection>
   );
 };
 
