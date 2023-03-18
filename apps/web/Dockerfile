@@ -28,6 +28,7 @@ FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
 ARG NEXT_PUBLIC_API_ORIGIN
 ENV NODE_ENV=production
 ENV NEXT_PUBLIC_API_ORIGIN=${NEXT_PUBLIC_API_ORIGIN}
+RUN apk add --no-cache libc6-compat
 
 WORKDIR /app
 
@@ -67,7 +68,6 @@ COPY --from=builder /app/packages/najit-najist-ui/dist ./packages/najit-najist-u
 
 # Copy node_modules
 COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
-COPY --from=builder /app/apps/web/node_modules ./apps/web/node_modules
 COPY --from=builder /app/node_modules ./node_modules
 
 COPY --from=builder /app/package.json ./package.json
