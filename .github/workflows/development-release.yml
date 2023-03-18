@@ -23,15 +23,19 @@ jobs:
             web:
               - 'apps/web/**'
               - 'package-lock.json'
+              - '.github/**'
             api:
               - 'apps/api/**'
               - 'package-lock.json'
+              - '.github/**'
             ui:
               - 'packages/ui/**'
               - 'package-lock.json'
+              - '.github/**'
             pb:
               - 'apps/pb/**'
               - 'package-lock.json'
+              - '.github/**'
 
       - name: 📍 Push Pocketbase to dokku
         if: steps.filter.outputs.pb == 'true'
@@ -40,6 +44,7 @@ jobs:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-pocketbase'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'develop'
+          git_push_flags: '--force'
 
       - name: 📍 Push API app to dokku
         if: steps.filter.outputs.api == 'true'
