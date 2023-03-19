@@ -63,3 +63,4 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'develop'
           git_push_flags: '--force'
+          trace: '1'
