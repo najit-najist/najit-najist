@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"],
-      "env": ["NEXT_PUBLIC_API_ORIGIN"]
+      "env": ["API_ORIGIN"]
     },
     "lint": {
       "outputs": []

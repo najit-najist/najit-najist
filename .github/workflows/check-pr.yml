@@ -63,7 +63,7 @@ jobs:
       - name: 🏗️ Build
         run: npm run build
         env:
-          NEXT_PUBLIC_API_ORIGIN: http://localhost:3000
+          API_ORIGIN: http://localhost:3000
 
       - name: 🧪 Run tests
         run: npm run test
