@@ -17,17 +17,16 @@
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
+    "@swc/cli": "^0.1.62",
+    "chokidar": "^3.5.3",
     "prettier": "^2.7.1",
     "prettier-plugin-astro": "^0.5.5",
-    "tsup": "^6.6.3",
     "rimraf": "^3.0.2",
+    "concurrently": "^7.4.0",
     "turbo": "latest"
   },
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "npm@8.19.2",
-  "dependencies": {
-    "concurrently": "^7.4.0"
-  }
+  "packageManager": "npm@8.19.2"
 }

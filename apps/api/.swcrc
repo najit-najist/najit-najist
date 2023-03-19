@@ -1,12 +1,10 @@
 {
-  "extends": "@najit-najist/tsconfig/base.json",
-  "compilerOptions": {
-    "composite": false,
-    "module": "ESNext",
-    "target": "ESNext",
+  "jsc": {
+    "target": "esnext",
     "baseUrl": "./src",
-    "rootDir": "src",
-    "outDir": "./dist",
+    "parser": {
+      "syntax": "typescript"
+    },
     "paths": {
       "@custom-types": ["./types"],
       "@schemas": ["./schemas"],
@@ -20,6 +18,5 @@
       "@services/*": ["./services/*"],
       "@lib": ["./lib"]
     }
-  },
-  "include": ["src"]
+  }
 }

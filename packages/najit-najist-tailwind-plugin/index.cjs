@@ -1,6 +1,5 @@
-import plugin from 'tailwindcss/plugin';
-import { Config } from 'tailwindcss';
-import formPlugin from '@tailwindcss/forms';
+const formPlugin = require('@tailwindcss/forms');
+const plugin = require('tailwindcss/plugin');
 
 const tailwindPlugin = plugin(({ addBase, addUtilities, addVariant }) => {
   addUtilities({
@@ -24,7 +23,11 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, addVariant }) => {
   });
 });
 
-export const getTheme = (): Omit<Config, 'content'> => ({
+/**
+ *
+ * @returns {Omit<import("tailwindcss").Config, 'content'>}
+ */
+const getTheme = () => ({
   safelist: ['instagram_svg__feather'],
   theme: {
     extend: {
@@ -64,4 +67,7 @@ export const getTheme = (): Omit<Config, 'content'> => ({
   plugins: [formPlugin, tailwindPlugin],
 });
 
-export default tailwindPlugin;
+module.exports = {
+  plugin: tailwindPlugin,
+  getTheme,
+};

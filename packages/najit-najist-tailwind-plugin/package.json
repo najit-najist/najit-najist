@@ -1,22 +1,21 @@
 {
   "name": "@najit-najist/tailwind-plugin",
+  "type": "module",
   "version": "0.0.0",
   "license": "MIT",
-  "type": "module",
-  "main": "dist/index.cjs",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "source": "src/index.ts",
+  "main": "index.cjs",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": "./index.cjs"
+  },
   "scripts": {
-    "lint": "eslint *.ts*",
-    "dev": "tsup --watch",
-    "build": "tsup"
+    "lint": "eslint *.ts*"
   },
   "devDependencies": {
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tsconfig": "*",
     "@tailwindcss/forms": "^0.5.3",
-    "tsup": "^6.6.3",
     "tailwindcss": "^3.2.4"
   },
   "peerDependencies": {

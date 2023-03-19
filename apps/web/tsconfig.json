@@ -9,7 +9,6 @@
     "baseUrl": "./src",
     "incremental": true,
     "strictNullChecks": true,
-    "tsBuildInfoFile": "tsconfig.tsbuildinfo",
     "paths": {
       "@custom-types": [
         "./types"
@@ -47,6 +46,7 @@
       "esnext"
     ],
     "allowJs": true,
+    "emitDeclarationOnly": false,
     "noEmit": true,
     "resolveJsonModule": true,
     "jsx": "preserve"
