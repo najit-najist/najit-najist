@@ -5,7 +5,8 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   { label, id: idFromTop, ...rest },
   ref
 ) {
-  const id = idFromTop ?? useId();
+  const fallbackId = useId();
+  const id = idFromTop ?? fallbackId;
 
   return (
     <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:border-t sm:border-gray-200 sm:pt-5">
