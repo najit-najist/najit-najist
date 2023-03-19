@@ -20,6 +20,7 @@ RUN --mount=type=bind,target=/docker-context \
           --exclude='node_modules' \
           --exclude='*/node_modules' \
           --include='package.json' \
+          --include='*/package.json' \
           --include='*/' --exclude='*' \
           /docker-context/ /workspace-install/;
 
@@ -38,7 +39,7 @@ ENV NEXT_PUBLIC_API_ORIGIN=${NEXT_PUBLIC_API_ORIGIN}
 RUN apk add --no-cache rsync
 RUN apk add --no-cache libc6-compat
 
-WORKDIR /app
+WORKDIR /workspace-builder
 
 COPY . .
 COPY --from=deps /workspace-install ./
@@ -57,28 +58,28 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
-COPY --from=builder /app/apps/web/next.config.mjs \
-                    /app/apps/web/package.json \
-                    /app/apps/web/next-env.d.ts \
+COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
+                    /workspace-builder/apps/web/package.json \
+                    /workspace-builder/apps/web/next-env.d.ts \
+                    /workspace-builder/apps/web/public/ \
                     ./apps/web/
 
-COPY --from=builder /app/apps/web/public ./apps/web/public
-COPY --from=builder --chown=nextjs:nodejs /app/apps/web/.next ./apps/web/.next
+COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next
 
 # Include api package as it its a monorepo dependency 
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=builder /app/apps/api/dist ./apps/api/dist
-
+COPY --from=builder /workspace-builder/apps/api/package.json \
+                    /workspace-builder/apps/api/node_modules/ \
+                    /workspace-builder/apps/api/dist/ \
+                    ./apps/api/
 
 # Include ui package as it its a monorepo dependency 
-COPY --from=builder /app/packages/najit-najist-ui/package.json ./packages/najit-najist-ui/package.json
-COPY --from=builder /app/packages/najit-najist-ui/dist ./packages/najit-najist-ui/dist
+COPY --from=builder /workspace-builder/packages/najit-najist-ui/package.json \
+                    /workspace-builder/packages/najit-najist-ui/dist/ \
+                    ./packages/najit-najist-ui/
 
 # Copy node_modules
-COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
-COPY --from=builder /app/node_modules ./node_modules
-
-COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /workspace-builder/node_modules             ./node_modules
+COPY --from=builder /workspace-builder/package.json             ./package.json
 
 USER nextjs
 
