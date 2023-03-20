@@ -22,7 +22,7 @@ jobs:
           filters: |
             web:
               - 'apps/web/**'
-              - 'apps/api/**'
+              - 'packages/najit-najist-api/**'
               - 'package-lock.json'
             ui:
               - 'packages/ui/**'
