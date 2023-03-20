@@ -8,31 +8,20 @@ import {
   UserStates,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
-import { FastifyInstance } from 'fastify';
 import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
-import { ClientResponseError } from '@najit-najist/pb';
+import { ClientResponseError, PocketBase } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
 import { GetManyUsersOptions } from '@schemas';
+import { logger } from '@logger';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
-  #logger: FastifyInstance['log'];
-  #pocketbase: FastifyInstance['pb'];
+  #pocketbase: PocketBase;
 
-  constructor(server: FastifyInstance) {
-    this.#logger = server.log;
-
-    if (!server.services.token) {
-      throw new ApplicationError({
-        code: ErrorCodes.GENERIC,
-        message: 'Token service missing',
-        origin: 'UserService.constructor',
-      });
-    }
-
-    this.#pocketbase = server.pb;
+  constructor({ pb }: { pb: PocketBase }) {
+    this.#pocketbase = pb;
   }
 
   async create(
@@ -72,7 +61,7 @@ export class UserService {
           newsletterUuid: randomUUID(),
         });
 
-      this.#logger.info(
+      logger.info(
         `UserService: Create: created user under email: ${user.email}`
       );
 

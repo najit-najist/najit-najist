@@ -1,15 +1,45 @@
-import { FastifyBaseLogger, FastifyInstance } from 'fastify';
 import Email from 'email-templates';
+import nodemailer from 'nodemailer';
+import { APP_ROOT } from '@constants';
+import { config } from '@config';
+import path from 'path';
+import { logger } from '@logger';
 
 export type AvailableTemplates = 'contact-us/admin' | 'contact-us/user';
 
 export class MailService {
-  #logger: FastifyBaseLogger;
   #mailer: Email;
 
-  constructor(server: FastifyInstance) {
-    this.#logger = server.log;
-    this.#mailer = server.mail;
+  constructor() {
+    let transporter = nodemailer.createTransport({
+      host: config.mail.host,
+      port: config.mail.port,
+      secure: config.mail.port === 465,
+      auth: {
+        user: config.mail.user,
+        pass: config.mail.password,
+      },
+    });
+
+    this.#mailer = new Email({
+      send: !config.env.isDev,
+      preview: config.env.isDev,
+      message: {
+        from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
+      },
+      views: {
+        root: path.join(APP_ROOT, 'email-templates'),
+        options: {
+          extension: 'ejs',
+        },
+      },
+      juiceResources: {
+        webResources: {
+          relativeTo: APP_ROOT,
+        },
+      },
+      transport: transporter,
+    });
   }
 
   async send({
@@ -33,15 +63,15 @@ export class MailService {
         },
         locals: payload,
       });
-      this.#logger.info(
+      logger.info(
         `MailService: Mail has been sent to email: ${to} -- ${JSON.stringify({
           rejected: result?.rejected,
           response: result?.response,
         })}`
       );
     } catch (e) {
-      this.#logger.error('Mail sending has error', e);
-      this.#logger.error(e);
+      logger.error('Mail sending has error', e);
+      logger.error(e);
 
       throw Error('Posílání emailu nebylo úspěšné.');
     }

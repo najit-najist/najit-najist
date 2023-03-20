@@ -41,14 +41,6 @@ const nextConfig = {
       },
     ];
   },
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: `${apiOrigin}/:path*`,
-      },
-    ];
-  },
 };
 
 export default nextConfig;

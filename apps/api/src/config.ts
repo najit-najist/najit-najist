@@ -8,7 +8,6 @@ dotenv.config();
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
 const domains = (process.env.CORS_ALLOW ?? baseDomain).split(',');
-const port = Number(process.env.PORT ?? 3001);
 
 // Environment
 const isDev = process.env.NODE_ENV !== 'production';
@@ -34,7 +33,6 @@ export const config = {
     version: 'dev123',
   },
   server: {
-    port,
     domain: baseDomain,
     session: {
       maxAge: sessionLength,
@@ -47,18 +45,6 @@ export const config = {
     },
     cors: {
       allowed: isDev ? '*' : domains,
-    },
-    /**
-     * Pocketbase config
-     */
-    pb: {
-      origin: String(process.env.POCKETBASE_ORIGIN),
-      users: {
-        contactForm: {
-          user: String(process.env.POCKETBASE_CONTACT_FORM_USER),
-          password: String(process.env.POCKETBASE_CONTACT_FORM_PASS),
-        },
-      },
     },
   },
   /**

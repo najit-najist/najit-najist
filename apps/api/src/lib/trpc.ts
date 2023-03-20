@@ -1,8 +1,0 @@
-import { initTRPC } from '@trpc/server';
-import superjson from 'superjson';
-
-import { Context } from '../plugins/trpc/context';
-
-export const t = initTRPC.context<Context>().create({
-  transformer: superjson,
-});

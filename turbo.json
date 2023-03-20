@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"],
-      "env": ["API_ORIGIN"]
+      "env": ["POCKETBASE_ORIGIN"]
     },
     "lint": {
       "outputs": []

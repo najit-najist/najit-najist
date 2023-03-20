@@ -1,23 +1,21 @@
 import { ErrorCodes, User } from '@custom-types';
 import { ApplicationError } from '@errors';
-import { FastifyInstance } from 'fastify';
+import { logger } from '@logger';
 import { PasswordService } from './Password.service';
 import { UserService } from './User.service/User.service';
 
 export class AuthService {
   #userService: UserService;
-  #server: FastifyInstance;
 
-  constructor(server: FastifyInstance) {
-    if (!server.services.user) {
+  constructor({ userService }: { userService: UserService }) {
+    if (!userService) {
       throw new ApplicationError({
         code: ErrorCodes.GENERIC,
         message: 'User service missing',
         origin: 'UserService.constructor',
       });
     }
-    this.#userService = server.services.user;
-    this.#server = server;
+    this.#userService = userService;
   }
 
   async validateUser(
@@ -34,8 +32,7 @@ export class AuthService {
         return result;
       }
     } catch (e) {
-      this.#server.log.error(
-        {},
+      logger.error(
         `validateUser: validation failed because: ${(e as Error).message}`
       );
     }

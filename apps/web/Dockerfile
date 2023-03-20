@@ -1,7 +1,7 @@
 # Global variables
 ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.15
-ARG API_ORIGIN=http://localhost:3001
+ARG POCKETBASE_ORIGIN=http://localhost:3001
 
 ###################################################################
 # Stage 1: Install deps                                           #
@@ -32,9 +32,9 @@ RUN npm install
 ###################################################################
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
-ARG API_ORIGIN
+ARG POCKETBASE_ORIGIN
 ENV NODE_ENV=production
-ENV API_ORIGIN=${API_ORIGIN}
+ENV POCKETBASE_ORIGIN=${POCKETBASE_ORIGIN}
 
 RUN apk add --no-cache rsync
 RUN apk add --no-cache libc6-compat

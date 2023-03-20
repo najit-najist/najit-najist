@@ -1,4 +1,4 @@
-import { t } from '@lib';
+import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
@@ -8,7 +8,7 @@ const UNAUTHORIZED_ERROR = new TRPCError({
 export const isAuthed = t.middleware(async ({ next, ctx }) => {
   const sessionUserToken = ctx.session.userToken;
   const result = sessionUserToken
-    ? ctx.jwt.decode<{
+    ? ctx.services.token.decode<{
         collectionId: string;
         exp: number;
         id: string;

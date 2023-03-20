@@ -1,3 +1,3 @@
-import type { appRouter } from '../plugins/trpc/router';
+import { appRouter } from '@trpc';
 
 export type AppRouter = typeof appRouter;

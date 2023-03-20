@@ -31,7 +31,7 @@ const PortalPage: FC = () => {
     formState: { isSubmitting, errors, isSubmitSuccessful },
   } = formMethods;
   const router = useRouter();
-  const isRegistrationCallback = searchParams.has('registrationCallback');
+  const isRegistrationCallback = searchParams?.has('registrationCallback');
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (values) => {

@@ -4,6 +4,7 @@ import { FC, PropsWithChildren, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { trpc } from '../trpc';
+import { serverPort } from '@najit-najist/api';
 import SuperJSON from 'superjson';
 import { httpBatchLink } from '@trpc/client';
 
@@ -24,10 +25,12 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
       transformer: SuperJSON,
       links: [
         httpBatchLink({
-          url:
+          url: new URL(
+            '/api/trpc',
             typeof window === 'undefined'
-              ? new URL('/trpc', process.env.API_ORIGIN).toString()
-              : '/api/trpc',
+              ? `http://127.0.0.1:${serverPort}`
+              : window.location.origin
+          ).toString(),
           headers: {
             cookie: cookies,
           },

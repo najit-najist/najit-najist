@@ -22,9 +22,6 @@ jobs:
           filters: |
             web:
               - 'apps/web/**'
-              - 'package-lock.json'
-              - '.github/**'
-            api:
               - 'apps/api/**'
               - 'package-lock.json'
               - '.github/**'
@@ -46,15 +43,6 @@ jobs:
           branch: 'develop'
           git_push_flags: '--force'
 
-      - name: 📍 Push API app to dokku
-        if: steps.filter.outputs.api == 'true'
-        uses: dokku/github-action@master
-        with:
-          git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-api'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          branch: 'develop'
-          git_push_flags: '--force'
-
       - name: 📍 Push web app to dokku
         if: steps.filter.outputs.web == 'true' || steps.filter.outputs.ui == 'true'
         uses: dokku/github-action@master
@@ -63,4 +51,3 @@ jobs:
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'develop'
           git_push_flags: '--force'
-          trace: '1'

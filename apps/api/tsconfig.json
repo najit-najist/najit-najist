@@ -7,6 +7,9 @@
     "baseUrl": "./src",
     "rootDir": "src",
     "outDir": "./dist",
+    "plugins": [
+      { "transform": "@zerollup/ts-transform-paths" }
+    ],
     "paths": {
       "@custom-types": ["./types"],
       "@schemas": ["./schemas"],
@@ -16,9 +19,9 @@
       "@utils/*": ["./utils/*"],
       "@config": ["./config"],
       "@constants": ["./constants"],
-      "@plugins": ["./plugins"],
       "@services/*": ["./services/*"],
-      "@lib": ["./lib"]
+      "@trpc": ["./trpc"],
+      "@logger": ["./logger"]
     }
   },
   "include": ["src"]

@@ -1,5 +1,5 @@
 import { config } from '@config';
-import { t } from '@lib';
+import { t } from '@trpc';
 import {
   PocketbaseCollections,
   User,
@@ -8,6 +8,7 @@ import {
 } from '@custom-types';
 import { contactUsSchema } from '@schemas';
 import { z } from 'zod';
+import { logger } from '@logger';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
@@ -28,7 +29,7 @@ export const contactUsRoutes = t.router({
               .update(String(user.id), { newsletter: true });
           }
         } catch (e) {
-          ctx.log.info(
+          logger.info(
             e,
             `User under ${input.email} does not exist, creating new...`
           );
@@ -45,7 +46,7 @@ export const contactUsRoutes = t.router({
               newsletter: true,
             });
           } catch (error) {
-            ctx.log.error(
+            logger.error(
               error,
               'An error happened during contact form create unique user'
             );
@@ -66,10 +67,7 @@ export const contactUsRoutes = t.router({
           subscribeToNewsletter: input.subscribeToNewsletter,
         })
         .catch((error) => {
-          ctx.log.error(
-            error,
-            `Failed to save a reponse from form to database`
-          );
+          logger.error(error, `Failed to save a reponse from form to database`);
 
           throw new Error('Error happened');
         });
@@ -82,7 +80,7 @@ export const contactUsRoutes = t.router({
           template: 'contact-us/admin',
         })
         .catch((error) => {
-          ctx.log.error(
+          logger.error(
             error,
             `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
           );
@@ -95,7 +93,7 @@ export const contactUsRoutes = t.router({
           template: 'contact-us/user',
         })
         .catch((error) => {
-          ctx.log.error(error, `Failed to send email to user`);
+          logger.error(error, `Failed to send email to user`);
         });
 
       ctx.pb.authStore.clear();

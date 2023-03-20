@@ -1,0 +1,14 @@
+import { config } from '@config';
+import type { NextApiRequest, NextApiResponse } from 'next';
+import NextCors from 'nextjs-cors';
+
+export const setupCors = (req: NextApiRequest, res: NextApiResponse) => {
+  const corsOrigins = config.server.cors.allowed;
+
+  return (NextCors as any).default(req, res, {
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: corsOrigins,
+    maxAge: config.server.session.maxAge,
+    optionsSuccessStatus: 200,
+  });
+};

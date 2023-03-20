@@ -1,20 +1,26 @@
-import { FastifyInstance } from 'fastify';
-import { JWT } from '@fastify/jwt';
+import { config } from '@config';
+import jwt, { Algorithm } from 'jsonwebtoken';
+import jwtDecode from 'jwt-decode';
 
 export class TokenService {
-  #jwt: JWT;
-
-  constructor(server: FastifyInstance) {
-    this.#jwt = server.jwt;
-  }
+  #algorithm: Algorithm = 'RS256';
 
   generate(payload: { id: string }) {
-    return this.#jwt.sign(payload, {
+    return jwt.sign(payload, config.server.secrets.jwt, {
       expiresIn: '1d',
+      algorithm: this.#algorithm,
     });
   }
 
-  verify(token: string) {
-    return this.#jwt.verify(token) as { id: string };
+  decode<T extends { id: string }>(token: string) {
+    return jwtDecode<T>(token.toString());
+  }
+
+  verify<T extends { id: string }>(token: string) {
+    const decoded = jwt.verify(token, config.server.secrets.jwt, {
+      algorithms: [this.#algorithm],
+    });
+
+    return this.decode<T>(decoded.toString());
   }
 }

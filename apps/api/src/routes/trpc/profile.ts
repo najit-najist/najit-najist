@@ -4,8 +4,7 @@ import {
   User,
   UserStates,
 } from '@custom-types';
-import { t } from '@lib';
-import { protectedProcedure } from '../../plugins/trpc/procedures';
+import { protectedProcedure, t } from '@trpc';
 import {
   getMeOutputSchema,
   loginInputSchema,
@@ -17,6 +16,7 @@ import { ClientResponseError } from '@najit-najist/pb';
 import { config } from '@config';
 import { ApplicationError } from '@errors';
 import { z } from 'zod';
+import { logger } from '@logger';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -94,7 +94,7 @@ export const profileRouter = t.router({
       } catch (error) {
         ctx.pb.authStore.clear();
 
-        ctx.log.error(error, 'An error happened during user registration');
+        logger.error(error, 'An error happened during user registration');
 
         if (error instanceof ClientResponseError) {
           throw new TRPCError({
@@ -126,7 +126,7 @@ export const profileRouter = t.router({
 
         return true;
       } catch (error) {
-        ctx.log.error(
+        logger.error(
           error,
           'An error happened during user verify registration'
         );

@@ -1,5 +1,4 @@
-import { t } from '@lib';
-import { protectedProcedure } from '../../plugins/trpc/procedures';
+import { protectedProcedure, t } from '@trpc';
 import { getManyInputSchema } from '@schemas';
 
 export const usersRoute = t.router({

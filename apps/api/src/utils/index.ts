@@ -1,3 +1,3 @@
-export * from './createTrpcRouter';
 export * from './formatErrorMessage';
+export * from './getPasswordStrength';
 export * from './removeDiacritics';
