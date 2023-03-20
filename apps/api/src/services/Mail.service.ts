@@ -8,7 +8,7 @@ import { logger } from '@logger';
 export type AvailableTemplates = 'contact-us/admin' | 'contact-us/user';
 
 export class MailService {
-  #mailer: Email;
+  mailer: Email;
 
   constructor() {
     let transporter = nodemailer.createTransport({
@@ -21,7 +21,7 @@ export class MailService {
       },
     });
 
-    this.#mailer = new Email({
+    this.mailer = new Email({
       send: !config.env.isDev,
       preview: config.env.isDev,
       message: {
@@ -55,7 +55,7 @@ export class MailService {
   }) {
     let result;
     try {
-      result = await this.#mailer.send({
+      result = await this.mailer.send({
         template,
         message: {
           to,

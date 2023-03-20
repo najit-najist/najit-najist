@@ -1,16 +1,14 @@
-import fs from 'fs-extra';
-import path from 'path';
 import { describe, expect, it } from 'vitest';
-import { bootstrap } from '../../src/bootstrap';
+import { MailService } from '../../src/services/Mail.service';
 
 describe('plugins', () => {
   describe('mail', () => {
     it('should render relative', async () => {
       const name = 'John';
       const templateFileContent = `Hello ${name}`;
-      const server = await bootstrap('testing');
+      const mailService = new MailService();
 
-      const res = await server.mail.render('test', {
+      const res = await mailService.mailer.render('test', {
         name,
       });
 
