@@ -69,6 +69,7 @@ COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./ap
 # Include api package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/apps/api/package.json \
                     /workspace-builder/apps/api/node_modules/ \
+                    /workspace-builder/apps/api/email-templates/ \
                     /workspace-builder/apps/api/dist/ \
                     ./apps/api/
 
