@@ -22,30 +22,19 @@ jobs:
           filters: |
             web:
               - 'apps/web/**'
-              - 'package-lock.json'
-            api:
               - 'apps/api/**'
               - 'package-lock.json'
             ui:
               - 'packages/ui/**'
               - 'package-lock.json'
             pb:
-              - 'apps/pb/**'
-              - 'package-lock.json'
+              - 'apps/pb/Dockerfile'
 
       - name: 📍 Push Pocketbase to dokku
         if: steps.filter.outputs.pb == 'true'
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/pocketbase'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          branch: 'main'
-
-      - name: 📍 Push API app to dokku
-        if: steps.filter.outputs.api == 'true'
-        uses: dokku/github-action@master
-        with:
-          git_remote_url: 'ssh://dokku@najitnajist.cz:22/api'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           branch: 'main'
 

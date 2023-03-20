@@ -30,9 +30,7 @@ jobs:
               - 'package-lock.json'
               - '.github/**'
             pb:
-              - 'apps/pb/**'
-              - 'package-lock.json'
-              - '.github/**'
+              - 'apps/pb/Dockerfile'
 
       - name: 📍 Push Pocketbase to dokku
         if: steps.filter.outputs.pb == 'true'
