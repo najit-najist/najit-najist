@@ -11,14 +11,14 @@ export interface AlertProps
     >,
     AlertRootVariantProps {
   heading: ReactNode;
-  icon: typeof HandRaisedIcon;
+  icon?: typeof HandRaisedIcon;
 }
 
 const alertRootStyles = cva('rounded-md p-4', {
   variants: {
     color: {
       default: 'bg-blue-50',
-      error: 'bg-yellow-50',
+      error: 'bg-red-50',
       warning: 'bg-yellow-50',
       success: 'bg-green-50',
     },
@@ -91,7 +91,9 @@ export const Alert: FC<AlertProps> = ({
         ) : null}
         <div className="ml-3">
           <h3 className={titleStyles({ color })}>{heading}</h3>
-          <div className={contentStyles({ color })}>{children}</div>
+          {children ? (
+            <div className={contentStyles({ color })}>{children}</div>
+          ) : null}
         </div>
       </div>
     </div>

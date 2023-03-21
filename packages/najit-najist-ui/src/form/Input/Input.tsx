@@ -50,7 +50,7 @@ const inputTypeToStyleType = (
 };
 
 export const inputStyles = cva(
-  'block w-full rounded-r-md border border-gray-300 shadow-sm sm:text-sm focus:outline-none',
+  'block w-full rounded-r-md border border-gray-300 shadow-sm focus:outline-none',
   {
     variants: {
       type: {
@@ -58,8 +58,8 @@ export const inputStyles = cva(
         checkbox: '',
       },
       size: {
-        normal: 'py-2 px-3',
-        md: 'py-3 px-5',
+        normal: 'py-2 px-3 sm:text-sm',
+        md: 'py-3 px-5 sm:text-md',
       },
       color: {
         default:
