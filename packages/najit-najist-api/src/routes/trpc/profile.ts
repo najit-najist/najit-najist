@@ -73,6 +73,7 @@ export const profileRouter = t.router({
 
       // add user token to session
       ctx.session.userToken = token;
+      await ctx.session.save();
 
       return {
         token,

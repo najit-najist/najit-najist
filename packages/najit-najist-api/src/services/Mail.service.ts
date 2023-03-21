@@ -1,6 +1,5 @@
 import Email from 'email-templates';
 import nodemailer from 'nodemailer';
-import { APP_ROOT } from '@constants';
 import { config } from '@config';
 import path from 'path';
 import { logger } from '@logger';
@@ -28,14 +27,14 @@ export class MailService {
         from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
       },
       views: {
-        root: path.join(APP_ROOT, 'email-templates'),
+        root: path.resolve(path.join(config.app.root, 'email-templates')),
         options: {
           extension: 'ejs',
         },
       },
       juiceResources: {
         webResources: {
-          relativeTo: APP_ROOT,
+          relativeTo: config.app.root,
         },
       },
       transport: transporter,

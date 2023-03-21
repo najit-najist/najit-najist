@@ -30,12 +30,12 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
     throw UNAUTHORIZED_ERROR;
   }
 
-  // Load loggedin user from
+  // Load logged in user from session
   ctx.pb.authStore.save(sessionUserToken, {
     id: result.id,
   } as any);
 
-  return next({
+  const nextResult = await next({
     ctx: {
       // Infers the `session` as non-nullable
       session: ctx.session,
@@ -46,6 +46,11 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
       },
     },
   });
+
+  // Clear authed connection to pocketbase
+  ctx.pb.authStore.clear();
+
+  return nextResult;
 });
 
 /**

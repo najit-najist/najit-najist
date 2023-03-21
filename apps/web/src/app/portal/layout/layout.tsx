@@ -4,10 +4,11 @@ import { Suspense } from 'react';
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { SESSION_NAME } from '@najit-najist/api';
 
 const PortalLayout: LayoutComponent = ({ children }) => {
   const cookieStore = cookies();
-  const session = cookieStore.get(`najit-najist-session`);
+  const session = cookieStore.get(SESSION_NAME);
 
   // TODO: Should we check for expiry too?
   if (!session) {

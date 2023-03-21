@@ -14,6 +14,10 @@
     "./server": {
       "import": "./dist/server.js",
       "types": "./dist/server.d.ts"
+    }, 
+    "./edge": {
+      "import": "./dist/edge.js",
+      "types": "./dist/edge.d.ts"
     }
   },
   "author": "ondrej-langr <langr.ondrej.work@gmail.com>",
@@ -22,7 +26,7 @@
     "dist"
   ],
   "scripts": {
-    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\" \"npm:dev:package:aliases\"",
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\" \"npm:dev:package:types:aliases\"",
     "dev:package": "npm run build:package -- --watch",
     "dev:package:types": "npm run build:types -- --watch",
     "dev:package:types:aliases": "npm run build:types:aliases -- --watch",

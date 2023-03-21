@@ -8,7 +8,7 @@ export const setupCors = (req: NextApiRequest, res: NextApiResponse) => {
   return (NextCors as any).default(req, res, {
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
     origin: corsOrigins,
-    maxAge: config.server.session.maxAge,
+    maxAge: config.server.session.cookieOptions.maxAge,
     optionsSuccessStatus: 200,
   });
 };

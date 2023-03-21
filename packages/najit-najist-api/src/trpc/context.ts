@@ -12,6 +12,7 @@ import 'iron-session/next';
 
 export const createContext = ({ req }: CreateNextContextOptions) => {
   const context = {
+    headers: req.headers,
     pb: new PocketBase(config.pb.origin),
     session: req.session,
     sessionData: undefined as

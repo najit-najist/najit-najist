@@ -1,9 +1,6 @@
-import { APP_NAME, SESSION_NAME, APP_ROOT } from '@constants';
+import { APP_NAME, SESSION_NAME } from '@constants';
 import { PocketbaseCollections } from '@custom-types';
 import { PocketBase } from '@najit-najist/pb';
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
@@ -29,14 +26,23 @@ const mailPort = Number(process.env.MAIL_PORT);
 export const config = {
   app: {
     name: APP_NAME,
-    root: APP_ROOT,
+    root: '../../packages/najit-najist-api',
     version: 'dev123',
   },
   server: {
     domain: baseDomain,
-    session: {
-      maxAge: sessionLength,
-      name: SESSION_NAME,
+    get session() {
+      return {
+        cookieName: SESSION_NAME,
+        password: this.secrets.session,
+        cookieOptions: {
+          domain: isDev ? undefined : baseDomain,
+          httpOnly: true,
+          maxAge: sessionLength,
+          secure: !isDev,
+          sameSite: !isDev ? 'strict' : 'lax',
+        },
+      } as const;
     },
     secrets: {
       session: sessionSecret,
