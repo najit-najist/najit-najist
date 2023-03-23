@@ -31,6 +31,7 @@ jobs:
               - '.github/**'
             pb:
               - 'apps/pb/Dockerfile'
+              - 'apps/pb/migrations/**'
 
       - name: 📍 Push Pocketbase to dokku
         if: steps.filter.outputs.pb == 'true'
