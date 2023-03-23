@@ -6,50 +6,52 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const session = await getEdgeSession(request, response);
 
-  if (!session.previewAuthorized) {
-    if (request.method.toUpperCase() === 'POST') {
-      const [key, value] = new TextDecoder()
-        .decode(
-          await request.body
-            ?.getReader()
-            .read()
-            .then(({ value }) => value)
-        )
-        .split('=');
+  if (process.env.NODE_ENV === 'production') {
+    if (!session.previewAuthorized) {
+      if (request.method.toUpperCase() === 'POST') {
+        const [key, value] = new TextDecoder()
+          .decode(
+            await request.body
+              ?.getReader()
+              .read()
+              .then(({ value }) => value)
+          )
+          .split('=');
 
-      const url = request.nextUrl.clone();
+        const url = request.nextUrl.clone();
 
-      if (key !== 'code') {
-        return NextResponse.next();
-      }
+        if (key !== 'code') {
+          return NextResponse.next();
+        }
 
-      if (value != PREVIEW_AUTH_PASSWORD) {
-        url.pathname = '/unauthorized-preview';
+        if (value != PREVIEW_AUTH_PASSWORD) {
+          url.pathname = '/unauthorized-preview';
 
-        return NextResponse.rewrite(url);
+          return NextResponse.rewrite(url);
+        } else {
+          url.pathname = '/';
+          session.previewAuthorized = true;
+          await session.save();
+
+          return NextResponse.redirect(url, {
+            headers: new Headers(response.headers),
+          });
+        }
       } else {
-        url.pathname = '/';
-        session.previewAuthorized = true;
-        await session.save();
+        const url = request.nextUrl.clone();
+        if (!url.pathname.startsWith('/unauthorized-preview')) {
+          url.pathname = '/unauthorized-preview';
 
-        return NextResponse.redirect(url, {
-          headers: new Headers(response.headers),
-        });
+          return NextResponse.redirect(url);
+        }
+
+        return response;
       }
-    } else {
+    } else if (request.nextUrl.pathname.startsWith('/unauthorized-preview')) {
       const url = request.nextUrl.clone();
-      if (!url.pathname.startsWith('/unauthorized-preview')) {
-        url.pathname = '/unauthorized-preview';
-
-        return NextResponse.redirect(url);
-      }
-
-      return response;
+      url.pathname = '/';
+      return NextResponse.redirect(url);
     }
-  } else if (request.nextUrl.pathname.startsWith('/unauthorized-preview')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/';
-    return NextResponse.redirect(url);
   }
 
   if (request.nextUrl.pathname.startsWith('/logout')) {
