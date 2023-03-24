@@ -1,5 +1,3 @@
-const apiOrigin = process.env.API_ORIGIN;
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,

@@ -67,7 +67,7 @@
     "cross-fetch": "^3.1.5",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
-    "email-templates": "^10.0.1",
+    "email-templates": "^11.0.3",
     "fs-extra": "^10.1.0",
     "iron-session": "^6.3.1",
     "jsonwebtoken": "^9.0.0",

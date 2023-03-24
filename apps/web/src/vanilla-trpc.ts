@@ -1,4 +1,4 @@
-import { AppRouter } from '@najit-najist/api';
+import { AppRouter, serverPort } from '@najit-najist/api';
 import { createTRPCProxyClient, httpBatchLink } from '@trpc/client';
 import SuperJSON from 'superjson';
 
@@ -9,7 +9,7 @@ export const getClient = (
     transformer: SuperJSON,
     links: [
       httpBatchLink({
-        url: new URL('/trpc', process.env.API_ORIGIN).toString(),
+        url: new URL('/api/trpc', `http://127.0.0.1:${serverPort}`).toString(),
         ...params,
       }),
     ],

@@ -15,12 +15,13 @@ export const UserHead: FC<{
       <div className="w-[225px] h-[225px] rounded-full shadow-md overflow-hidden relative">
         <Image
           alt=""
+          width={225}
+          height={225}
           src={image}
           placeholder="blur"
-          fill
           quality={100}
           className={clsx(
-            'absolute top-0 left-0 object-cover',
+            'absolute top-0 left-0 object-cover h-full',
             imagePosition === 'top' ? 'object-top' : 'object-center'
           )}
         />

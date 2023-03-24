@@ -23,8 +23,8 @@ import { useCurrentUser } from '@hooks';
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
+  { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
-  { text: 'Náš Team', href: '/kontakt#nas-team' },
 ];
 
 const useUser = () =>
@@ -130,7 +130,12 @@ export const Header: FC<PropsWithChildren> = () => {
               {navLinks.map(({ text, href }) => (
                 <li key={href}>
                   <a
-                    className="font-bold py-3 sm:py-8 px-6 block hover:bg-deep-green-400 hover:text-white duration-200"
+                    className={clsx(
+                      'font-bold py-3 sm:py-8 px-6 block duration-200',
+                      pathname === href
+                        ? 'bg-deep-green-400 text-white '
+                        : 'hover:bg-deep-green-400 hover:text-white '
+                    )}
                     href={href}
                   >
                     {text}

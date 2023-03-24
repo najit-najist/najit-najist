@@ -40,6 +40,7 @@ const navigationItems: NavigationItems = {
     useful: [
       { name: 'O nás', href: '/about' },
       { name: 'Kontakt', href: '/kontakt' },
+      { name: 'Náš team', href: '/kontakt#nas-team' },
       { name: 'VOP', href: '/vop' },
       { name: 'GDPR', href: '/gdpr' },
     ],

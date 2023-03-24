@@ -3,6 +3,9 @@ import { LayoutComponent } from '@custom-types';
 import { ContextProviders } from '@contexts';
 import { headers } from 'next/headers';
 
+// @ts-ignore
+import('dayjs/locale/cs');
+
 const RootLayout: LayoutComponent = ({ children }) => {
   const headersStore = headers();
 
