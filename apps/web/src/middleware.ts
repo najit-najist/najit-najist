@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SESSION_NAME } from '@najit-najist/api';
 import { getEdgeSession, PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
-import dayjs from 'dayjs';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();

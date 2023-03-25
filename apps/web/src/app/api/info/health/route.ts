@@ -1,5 +1,6 @@
-import { config, logger } from '@najit-najist/api/server';
-import { NextApiHandler } from 'next';
+import { config } from '@najit-najist/api/dist/config';
+import { logger } from '@najit-najist/api/dist/logger';
+import { NextResponse } from 'next/server';
 
 const TIMEOUT = 3 * 1000;
 const fetchWithTimeout = async (
@@ -14,6 +15,7 @@ const fetchWithTimeout = async (
   });
 
   const timeout = setTimeout(() => {
+    console.log('timeout happened');
     abortController.abort();
   }, TIMEOUT);
 
@@ -25,21 +27,27 @@ const fetchWithTimeout = async (
   });
 };
 
-const handler: NextApiHandler = async () => {
+export async function GET(request: Request) {
   let pocketbase = await fetchWithTimeout(
     new URL('/api/health', config.pb.origin)
   )
     .catch((error) => {
-      logger.error(error, 'Failed to connect to pocketbase');
+      console.error('Failed to connect to pocketbase', error);
 
       return false;
     })
-    .then((res) => res);
+    .then((res) => {
+      if (typeof res === 'boolean') {
+        return res;
+      }
 
-  return {
+      console.info('Fetched info from pocketbase', res);
+
+      return res.json();
+    });
+
+  return NextResponse.json({
     alive: true,
     pocketbase,
-  };
-};
-
-export default handler;
+  });
+}
