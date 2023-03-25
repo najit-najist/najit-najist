@@ -8,9 +8,7 @@ describe('plugins', () => {
       const templateFileContent = `Hello ${name}`;
       const mailService = new MailService();
 
-      await mailService.init();
-
-      const res = await mailService.mailer?.render('test', {
+      const res = await mailService.mailer.render('test', {
         name,
       });
 
