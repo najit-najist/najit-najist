@@ -1,7 +1,7 @@
 import { config, logger } from '@najit-najist/api/server';
 import { NextApiHandler } from 'next';
 
-const TIMEOUT = 3 * 60 * 1000;
+const TIMEOUT = 3 * 1000;
 const fetchWithTimeout = async (
   input: RequestInfo | URL,
   init?: RequestInit | undefined
