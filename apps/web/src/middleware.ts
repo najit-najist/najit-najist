@@ -1,56 +1,77 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SESSION_NAME } from '@najit-najist/api';
 import { getEdgeSession, PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
+import dayjs from 'dayjs';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const session = await getEdgeSession(request, response);
 
   if (process.env.NODE_ENV === 'production') {
-    if (!session.previewAuthorized) {
-      if (request.method.toUpperCase() === 'POST') {
-        const [key, value] = new TextDecoder()
-          .decode(
-            await request.body
-              ?.getReader()
-              .read()
-              .then(({ value }) => value)
-          )
-          .split('=');
+    const UNAUTHORIZED_URL = '/unauthorized-preview';
+    const UNAUTHORIZED_URL_POST = '/unauthorized-preview-post';
+    const requestUrl = request.nextUrl;
 
-        const url = request.nextUrl.clone();
+    // If not logged in then redirect to unauthorized preview handler
+    if (
+      !session.previewAuthorized &&
+      !(
+        requestUrl.pathname === UNAUTHORIZED_URL ||
+        requestUrl.pathname === UNAUTHORIZED_URL_POST
+      )
+    ) {
+      const url = request.nextUrl.clone();
+      url.pathname = UNAUTHORIZED_URL;
+      return NextResponse.redirect(url);
+    }
 
-        if (key !== 'code') {
-          return NextResponse.next();
-        }
-
-        if (value != PREVIEW_AUTH_PASSWORD) {
-          url.pathname = '/unauthorized-preview';
-
-          return NextResponse.rewrite(url);
-        } else {
-          url.pathname = '/';
-          session.previewAuthorized = true;
-          await session.save();
-
-          return NextResponse.redirect(url, {
-            headers: new Headers(response.headers),
-          });
-        }
-      } else {
-        const url = request.nextUrl.clone();
-        if (!url.pathname.startsWith('/unauthorized-preview')) {
-          url.pathname = '/unauthorized-preview';
-
-          return NextResponse.redirect(url);
-        }
-
-        return response;
-      }
-    } else if (request.nextUrl.pathname.startsWith('/unauthorized-preview')) {
+    // If logged in and on login page then redirect back to index
+    if (
+      session.previewAuthorized &&
+      (requestUrl.pathname === UNAUTHORIZED_URL ||
+        requestUrl.pathname === UNAUTHORIZED_URL_POST)
+    ) {
       const url = request.nextUrl.clone();
       url.pathname = '/';
       return NextResponse.redirect(url);
+    }
+
+    // Handle post
+    if (requestUrl.pathname === UNAUTHORIZED_URL_POST) {
+      // Read body
+      const [key, value] = new TextDecoder()
+        .decode(
+          await request.body
+            ?.getReader()
+            .read()
+            .then(({ value }) => value)
+        )
+        .split('=');
+
+      const url = request.nextUrl.clone();
+
+      // If key is not code then do nothing
+      if (key !== 'code') {
+        return NextResponse.next();
+      }
+
+      if (value != PREVIEW_AUTH_PASSWORD) {
+        url.pathname = UNAUTHORIZED_URL;
+        url.search = new URLSearchParams([['invalid', '']]).toString();
+
+        console.log('request failed when accessing preview');
+        console.log(request);
+
+        return NextResponse.redirect(url);
+      } else {
+        url.pathname = '/';
+        session.previewAuthorized = true;
+        await session.save();
+
+        return NextResponse.redirect(url, {
+          headers: new Headers(response.headers),
+        });
+      }
     }
   }
 
