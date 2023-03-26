@@ -5,6 +5,8 @@ import { getClient } from '@vanilla-trpc';
 
 import { Item } from './components/Item';
 
+export const revalidate = 30;
+
 export default async function Page() {
   const { items: posts } = await getClient().posts.getMany.query();
 
