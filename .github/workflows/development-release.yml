@@ -7,7 +7,47 @@ on:
       - develop
 
 jobs:
+  check-build:
+    name: Check project build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - uses: n1hility/cancel-previous-runs@v2
+        with: 
+          token: ${{ secrets.GITHUB_TOKEN }}
+          workflow: check-pr.yml
+
+        # https://github.com/actions/checkout
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+        with:
+            fetch-depth: 2
+
+      - uses: actions/cache@v2
+        name: Cache
+        with:
+          path: '**/node_modules'
+          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Setup node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+
+      - name: 🐞 Install Dependencies
+        run: npm ci
+
+      - name: 🏗️ Build
+        run: npm run build
+        env:
+          POCKETBASE_ORIGIN: http://localhost:3000
+
   deploy:
+    needs: check-build
     runs-on: ubuntu-latest
     steps:
       - name: 🚙 Checkout 
