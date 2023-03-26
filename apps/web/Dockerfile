@@ -2,6 +2,8 @@
 ARG NODE_VERSION=16
 ARG ALPINE_VERSION=3.15
 ARG POCKETBASE_ORIGIN=http://localhost:3001
+ARG TURBO_TEAM
+ARG TURBO_TOKEN
 
 ###################################################################
 # Stage 1: Install deps                                           #
@@ -32,9 +34,15 @@ RUN npm install
 ###################################################################
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
+
 ARG POCKETBASE_ORIGIN
-ENV NODE_ENV=production
+ARG TURBO_TEAM
+ARG TURBO_TOKEN
+
 ENV POCKETBASE_ORIGIN=${POCKETBASE_ORIGIN}
+ENV NODE_ENV=production
+ENV TURBO_TEAM=${TURBO_TEAM}
+ENV TURBO_TOKEN=${TURBO_TOKEN}
 
 RUN apk add --no-cache rsync
 RUN apk add --no-cache libc6-compat
