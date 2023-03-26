@@ -1,6 +1,7 @@
 import { config } from '@najit-najist/api/dist/config';
-import { logger } from '@najit-najist/api/dist/logger';
 import { NextResponse } from 'next/server';
+
+export const revalidate = 0;
 
 const TIMEOUT = 3 * 1000;
 const fetchWithTimeout = async (
@@ -29,7 +30,8 @@ const fetchWithTimeout = async (
 
 export async function GET(request: Request) {
   let pocketbase = await fetchWithTimeout(
-    new URL('/api/health', config.pb.origin)
+    new URL('/api/health', config.pb.origin),
+    { cache: 'no-store', next: { revalidate: 0 } }
   )
     .catch((error) => {
       console.error('Failed to connect to pocketbase', error);
