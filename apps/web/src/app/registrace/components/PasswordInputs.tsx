@@ -1,4 +1,4 @@
-import { Input } from '@najit-najist/ui';
+import { PasswordInput } from '@najit-najist/ui';
 import { FC, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { getPasswordStrength, PasswordStrength } from '@najit-najist/api';
@@ -57,11 +57,10 @@ export const PasswordInputs: FC = () => {
   return (
     <>
       <div>
-        <Input
+        <PasswordInput
           required
           label="Heslo"
           id="password"
-          type="password"
           autoComplete="new-password"
           error={formState.errors.password}
           disabled={fieldsAreDisabled}
@@ -70,11 +69,10 @@ export const PasswordInputs: FC = () => {
         <PasswordStrengthMeter />
       </div>
 
-      <Input
+      <PasswordInput
         required
         label="Heslo znovu"
         id="password-again"
-        type="password"
         autoComplete="new-password"
         error={formState.errors.passwordAgain}
         disabled={fieldsAreDisabled}

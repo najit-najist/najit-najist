@@ -17,9 +17,9 @@ const PortalLayout: LayoutComponent = ({ children }) => {
 
   return (
     <div className="w-full flex flex-col">
-      <div className="mx-auto lg:grid lg:grid-cols-8 lg:gap-12 h-full w-full">
+      <div className="mx-auto lg:grid lg:grid-cols-10 lg:gap-12 h-full w-full">
         <LeftSidebar />
-        <main className="w-full col-span-5 py-6 sm:px-6 lg:px-8">
+        <main className="w-full col-span-6 py-6 sm:px-6 lg:px-8">
           <Suspense fallback={<>Načítám....</>}>{children}</Suspense>
         </main>
         <div className="col-span-2" />

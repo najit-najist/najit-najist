@@ -41,12 +41,15 @@ const ProfileButton: FC = () => {
 
   if (!user) {
     return (
-      <Link
-        className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
-        href="/login"
-      >
-        <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
-      </Link>
+      <>
+        <Link
+          className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
+          href="/login"
+        >
+          <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
+          se
+        </Link>
+      </>
     );
   }
 

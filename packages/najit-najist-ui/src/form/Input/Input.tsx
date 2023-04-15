@@ -21,13 +21,14 @@ export interface InputProps
       >,
       'size' | 'color' | 'disabled' | 'prefix'
     >,
-    Omit<InputVariantProps, 'type' | 'withPrefix'> {
+    Omit<InputVariantProps, 'type' | 'withPrefix' | 'withSuffix'> {
   label?: string;
   hideLabel?: boolean;
   error?: FieldError;
   description?: ReactNode;
   rootClassName?: string;
   prefix?: ReactNode;
+  suffix?: ReactNode;
   wrapperClassName?: string;
 }
 
@@ -50,7 +51,7 @@ const inputTypeToStyleType = (
 };
 
 export const inputStyles = cva(
-  'block w-full rounded-r-md border border-gray-300 shadow-sm focus:outline-none',
+  'block w-full border border-gray-300 shadow-sm focus:outline-none',
   {
     variants: {
       type: {
@@ -72,6 +73,10 @@ export const inputStyles = cva(
       withPrefix: {
         true: '',
         false: 'rounded-l-md',
+      },
+      withSuffix: {
+        true: '',
+        false: 'rounded-r-md',
       },
     },
     defaultVariants: {
@@ -95,6 +100,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     rootClassName,
     disabled,
     prefix,
+    suffix,
     wrapperClassName,
     required,
     ...rest
@@ -121,7 +127,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
       >
         {prefix ? (
           <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm">
-            {prefix}{' '}
+            {prefix}
           </span>
         ) : null}
         <input
@@ -133,6 +139,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             color,
             disabled,
             withPrefix: !!prefix,
+            withSuffix: !!suffix,
             ...rest,
           })}
           type={type}
@@ -141,6 +148,11 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           required={required}
           {...rest}
         />
+        {suffix ? (
+          <span className="inline-block rounded-r-md border border-l-0 border-gray-300 text-gray-500 sm:text-sm">
+            {suffix}
+          </span>
+        ) : null}
       </div>
 
       {error && <ErrorMessage>{error.message}</ErrorMessage>}

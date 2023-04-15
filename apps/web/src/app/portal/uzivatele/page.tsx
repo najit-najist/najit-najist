@@ -1,15 +1,24 @@
 import { Section } from '@components/portal';
 
-import { FC, Suspense } from 'react';
+import { FC, PropsWithChildren, Suspense } from 'react';
 import { Header } from './components/Header';
 import { Users } from './components/Users';
+
+const Th: FC<PropsWithChildren> = ({ children }) => (
+  <th
+    scope="col"
+    className="px-3 py-2 text-left text-sm font-semibold text-gray-900"
+  >
+    {children}
+  </th>
+);
 
 const UsersListPage: FC = () => {
   return (
     <Section>
       <Header />
-      <div className="mt-8 flow-root">
-        <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div className="mt-8 flow-root !border-t-0 mx-10">
+        <div className="-my-2 overflow-x-auto">
           <div className="inline-block min-w-full py-2 align-middle">
             <table className="min-w-full divide-y divide-gray-300">
               <thead>
@@ -17,24 +26,9 @@ const UsersListPage: FC = () => {
                   <th scope="col" className="sr-only">
                     Name
                   </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Email a Telefon
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Email
-                  </th>
-                  <th
-                    scope="col"
-                    className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Role
-                  </th>
+                  <Th>Telefon</Th>
+                  <Th>Email</Th>
+                  <Th>Role</Th>
                   <th
                     scope="col"
                     className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8"

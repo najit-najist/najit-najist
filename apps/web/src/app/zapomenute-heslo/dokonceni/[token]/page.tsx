@@ -1,6 +1,6 @@
 'use client';
 import { registerInputSchema } from '@najit-najist/api';
-import { Button } from '@najit-najist/ui';
+import { Button, PasswordInput } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
@@ -69,9 +69,8 @@ const ForgottenPasswordFinalizationPage: FC = () => {
                 Heslo
               </label>
               <div className="mt-1">
-                <input
+                <PasswordInput
                   id="password"
-                  type="password"
                   autoComplete="new-password"
                   required
                   className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -88,9 +87,8 @@ const ForgottenPasswordFinalizationPage: FC = () => {
                 Heslo znovu
               </label>
               <div className="mt-1">
-                <input
+                <PasswordInput
                   id="password-again"
-                  type="password"
                   autoComplete="new-password"
                   required
                   className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
