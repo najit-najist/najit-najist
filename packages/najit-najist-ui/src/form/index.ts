@@ -5,5 +5,6 @@ export * from './ErrorMessage';
 export * from './FormBreak';
 export * from './Label';
 export * from './FormControlWrapper';
+export * from './PasswordInput';
 export * from './Switch';
 export * from './Textarea';

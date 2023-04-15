@@ -20,14 +20,14 @@ export const Item: FC<Post> = (post) => {
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />
         ) : (
-          <div className="flex w-full h-full">
+          <div className="flex w-full h-full bg-white">
             <PhotoIcon className="w-20 h-20 m-auto" />
           </div>
         )}
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
       </div>
       <div>
-        <div className="flex items-center gap-x-4 text-xs">
+        <div className="flex items-center gap-x-4 text-xs mt-2">
           <time dateTime={post.publishedAt} className="text-gray-500">
             {dayjs(post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
           </time>

@@ -34,7 +34,6 @@ export const Users: FC = () => {
             </div>
           </td>
           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-            <div className="text-gray-900">{person.email}</div>
             <div className="text-gray-500">{person.telephoneNumber}</div>
           </td>
           <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
