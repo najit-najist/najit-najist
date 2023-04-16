@@ -9,6 +9,10 @@ export const metadata = {
   },
 };
 
+export const metadata = {
+  title: 'Portál > %s',
+};
+
 const PortalLayout: LayoutComponent = ({ children }) => {
   return (
     <div className="w-full flex flex-col">
