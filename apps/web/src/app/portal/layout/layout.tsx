@@ -7,7 +7,10 @@ import { redirect } from 'next/navigation';
 import { SESSION_NAME } from '@najit-najist/api';
 
 export const metadata = {
-  title: 'Portál > %s',
+  title: {
+    template: 'Portál > %s | Najít Najíst',
+    default: 'Hlavní stránka',
+  },
 };
 
 const PortalLayout: LayoutComponent = ({ children }) => {
@@ -21,7 +24,7 @@ const PortalLayout: LayoutComponent = ({ children }) => {
 
   return (
     <div className="w-full flex flex-col">
-      <div className="mx-auto lg:grid lg:grid-cols-10 lg:gap-12 h-full w-full">
+      <div className="mx-auto lg:grid lg:grid-cols-10 h-full w-full">
         <LeftSidebar />
         <main className="w-full col-span-6 py-6 sm:px-6 lg:px-8">
           <Suspense fallback={<>Načítám....</>}>{children}</Suspense>

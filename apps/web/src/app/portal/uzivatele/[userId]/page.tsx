@@ -1,12 +1,22 @@
-import { Section } from '@components/portal';
-import { FC } from 'react';
+import { User } from '@najit-najist/api';
+import { getClient } from '@vanilla-trpc';
+import { notFound } from 'next/navigation';
+import { Content } from './_components/Content';
 
-const PortalPage: FC<{ params: { userId: string } }> = ({ params }) => {
-  return (
-    <Section>
-      Toto je stránka pro úpravu uživatele pod id {params.userId}
-    </Section>
-  );
-};
+type Params = { params: { userId: string } };
 
-export default PortalPage;
+export default async function Page({ params }: Params) {
+  let user: User;
+
+  try {
+    user = await getClient().users.getOne.query({
+      where: {
+        id: params.userId,
+      },
+    });
+  } catch (error) {
+    return notFound();
+  }
+
+  return <Content user={user} />;
+}
