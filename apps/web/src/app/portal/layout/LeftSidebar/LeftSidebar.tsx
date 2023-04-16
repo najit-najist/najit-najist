@@ -39,7 +39,10 @@ export const LeftSidebar = () => {
   const pathname = usePathname();
 
   return (
-    <aside className="col-span-2 flex flex-col bg-white" aria-label="Sidebar">
+    <aside
+      className="col-span-2 flex flex-col bg-white border-r-2 border-gray-100"
+      aria-label="Sidebar"
+    >
       <Link href="/" className="px-6 pt-6 block">
         <Logo className="h-14 w-auto" />
       </Link>
