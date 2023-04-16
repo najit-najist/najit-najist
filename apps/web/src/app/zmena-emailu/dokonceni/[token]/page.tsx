@@ -8,8 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { trpc } from 'trpc';
 import { z } from 'zod';
 
-import { BottomLinks } from './components/BottomLinks';
-import { Title } from './components/Title';
+import { BottomLinks } from './_components/BottomLinks';
+import { Title } from './_components/Title';
 
 type FormValues = z.infer<typeof registerInputSchema> & {
   passwordAgain: string;

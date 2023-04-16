@@ -6,6 +6,10 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { SESSION_NAME } from '@najit-najist/api';
 
+export const metadata = {
+  title: 'Portál > %s',
+};
+
 const PortalLayout: LayoutComponent = ({ children }) => {
   const cookieStore = cookies();
   const session = cookieStore.get(SESSION_NAME);

@@ -3,9 +3,13 @@ import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { getClient } from '@vanilla-trpc';
 
-import { Item } from './components/Item';
+import { Item } from './_components/Item';
 
 export const revalidate = 30;
+
+export const metadata = {
+  title: 'Články',
+};
 
 export default async function Page() {
   const { items: posts } = await getClient().posts.getMany.query();

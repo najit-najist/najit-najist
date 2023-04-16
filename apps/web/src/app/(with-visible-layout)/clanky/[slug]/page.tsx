@@ -4,14 +4,29 @@ import type { Post } from '@najit-najist/api';
 import { getFileUrl } from '@utils';
 import { getClient } from '@vanilla-trpc';
 import dayjs from 'dayjs';
+import { Metadata } from 'next';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 
+type PageParams = {
+  params: { slug: string };
+};
+
+export async function generateMetadata({
+  params: { slug: postSlug },
+}: PageParams): Promise<Metadata> {
+  const post = await getClient().posts.getOne.query({
+    slug: postSlug,
+  });
+
+  return {
+    title: post.title,
+  };
+}
+
 export default async function PostUnderPage({
   params: { slug: postSlug },
-}: {
-  params: { slug: string };
-}) {
+}: PageParams) {
   let post: Post;
 
   try {

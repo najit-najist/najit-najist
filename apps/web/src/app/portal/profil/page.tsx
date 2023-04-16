@@ -3,8 +3,8 @@ import { useCurrentUser } from '@hooks';
 import { Switch, Button } from '@najit-najist/ui';
 import { FC, useCallback } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { Input } from './components/Input';
-import { Section } from './components/Section';
+import { Input } from './_components/Input';
+import { Section } from './_components/Section';
 import { Section as PortalSection } from '@components/portal';
 
 const ProfilePage: FC = () => {

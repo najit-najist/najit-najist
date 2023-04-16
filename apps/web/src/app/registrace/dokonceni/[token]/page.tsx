@@ -3,7 +3,11 @@ import { getClient } from '@vanilla-trpc';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
-import { BottomLinks } from './components/BottomLinks';
+import { BottomLinks } from './_components/BottomLinks';
+
+export const metadata = {
+  title: 'Dokončení registrace',
+};
 
 const RegistrationFinalizationPage = async ({
   params: { token },

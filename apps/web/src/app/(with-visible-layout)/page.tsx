@@ -1,9 +1,9 @@
 import { FC } from 'react';
 
 import { NewsletterSubscribe } from '@components/layout';
-import { HeroBanner } from './components/HeroBanner';
-import { QuickLinks } from './components/QuickLinks';
-import { VideoSection } from './components/VideoSection';
+import { HeroBanner } from './_components/HeroBanner';
+import { QuickLinks } from './_components/QuickLinks';
+import { VideoSection } from './_components/VideoSection';
 
 const MainPage: FC = () => {
   return (

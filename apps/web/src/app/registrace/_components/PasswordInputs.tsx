@@ -2,7 +2,7 @@ import { PasswordInput } from '@najit-najist/ui';
 import { FC, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { getPasswordStrength, PasswordStrength } from '@najit-najist/api';
-import { FormValues } from '../types/FormValues';
+import { FormValues } from '../_types/FormValues';
 import clsx from 'clsx';
 
 const passwordStrengths = [
