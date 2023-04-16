@@ -10,7 +10,10 @@ export const metadata = {
 };
 
 export const metadata = {
-  title: 'Portál > %s',
+  title: {
+    template: 'Portál > %s | Najít Najíst',
+    default: 'Hlavní stránka',
+  },
 };
 
 const PortalLayout: LayoutComponent = ({ children }) => {
