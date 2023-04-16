@@ -7,8 +7,12 @@ import terezaZizkovaUrl from '/public/images/team/tereza-zizkova.jpg';
 import vojtechZizkaUrl from '/public/images/team/vojtech-zizka.jpg';
 import lenkaCernouskovaUrl from '/public/images/team/lenka-cernouskova.jpg';
 import kristynaZizkovaUrl from '/public/images/team/kristyna-zizkova.jpg';
-import { imagePosition, UserHead } from './components/UserHead';
+import { imagePosition, UserHead } from './_components/UserHead';
 import { StaticImageData } from 'next/image';
+
+export const metadata = {
+  title: 'Kontakt',
+};
 
 const teamMembers: {
   name: string;

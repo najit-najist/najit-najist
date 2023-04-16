@@ -1,8 +1,12 @@
 import { Section } from '@components/portal';
 
 import { FC, PropsWithChildren, Suspense } from 'react';
-import { Header } from './components/Header';
-import { Users } from './components/Users';
+import { Header } from './_components/Header';
+import { Users } from './_components/Users';
+
+export const metadata = {
+  title: 'Uživatelé',
+};
 
 const Th: FC<PropsWithChildren> = ({ children }) => (
   <th

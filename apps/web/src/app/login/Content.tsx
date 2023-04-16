@@ -6,8 +6,8 @@ import { FC, useCallback } from 'react';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
-import { BottomLinks } from './components/BottomLInks';
-import { Title } from './components/Title';
+import { BottomLinks } from './_components/BottomLInks';
+import { Title } from './_components/Title';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { trpc } from 'trpc';
 import type { TRPCError } from '@trpc/server';
