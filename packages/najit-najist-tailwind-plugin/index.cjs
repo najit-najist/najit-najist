@@ -64,7 +64,19 @@ const getTheme = () => ({
       },
     },
   },
-  plugins: [formPlugin, tailwindPlugin],
+  plugins: [
+    formPlugin,
+    tailwindPlugin,
+    {
+      handler: ({ addBase }) => {
+        addBase({
+          [`.ce-block__content, .ce-toolbar__content`]: {
+            maxWidth: 'unset',
+          },
+        });
+      },
+    },
+  ],
 });
 
 module.exports = {

@@ -1,5 +1,6 @@
 export * from './form';
 export * from './Alert';
+export * from './editor';
 export * from './Button';
 export * from './Skeleton';
 

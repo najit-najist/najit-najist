@@ -61,6 +61,7 @@ export const inputStyles = cva(
       size: {
         normal: 'py-2 px-3 sm:text-sm',
         md: 'py-3 px-5 sm:text-md',
+        lg: 'py-3 px-5 sm:text-xl',
       },
       color: {
         default:
