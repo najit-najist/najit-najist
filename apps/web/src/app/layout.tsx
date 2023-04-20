@@ -44,14 +44,20 @@ export const metadata = {
   publisher: 'najitnajist',
 };
 
-const inter = Suez_One({ weight: '400', subsets: ['latin'] });
+const inter = Suez_One({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-suez',
+});
 const playfair = Playfair_Display({
   weight: ['400', '700'],
+  variable: '--font-playfair-display',
   style: ['italic', 'normal'],
   subsets: ['latin'],
 });
 const montserrat = Montserrat({
   weight: ['300', '400', '700', '800'],
+  variable: '--font-montserrat',
   style: ['italic', 'normal'],
   subsets: ['latin'],
 });
