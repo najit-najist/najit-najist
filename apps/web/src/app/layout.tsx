@@ -8,14 +8,20 @@ import clsx from 'clsx';
 // @ts-ignore
 import('dayjs/locale/cs');
 
-const inter = Suez_One({ weight: '400', subsets: ['latin'] });
+const inter = Suez_One({
+  weight: '400',
+  subsets: ['latin'],
+  variable: '--font-suez',
+});
 const playfair = Playfair_Display({
   weight: ['400', '700'],
+  variable: '--font-playfair-display',
   style: ['italic', 'normal'],
   subsets: ['latin'],
 });
 const montserrat = Montserrat({
   weight: ['300', '400', '700', '800'],
+  variable: '--font-montserrat',
   style: ['italic', 'normal'],
   subsets: ['latin'],
 });
@@ -40,7 +46,10 @@ const RootLayout: LayoutComponent = ({ children }) => {
           'bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container min-h-screen flex',
           inter.className,
           playfair.className,
-          montserrat.className
+          montserrat.className,
+          inter.variable,
+          playfair.variable,
+          montserrat.variable
         )}
       >
         <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>
