@@ -70,6 +70,7 @@ COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     /workspace-builder/apps/web/package.json \
                     /workspace-builder/apps/web/next-env.d.ts \
                     /workspace-builder/apps/web/public/ \
+                    /workspace-builder/apps/web/src/ \
                     ./apps/web/
 
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next

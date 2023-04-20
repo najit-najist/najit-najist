@@ -49,9 +49,9 @@ const getTheme = () => ({
       },
     },
     fontFamily: {
-      sans: ['montserrat', 'sans-serif'],
-      fancy: ['playfair-display', 'serif'],
-      suez: ['Suez One', 'serif'],
+      sans: ['var(--font-montserrat)'],
+      fancy: ['var(--font-playfair-display)'],
+      suez: ['var(--font-suez)'],
     },
     container: {
       center: true,

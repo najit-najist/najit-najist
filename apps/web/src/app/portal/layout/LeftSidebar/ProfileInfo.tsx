@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 export const ProfileInfo: FC = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user } = useCurrentUser({ suspense: true });
 
   return (
     <div className="flex flex-shrink-0 px-6 py-4 mt-auto border-t-2 border-gray-50">
