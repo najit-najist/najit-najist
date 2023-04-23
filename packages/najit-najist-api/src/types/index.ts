@@ -8,3 +8,4 @@ export * from './PocketbaseErrorCodes';
 export * from './Post';
 export * from './PostCategories';
 export * from './User';
+export * from './UserTokenData';
