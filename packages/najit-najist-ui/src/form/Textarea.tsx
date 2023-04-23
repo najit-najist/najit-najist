@@ -1,3 +1,4 @@
+import { cx } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
   forwardRef,
@@ -35,7 +36,9 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         id={inputId}
       >
         <textarea
-          className={inputStyles({ className })}
+          className={inputStyles({
+            className: cx(className, label ? 'mt-1' : ''),
+          })}
           ref={ref}
           id={inputId}
           name={name}

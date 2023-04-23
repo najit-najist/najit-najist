@@ -21,7 +21,7 @@ export interface InputProps
       >,
       'size' | 'color' | 'disabled' | 'prefix'
     >,
-    Omit<InputVariantProps, 'type' | 'withPrefix' | 'withSuffix'> {
+    Omit<InputVariantProps, 'withPrefix' | 'withSuffix'> {
   label?: string;
   hideLabel?: boolean;
   error?: FieldError;
@@ -32,10 +32,10 @@ export interface InputProps
   wrapperClassName?: string;
 }
 
-const inputTypeToStyleType = (
+const inputTypeToAppearance = (
   type: InputProps['type']
-): InputVariantProps['type'] => {
-  let res: InputVariantProps['type'] = 'normal';
+): InputVariantProps['appearance'] => {
+  let res: InputVariantProps['appearance'] = 'normal';
 
   switch (type) {
     case 'checkbox': {
@@ -51,20 +51,21 @@ const inputTypeToStyleType = (
 };
 
 export const inputStyles = cva(
-  'block w-full border border-gray-300 shadow-sm focus:outline-none',
+  'block w-full border-gray-300 shadow-sm focus:outline-none',
   {
     variants: {
-      type: {
-        normal: '',
-        checkbox: '',
+      appearance: {
+        normal: 'border',
+        checkbox: 'border',
+        standalone: 'border-b-2',
       },
       size: {
         normal: 'py-2 px-3 sm:text-sm',
         md: 'py-3 px-5 sm:text-md',
+        lg: 'py-3 px-5 sm:text-xl',
       },
       color: {
-        default:
-          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400 focus:border-green-400 placeholder-warm-gray-500',
+        default: 'placeholder-gray-400 focus:border-green-400',
       },
       disabled: {
         true: 'opacity-60 bg-gray-100',
@@ -80,16 +81,27 @@ export const inputStyles = cva(
       },
     },
     defaultVariants: {
-      type: 'normal',
+      appearance: 'normal',
       size: 'normal',
       color: 'default',
+      withPrefix: false,
+      withSuffix: false,
     },
+    compoundVariants: [
+      {
+        color: 'default',
+        appearance: 'normal',
+        className:
+          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400',
+      },
+    ],
   }
 );
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   {
     type,
+    appearance,
     className,
     label,
     hideLabel,
@@ -134,7 +146,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           ref={ref}
           className={inputStyles({
             className,
-            type: inputTypeToStyleType(type),
+            appearance: appearance ?? inputTypeToAppearance(type),
             size,
             color,
             disabled,

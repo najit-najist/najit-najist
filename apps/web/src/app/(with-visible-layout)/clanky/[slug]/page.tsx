@@ -1,6 +1,7 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import type { Post } from '@najit-najist/api';
+import { DataRenderer } from '@najit-najist/ui/editor-renderer';
 import { getFileUrl } from '@utils';
 import { getClient } from '@vanilla-trpc';
 import dayjs from 'dayjs';
@@ -33,6 +34,10 @@ export default async function PostUnderPage({
     post = await getClient().posts.getOne.query({
       slug: postSlug,
     });
+
+    if (!post.publishedAt) {
+      throw new Error('Not published');
+    }
   } catch (error) {
     return notFound();
   }
@@ -41,7 +46,7 @@ export default async function PostUnderPage({
     <div>
       <PageHeader className="container">
         <time
-          dateTime={post.publishedAt}
+          dateTime={post.publishedAt as string}
           className="text-gray-500 font-semibold"
         >
           {dayjs(post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
@@ -69,10 +74,11 @@ export default async function PostUnderPage({
         </div>
       </div>
 
-      <div
-        className="container text-xl pb-10"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      ></div>
+      {post.content ? (
+        <div className="container text-xl pb-10">
+          <DataRenderer data={post.content} />
+        </div>
+      ) : null}
     </div>
   );
 }
