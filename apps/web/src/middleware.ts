@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { SESSION_NAME, UserTokenData } from '@najit-najist/api';
-import {
-  getEdgeSession,
-  PREVIEW_AUTH_PASSWORD,
-  TokenService,
-} from '@najit-najist/api/edge';
+import jwtDecode from 'jwt-decode';
+import { getEdgeSession, PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -108,7 +105,8 @@ export async function middleware(request: NextRequest) {
 
     return NextResponse.redirect(url);
   } else if (isPortalRequest && session.userToken) {
-    const result = new TokenService().decode<UserTokenData>(session.userToken);
+    // We cannot use our token service since lodash cannot be used in edge runtime (edge is used by jwt)
+    const result = jwtDecode<UserTokenData>(session.userToken);
     const url = request.nextUrl.clone();
     url.pathname = '/login';
 
