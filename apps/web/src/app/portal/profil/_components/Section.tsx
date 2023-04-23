@@ -1,10 +1,11 @@
+import clsx from 'clsx';
 import { FC, PropsWithChildren } from 'react';
 
 export const Section: FC<
-  PropsWithChildren<{ title: string; description: string }>
-> = ({ description, title, children }) => (
-  <div className="space-y-6 sm:space-y-5">
-    <div className="pt-10">
+  PropsWithChildren<{ title: string; description: string; className?: string }>
+> = ({ description, title, children, className }) => (
+  <div className={clsx('space-y-6 sm:space-y-5 px-8 pt-2', className)}>
+    <div>
       <h3 className="text-base font-semibold leading-6 text-gray-900">
         {title}
       </h3>

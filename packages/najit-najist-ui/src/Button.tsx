@@ -22,6 +22,7 @@ const buttonStyles = cva(
           'bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 font-semibold',
         sweet:
           'bg-green-300 hover:bg-green-400 focus:ring-bg-green-400 text-white',
+        blue: 'bg-indigo-700 hover:bg-indigo-600 text-white border border-indigo-700',
       },
       isLoading: {
         true: 'cursor-wait opacity-70',

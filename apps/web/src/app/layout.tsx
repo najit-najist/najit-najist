@@ -3,10 +3,17 @@ import { LayoutComponent } from '@custom-types';
 import { ContextProviders } from '@contexts';
 import { Suez_One, Playfair_Display, Montserrat } from 'next/font/google';
 import { headers } from 'next/headers';
+import timezone from 'dayjs/plugin/timezone';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import clsx from 'clsx';
+import dayjs from 'dayjs';
+
+dayjs.extend(timezone);
+dayjs.extend(relativeTime);
 
 // @ts-ignore
 import('dayjs/locale/cs');
+dayjs.locale('cs');
 
 const inter = Suez_One({
   weight: '400',

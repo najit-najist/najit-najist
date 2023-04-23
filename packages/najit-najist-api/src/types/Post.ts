@@ -9,7 +9,22 @@ export type Post = ContentTypeBase & {
   /**
    * Indicates that post is created and when
    */
-  publishedAt: string;
-  content: string;
+  publishedAt?: string | null;
+  content?: {
+    /**
+     * Editor's version
+     */
+    version?: string;
+
+    /**
+     * Timestamp of saving in milliseconds
+     */
+    time?: number;
+
+    /**
+     * Saved Blocks
+     */
+    blocks: any[];
+  };
   categories: Omit<PostCategories, 'created' | 'updated'>[];
 };

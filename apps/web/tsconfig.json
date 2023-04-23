@@ -31,6 +31,9 @@
       "@components/*": [
         "./components/*"
       ],
+      "@trpc": [
+        "./trpc"
+      ],
       "@vanilla-trpc": [
         "./vanilla-trpc"
       ]

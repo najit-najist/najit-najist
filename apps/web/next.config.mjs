@@ -1,12 +1,16 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  // reactStrictMode: true,
   swcMinify: true,
   experimental: {
     appDir: true,
     typedRoutes: true,
   },
-  transpilePackages: ['@najitnajist/ui', '@najitnajist/api'],
+  transpilePackages: [
+    '@najitnajist/ui',
+    '@najitnajist/api',
+    '@najit-najist/tailwind-plugin',
+  ],
   webpack(config, { isServer }) {
     config.module.rules.push(
       {
