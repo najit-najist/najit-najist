@@ -6,7 +6,11 @@ const nextConfig = {
     appDir: true,
     typedRoutes: true,
   },
-  transpilePackages: ['@najitnajist/ui', '@najitnajist/api'],
+  transpilePackages: [
+    '@najitnajist/ui',
+    '@najitnajist/api',
+    '@najit-najist/tailwind-plugin',
+  ],
   webpack(config, { isServer }) {
     config.module.rules.push(
       {

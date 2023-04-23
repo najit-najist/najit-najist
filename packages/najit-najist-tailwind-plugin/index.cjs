@@ -1,7 +1,7 @@
 const formPlugin = require('@tailwindcss/forms');
 const plugin = require('tailwindcss/plugin');
 
-const tailwindPlugin = plugin(({ addBase, addUtilities, addVariant }) => {
+const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
   addUtilities({
     '.text-shadow-sm': {
       textShadow: '#ffffff 0px 0px 6px',
@@ -20,6 +20,28 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, addVariant }) => {
       scale: '0.865',
       marginTop: '-2px',
     },
+    '.ce-block__content': {
+      maxWidth: 'unset',
+    },
+    '.ce-toolbar__content': {
+      maxWidth: 'unset',
+    },
+    '.ce-header': {
+      fontWeight: 600,
+      fontFamily: theme('fontFamily.sans'),
+      marginTop: `${theme('spacing.10')}!important`,
+      marginBottom: `${theme('spacing.5')}!important`,
+      padding: '0!important',
+    },
+    'h2.ce-header': {
+      fontSize: theme('fontSize.5xl'),
+    },
+    'h3.ce-header': {
+      fontSize: theme('fontSize.3xl'),
+    },
+    'h4.ce-header': {
+      fontSize: theme('fontSize.xl'),
+    },
   });
 });
 
@@ -28,7 +50,13 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, addVariant }) => {
  * @returns {Omit<import("tailwindcss").Config, 'content'>}
  */
 const getTheme = () => ({
-  safelist: ['instagram_svg__feather'],
+  safelist: [
+    'instagram_svg__feather',
+    'ce-block__content',
+    'ce-header',
+    'ce-block__content',
+    'ce-toolbar__content',
+  ],
   theme: {
     extend: {
       colors: {
@@ -64,19 +92,7 @@ const getTheme = () => ({
       },
     },
   },
-  plugins: [
-    formPlugin,
-    tailwindPlugin,
-    {
-      handler: ({ addBase }) => {
-        addBase({
-          [`.ce-block__content, .ce-toolbar__content`]: {
-            maxWidth: 'unset',
-          },
-        });
-      },
-    },
-  ],
+  plugins: [formPlugin, tailwindPlugin],
 });
 
 module.exports = {

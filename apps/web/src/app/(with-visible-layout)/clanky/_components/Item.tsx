@@ -28,7 +28,7 @@ export const Item: FC<Post> = (post) => {
       </div>
       <div>
         <div className="flex items-center gap-x-4 text-xs mt-2">
-          <time dateTime={post.publishedAt} className="text-gray-500">
+          <time dateTime={post.publishedAt as string} className="text-gray-500">
             {dayjs(post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
           </time>
           <div className="flex space-x-3">

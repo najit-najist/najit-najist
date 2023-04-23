@@ -11,6 +11,16 @@
       "import": "./dist/index.js",
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./editor": {
+      "import": "./dist/editor/index.js",
+      "require": "./dist/editor/index.js",
+      "types": "./dist/editor/index.d.ts"
+    },
+    "./editor-renderer": {
+      "import": "./dist/editor/DataRenderer/index.js",
+      "require": "./dist/editor/DataRenderer/index.js",
+      "types": "./dist/editor/DataRenderer/index.d.ts"
     }
   },
   "license": "MIT",
@@ -31,6 +41,7 @@
     "@heroicons/react": "^2.0.12",
     "class-variance-authority": "^0.3.0",
     "clsx": "^1.2.1",
+    "html-react-parser": "^3.0.16",
     "react-editor-js": "^2.1.0"
   },
   "devDependencies": {

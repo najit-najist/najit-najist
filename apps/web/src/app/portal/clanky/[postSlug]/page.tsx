@@ -1,9 +1,11 @@
-import { Post, User } from '@najit-najist/api';
+import { Post } from '@najit-najist/api';
 import { getClient } from '@vanilla-trpc';
 import { notFound } from 'next/navigation';
 import { Content } from './_components/Content';
 
 type Params = { params: { postSlug: string } };
+
+export const revalidate = 0;
 
 export default async function Page({ params }: Params) {
   let user: Post;

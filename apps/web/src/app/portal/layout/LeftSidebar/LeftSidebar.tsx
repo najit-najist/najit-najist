@@ -66,7 +66,7 @@ const secondaryLinks: Array<LinkMeta> = [
   },
   {
     name: 'Vytvoření článku',
-    href: '/portal/uzivatele/novy',
+    href: '/portal/clanky/novy',
     icon: BookOpenIcon,
     userCheck: (currentUser) =>
       canUser(currentUser, {
