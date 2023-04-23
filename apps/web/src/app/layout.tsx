@@ -44,34 +44,6 @@ export const metadata = {
   publisher: 'najitnajist',
 };
 
-const inter = Suez_One({
-  weight: '400',
-  subsets: ['latin'],
-  variable: '--font-suez',
-});
-const playfair = Playfair_Display({
-  weight: ['400', '700'],
-  variable: '--font-playfair-display',
-  style: ['italic', 'normal'],
-  subsets: ['latin'],
-});
-const montserrat = Montserrat({
-  weight: ['300', '400', '700', '800'],
-  variable: '--font-montserrat',
-  style: ['italic', 'normal'],
-  subsets: ['latin'],
-});
-
-export const metadata = {
-  title: {
-    template: '%s | Najít Najíst',
-    default: 'Hlavní stránka',
-  },
-  viewport: 'width=device-width',
-  creator: 'Ondřej Langr <hi@ondrejlangr.cz>',
-  publisher: 'najitnajist',
-};
-
 const RootLayout: LayoutComponent = ({ children }) => {
   const headersStore = headers();
 
