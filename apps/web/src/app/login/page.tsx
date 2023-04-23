@@ -8,13 +8,5 @@ export const metadata = {
 };
 
 export default function LoginPage() {
-  const cookieStore = cookies();
-  const session = cookieStore.get(SESSION_NAME);
-
-  // TODO: Should we check for expiry too?
-  if (session) {
-    redirect(`/portal`);
-  }
-
   return <Content />;
 }
