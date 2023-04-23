@@ -1,5 +1,6 @@
 import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
+import { UserTokenData } from '@custom-types';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',
@@ -8,12 +9,7 @@ const UNAUTHORIZED_ERROR = new TRPCError({
 export const isAuthed = t.middleware(async ({ next, ctx }) => {
   const sessionUserToken = ctx.session.userToken;
   const result = sessionUserToken
-    ? ctx.services.token.decode<{
-        collectionId: string;
-        exp: number;
-        id: string;
-        type: string;
-      }>(sessionUserToken)
+    ? ctx.services.token.decode<UserTokenData>(sessionUserToken)
     : null;
 
   if (!sessionUserToken || !result) {

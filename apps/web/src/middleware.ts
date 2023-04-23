@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_NAME } from '@najit-najist/api';
-import { getEdgeSession, PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
+import { SESSION_NAME, UserTokenData } from '@najit-najist/api';
+import {
+  getEdgeSession,
+  PREVIEW_AUTH_PASSWORD,
+  TokenService,
+} from '@najit-najist/api/edge';
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -97,11 +101,35 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (request.nextUrl.pathname.startsWith('/portal') && !session.userToken) {
+  const isPortalRequest = request.nextUrl.pathname.startsWith('/portal');
+  if (isPortalRequest && !session.userToken) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
 
     return NextResponse.redirect(url);
+  } else if (isPortalRequest && session.userToken) {
+    const result = new TokenService().decode<UserTokenData>(session.userToken);
+    const url = request.nextUrl.clone();
+    url.pathname = '/login';
+
+    if (!result) {
+      return NextResponse.redirect(url, {
+        headers: new Headers(response.headers),
+      });
+    }
+
+    const unixNow = parseInt((new Date().getTime() / 1000).toFixed(0));
+    const unixExpiry = result.exp;
+
+    if (unixNow >= unixExpiry) {
+      session.userToken = undefined;
+
+      await session.save();
+
+      return NextResponse.redirect(url, {
+        headers: new Headers(response.headers),
+      });
+    }
   }
 
   return response;
