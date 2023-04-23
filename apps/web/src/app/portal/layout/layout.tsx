@@ -15,12 +15,6 @@ export const metadata = {
 
 const PortalLayout: LayoutComponent = ({ children }) => {
   const cookieStore = cookies();
-  const session = cookieStore.get(SESSION_NAME);
-
-  // TODO: Should we check for expiry too?
-  if (!session) {
-    redirect(`/login`);
-  }
 
   return (
     <div className="w-full flex flex-col">
