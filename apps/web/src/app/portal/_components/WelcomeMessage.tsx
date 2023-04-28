@@ -7,6 +7,8 @@ export const WelcomeMessage: FC = () => {
   const { data } = useCurrentUser({ trpc: { ssr: false } });
 
   return (
-    <h1 className="text-4xl font-semibold">Vítejte, {data?.firstName}!</h1>
+    <h1 className="text-4xl font-semibold mx-10">
+      Vítejte, {data?.firstName}!
+    </h1>
   );
 };
