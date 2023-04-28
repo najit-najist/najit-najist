@@ -21,6 +21,7 @@ type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
 export const Content: FC = () => {
   const { mutateAsync: doLogin } = trpc.profile.login.useMutation();
   const searchParams = useSearchParams();
+  const utils = trpc.useContext();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(loginInputSchema),
   });
@@ -37,6 +38,7 @@ export const Content: FC = () => {
     async (values) => {
       try {
         await doLogin(values);
+        await utils.profile.me.invalidate();
 
         router.push('/portal');
       } catch (error) {
@@ -147,7 +149,7 @@ export const Content: FC = () => {
 
             <div>
               <Button
-                isLoading={isSubmitting}
+                isLoading={isSubmitting || isSubmitSuccessful}
                 type="submit"
                 size="normal"
                 className="shadow-sm w-full"
