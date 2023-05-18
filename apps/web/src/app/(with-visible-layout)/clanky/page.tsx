@@ -12,12 +12,6 @@ export const metadata = {
   title: 'Články',
 };
 
-export const revalidate = 30;
-
-export const metadata = {
-  title: 'Články',
-};
-
 export default async function Page() {
   const { items: posts } = await getClient().posts.getMany.query();
 

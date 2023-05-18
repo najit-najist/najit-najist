@@ -11,7 +11,10 @@ import ListPlugin from '@editorjs/nested-list';
 // @ts-ignore
 import UnderlinePlugin from '@editorjs/underline';
 import { Tool } from './types';
-import { AVAILABLE_LEVELS, DEFAULT_LEVEL } from './DataRenderer/renderers';
+import {
+  AVAILABLE_LEVELS,
+  DEFAULT_LEVEL,
+} from '../BlockEditorRenderer/renderers';
 
 export const EDITORJS_TOOLS = {
   paragraph: {
