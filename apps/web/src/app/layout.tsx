@@ -1,4 +1,5 @@
 import '../globals.css';
+import 'keen-slider/keen-slider.min.css';
 import { LayoutComponent } from '@custom-types';
 import { ContextProviders } from '@contexts';
 import { Suez_One, Playfair_Display, Montserrat } from 'next/font/google';
@@ -50,7 +51,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
     <html lang="cs">
       <body
         className={clsx(
-          'bg-gradient-to-b from-[#fbf9eb] to-white data-scroll-container min-h-screen flex',
+          'bg-gradient-to-b from-[#fbf9ebd3] to-white data-scroll-container min-h-screen flex',
           inter.className,
           playfair.className,
           montserrat.className,

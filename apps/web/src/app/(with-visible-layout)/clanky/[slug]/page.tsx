@@ -1,34 +1,39 @@
-import { PageHeader } from '@components/common/PageHeader';
-import { PageTitle } from '@components/common/PageTitle';
-import type { Post } from '@najit-najist/api';
-import { DataRenderer } from '@najit-najist/ui/editor-renderer';
-import { getFileUrl } from '@utils';
+import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
+import { Post } from '@najit-najist/api';
+import { isUserLoggedIn } from '@najit-najist/api/server';
 import { getClient } from '@vanilla-trpc';
-import dayjs from 'dayjs';
 import { Metadata } from 'next';
-import Image from 'next/image';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 type PageParams = {
   params: { slug: string };
+  searchParams: { editor: string };
 };
 
 export async function generateMetadata({
   params: { slug: postSlug },
+  searchParams,
 }: PageParams): Promise<Metadata> {
   const post = await getClient().posts.getOne.query({
     slug: postSlug,
   });
 
   return {
-    title: post.title,
+    title: !!searchParams.editor ? `Upravení ${post.title}` : post.title,
   };
 }
 
 export default async function PostUnderPage({
   params: { slug: postSlug },
+  searchParams,
 }: PageParams) {
   let post: Post;
+  const isEditorEnabled = !!searchParams.editor;
+  const userLoggedIn = await isUserLoggedIn();
+
+  if (isEditorEnabled && !userLoggedIn) {
+    redirect('/');
+  }
 
   try {
     post = await getClient().posts.getOne.query({
@@ -43,42 +48,10 @@ export default async function PostUnderPage({
   }
 
   return (
-    <div>
-      <PageHeader className="container">
-        <time
-          dateTime={post.publishedAt as string}
-          className="text-gray-500 font-semibold"
-        >
-          {dayjs(post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
-        </time>
-        <PageTitle>{post.title}</PageTitle>
-      </PageHeader>
-
-      <div className="bg-[#388659] py-10 my-14">
-        <div className="container flex space-x-10">
-          {post.image ? (
-            <div className="w-1/2 aspect-[16/10] relative flex-none -mt-24 mb-5">
-              <Image
-                width={300}
-                height={300}
-                unoptimized
-                src={getFileUrl('posts', post.id, post.image)}
-                alt=""
-                className="absolute inset-0 h-full w-full rounded-lg bg-gray-50 object-cover shadow-md"
-              />
-            </div>
-          ) : null}
-          <p className="text-white font-suez text-xl leading-10 max-w-4xl">
-            {post.description}
-          </p>
-        </div>
-      </div>
-
-      {post.content ? (
-        <div className="container text-xl pb-10">
-          <DataRenderer data={post.content} />
-        </div>
-      ) : null}
-    </div>
+    <PostPageManageContent
+      isEditorHeaderShown={userLoggedIn}
+      viewType={isEditorEnabled ? 'edit' : 'view'}
+      post={post}
+    />
   );
 }

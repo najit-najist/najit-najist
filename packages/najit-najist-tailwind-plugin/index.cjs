@@ -42,6 +42,49 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
     'h4.ce-header': {
       fontSize: theme('fontSize.xl'),
     },
+    '.quill': {
+      borderRadius: theme('borderRadius.md'),
+      background: theme('colors.white'),
+      position: 'relative',
+      display: 'flex',
+      flexFlow: 'column-reverse',
+      borderWidth: theme('borderWidth.2'),
+      borderColor: theme('colors.gray.200'),
+
+      '.ql-toolbar': {
+        opacity: 0,
+        transitionProperty: 'opacity',
+        transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+        transitionDuration: '150ms',
+      },
+      '.gl-stroke': {
+        stroke: `${theme('colors.gray.400')}!important`,
+      },
+
+      '&.is-focusing': {
+        '.ql-toolbar': {
+          opacity: 1,
+        },
+      },
+    },
+    '.ql-container, .ql-toolbar': {
+      border: 'none!important',
+    },
+    '.ql-toolbar': {
+      fontSize: '1rem',
+    },
+    '.ql-toolbar': {
+      '.ql-picker, .ql-formats>button': {
+        borderRadius: theme('borderRadius.md'),
+
+        '&:hover': {
+          backgroundColor: theme('colors.gray.100'),
+        },
+      },
+      '.ql-formats>button': {
+        padding: '5px!important',
+      },
+    },
   });
 });
 
@@ -54,6 +97,9 @@ const getTheme = () => ({
     'instagram_svg__feather',
     'ce-block__content',
     'ce-header',
+    'quill',
+    'ql-container',
+    'ql-toolbar',
     'ce-block__content',
     'ce-toolbar__content',
   ],

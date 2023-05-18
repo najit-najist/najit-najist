@@ -13,7 +13,7 @@ export interface LabelProps
     >,
     VariantProps<typeof labelStyles> {}
 
-const labelStyles = cva('block text-sm font-medium text-gray-700', {
+export const labelStyles = cva('block text-sm font-medium text-gray-700', {
   variants: {
     type: {
       invisible: 'sr-only',

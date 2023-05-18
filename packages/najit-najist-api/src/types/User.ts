@@ -21,6 +21,7 @@ export interface User {
   username: string;
   email: string;
   newsletter: boolean;
+  avatar?: string;
   newsletterUuid: string;
   status: UserStates;
   role: UserRoles;

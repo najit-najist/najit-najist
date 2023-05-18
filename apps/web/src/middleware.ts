@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SESSION_NAME, UserTokenData } from '@najit-najist/api';
-import jwtDecode from 'jwt-decode';
 import { getEdgeSession, PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
 
 export async function middleware(request: NextRequest) {
@@ -74,63 +72,6 @@ export async function middleware(request: NextRequest) {
       }
     }
   }
-
-  if (request.nextUrl.pathname.startsWith('/logout')) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-
-    const response = NextResponse.redirect(url, {
-      headers: new Headers(request.headers),
-    });
-
-    response.cookies.delete(SESSION_NAME);
-
-    return NextResponse.redirect(url, {
-      // Bug in next - we have to pass headers again
-      headers: response.headers,
-    });
-  }
-
-  if (request.nextUrl.pathname.startsWith('/login') && session.userToken) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/portal';
-
-    return NextResponse.redirect(url);
-  }
-
-  const isPortalRequest = request.nextUrl.pathname.startsWith('/portal');
-  if (isPortalRequest && !session.userToken) {
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-
-    return NextResponse.redirect(url);
-  } else if (isPortalRequest && session.userToken) {
-    // We cannot use our token service since lodash cannot be used in edge runtime (edge is used by jwt)
-    const result = jwtDecode<UserTokenData>(session.userToken);
-    const url = request.nextUrl.clone();
-    url.pathname = '/login';
-
-    if (!result) {
-      return NextResponse.redirect(url, {
-        headers: new Headers(response.headers),
-      });
-    }
-
-    const unixNow = parseInt((new Date().getTime() / 1000).toFixed(0));
-    const unixExpiry = result.exp;
-
-    if (unixNow >= unixExpiry) {
-      session.userToken = undefined;
-
-      await session.save();
-
-      return NextResponse.redirect(url, {
-        headers: new Headers(response.headers),
-      });
-    }
-  }
-
-  return response;
 }
 
 export const config = {

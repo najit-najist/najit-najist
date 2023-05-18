@@ -17,7 +17,9 @@
       "@config": ["./config"],
       "@constants": ["./constants"],
       "@services/*": ["./services/*"],
-      "@trpc": ["./trpc"],
+      "@services": ["./services"],
+      "@trpc": ["./trpc/index.js"],
+      "@trpc-procedures/*": ["./trpc/procedures/*"],
       "@logger": ["./logger"]
     }
   },

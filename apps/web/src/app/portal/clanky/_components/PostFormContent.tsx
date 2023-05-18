@@ -1,13 +1,15 @@
 import { Section } from '@components/portal';
 import { Post } from '@najit-najist/api';
 import { Input, Textarea } from '@najit-najist/ui';
-import { EditorCode } from '@najit-najist/ui/editor';
+import type { BlockEditorCode } from '@najit-najist/ui/editor';
+import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
 import dynamic from 'next/dynamic';
-import { FC } from 'react';
+import { FC, useEffect, useId, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 const LazyEditor = dynamic(
-  () => import('@najit-najist/ui/editor').then(({ Editor }) => Editor),
+  () =>
+    import('@najit-najist/ui/editor').then(({ BlockEditor }) => BlockEditor),
   {
     ssr: false,
     loading() {
@@ -16,13 +18,23 @@ const LazyEditor = dynamic(
   }
 );
 
-type PostFormContentProps = { onEditorInit?: (core: EditorCode) => void };
-
-export const PostFormContent: FC<PostFormContentProps> = ({ onEditorInit }) => {
+export const PostFormContent: FC = () => {
   const { register, formState, watch } = useFormContext<Post>();
   const fieldsAreDisabled = formState.isSubmitting;
-
+  const [editorInstance, setEditorInstance] = useState<BlockEditorCode>();
+  const editorId = useId();
+  const editorInstances = useEditorJSInstances();
   const editorData = watch('content');
+
+  useEffect(() => {
+    if (editorInstance) {
+      editorInstances.set(editorId, editorInstance);
+    }
+
+    return () => {
+      editorInstances.delete(editorId);
+    };
+  }, [editorInstance, editorId, editorInstances]);
 
   return (
     <>
@@ -50,7 +62,7 @@ export const PostFormContent: FC<PostFormContentProps> = ({ onEditorInit }) => {
       <Section className="px-[64px]">
         <LazyEditor
           defaultValue={editorData}
-          onInitialize={onEditorInit}
+          onInitialize={setEditorInstance}
           minHeight={200}
         />
       </Section>

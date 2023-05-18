@@ -8,21 +8,24 @@ export type ButtonProps = DetailedHTMLProps<
 > &
   VariantProps<typeof buttonStyles>;
 
-const buttonStyles = cva(
+export const buttonStyles = cva(
   'rounded-lg duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-lg',
   {
     variants: {
-      size: {
-        small: 'py-2 px-4 text-sm',
-        normal: 'py-2 px-8',
-      },
       color: {
         normal: 'bg-deep-green-500 focus:ring-deep-green-400 text-white',
-        white:
-          'bg-white hover:bg-gray-50 text-gray-900 border border-gray-300 font-semibold',
+        white: 'bg-white text-deep-green-400 shadow font-semibold',
         sweet:
           'bg-green-300 hover:bg-green-400 focus:ring-bg-green-400 text-white',
         blue: 'bg-indigo-700 hover:bg-indigo-600 text-white border border-indigo-700',
+        red: 'bg-red-700 hover:bg-red-600 text-white border border-red-700',
+        softRed:
+          'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
+      },
+      appearance: {
+        small: 'py-2 px-4 text-sm',
+        spaceless: '',
+        normal: 'py-2 px-8',
       },
       isLoading: {
         true: 'cursor-wait opacity-70',
@@ -30,7 +33,7 @@ const buttonStyles = cva(
       },
     },
     defaultVariants: {
-      size: 'normal',
+      appearance: 'normal',
       color: 'normal',
       isLoading: false,
     },
@@ -43,6 +46,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={buttonStyles({ className, isLoading, ...rest })}
+        type="button"
         {...rest}
       >
         {isLoading ? (

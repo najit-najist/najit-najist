@@ -10,7 +10,7 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
-import type { EditorCode } from '@najit-najist/ui/editor';
+import type { BlockEditorCode } from '@najit-najist/ui/editor';
 import { trpc } from '@trpc';
 import { PostFormContent } from '../../_components/PostFormContent';
 import { PostPageLayout } from '../../_components/PostPageLayout';
@@ -29,7 +29,7 @@ export const Content: FC<{ post: Post }> = ({ post }) => {
   });
   const router = useRouter();
   const { mutateAsync: update } = trpc.posts.update.useMutation();
-  const contentEditorRef = useRef<EditorCode>();
+  const contentEditorRef = useRef<BlockEditorCode>();
   const { formState, handleSubmit } = formMethods;
 
   const onSubmit: SubmitHandler<Post> = useCallback(
@@ -150,9 +150,7 @@ export const Content: FC<{ post: Post }> = ({ post }) => {
             ]}
           />
 
-          <PostFormContent
-            onEditorInit={(editor) => (contentEditorRef.current = editor)}
-          />
+          <PostFormContent />
         </PostPageLayout>
       </form>
     </FormProvider>

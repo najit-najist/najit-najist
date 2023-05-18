@@ -63,14 +63,14 @@ export class MailService {
         locals: payload,
       });
       logger.info(
-        `MailService: Mail has been sent to email: ${to} -- ${JSON.stringify({
+        {
           rejected: result?.rejected,
           response: result?.response,
-        })}`
+        },
+        `MailService: Mail has been sent to email: ${to}`
       );
     } catch (e) {
-      logger.error('Mail sending has error', e);
-      logger.error(e);
+      logger.error(e, 'Mail sending has error');
 
       throw Error('Posílání emailu nebylo úspěšné.');
     }

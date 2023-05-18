@@ -1,6 +1,6 @@
 import { APP_NAME, SESSION_NAME } from '@constants';
 import { PocketbaseCollections } from '@custom-types';
-import { PocketBase } from '@najit-najist/pb';
+import { pocketbase } from '@najit-najist/pb';
 
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
@@ -75,7 +75,7 @@ export const config = {
           return [key, { password, email }];
         })
     ),
-    async loginWithAccount(pb: PocketBase, userName: string) {
+    async loginWithAccount(userName: string) {
       const account = this.accounts.get(userName);
 
       if (!account) {
@@ -83,7 +83,7 @@ export const config = {
       }
 
       try {
-        await pb
+        await pocketbase
           .collection(PocketbaseCollections.API_CONTROLLERS)
           .authWithPassword(account.email, account.password);
       } catch (error) {

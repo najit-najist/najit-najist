@@ -4,19 +4,23 @@ import {
   User,
   UserStates,
 } from '@custom-types';
-import { protectedProcedure, t } from '@trpc';
+import { t } from '@trpc';
 import {
   getMeOutputSchema,
   loginInputSchema,
   loginOutputSchema,
   registerInputSchema,
+  updateUserInputSchema,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
-import { ClientResponseError } from '@najit-najist/pb';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { config } from '@config';
 import { ApplicationError } from '@errors';
-import { z } from 'zod';
+import { array, z } from 'zod';
 import { logger } from '@logger';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import { AvailableModels, setSessionToCookies } from '@utils';
+import { AuthService } from '@services';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -24,20 +28,29 @@ const INVALID_CREDENTIALS_ERROR = new TRPCError({
 });
 
 export const profileRouter = t.router({
+  update: protectedProcedure
+    .input(updateUserInputSchema)
+    .output(getMeOutputSchema)
+    .mutation(async ({ ctx, input }) => {
+      return pocketbase
+        .collection(AvailableModels.USER)
+        .update<User>(ctx.sessionData.userId, input);
+    }),
   me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
-    return ctx.pb.collection('users').getOne<User>(ctx.sessionData.userId, {});
+    return pocketbase
+      .collection(AvailableModels.USER)
+      .getOne<User>(ctx.sessionData.userId, {});
   }),
   login: t.procedure
     .input(loginInputSchema)
     .output(loginOutputSchema)
     .mutation(async ({ ctx, input }) => {
-      const { pb } = ctx;
       let user: (User & { verified?: boolean }) | undefined;
 
       try {
         // Try to log in
-        const { record } = await pb
-          .collection('users')
+        const { record } = await pocketbase
+          .collection(AvailableModels.USER)
           .authWithPassword<NonNullable<typeof user>>(
             input.email,
             input.password
@@ -48,7 +61,7 @@ export const profileRouter = t.router({
         throw INVALID_CREDENTIALS_ERROR;
       }
 
-      const { isValid, token } = pb.authStore;
+      const { isValid, token, model } = pocketbase.authStore;
 
       if (!isValid || !user) {
         throw INVALID_CREDENTIALS_ERROR;
@@ -72,8 +85,21 @@ export const profileRouter = t.router({
       }
 
       // add user token to session
-      ctx.session.userToken = token;
-      await ctx.session.save();
+      await setSessionToCookies(
+        {
+          // TODO: This should be removed after release
+          previewAuthorized: true,
+          authContent: {
+            model: {
+              collectionId: model?.collectionId,
+              username: user.username,
+              verified: user.verified,
+            },
+            token,
+          },
+        },
+        ctx.resHeaders
+      );
 
       return {
         token,
@@ -83,17 +109,17 @@ export const profileRouter = t.router({
     .input(registerInputSchema)
     .mutation(async ({ ctx, input }) => {
       const { services } = ctx;
-      await config.pb.loginWithAccount(ctx.pb, 'contactForm');
+      await config.pb.loginWithAccount('contactForm');
 
       try {
         const user = await services.user.create(input, true);
-        ctx.pb.authStore.clear();
+        AuthService.clearAuthPocketBase();
 
         return {
           email: user.email,
         };
       } catch (error) {
-        ctx.pb.authStore.clear();
+        AuthService.clearAuthPocketBase();
 
         logger.error(error, 'An error happened during user registration');
 
@@ -121,7 +147,7 @@ export const profileRouter = t.router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        await ctx.pb
+        await pocketbase
           .collection(PocketbaseCollections.USERS)
           .confirmVerification(input.token);
 

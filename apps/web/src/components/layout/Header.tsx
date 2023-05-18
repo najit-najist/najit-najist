@@ -1,104 +1,67 @@
 'use client';
 
-import {
-  FC,
-  PropsWithChildren,
-  Suspense,
-  useCallback,
-  useMemo,
-  useState,
-} from 'react';
-import {
-  Bars3Icon,
-  PresentationChartLineIcon,
-  UserCircleIcon,
-} from '@heroicons/react/24/outline';
+import { FC, PropsWithChildren, Suspense, useMemo } from 'react';
+import { UserCircleIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '@najit-najist/ui';
 import { clsx } from 'clsx';
 import { Logo } from '@components/common/Logo';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useCurrentUser } from '@hooks';
+import { LoggedInUserMenu } from './LoggedInUserMenu';
+
+const pillStyles = clsx(
+  'inline-flex items-center duration-100 whitespace-nowrap bg-white hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1 px-3 my-2 ring ring-gray-100'
+);
 
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
+  { text: 'Recepty', href: '/recepty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];
 
-const useUser = () =>
-  useCurrentUser({
+const TopHeaderItems: FC<{}> = () => {
+  const { data: loggedInUser } = useCurrentUser({
     useErrorBoundary: false,
+    suspense: true,
     retry: false,
     trpc: {
       ssr: false,
     },
   });
 
-const ProfileButton: FC = () => {
-  const { data: user } = useUser();
-
-  if (!user) {
-    return (
-      <>
+  return (
+    <>
+      {loggedInUser ? (
+        <>
+          <Link className={pillStyles} href={'/muj-ucet/profil'}>
+            Můj profil
+          </Link>
+          <LoggedInUserMenu />
+        </>
+      ) : (
         <Link
-          className="inline-flex items-center text-lg hover:bg-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1.5 px-3 duration-100"
           href="/login"
+          className={clsx('inline-flex items-center', pillStyles)}
         >
           <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
           se
         </Link>
-      </>
-    );
-  }
-
-  return (
-    <Link
-      className="inline-flex items-center text-lg bg-deep-green-400 text-white rounded-full py-1.5 px-3"
-      href="/portal/profil"
-    >
-      <UserCircleIcon width={25} height={25} className="mr-3" />{' '}
-      <span>
-        {user.firstName} {user.lastName}
-      </span>
-    </Link>
+      )}
+    </>
   );
 };
 
-const PortalLink: FC = () => {
-  const { data: user } = useUser();
-
-  if (!user) {
-    return null;
-  }
-
+export const TopHeader: FC = ({}) => {
   return (
-    <Link
-      className="inline-flex items-center text-lg p-2 mr-3 bg-white rounded-full"
-      href="/portal"
-    >
-      <PresentationChartLineIcon width={22} height={22} />
-    </Link>
-  );
-};
-
-export const TopHeader: FC<{ onBurgerClick: () => void }> = ({
-  onBurgerClick,
-}) => {
-  return (
-    <div className="bg-white sm:bg-transparent relative z-20">
-      <div className="container flex py-5 sm:py-1">
-        <div className="ml-auto flex items-center">
-          <Suspense fallback={<Skeleton className="h-10 rounded-full w-32" />}>
-            <PortalLink />
+    <div className="bg-transparent relative z-30">
+      <div className="container flex">
+        <div className="ml-auto flex gap-3">
+          <Suspense fallback={<Skeleton className="h-[32px] w-[100px] my-2" />}>
+            <TopHeaderItems />
           </Suspense>
-          <Suspense fallback={<></>}>
-            <ProfileButton />
-          </Suspense>
-          <button onClick={onBurgerClick} className="block sm:hidden ml-6">
-            <Bars3Icon width={35} height={35} />
-          </button>
         </div>
       </div>
     </div>
@@ -107,29 +70,20 @@ export const TopHeader: FC<{ onBurgerClick: () => void }> = ({
 
 export const Header: FC<PropsWithChildren> = () => {
   const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isPortal = useMemo(() => pathname?.startsWith('/portal'), [pathname]);
-
-  const toggleMobileHeader = useCallback(
-    () => setMobileMenuOpen((prev) => !prev),
-    [setMobileMenuOpen]
-  );
 
   return (
     <>
-      <TopHeader onBurgerClick={toggleMobileHeader} />
+      <TopHeader />
       {!isPortal && (
         <header
-          className={clsx(
-            'sm:block sm:sticky top-[-1px] left-0 z-20 bg-white',
-            !mobileMenuOpen && 'hidden'
-          )}
+          className={clsx('sm:block sm:sticky top-[-1px] left-0 z-20 bg-white')}
         >
           <nav className="container flex items-center">
             <Link href="/">
               <Logo className="h-16 w-auto" />
             </Link>
-            <ul className="ml-auto sm:flex text-right sm:text-left items-center gap-2 text-lg">
+            <ul className="ml-auto hidden sm:flex text-right sm:text-left items-center gap-2 text-lg">
               {navLinks.map(({ text, href }) => (
                 <li key={href}>
                   <a

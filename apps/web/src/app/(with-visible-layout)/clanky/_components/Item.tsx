@@ -1,6 +1,5 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import type { Post } from '@najit-najist/api';
-import { getFileUrl } from '@utils';
+import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,7 +14,7 @@ export const Item: FC<Post> = (post) => {
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl('posts', post.id, post.image)}
+            src={getFileUrl(AvailableModels.POST, post.id, post.image)}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />

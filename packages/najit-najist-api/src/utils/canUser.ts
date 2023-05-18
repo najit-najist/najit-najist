@@ -10,6 +10,7 @@ export enum UserActions {
 export enum AvailableModels {
   USER = 'users',
   POST = 'posts',
+  RECIPES = 'recipes',
 }
 
 export type CanUserOptions = {
