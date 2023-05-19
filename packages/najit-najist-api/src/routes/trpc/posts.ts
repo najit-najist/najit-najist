@@ -1,4 +1,5 @@
-import { t, protectedProcedure } from '@trpc';
+import { t } from '@trpc';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import {
   createPostInputSchema,
   getManyPostsInputSchema,
@@ -7,12 +8,13 @@ import {
 } from '@schemas';
 import { PocketbaseCollections, Post } from '@custom-types';
 import { slugify } from '@utils';
+import { pocketbase } from '@najit-najist/pb';
 
 export const postsRoute = t.router({
   create: protectedProcedure
     .input(createPostInputSchema)
     .mutation(async ({ ctx, input }) =>
-      ctx.pb.collection(PocketbaseCollections.POSTS).create<Post>({
+      pocketbase.collection(PocketbaseCollections.POSTS).create<Post>({
         ...input,
         slug: slugify(input.title),
         createdBy: ctx.sessionData.userId,
@@ -22,18 +24,20 @@ export const postsRoute = t.router({
   update: protectedProcedure
     .input(updateOnePostInputSchema)
     .mutation(async ({ ctx, input }) =>
-      ctx.pb.collection(PocketbaseCollections.POSTS).update<Post>(input.id, {
-        ...input.data,
-        updateBy: ctx.sessionData.userId,
-        ...(input.data.title ? { slug: slugify(input.data.title) } : null),
-      })
+      pocketbase
+        .collection(PocketbaseCollections.POSTS)
+        .update<Post>(input.id, {
+          ...input.data,
+          updateBy: ctx.sessionData.userId,
+          ...(input.data.title ? { slug: slugify(input.data.title) } : null),
+        })
     ),
 
   getMany: t.procedure
     .input(getManyPostsInputSchema.optional())
     .query(
       async ({ ctx, input = { page: 1, perPage: 20, onlyPublished: true } }) =>
-        ctx.pb
+        pocketbase
           .collection(PocketbaseCollections.POSTS)
           .getList<Post>(input?.page, input?.perPage, {
             filter: input.onlyPublished ? `publishedAt != null` : undefined,
@@ -45,7 +49,7 @@ export const postsRoute = t.router({
   getOne: t.procedure
     .input(getOnePostInputSchema)
     .query(async ({ ctx, input }) =>
-      ctx.pb
+      pocketbase
         .collection(PocketbaseCollections.POSTS)
         .getFirstListItem<Post>(`slug="${input.slug}"`, {
           expand: `categories`,

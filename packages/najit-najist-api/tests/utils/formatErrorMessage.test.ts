@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { formatErrorMessage } from '../../src/utils';
+import { formatErrorMessage } from '../../src/utils/formatErrorMessage';
 
 describe('utils', () => {
   describe('formatErrorMessage', () => {

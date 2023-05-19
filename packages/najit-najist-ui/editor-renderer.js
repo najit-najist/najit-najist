@@ -1,1 +1,1 @@
-export * from './dist/editor/DataRenderer/index.js';
+export * from './dist/BlockEditorRenderer/index.js';

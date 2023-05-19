@@ -7,6 +7,7 @@ import { trpc } from '../trpc';
 import { serverPort } from '@najit-najist/api';
 import SuperJSON from 'superjson';
 import { httpBatchLink } from '@trpc/client';
+import { EditorJsInstancesProvider } from './editorJsInstancesContext';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,8 +41,12 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
   );
 
   return (
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-    </trpc.Provider>
+    <EditorJsInstancesProvider>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient}>
+          {children}
+        </QueryClientProvider>
+      </trpc.Provider>
+    </EditorJsInstancesProvider>
   );
 };

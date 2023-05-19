@@ -144,7 +144,7 @@ export const Content: FC = () => {
                 <Button
                   isLoading={fieldsAreDisabled}
                   type="submit"
-                  size="normal"
+                  appearance="normal"
                   className="shadow-sm w-full"
                 >
                   Registrovat

@@ -8,7 +8,7 @@ export const Header: FC = () => {
     <div className="sm:flex sm:items-center px-10">
       <div className="sm:flex-auto">
         <h1 className="text-base font-semibold leading-6 text-gray-900">
-          Uživatelé
+          Články
         </h1>
         <p className="mt-2 text-sm text-gray-700">
           A list of all the users in your account including their name, title,
@@ -16,7 +16,7 @@ export const Header: FC = () => {
         </p>
       </div>
       <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
-        <Button type="button">Přidat uživatele</Button>
+        <Button type="button">Přidat článek</Button>
       </div>
     </div>
   );

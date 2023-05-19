@@ -7,7 +7,7 @@ import {
   HomeIcon,
   UserGroupIcon,
 } from '@heroicons/react/24/outline';
-import { useCurrentUser } from '@hooks';
+import { useLoggedInUser } from '@hooks';
 import { User, canUser, UserActions, AvailableModels } from '@najit-najist/api';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -30,7 +30,7 @@ const links: Array<LinkMeta> = [
   },
   {
     name: 'Uživatelé',
-    href: '/portal/uzivatele',
+    href: '/administrace/uzivatele',
     icon: UserGroupIcon,
     userCheck: (currentUser) =>
       canUser(currentUser, {
@@ -80,7 +80,7 @@ const Divider: FC = () => <hr className="w-full bg-gray-100 h-0.5" />;
 
 export const LeftSidebar = () => {
   const pathname = usePathname();
-  const { data: currentUser } = useCurrentUser();
+  const loggedInUser = useLoggedInUser();
 
   return (
     <aside
@@ -95,8 +95,8 @@ export const LeftSidebar = () => {
           <div className="space-y-1">
             {links
               .filter((item) =>
-                currentUser && item.userCheck
-                  ? item.userCheck?.(currentUser)
+                loggedInUser && item.userCheck
+                  ? item.userCheck?.(loggedInUser)
                   : true
               )
               .map((item) => {
@@ -133,8 +133,8 @@ export const LeftSidebar = () => {
           <div className="space-y-1">
             {secondaryLinks
               .filter((item) =>
-                currentUser && item.userCheck
-                  ? item.userCheck?.(currentUser)
+                loggedInUser && item.userCheck
+                  ? item.userCheck?.(loggedInUser)
                   : true
               )
               .map((item) => {

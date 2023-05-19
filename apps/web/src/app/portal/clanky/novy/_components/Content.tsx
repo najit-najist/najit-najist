@@ -5,7 +5,7 @@ import { Button, FormBreak, Paper } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useRef } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import type { EditorCode } from '@najit-najist/ui/editor';
+import type { BlockEditorCode } from '@najit-najist/ui/editor';
 import { trpc } from '@trpc';
 import { PostFormContent } from '../../_components/PostFormContent';
 import { PostPageLayout } from '../../_components/PostPageLayout';
@@ -25,7 +25,7 @@ export const Content: FC = () => {
   });
   const router = useRouter();
   const { mutateAsync: create } = trpc.posts.create.useMutation();
-  const contentEditorRef = useRef<EditorCode>();
+  const contentEditorRef = useRef<BlockEditorCode>();
   const { formState, handleSubmit, setValue } = formMethods;
   const saveFormButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -47,7 +47,7 @@ export const Content: FC = () => {
     <Paper className="p-2 sm:p-5 flex justify-between items-center mt-7">
       <Button
         color="blue"
-        size="small"
+        appearance="small"
         isLoading={formState.isSubmitting}
         ref={saveFormButtonRef}
       >
@@ -78,9 +78,7 @@ export const Content: FC = () => {
             ]}
           />
 
-          <PostFormContent
-            onEditorInit={(editor) => (contentEditorRef.current = editor)}
-          />
+          <PostFormContent />
         </PostPageLayout>
       </form>
     </FormProvider>

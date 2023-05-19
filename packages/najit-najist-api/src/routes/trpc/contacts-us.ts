@@ -9,6 +9,8 @@ import {
 import { contactUsSchema } from '@schemas';
 import { z } from 'zod';
 import { logger } from '@logger';
+import { pocketbase } from '@najit-najist/pb';
+import { AuthService } from '@services';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
@@ -16,7 +18,7 @@ export const contactUsRoutes = t.router({
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
       let user: User | undefined = undefined;
-      await config.pb.loginWithAccount(ctx.pb, 'contactForm');
+      await config.pb.loginWithAccount('contactForm');
 
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
@@ -24,7 +26,7 @@ export const contactUsRoutes = t.router({
           user = await ctx.services.user.getBy('email', input.email);
 
           if (!user.newsletter) {
-            user = await ctx.pb
+            user = await pocketbase
               .collection(PocketbaseCollections.USERS)
               .update(String(user.id), { newsletter: true });
           }
@@ -56,7 +58,7 @@ export const contactUsRoutes = t.router({
         }
       }
 
-      const createdResponse = await ctx.pb
+      const createdResponse = await pocketbase
         .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
         .create({
           email: user!.email,
@@ -96,7 +98,7 @@ export const contactUsRoutes = t.router({
           logger.error(error, `Failed to send email to user`);
         });
 
-      ctx.pb.authStore.clear();
+      AuthService.clearAuthPocketBase();
 
       return true;
     }),

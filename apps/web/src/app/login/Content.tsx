@@ -40,7 +40,7 @@ export const Content: FC = () => {
         await doLogin(values);
         await utils.profile.me.invalidate();
 
-        router.push('/portal');
+        router.push('/muj-ucet/profil');
       } catch (error) {
         const message = (error as TRPCError).message;
 
@@ -59,7 +59,7 @@ export const Content: FC = () => {
         }
       }
     },
-    [doLogin, router, setError]
+    [doLogin, router, setError, utils.profile.me]
   );
 
   return (
@@ -151,10 +151,12 @@ export const Content: FC = () => {
               <Button
                 isLoading={isSubmitting || isSubmitSuccessful}
                 type="submit"
-                size="normal"
+                appearance="normal"
                 className="shadow-sm w-full"
               >
-                {isSubmitting ? 'Přihlašuji...' : 'Přihlásit se'}
+                {isSubmitting || isSubmitSuccessful
+                  ? 'Přihlašuji...'
+                  : 'Přihlásit se'}
               </Button>
             </div>
             {errors.errorPot?.message ? (

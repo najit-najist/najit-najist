@@ -13,18 +13,18 @@ type Item = {
 };
 
 const items: Item[] = [
-  { title: 'Obchody', href: '', imageSrc: shoppingImage },
-  { title: 'Restaurace', href: '', imageSrc: waitressImage },
-  { title: 'Akce', href: '', imageSrc: eventsImage },
-  { title: 'Naše pekárny', href: '', imageSrc: bakeryImage },
+  { title: 'Obchody', href: '/', imageSrc: shoppingImage },
+  { title: 'Restaurace', href: '/', imageSrc: waitressImage },
+  { title: 'Akce', href: '/', imageSrc: eventsImage },
+  { title: 'Naše pekárny', href: '/', imageSrc: bakeryImage },
 ];
 
 const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
   <a
     href={href}
-    className="w-full sm:w-[calc(50%-1.25rem)] hover:scale-[1.02] duration-100 hover:shadow-2xl lg:w-full"
+    className="w-full aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] hover:scale-[1.02] duration-100 hover:shadow-2xl lg:w-full"
   >
-    <div className="rounded-xl overflow-hidden relative w-full h-[320px] xl:h-[400px]">
+    <div className="rounded-xl overflow-hidden relative w-full h-full">
       <Image
         className="absolute top-0 left-0 w-full h-full object-cover content-center"
         src={imageSrc}
@@ -32,7 +32,7 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
       />
       <div className="absolute inset-0 from-transparent to-black bg-gradient-to-b opacity-70" />
       <div className="absolute inset-0 bg-[#ffcccc] opacity-20" />
-      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-14 xl:mb-14 text-4xl text-white font-suez">
+      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-12 xl:mb-12 text-4xl text-white font-suez">
         {title}
       </p>
     </div>
@@ -41,7 +41,7 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
 
 export const QuickLinks: FC = () => {
   return (
-    <section className="max-w-[1720px] w-full mx-auto flex-wrap lg:flex-nowrap flex gap-5 px-5 -mt-32">
+    <section className="container w-full mx-auto flex-wrap lg:flex-nowrap flex gap-5 -mt-32">
       {items.map((data) => (
         <LinkItem key={data.title} {...data} />
       ))}

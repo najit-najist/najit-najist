@@ -14,7 +14,11 @@
     "./server": {
       "import": "./dist/server.js",
       "types": "./dist/server.d.ts"
-    }, 
+    },
+    "./services": {
+      "import": "./dist/services.js",
+      "types": "./dist/services.d.ts"
+    },
     "./edge": {
       "import": "./dist/edge.js",
       "types": "./dist/edge.d.ts"
@@ -63,24 +67,25 @@
     "@najit-najist/pb": "*",
     "@trpc/server": "^10.14.0",
     "bcrypt": "^5.1.0",
+    "chalk": "5.2.0",
     "concurrently": "^7.5.0",
     "slugify": "^1.6.6",
     "cross-fetch": "^3.1.5",
+    "dayjs": "1.11.7",
     "dotenv": "^16.0.3",
     "ejs": "^3.1.8",
-    "email-templates": "^11.0.3",
+    "email-templates": "11.0.3",
     "fs-extra": "^10.1.0",
     "iron-session": "^6.3.1",
     "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
     "lru-cache": "^8.0.4",
-    "next": "^13.3",
+    "next": "^13.4.2",
     "nextjs-cors": "^2.1.2",
     "nodemailer": "^6.8.0",
     "passport": "^0.6.0",
     "passport-local": "^1.0.0",
-    "pino": "^8.11.0",
-    "pino-pretty": "^9.1.1",
+    "string-strip-html": "^13.2.3",
     "superjson": "^1.11.0",
     "vitest": "^0.24.5",
     "zod": "^3.19.1",

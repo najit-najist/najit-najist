@@ -1,8 +1,10 @@
 import { ErrorCodes, User } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { logger } from '@logger';
+import { pocketbase, Record } from '@najit-najist/pb';
+import { getSessionFromCookies } from '@utils';
 import { PasswordService } from './Password.service';
-import { UserService } from './User.service/User.service';
+import { UserService } from './User.service';
 
 export class AuthService {
   #userService: UserService;
@@ -32,11 +34,30 @@ export class AuthService {
         return result;
       }
     } catch (e) {
-      logger.error(
-        `validateUser: validation failed because: ${(e as Error).message}`
-      );
+      logger.error(e, `validateUser: validation failed because:`);
     }
 
     return null;
+  }
+
+  /**
+   * Attaches current user into PocketBase
+   */
+  static async authPocketBase() {
+    const { authContent } = await getSessionFromCookies();
+
+    if (!authContent) {
+      throw new Error('Cannot attach auth when user is not logged in');
+    }
+
+    pocketbase.authStore.save(authContent.token, new Record(authContent.model));
+
+    return {
+      token: authContent.token,
+    };
+  }
+
+  static clearAuthPocketBase() {
+    pocketbase.authStore.clear();
   }
 }

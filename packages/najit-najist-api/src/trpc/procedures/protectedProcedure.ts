@@ -1,52 +1,38 @@
 import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
-import { UserTokenData } from '@custom-types';
+import { isTokenExpired } from '@najit-najist/pb';
+import {
+  deserializePocketToken,
+  getSessionFromCookies,
+  setSessionToCookies,
+} from '@utils';
+import { AuthService } from '@services';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',
 });
 
 export const isAuthed = t.middleware(async ({ next, ctx }) => {
-  const sessionUserToken = ctx.session.userToken;
-  const result = sessionUserToken
-    ? ctx.services.token.decode<UserTokenData>(sessionUserToken)
-    : null;
+  const session = await getSessionFromCookies();
 
-  if (!sessionUserToken || !result) {
-    throw UNAUTHORIZED_ERROR;
-  }
-
-  const unixNow = parseInt((new Date().getTime() / 1000).toFixed(0));
-  const unixExpiry = result.exp;
-
-  // If token is expired then its probably good idea to destroy session and return unauthorized
-  if (unixNow >= unixExpiry) {
-    await ctx.session.destroy();
+  if (!session.authContent || isTokenExpired(session.authContent.token)) {
+    // If token is expired then its probably good idea to destroy auth session and return unauthorized
+    setSessionToCookies({ ...session, authContent: undefined }, ctx.resHeaders);
 
     throw UNAUTHORIZED_ERROR;
   }
 
-  // Load logged in user from session
-  ctx.pb.authStore.save(sessionUserToken, {
-    id: result.id,
-  } as any);
+  const result = deserializePocketToken(session.authContent.token);
+  await AuthService.authPocketBase();
 
-  const nextResult = await next({
+  return next({
     ctx: {
-      // Infers the `session` as non-nullable
-      session: ctx.session,
       sessionData: {
         userId: result.id,
-        token: sessionUserToken,
         authModel: result.collectionId,
       },
     },
   });
-
-  // Clear authed connection to pocketbase
-  ctx.pb.authStore.clear();
-
-  return nextResult;
 });
 
 /**
