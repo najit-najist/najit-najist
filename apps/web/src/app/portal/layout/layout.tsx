@@ -9,6 +9,13 @@ export const metadata = {
   },
 };
 
+export const metadata = {
+  title: {
+    template: 'Portál > %s | Najít Najíst',
+    default: 'Hlavní stránka',
+  },
+};
+
 const PortalLayout: LayoutComponent = ({ children }) => {
   return (
     <div className="w-full flex flex-col">

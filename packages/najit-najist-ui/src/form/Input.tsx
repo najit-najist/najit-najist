@@ -1,4 +1,3 @@
-import { TvIcon } from '@heroicons/react/24/outline';
 import { cva, cx, VariantProps } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
@@ -33,8 +32,8 @@ export interface InputProps
   rootClassName?: string;
   prefix?: ReactNode;
   suffix?: ReactNode;
-  leftIcon?: typeof TvIcon;
-  rightIcon?: typeof TvIcon;
+  // leftIcon?: typeof TvIcon;
+  // rightIcon?: typeof TvIcon;
   wrapperClassName?: string;
 }
 
