@@ -34,18 +34,18 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
-      - uses: n1hility/cancel-previous-runs@v2
+      - uses: n1hility/cancel-previous-runs@v3
         with: 
           token: ${{ secrets.GITHUB_TOKEN }}
           workflow: check-pr.yml
 
         # https://github.com/actions/checkout
       - name: Checkout Repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
             fetch-depth: 2
 
-      - uses: actions/cache@v2
+      - uses: actions/cache@v3
         name: Cache
         with:
           path: '**/node_modules'
