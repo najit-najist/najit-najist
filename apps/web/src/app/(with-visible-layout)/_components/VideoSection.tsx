@@ -6,7 +6,7 @@ import ourStoryUrlMp4 from '/public/our-story.min.mp4';
 
 export const VideoSection: FC = () => {
   return (
-    <div className="max-w-5xl px-4 mx-auto mt-20">
+    <div className="container px-4 mx-auto mt-20">
       <div className="mx-auto text-center">
         <h2 className="text-5xl font-bold mt-10 mb-7">Náš příběh</h2>
       </div>
