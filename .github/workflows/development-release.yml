@@ -104,16 +104,16 @@ jobs:
         with:
           context: .
           push: true
-          tags: ondrejlangr/najit-najist-pb-dev:${{ github.sha }}
-          file: "./apps/pb/Dockerfile"
+          tags: ondrejlangr/najit-najist-pb:dev-${{ github.sha }}
+          file: ./apps/pb/Dockerfile
 
       - name: Push to dokku
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-pocketbase'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          deploy_docker_image: ondrejlangr/najit-najist-pb-dev:${{ github.sha }}
-          branch: 'develop'
+          deploy_docker_image: ondrejlangr/najit-najist-pb:dev-${{ github.sha }}
+          branch: 'development'
           git_push_flags: '--force'
 
   deploy-web:
@@ -144,17 +144,16 @@ jobs:
         with:
           context: .
           push: true
-          tags: ondrejlangr/najit-najist-web-dev:${{ github.sha }}
+          tags: ondrejlangr/najit-najist-web:dev-${{ github.sha }}
           build-args: TURBO_TEAM=${{ secrets.TURBO_TEAM }} TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
-          file: "./apps/web/Dockerfile"
-
+          file: ./apps/web/Dockerfile
 
       - name: Push to dokku
         uses: dokku/github-action@master
         with:
           git_remote_url: 'ssh://dokku@najitnajist.cz:22/dev-web'
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          deploy_docker_image: ondrejlangr/najit-najist-web-dev:${{ github.sha }}
-          branch: 'develop'
+          deploy_docker_image: ondrejlangr/najit-najist-web:dev-${{ github.sha }}
+          branch: 'development'
           git_push_flags: '--force'
           
