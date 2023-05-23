@@ -78,9 +78,9 @@ jobs:
 
   deploy-pocketbase:
     name: "📍 Deploy Pocketbase to dokku"
-    needs: check-build
+    needs: [prepare, check-build]
     runs-on: ubuntu-latest
-    if: needs.paths-filter.outputs.pocketbase == 'true' || needs.paths-filter.outputs.repo == 'true'
+    if: needs.prepare.outputs.pocketbase == 'true' || needs.prepare.outputs.repo == 'true'
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
@@ -116,9 +116,9 @@ jobs:
 
   deploy-web:
     name: "📍 Deploy web to dokku"
-    needs: check-build
+    needs: [prepare, check-build]
     runs-on: ubuntu-latest
-    if: needs.paths-filter.outputs.web == 'true' || needs.paths-filter.outputs.repo == 'true'
+    if: needs.prepare.outputs.web == 'true' || needs.prepare.outputs.repo == 'true'
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
