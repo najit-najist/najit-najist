@@ -80,7 +80,7 @@ jobs:
     name: "📍 Deploy Pocketbase to dokku"
     needs: [prepare, check-build]
     runs-on: ubuntu-latest
-    if: needs.prepare.outputs.pocketbase == 'true' || needs.prepare.outputs.repo == 'true'
+    if: needs.prepare.outputs.pocketbase == 'true'
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
