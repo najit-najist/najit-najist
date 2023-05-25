@@ -1,14 +1,58 @@
+import {
+  AcademicCapIcon,
+  ArchiveBoxIcon,
+  ClockIcon,
+} from '@heroicons/react/24/outline';
+import { PencilIcon } from '@heroicons/react/24/solid';
 import { Recipe, stripHtml } from '@najit-najist/api';
+import { Badge, Button } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
+import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
+import { ItemLink } from './ItemLink';
 
-export const Item: FC<Recipe> = ({ images, slug, title, id, description }) => {
+const extractTimeFromSteps = (steps: Recipe['steps']) =>
+  steps.reduce(
+    (finalValue, { parts }) =>
+      finalValue +
+      parts.reduce(
+        (partsFinalValue, { duration }) => partsFinalValue + duration,
+        0
+      ),
+    0
+  );
+
+export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
+  images,
+  slug,
+  title,
+  id,
+  description,
+  steps,
+  difficulty,
+  showEditLink,
+  type,
+}) => {
   const linkHref = `/recepty/${slug}` as const;
 
   return (
     <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow">
-      <ImageSlider imageUrls={images} itemId={id} itemLink={linkHref} />
+      <div className="relative block w-full aspect-square">
+        <ImageSlider imageUrls={images} itemId={id} itemLink={linkHref} />
+        <div className="absolute top-0 right-0 m-2 flex flex-col items-end gap-2">
+          <Badge color="blue" className="whitespace-nowrap">
+            <ClockIcon className="w-4 h-4" /> {extractTimeFromSteps(steps)}{' '}
+            minut
+          </Badge>
+          <Badge color="yellow" className="whitespace-nowrap">
+            <AcademicCapIcon className="w-4 h-4" /> {difficulty.name}
+          </Badge>
+          <Badge className="whitespace-nowrap">
+            <ArchiveBoxIcon className="w-4 h-4" /> {type.title}
+          </Badge>
+        </div>
+      </div>
       <div className="p-5">
         <Link href={linkHref}>
           <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
@@ -18,25 +62,10 @@ export const Item: FC<Recipe> = ({ images, slug, title, id, description }) => {
         <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3">
           {stripHtml(description).result}
         </p>
-        <Link
-          href={linkHref}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-        >
-          Read more
-          <svg
-            aria-hidden="true"
-            className="w-4 h-4 ml-2 -mr-1"
-            fill="currentColor"
-            viewBox="0 0 20 20"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              fillRule="evenodd"
-              d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-              clipRule="evenodd"
-            ></path>
-          </svg>
-        </Link>
+        <div className="flex justify-between">
+          <ItemLink href={linkHref} />
+          <EditLink href={linkHref} />
+        </div>
       </div>
     </div>
   );

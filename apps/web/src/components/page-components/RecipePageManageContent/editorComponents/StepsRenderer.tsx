@@ -1,21 +1,29 @@
+import { ClockIcon } from '@heroicons/react/24/outline';
 import { Recipe } from '@najit-najist/api';
 import HTMLReactParser from 'html-react-parser';
 import { FC } from 'react';
 
 export const StepsRenderer: FC<Pick<Recipe, 'steps'>> = ({ steps }) => {
   return (
-    <ul className="list-decimal">
+    <ul className="list-inside">
       {steps.length
         ? steps.map(({ parts, title }) => (
-            <li className="ml-5" key={title}>
-              <h4 className="text-xl font-semibold">
-                <span className="text-green-400">{title}</span>
-              </h4>
-              <ul className="list ml-3 space-y-5">
-                {parts.map(({ content, duration }) => (
-                  <li className="flex gap-5 border-l-4 border-deep-green-400 pl-5">
-                    <div className="w-full">{HTMLReactParser(content)}</div>
-                    <span className="flex-none">{duration} minut</span>
+            <li key={title}>
+              {steps.length > 1 ? (
+                <h4 className="text-xl font-semibold">
+                  <span className="text-green-400">{title}</span>
+                </h4>
+              ) : null}
+              <ul className="space-y-5 list-decimal pl-5">
+                {parts.map(({ content, duration }, key) => (
+                  <li key={key}>
+                    <div className="flex gap-5">
+                      <div className="w-full">{HTMLReactParser(content)}</div>
+                      <span className="flex-none text-deep-green-300">
+                        <ClockIcon className="w-5 h-5 inline-block -mt-1 mr-1" />{' '}
+                        <b>{duration}</b> minut
+                      </span>
+                    </div>
                   </li>
                 ))}
               </ul>

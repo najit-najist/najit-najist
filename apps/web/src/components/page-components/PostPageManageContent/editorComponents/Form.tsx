@@ -1,7 +1,13 @@
 'use client';
 
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
-import { Post, Recipe } from '@najit-najist/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  createPostInputSchema,
+  Post,
+  Recipe,
+  updateOnePostInputSchema,
+} from '@najit-najist/api';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
@@ -15,6 +21,9 @@ export const Form: FC<
   const editorReferences = useEditorJSInstances();
   const formMethods = useForm<Recipe>({
     defaultValues: post,
+    resolver: zodResolver(
+      viewType === 'create' ? createPostInputSchema : updateOnePostInputSchema
+    ),
   });
   const { handleSubmit } = formMethods;
   const { mutateAsync: updatePost } = trpc.posts.update.useMutation();

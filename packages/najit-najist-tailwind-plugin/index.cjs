@@ -53,7 +53,7 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
 
       '.ql-toolbar': {
         opacity: 0,
-        transitionProperty: 'opacity',
+        transitionProperty: 'opacity, margin',
         transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
         transitionDuration: '150ms',
       },
@@ -64,7 +64,12 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
       '&.is-focusing': {
         '.ql-toolbar': {
           opacity: 1,
+          marginTop: '0',
         },
+      },
+
+      '&.ql-toolbar': {
+        marginTop: '-40px',
       },
     },
     '.ql-container, .ql-toolbar': {

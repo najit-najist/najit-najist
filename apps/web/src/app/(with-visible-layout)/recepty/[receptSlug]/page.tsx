@@ -37,17 +37,12 @@ export default async function Page({ params, searchParams }: Params) {
     .getBy('slug', receptSlug)
     .catch(() => notFound());
 
-  const { items: metrics } = await RecipesService.resourceMetrics.getMany({
-    page: 1,
-    perPage: 999,
-  });
-
   return (
+    // @ts-ignore
     <RecipePageManageContent
       isEditorHeaderShown={isLoggedIn}
       viewType={isEditorEnabled ? 'edit' : 'view'}
       recipe={recipe}
-      metrics={metrics}
     />
   );
 }

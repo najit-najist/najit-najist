@@ -38,7 +38,7 @@ export const Content: FC = () => {
     async (values) => {
       try {
         await doLogin(values);
-        await utils.profile.me.invalidate();
+        await utils.profile.me.refetch();
 
         router.push('/muj-ucet/profil');
       } catch (error) {

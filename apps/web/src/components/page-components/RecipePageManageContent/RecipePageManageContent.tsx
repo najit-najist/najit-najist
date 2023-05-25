@@ -1,10 +1,5 @@
-import {
-  AvailableModels,
-  getFileUrl,
-  Recipe,
-  RecipeResourceMetric,
-} from '@najit-najist/api';
-import { FC, PropsWithChildren } from 'react';
+import { AvailableModels, getFileUrl, Recipe } from '@najit-najist/api';
+import { FC, PropsWithChildren, ReactElement } from 'react';
 import { Aside } from './Aside';
 import HTMLReactParser from 'html-react-parser';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
@@ -17,6 +12,9 @@ import { TitleEdit } from './editorComponents/TitleEdit';
 import { EditorHeader } from './EditorHeader';
 import { CustomImage } from './CustomImage';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
+import { RecipesService } from '@najit-najist/api/server';
+import { TypeEdit } from './editorComponents/TypeEdit';
+import { DifficultyEdit } from './editorComponents/DifficultyEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-xl font-semibold">{children}</h3>
@@ -24,7 +22,6 @@ const Title: FC<PropsWithChildren> = ({ children }) => (
 
 export type RecipePageManageContentProps = {
   isEditorHeaderShown?: boolean;
-  metrics: RecipeResourceMetric[];
 } & (
   | { viewType: 'edit'; recipe: Recipe }
   | {
@@ -34,11 +31,20 @@ export type RecipePageManageContentProps = {
   | { viewType: 'create' }
 );
 
-export const RecipePageManageContent: FC<RecipePageManageContentProps> = ({
-  metrics,
+export const RecipePageManageContent = async ({
   isEditorHeaderShown,
   ...props
-}) => {
+}: RecipePageManageContentProps): Promise<ReactElement> => {
+  const [{ items: metrics }, { items: types }, { items: difficulties }] =
+    await Promise.all([
+      RecipesService.resourceMetrics.getMany({
+        page: 1,
+        perPage: 999,
+      }),
+      RecipesService.types.getMany({ page: 1, perPage: 999 }),
+      RecipesService.difficulties.getMany({ page: 1, perPage: 999 }),
+    ]);
+
   const { viewType } = props;
   const recipe = props.viewType !== 'create' ? props.recipe : undefined;
   const { created, updated, title } = recipe ?? {};
@@ -86,13 +92,18 @@ export const RecipePageManageContent: FC<RecipePageManageContentProps> = ({
           ) : (
             <TitleEdit />
           )}
-          {isEditorEnabled ? (
-            <>Type and difficulty edit</>
-          ) : (
-            <p className="mt-1 ">
-              {props.recipe.type.title}, {props.recipe.difficulty.name}
-            </p>
-          )}
+          <div className="flex grid-cols-2 gap-1">
+            {isEditorEnabled ? (
+              <>
+                <TypeEdit types={types} />
+                <DifficultyEdit difficulties={difficulties} />
+              </>
+            ) : (
+              <p className="mt-1">
+                {props.recipe.type.title}, {props.recipe.difficulty.name}
+              </p>
+            )}
+          </div>
 
           <div className="my-10">
             <Title>Popisek</Title>
@@ -108,11 +119,14 @@ export const RecipePageManageContent: FC<RecipePageManageContentProps> = ({
               <Title>Suroviny</Title>
               <div>
                 {!isEditorEnabled ? (
-                  props.recipe.numberOfPortions ? (
-                    `${props.recipe.numberOfPortions} porcí`
-                  ) : (
-                    'Neuvedeno'
-                  )
+                  <span className="text-deep-green-300">
+                    Počet porcí:{' '}
+                    <b>
+                      {props.recipe.numberOfPortions
+                        ? `${props.recipe.numberOfPortions} porcí`
+                        : 'Neuvedeno'}
+                    </b>
+                  </span>
                 ) : (
                   <>Portions editor</>
                 )}

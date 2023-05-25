@@ -25,7 +25,7 @@ export const ImageSlider: FC<{
   });
 
   return (
-    <div className="relative block w-full aspect-square">
+    <>
       <Link href={itemLink as any}>
         <div ref={sliderRef} className="keen-slider h-full">
           {imageUrls.map((imageName) => (
@@ -57,6 +57,6 @@ export const ImageSlider: FC<{
           </button>
         </div>
       ) : null}
-    </div>
+    </>
   );
 };

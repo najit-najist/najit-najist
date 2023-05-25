@@ -42,6 +42,7 @@ export const ContentEdit: FC = () => {
       onInitialize={setInstance}
       readOnly={fieldsAreDisabled}
       minHeight={200}
+      error={formState.errors.content?.message}
     />
   );
 };

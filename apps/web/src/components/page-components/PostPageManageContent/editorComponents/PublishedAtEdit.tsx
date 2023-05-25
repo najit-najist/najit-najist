@@ -15,6 +15,7 @@ export const PublishedAtEdit: FC = () => {
       disabled={formState.isSubmitting}
       rootClassName="max-w-[200px] text-sm mb-3"
       type="datetime-local"
+      error={formState.errors.publishedAt}
       {...register('publishedAt', { valueAsDate: true })}
     />
   );

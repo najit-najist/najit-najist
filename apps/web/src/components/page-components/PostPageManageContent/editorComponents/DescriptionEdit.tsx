@@ -19,11 +19,12 @@ export const DescriptionEdit = () => {
   return (
     <Controller
       name="description"
-      render={({ field: { ref, ...field } }) => (
+      render={({ field: { ref, ...field }, fieldState }) => (
         <LazyEditor
           rootClassName="w-full min-h-full"
           className="h-full"
           placeholder="Úvod článku..."
+          error={fieldState.error}
           {...field}
         />
       )}

@@ -51,13 +51,10 @@ const notificationStyles = cva('rounded-full block', {
   },
 });
 
-export const Badge: FC<PropsWithChildren<VariantProps<typeof badgeStyles>>> = ({
-  children,
-  color,
-  size,
-  withNotification,
-}) => (
-  <span className={badgeStyles({ color, size, withNotification })}>
+export const Badge: FC<
+  PropsWithChildren<VariantProps<typeof badgeStyles> & { className?: string }>
+> = ({ children, color, size, withNotification, className }) => (
+  <span className={badgeStyles({ color, size, withNotification, className })}>
     {withNotification ? (
       <div className="relative">
         <span className={notificationStyles({ size: 'big', color })} />

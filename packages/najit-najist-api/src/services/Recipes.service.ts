@@ -10,7 +10,9 @@ import {
   UpdateRecipeInput,
 } from '@schemas';
 import { slugify } from '@utils';
+import { RecipeDifficultyService } from './RecipeDifficulty.service';
 import { RecipeResourceMetricService } from './RecipeResourceMetric.service';
+import { RecipeTypeService } from './RecipeType.service';
 
 type GetByType = keyof Pick<Recipe, 'id' | 'slug'>;
 
@@ -28,6 +30,9 @@ type RecipeWithExpand = Recipe & {
 export class RecipesService {
   static resourceMetrics: RecipeResourceMetricService =
     new RecipeResourceMetricService();
+
+  static types: RecipeTypeService = new RecipeTypeService();
+  static difficulties: RecipeDifficultyService = new RecipeDifficultyService();
 
   private mapExpandToResponse(recipeWithExpand: RecipeWithExpand): Recipe {
     const {
@@ -55,16 +60,14 @@ export class RecipesService {
   async update(id: string, input: UpdateRecipeInput): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
-        await pocketbase
-          .collection(PocketbaseCollections.RECIPES)
-          .update(
-            id,
-            {
-              ...input,
-              ...(input.title ? { slug: slugify(input.title) } : null),
-            },
-            { expand: BASE_EXPAND }
-          )
+        await pocketbase.collection(PocketbaseCollections.RECIPES).update(
+          id,
+          {
+            ...input,
+            ...(input.title ? { slug: slugify(input.title) } : null),
+          },
+          { expand: BASE_EXPAND }
+        )
       );
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {

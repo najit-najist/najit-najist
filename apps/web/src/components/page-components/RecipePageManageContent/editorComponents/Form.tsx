@@ -1,17 +1,33 @@
 'use client';
 
-import { Recipe } from '@najit-najist/api';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  createRecipeInputSchema,
+  Recipe,
+  updateRecipeInputSchema,
+} from '@najit-najist/api';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { RecipeFormData } from '../_types';
+
+const getStringId = (input: string | { id: string; [x: string]: any }) =>
+  typeof input === 'object' ? input.id : input;
 
 export const Form: FC<
   PropsWithChildren<{ recipe?: Recipe; viewType: 'edit' | 'create' }>
 > = ({ recipe, children, viewType }) => {
   const router = useRouter();
-  const formMethods = useForm<Recipe>({
-    defaultValues: recipe,
+  const formMethods = useForm<RecipeFormData>({
+    defaultValues: {
+      ...recipe,
+      type: recipe?.type.id,
+      difficulty: recipe?.difficulty.id,
+    },
+    resolver: zodResolver(
+      viewType === 'edit' ? updateRecipeInputSchema : createRecipeInputSchema
+    ),
   });
   const { handleSubmit } = formMethods;
   const { mutateAsync: updateRecipe } = trpc.recipes.update.useMutation();
@@ -27,6 +43,8 @@ export const Form: FC<
             description: values.description,
             resources: values.resources,
             steps: values.steps,
+            difficulty: getStringId(values.difficulty),
+            type: getStringId(values.type),
           },
         });
       } else if (viewType === 'create') {
@@ -35,6 +53,8 @@ export const Form: FC<
           description: values.description,
           resources: values.resources,
           steps: values.steps,
+          difficulty: getStringId(values.difficulty),
+          type: getStringId(values.type),
           images: [],
         });
 

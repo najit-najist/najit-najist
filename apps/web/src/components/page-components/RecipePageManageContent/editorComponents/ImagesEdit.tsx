@@ -7,6 +7,8 @@ import { ChangeEventHandler, FC, PropsWithChildren, useRef } from 'react';
 import { Controller } from 'react-hook-form';
 import { CustomImage } from '../CustomImage';
 
+const isBase64 = (input: string) => input.includes('base64,');
+
 const ImagePicker: FC<
   PropsWithChildren<{ onChange: (incomingValue: string) => void }>
 > = ({ onChange, children }) => {
@@ -68,7 +70,9 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
             <CustomImage
               src={
                 recipeId
-                  ? getFileUrl(AvailableModels.RECIPES, recipeId, value)
+                  ? isBase64(value)
+                    ? value
+                    : getFileUrl(AvailableModels.RECIPES, recipeId, value)
                   : value
               }
             />
@@ -91,11 +95,13 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
                     key={imageUrl}
                     src={
                       recipeId
-                        ? getFileUrl(
-                            AvailableModels.RECIPES,
-                            recipeId,
-                            imageUrl
-                          )
+                        ? isBase64(imageUrl)
+                          ? imageUrl
+                          : getFileUrl(
+                              AvailableModels.RECIPES,
+                              recipeId,
+                              imageUrl
+                            )
                         : imageUrl
                     }
                   />

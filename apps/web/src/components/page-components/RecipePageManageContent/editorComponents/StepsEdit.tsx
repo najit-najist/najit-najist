@@ -7,6 +7,7 @@ import { Button, Input, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { FC, useCallback } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
+import { RecipeFormData } from '../_types';
 
 const LazyEditor = dynamic(
   () =>
@@ -20,7 +21,8 @@ const LazyEditor = dynamic(
 );
 
 export const StepsEdit: FC = () => {
-  const { watch, register, setValue, getValues } = useFormContext<Recipe>();
+  const { watch, register, setValue, getValues, formState } =
+    useFormContext<RecipeFormData>();
   const stepGroups = watch('steps');
 
   const onAddGroup = useCallback(() => {
@@ -66,6 +68,7 @@ export const StepsEdit: FC = () => {
               <Input
                 rootClassName="w-full"
                 label="Název skupiny"
+                disabled={formState.isSubmitting}
                 {...register(`steps.${groupIndex}.title`)}
               />
 
@@ -73,6 +76,7 @@ export const StepsEdit: FC = () => {
                 onClick={onRemoveGroup(groupIndex)}
                 color="softRed"
                 appearance="spaceless"
+                disabled={formState.isSubmitting}
                 className="px-2 pt-1.5 pb-1 flex-none"
               >
                 <TrashIcon className="w-5 h-5" />
@@ -89,6 +93,7 @@ export const StepsEdit: FC = () => {
                     <Input
                       label="Délka kroku"
                       rootClassName="mb-3"
+                      disabled={formState.isSubmitting}
                       {...register(
                         `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
                         {
@@ -110,6 +115,7 @@ export const StepsEdit: FC = () => {
                   onClick={onAddStep(groupIndex)}
                   className="w-full !p-2"
                   color="white"
+                  disabled={formState.isSubmitting}
                 >
                   <PlusIcon className="w-5 h-5 inline -mt-1 mr-3" />
                   Přidat další krok
@@ -119,7 +125,12 @@ export const StepsEdit: FC = () => {
           </li>
         ))}
         <li className="mt-5">
-          <Button onClick={onAddGroup} className="w-full !p-2" color="white">
+          <Button
+            onClick={onAddGroup}
+            className="w-full !p-2"
+            color="white"
+            disabled={formState.isSubmitting}
+          >
             <PlusIcon className="w-5 h-5 inline -mt-1 mr-3" />
             Přidat další skupinu
           </Button>

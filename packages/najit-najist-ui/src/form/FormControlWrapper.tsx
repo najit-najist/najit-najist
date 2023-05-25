@@ -6,6 +6,7 @@ import type {
   HTMLInputTypeAttribute,
   PropsWithChildren,
 } from 'react';
+import { FieldError } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
 import { Label } from './Label';
 
@@ -13,7 +14,7 @@ export interface FormControlWrapperProps
   extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
   title?: string;
   description?: string;
-  error?: string;
+  error?: string | FieldError;
   id: string;
   required?: boolean;
   type?: HTMLInputTypeAttribute;
@@ -32,7 +33,11 @@ export const FormControlWrapper: FC<
         </Label>
       )}
       {children}
-      {error && <ErrorMessage>{error}</ErrorMessage>}
+      {error && (
+        <ErrorMessage>
+          {typeof error === 'string' ? error : error?.message}
+        </ErrorMessage>
+      )}
     </>
   );
 

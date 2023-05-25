@@ -4,6 +4,7 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { cx } from 'class-variance-authority';
 import { labelStyles } from './Label';
 import { ErrorMessage } from './ErrorMessage';
+import { FieldError } from 'react-hook-form';
 
 export type ItemBase = { id: string };
 
@@ -16,7 +17,7 @@ export type SelectProps<T extends ItemBase> = {
   name?: string;
   disabled?: boolean;
   multiple?: boolean;
-  error?: string;
+  error?: string | FieldError;
   className?: string;
 };
 
@@ -107,7 +108,11 @@ export function Select<T extends ItemBase>({
               </Listbox.Options>
             </Transition>
           </div>
-          {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+          {error ? (
+            <ErrorMessage>
+              {typeof error === 'string' ? error : error.message}
+            </ErrorMessage>
+          ) : null}
         </>
       )}
     </Listbox>
