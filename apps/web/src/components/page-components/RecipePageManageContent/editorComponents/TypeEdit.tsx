@@ -1,6 +1,6 @@
 'use client';
 
-import { Recipe, RecipeType } from '@najit-najist/api';
+import { RecipeType } from '@najit-najist/api';
 import { Select } from '@najit-najist/ui';
 import { FC, useMemo } from 'react';
 import { Controller } from 'react-hook-form';
@@ -18,9 +18,7 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({ types }) => {
       render={({ field, fieldState, formState }) => (
         <Select<RecipeType>
           name={field.name}
-          selected={typesSet.get(
-            typeof field.value === 'string' ? field.value : field.value?.id
-          )}
+          selected={typesSet.get(field.value)}
           formatter={({ title }) => title}
           items={types}
           disabled={formState.isSubmitting}

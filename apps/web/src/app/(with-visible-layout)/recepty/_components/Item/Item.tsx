@@ -63,7 +63,9 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
           {stripHtml(description).result}
         </p>
         <div className="flex justify-between">
+          {/* @ts-ignore */}
           <ItemLink href={linkHref} />
+          {/* @ts-ignore */}
           <EditLink href={linkHref} />
         </div>
       </div>

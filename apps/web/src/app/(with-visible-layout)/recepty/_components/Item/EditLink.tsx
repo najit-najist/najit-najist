@@ -25,6 +25,7 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
 
   return (
     <Link
+      // @ts-ignore
       href={`${href}?editor=true`}
       className={buttonStyles({
         appearance: 'spaceless',
