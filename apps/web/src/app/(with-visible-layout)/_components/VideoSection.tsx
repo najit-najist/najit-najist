@@ -1,7 +1,5 @@
 import { FC } from 'react';
 
-import ourStoryUrlWebm from '/public/our-story.webm';
-import ourStoryUrlMp4 from '/public/our-story.min.mp4';
 // import { FloatingImages } from './FloatingImages';
 
 export const VideoSection: FC = () => {
@@ -17,8 +15,8 @@ export const VideoSection: FC = () => {
           className="sm:aspect-video bg-black relative"
           controls
         >
-          <source src={ourStoryUrlWebm} type="video/webm" />
-          <source src={ourStoryUrlMp4} type="video/mp4" />
+          <source src="/our-story.webm" type="video/webm" />
+          <source src="/our-story.min.mp4" type="video/mp4" />
         </video>
       </div>
     </div>
