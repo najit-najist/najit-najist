@@ -6,9 +6,8 @@ describe('plugins', () => {
     it('should render relative', async () => {
       const name = 'John';
       const templateFileContent = `Hello ${name}`;
-      const mailService = new MailService();
 
-      const res = await mailService.mailer.render('test', {
+      const res = await MailService.mailer.render('test', {
         name,
       });
 
