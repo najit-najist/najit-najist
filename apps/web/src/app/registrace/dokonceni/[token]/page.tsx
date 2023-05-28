@@ -1,5 +1,5 @@
 import { Logo } from '@components/common/Logo';
-import { getClient } from '@vanilla-trpc';
+import { getTrpcCaller } from '@najit-najist/api/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -14,15 +14,15 @@ const RegistrationFinalizationPage = async ({
 }: {
   params: { token: string };
 }) => {
-  const trpc = getClient();
+  const trpc = getTrpcCaller();
   let activationFailed = true;
 
   if (!token) {
     notFound();
   }
 
-  await trpc.profile.verifyRegistration
-    .mutate({
+  await trpc.profile
+    .verifyRegistration({
       token,
     })
     .then(() => {

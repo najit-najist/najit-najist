@@ -1,15 +1,52 @@
 'use client';
 
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { Input } from '@najit-najist/ui';
-import { FC, useCallback } from 'react';
+import debounce from 'lodash.debounce';
+import { usePathname, useRouter } from 'next/navigation';
+import { FC, useCallback, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
-export const SearchForm: FC = () => {
-  const formMethods = useForm();
-  const { handleSubmit, register } = formMethods;
+type FormData = { query?: string };
 
-  const onSubmit = useCallback(() => {}, []);
+export const SearchForm: FC<{ initialData?: Partial<FormData> }> = ({
+  initialData,
+}) => {
+  const formMethods = useForm<FormData>({
+    defaultValues: initialData,
+  });
+  const { handleSubmit, register, watch } = formMethods;
+  const [isLoading, activateIsLoading] = useTransition();
+  const router = useRouter();
+  const pathName = usePathname();
+
+  const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
+    ({ query }) => {
+      let route = pathName;
+
+      if (query) {
+        const searchParams = new URLSearchParams({
+          query,
+        });
+
+        route += `?${searchParams.toString()}`;
+      }
+
+      activateIsLoading(() => {
+        // @ts-ignore
+        router.replace(route);
+      });
+    },
+    [pathName, router]
+  );
+
+  useEffect(() => {
+    const debouncedSubmit = debounce(() => handleSubmit(onSubmit)(), 300);
+    const subscription = watch(debouncedSubmit);
+
+    return () => subscription.unsubscribe();
+  }, [handleSubmit, onSubmit, watch]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -17,7 +54,13 @@ export const SearchForm: FC = () => {
         placeholder="Vyhledávání..."
         rootClassName="max-w-sm"
         size="normal"
-        suffix={<MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />}
+        suffix={
+          formMethods.formState.isSubmitting || isLoading ? (
+            <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
+          ) : (
+            <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
+          )
+        }
         {...register('query')}
       />
     </form>

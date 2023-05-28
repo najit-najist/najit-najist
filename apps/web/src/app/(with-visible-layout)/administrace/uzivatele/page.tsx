@@ -17,16 +17,14 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
 
 export default async function Page() {
   return (
-    <div className="mt-8 flow-root !border-t-0 mx-10 container">
+    <div className="mt-8 flow-root !border-t-0 container">
       <SearchForm />
       <div className="overflow-x-auto mb-10">
         <div className="inline-block min-w-full py-2 align-middle">
           <table className="min-w-full divide-y divide-gray-300">
             <thead>
               <tr>
-                <th scope="col" className="sr-only">
-                  Name
-                </th>
+                <Th>Jméno</Th>
                 <Th>Telefon</Th>
                 <Th>Email</Th>
                 <Th>Role</Th>
@@ -38,7 +36,7 @@ export default async function Page() {
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 bg-white">
+            <tbody className="divide-y divide-gray-200">
               {/* @ts-ignore */}
               <Users />
             </tbody>

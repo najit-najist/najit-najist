@@ -36,14 +36,27 @@ export const postsRoute = t.router({
   getMany: t.procedure
     .input(getManyPostsInputSchema.optional())
     .query(
-      async ({ ctx, input = { page: 1, perPage: 20, onlyPublished: true } }) =>
-        pocketbase
+      async ({
+        ctx,
+        input = { page: 1, perPage: 20, onlyPublished: true, query: '' },
+      }) => {
+        const filter = [
+          input.onlyPublished ? `publishedAt != null` : undefined,
+          input.query
+            ? `(title ~ '${input.query}' || description ~ '${input.query}')`
+            : undefined,
+        ]
+          .filter(Boolean)
+          .join(' && ');
+
+        return pocketbase
           .collection(PocketbaseCollections.POSTS)
           .getList<Post>(input?.page, input?.perPage, {
-            filter: input.onlyPublished ? `publishedAt != null` : undefined,
+            filter,
             expand: `categories`,
             sort: '-publishedAt',
-          })
+          });
+      }
     ),
 
   getOne: t.procedure

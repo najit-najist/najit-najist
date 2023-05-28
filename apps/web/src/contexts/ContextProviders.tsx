@@ -8,6 +8,7 @@ import { serverPort } from '@najit-najist/api';
 import SuperJSON from 'superjson';
 import { httpBatchLink } from '@trpc/client';
 import { EditorJsInstancesProvider } from './editorJsInstancesContext';
+import { customTrpcLink } from '@constants';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +26,7 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
     trpc.createClient({
       transformer: SuperJSON,
       links: [
+        customTrpcLink,
         httpBatchLink({
           url: new URL(
             '/api/trpc',

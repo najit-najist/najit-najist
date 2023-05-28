@@ -1,6 +1,7 @@
 import {
   AuthService,
   getLoggedInUser,
+  getTrpcCaller,
   isUserLoggedIn,
 } from '@najit-najist/api/server';
 import { redirect } from 'next/navigation';
@@ -21,7 +22,7 @@ export default async function Page() {
 
   await AuthService.authPocketBase();
 
-  let user = await getLoggedInUser();
+  let user = await getTrpcCaller().profile.me();
 
   // Clear auth for other connections
   AuthService.clearAuthPocketBase();

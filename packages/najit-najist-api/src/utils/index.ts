@@ -1,5 +1,6 @@
 export * from './canUser';
 export * from './deserializePocketToken';
+export * from './extractTimeFromSteps';
 export * from './formatErrorMessage';
 export * from './getFileUrl';
 export * from './getLoggedInUser';

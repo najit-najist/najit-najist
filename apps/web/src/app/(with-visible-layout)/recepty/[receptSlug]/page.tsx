@@ -9,12 +9,10 @@ type Params = {
   searchParams: { editor?: string };
 };
 
-const service = new RecipesService();
-
 export async function generateMetadata({ params, searchParams }: Params) {
   const { receptSlug } = params;
   try {
-    const recipe = await service.getBy('slug', receptSlug);
+    const recipe = await RecipesService.getBy('slug', receptSlug);
 
     return {
       title: !!searchParams.editor ? `Upravení ${recipe.title}` : recipe.title,
@@ -33,9 +31,9 @@ export default async function Page({ params, searchParams }: Params) {
     redirect('/');
   }
 
-  const recipe = await service
-    .getBy('slug', receptSlug)
-    .catch(() => notFound());
+  const recipe = await RecipesService.getBy('slug', receptSlug).catch(() =>
+    notFound()
+  );
 
   return (
     // @ts-ignore

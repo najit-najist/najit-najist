@@ -1,7 +1,7 @@
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { getClient } from '@vanilla-trpc';
+import { getTrpcCaller } from '@najit-najist/api/server';
 
 import { Item } from './_components/Item';
 import { SearchForm } from './_components/SearchForm';
@@ -12,8 +12,18 @@ export const metadata = {
   title: 'Články',
 };
 
-export default async function Page() {
-  const { items: posts } = await getClient().posts.getMany.query();
+type Params = {
+  searchParams: {
+    query?: string;
+  };
+};
+
+export default async function Page({ searchParams }: Params) {
+  const { query } = searchParams;
+
+  const { items: posts } = await getTrpcCaller().posts.getMany({
+    query,
+  });
 
   return (
     <div className="container">
@@ -21,12 +31,24 @@ export default async function Page() {
         <PageTitle>Blog</PageTitle>
         <PageDescription>Vyberte si z naší knihovny článků</PageDescription>
       </PageHeader>
-      <SearchForm />
+      <SearchForm initialData={{ query }} />
       <div className="mt-5 space-y-20 lg:space-y-20 py-10">
         {posts.length ? (
           posts.map((post) => <Item key={post.id} {...post} />)
         ) : (
-          <div className="underline">Zatím žádné články...</div>
+          <div>
+            {query ? (
+              <>
+                Pro vaše vyhledávání{' '}
+                <span className="font-bold text-deep-green-300">
+                  &apos;{query}&apos;
+                </span>{' '}
+                nemáme žádné články ☹️
+              </>
+            ) : (
+              <>Zatím pro Vás nemáme žádné články...</>
+            )}
+          </div>
         )}
       </div>
     </div>

@@ -32,9 +32,11 @@ export class RecipesService {
     new RecipeResourceMetricService();
 
   static types: RecipeTypeService = new RecipeTypeService();
-  static difficulties: RecipeDifficultyService = new RecipeDifficultyService();
+  static difficulties = RecipeDifficultyService;
 
-  private mapExpandToResponse(recipeWithExpand: RecipeWithExpand): Recipe {
+  private static mapExpandToResponse(
+    recipeWithExpand: RecipeWithExpand
+  ): Recipe {
     const {
       expand: { type, difficulty },
       resources,
@@ -57,7 +59,7 @@ export class RecipesService {
     };
   }
 
-  async update(id: string, input: UpdateRecipeInput): Promise<Recipe> {
+  static async update(id: string, input: UpdateRecipeInput): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase.collection(PocketbaseCollections.RECIPES).update(
@@ -82,7 +84,7 @@ export class RecipesService {
     }
   }
 
-  async create(input: CreateRecipeInput): Promise<Recipe> {
+  static async create(input: CreateRecipeInput): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase
@@ -105,7 +107,7 @@ export class RecipesService {
     }
   }
 
-  async getBy(type: GetByType, value: any): Promise<Recipe> {
+  static async getBy(type: GetByType, value: any): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase
@@ -127,13 +129,34 @@ export class RecipesService {
     }
   }
 
-  async getMany(options?: GetManyUsersOptions): Promise<ListResult<Recipe>> {
-    const { page = 1, perPage = 40 } = options ?? {};
+  static async getMany(
+    options?: GetManyUsersOptions
+  ): Promise<ListResult<Recipe>> {
+    const {
+      page = 1,
+      perPage = 40,
+      difficultySlug,
+      search,
+      typeSlug,
+    } = options ?? {};
 
     try {
+      const filter = [
+        difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
+        typeSlug ? `type.slug = '${difficultySlug}'` : undefined,
+        search
+          ? `(title ~ '${search}' || slug ~ '${search}' || steps ~ '${search}')`
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(' && ');
+
       const result = await pocketbase
         .collection(PocketbaseCollections.RECIPES)
-        .getList<RecipeWithExpand>(page, perPage, { expand: BASE_EXPAND });
+        .getList<RecipeWithExpand>(page, perPage, {
+          expand: BASE_EXPAND,
+          filter,
+        });
 
       return { ...result, items: result.items.map(this.mapExpandToResponse) };
     } catch (error) {

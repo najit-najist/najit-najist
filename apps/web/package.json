@@ -30,6 +30,8 @@
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.37.0",
     "react-use": "^17.4.0",
+    "lodash.throttle": "^4.1.1",
+    "lodash.debounce": "^4.0.8",
     "superjson": "^1.11.0",
     "zod": "^3.19.1"
   },
@@ -37,6 +39,8 @@
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tailwind-plugin": "*",
     "@najit-najist/tsconfig": "*",
+    "@types/lodash.throttle": "^4.1.7",
+    "@types/lodash.debounce": "^4.0.7",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
     "autoprefixer": "^10.4.13",

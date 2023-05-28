@@ -20,7 +20,7 @@ import { array, z } from 'zod';
 import { logger } from '@logger';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { AvailableModels, setSessionToCookies } from '@utils';
-import { AuthService } from '@services';
+import { AuthService, UserService } from '@services';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -108,11 +108,10 @@ export const profileRouter = t.router({
   register: t.procedure
     .input(registerInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const { services } = ctx;
       await config.pb.loginWithAccount('contactForm');
 
       try {
-        const user = await services.user.create(input, true);
+        const user = await UserService.create(input, true);
         AuthService.clearAuthPocketBase();
 
         return {

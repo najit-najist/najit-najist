@@ -18,7 +18,7 @@ import { logger } from '@logger';
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
 export class UserService {
-  async create(
+  static async create(
     params: Omit<
       User,
       | 'password'
@@ -89,7 +89,7 @@ export class UserService {
     }
   }
 
-  async getBy(type: GetByType, value: any) {
+  static async getBy(type: GetByType, value: any) {
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
@@ -107,7 +107,7 @@ export class UserService {
     }
   }
 
-  async getMany(options?: GetManyUsersOptions) {
+  static async getMany(options?: GetManyUsersOptions) {
     const { page = 1, perPage = 40 } = options ?? {};
 
     try {

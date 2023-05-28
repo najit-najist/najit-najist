@@ -3,25 +3,13 @@ import {
   ArchiveBoxIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { PencilIcon } from '@heroicons/react/24/solid';
-import { Recipe, stripHtml } from '@najit-najist/api';
-import { Badge, Button } from '@najit-najist/ui';
+import { extractTimeFromSteps, Recipe, stripHtml } from '@najit-najist/api';
+import { Badge } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 import { ItemLink } from './ItemLink';
-
-const extractTimeFromSteps = (steps: Recipe['steps']) =>
-  steps.reduce(
-    (finalValue, { parts }) =>
-      finalValue +
-      parts.reduce(
-        (partsFinalValue, { duration }) => partsFinalValue + duration,
-        0
-      ),
-    0
-  );
 
 export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
   images,
@@ -31,15 +19,18 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
   description,
   steps,
   difficulty,
-  showEditLink,
   type,
 }) => {
   const linkHref = `/recepty/${slug}` as const;
 
   return (
-    <div className="max-w-sm bg-white border border-gray-200 rounded-lg shadow">
+    <div className="max-w-sm bg-white border border-ocean-300 rounded-lg shadow">
       <div className="relative block w-full aspect-square">
-        <ImageSlider imageUrls={images} itemId={id} itemLink={linkHref} />
+        <ImageSlider
+          imageUrls={images.slice(0, 4)}
+          itemId={id}
+          itemLink={linkHref}
+        />
         <div className="absolute top-0 right-0 m-2 flex flex-col items-end gap-2">
           <Badge color="blue" className="whitespace-nowrap">
             <ClockIcon className="w-4 h-4" /> {extractTimeFromSteps(steps)}{' '}

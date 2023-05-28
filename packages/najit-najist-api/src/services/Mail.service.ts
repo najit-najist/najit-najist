@@ -7,41 +7,37 @@ import { logger } from '@logger';
 export type AvailableTemplates = 'contact-us/admin' | 'contact-us/user';
 
 export class MailService {
-  mailer: Email;
+  private static transport = nodemailer.createTransport({
+    host: config.mail.host,
+    port: config.mail.port,
+    secure: config.mail.port === 465,
+    auth: {
+      user: config.mail.user,
+      pass: config.mail.password,
+    },
+  });
 
-  constructor() {
-    let transporter = nodemailer.createTransport({
-      host: config.mail.host,
-      port: config.mail.port,
-      secure: config.mail.port === 465,
-      auth: {
-        user: config.mail.user,
-        pass: config.mail.password,
+  public static mailer = new Email({
+    send: !config.env.isDev,
+    preview: config.env.isDev,
+    message: {
+      from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
+    },
+    views: {
+      root: path.resolve(path.join(config.app.root, 'email-templates')),
+      options: {
+        extension: 'ejs',
       },
-    });
+    },
+    juiceResources: {
+      webResources: {
+        relativeTo: config.app.root,
+      },
+    },
+    transport: this.transport,
+  });
 
-    this.mailer = new Email({
-      send: !config.env.isDev,
-      preview: config.env.isDev,
-      message: {
-        from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
-      },
-      views: {
-        root: path.resolve(path.join(config.app.root, 'email-templates')),
-        options: {
-          extension: 'ejs',
-        },
-      },
-      juiceResources: {
-        webResources: {
-          relativeTo: config.app.root,
-        },
-      },
-      transport: transporter,
-    });
-  }
-
-  async send({
+  static async send({
     payload,
     subject,
     template,

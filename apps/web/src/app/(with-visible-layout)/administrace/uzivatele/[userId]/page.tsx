@@ -1,5 +1,5 @@
 import { User } from '@najit-najist/api';
-import { getClient } from '@vanilla-trpc';
+import { getTrpcCaller } from '@najit-najist/api/server';
 import { notFound } from 'next/navigation';
 import { Content } from './_components/Content';
 
@@ -9,7 +9,7 @@ export default async function Page({ params }: Params) {
   let user: User;
 
   try {
-    user = await getClient().users.getOne.query({
+    user = await getTrpcCaller().users.getOne({
       where: {
         id: params.userId,
       },

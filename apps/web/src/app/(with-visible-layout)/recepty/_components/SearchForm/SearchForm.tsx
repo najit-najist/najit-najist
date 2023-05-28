@@ -1,15 +1,20 @@
 'use client';
 
+import {
+  ArrowPathIcon,
+  MagnifyingGlassIcon,
+} from '@heroicons/react/24/outline';
 import { RecipeDifficulty } from '@najit-najist/api';
-import { Button, Input, Select } from '@najit-najist/ui';
+import { Input, Select } from '@najit-najist/ui';
+import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
-import { FC, useCallback, useTransition } from 'react';
+import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 const typeLabelFormatter = (value: RecipeDifficulty) => value.name;
 type FormValues = {
   query?: string;
-  difficulty?: RecipeDifficulty;
+  difficultySlug?: string;
 };
 
 export const SearchForm: FC<{
@@ -21,23 +26,40 @@ export const SearchForm: FC<{
   const formMethods = useForm<FormValues>({
     defaultValues: initialValues,
   });
-  const { handleSubmit, register } = formMethods;
+  const { handleSubmit, register, watch } = formMethods;
+  const difficultiesMap = useMemo(
+    () => new Map(difficulties.map((item) => [item.slug, item])),
+    [difficulties]
+  );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ difficulty, query }) => {
-      const queryParams = new URLSearchParams(
-        [
-          ['query', query],
-          ['difficulty', difficulty?.slug],
-        ].filter(([_, value]) => !!value) as string[][]
-      );
+    ({ difficultySlug, query }) => {
+      let route = '/recepty';
+      const params = [
+        ['query', query],
+        ['difficulty', difficultySlug],
+      ].filter(([_, value]) => !!value) as string[][];
+
+      if (params.length) {
+        const queryParams = new URLSearchParams(params);
+
+        route += `?${queryParams.toString()}`;
+      }
 
       startRefreshing(() => {
-        router.push(`/recepty?${queryParams.toString()}`);
+        // @ts-ignore
+        router.push(route);
       });
     },
     [router]
   );
+
+  useEffect(() => {
+    const debouncedSubmit = debounce(() => handleSubmit(onSubmit)(), 300);
+    const subscription = watch(debouncedSubmit);
+
+    return () => subscription.unsubscribe();
+  }, [handleSubmit, onSubmit, watch]);
 
   return (
     <FormProvider {...formMethods}>
@@ -46,27 +68,31 @@ export const SearchForm: FC<{
         className="container my-10 flex w-full gap-5 items-end"
       >
         <Input
-          placeholder="Vyhledávání"
+          placeholder="Vyhledávání..."
           rootClassName="w-full"
+          suffix={
+            formMethods.formState.isSubmitting || isRefreshing ? (
+              <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
+            ) : (
+              <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
+            )
+          }
           {...register('query')}
         />
         <Controller<FormValues>
-          name="difficulty"
+          name="difficultySlug"
           render={({ field: { name, value, onChange } }) => (
             <Select<RecipeDifficulty>
               name={name}
               label="Náročnost"
-              selected={typeof value !== 'string' ? value : undefined}
-              onChange={onChange}
+              selected={difficultiesMap.get(value ?? '')}
+              onChange={(item) => onChange(item.slug)}
               formatter={typeLabelFormatter}
               items={difficulties}
               className="max-w-xs w-full"
             />
           )}
         />
-        <Button disabled={isRefreshing} appearance="small">
-          Submit
-        </Button>
       </form>
     </FormProvider>
   );

@@ -6,7 +6,7 @@ import { GetManyUsersOptions, RecipeDifficulty } from '@schemas';
 type GetByType = keyof Pick<RecipeDifficulty, 'id'>;
 
 export class RecipeDifficultyService {
-  async getBy(type: GetByType, value: any): Promise<RecipeDifficulty> {
+  static async getBy(type: GetByType, value: any): Promise<RecipeDifficulty> {
     try {
       return pocketbase
         .collection(PocketbaseCollections.RECIPE_DIFFICULTY)
@@ -24,7 +24,7 @@ export class RecipeDifficultyService {
     }
   }
 
-  async getMany(
+  static async getMany(
     options?: GetManyUsersOptions
   ): Promise<ListResult<RecipeDifficulty>> {
     const { page = 1, perPage = 40 } = options ?? {};

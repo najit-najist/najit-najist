@@ -20,7 +20,7 @@ export const ImageSlider: FC<{
 }> = ({ imageUrls, itemLink, itemId }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
-    slides: { spacing: 20 },
+    slides: { spacing: 10 },
     disabled: !imageUrls.length,
   });
 
@@ -29,7 +29,7 @@ export const ImageSlider: FC<{
       <Link href={itemLink as any}>
         <div ref={sliderRef} className="keen-slider h-full">
           {imageUrls.map((imageName) => (
-            <div key={imageName} className="keen-slider__slide">
+            <div key={imageName} className="keen-slider__slide min-w-full">
               <Image
                 width={300}
                 height={300}
@@ -44,13 +44,17 @@ export const ImageSlider: FC<{
       {imageUrls.length ? (
         <div className="absolute flex m-4 bottom-0 right-0">
           <button
-            onClick={instanceRef.current?.prev}
+            onClick={() => {
+              instanceRef.current?.prev();
+            }}
             className={arrowButtonClassName}
           >
             <ArrowLeftIcon className={arrowClassName} />
           </button>
           <button
-            onClick={instanceRef.current?.next}
+            onClick={() => {
+              instanceRef.current?.next();
+            }}
             className={arrowButtonClassName}
           >
             <ArrowRightIcon className={arrowClassName} />

@@ -1,10 +1,28 @@
 import { Fragment, ReactElement } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
-import { cx } from 'class-variance-authority';
+import { cva, cx } from 'class-variance-authority';
 import { labelStyles } from './Label';
 import { ErrorMessage } from './ErrorMessage';
 import { FieldError } from 'react-hook-form';
+
+const selectButtonStyles = cva(
+  'relative w-full cursor-default rounded-md bg-white text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
+  {
+    variants: {
+      size: {
+        normal: 'py-[0.55rem] pl-3 pr-10 sm:text-sm sm:leading-6',
+      },
+      color: {
+        default: 'focus:ring-deep-green-400 text-gray-900 ring-gray-300',
+      },
+    },
+    defaultVariants: {
+      size: 'normal',
+      color: 'default',
+    },
+  }
+);
 
 export type ItemBase = { id: string };
 
@@ -49,7 +67,7 @@ export function Select<T extends ItemBase>({
             <Listbox.Label className={labelStyles()}>{label}</Listbox.Label>
           ) : null}
           <div className="relative mt-1">
-            <Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+            <Listbox.Button className={selectButtonStyles()}>
               <span className="block truncate">
                 {selected ? formatter(selected) ?? '' : 'Vyberte'}
               </span>
@@ -74,7 +92,7 @@ export function Select<T extends ItemBase>({
                     key={item.id}
                     className={({ active }) =>
                       cx(
-                        active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                        active ? 'bg-ocean-600 text-white' : 'text-gray-900',
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }
@@ -94,7 +112,7 @@ export function Select<T extends ItemBase>({
                         {selected ? (
                           <span
                             className={cx(
-                              active ? 'text-white' : 'text-indigo-600',
+                              active ? 'text-white' : 'text-ocean-600',
                               'absolute inset-y-0 right-0 flex items-center pr-4'
                             )}
                           >

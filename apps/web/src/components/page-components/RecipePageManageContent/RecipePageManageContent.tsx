@@ -1,4 +1,9 @@
-import { AvailableModels, getFileUrl, Recipe } from '@najit-najist/api';
+import {
+  AvailableModels,
+  extractTimeFromSteps,
+  getFileUrl,
+  Recipe,
+} from '@najit-najist/api';
 import { FC, PropsWithChildren, ReactElement } from 'react';
 import { Aside } from './Aside';
 import HTMLReactParser from 'html-react-parser';
@@ -12,7 +17,10 @@ import { TitleEdit } from './editorComponents/TitleEdit';
 import { EditorHeader } from './EditorHeader';
 import { CustomImage } from './CustomImage';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
-import { RecipesService } from '@najit-najist/api/server';
+import {
+  RecipeDifficultyService,
+  RecipesService,
+} from '@najit-najist/api/server';
 import { TypeEdit } from './editorComponents/TypeEdit';
 import { DifficultyEdit } from './editorComponents/DifficultyEdit';
 
@@ -42,13 +50,16 @@ export const RecipePageManageContent = async ({
         perPage: 999,
       }),
       RecipesService.types.getMany({ page: 1, perPage: 999 }),
-      RecipesService.difficulties.getMany({ page: 1, perPage: 999 }),
+      RecipeDifficultyService.getMany({ page: 1, perPage: 999 }),
     ]);
 
   const { viewType } = props;
   const recipe = props.viewType !== 'create' ? props.recipe : undefined;
   const { created, updated, title } = recipe ?? {};
   const isEditorEnabled = props.viewType !== 'view';
+  const hrComponent = (
+    <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
+  );
 
   const content = (
     <>
@@ -84,7 +95,7 @@ export const RecipePageManageContent = async ({
         </div>
 
         <div className="col-span-6 pl-5">
-          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-[#5266B4] block">
+          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block">
             Recept
           </span>
           {!isEditorEnabled ? (
@@ -107,6 +118,7 @@ export const RecipePageManageContent = async ({
 
           <div className="my-10">
             <Title>Popisek</Title>
+            {hrComponent}
             {!isEditorEnabled ? (
               <div>{HTMLReactParser(props.recipe.description)}</div>
             ) : (
@@ -132,6 +144,7 @@ export const RecipePageManageContent = async ({
                 )}
               </div>
             </div>
+            {hrComponent}
             {!isEditorEnabled ? (
               <ResourcesRenderer
                 metrics={metrics}
@@ -143,7 +156,20 @@ export const RecipePageManageContent = async ({
           </div>
 
           <div className="my-10">
-            <Title>Postup</Title>
+            <div className="flex justify-between items-center">
+              <Title>Postup</Title>
+              <div>
+                {!isEditorEnabled ? (
+                  <span className="text-deep-green-300">
+                    Celkem:{' '}
+                    <b>{extractTimeFromSteps(props.recipe.steps)} minut</b>
+                  </span>
+                ) : (
+                  <></>
+                )}
+              </div>
+            </div>
+            {hrComponent}
             {!isEditorEnabled ? (
               <StepsRenderer steps={props.recipe.steps} />
             ) : (

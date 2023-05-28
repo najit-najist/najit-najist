@@ -30,7 +30,7 @@ export const MainContent: FC<{
   return (
     <>
       <div className="col-span-6 pl-5">
-        <span className="mt-5 mb-3 text-sm uppercase font-semibold text-[#5266B4] block">
+        <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block">
           Recept
         </span>
         {!isEditorEnabled ? (

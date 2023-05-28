@@ -36,9 +36,6 @@
       ],
       "@trpc": [
         "./trpc"
-      ],
-      "@vanilla-trpc": [
-        "./vanilla-trpc"
       ]
     },
     "plugins": [

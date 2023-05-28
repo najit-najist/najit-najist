@@ -10,7 +10,7 @@ import { contactUsSchema } from '@schemas';
 import { z } from 'zod';
 import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
-import { AuthService } from '@services';
+import { AuthService, MailService, UserService } from '@services';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
@@ -23,7 +23,7 @@ export const contactUsRoutes = t.router({
       // If user want to subscribe to our newsletter we will create basic account for them
       if (input.subscribeToNewsletter) {
         try {
-          user = await ctx.services.user.getBy('email', input.email);
+          user = await UserService.getBy('email', input.email);
 
           if (!user.newsletter) {
             user = await pocketbase
@@ -37,7 +37,7 @@ export const contactUsRoutes = t.router({
           );
 
           try {
-            user = await ctx.services.user.create({
+            user = await UserService.create({
               email: input.email,
               firstName: input.firstName,
               lastName: input.lastName,
@@ -74,29 +74,25 @@ export const contactUsRoutes = t.router({
           throw new Error('Error happened');
         });
 
-      ctx.services.mail
-        .send({
-          to: config.mail.baseEmail,
-          subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
-          payload: input,
-          template: 'contact-us/admin',
-        })
-        .catch((error) => {
-          logger.error(
-            error,
-            `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
-          );
-        });
+      MailService.send({
+        to: config.mail.baseEmail,
+        subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
+        payload: input,
+        template: 'contact-us/admin',
+      }).catch((error) => {
+        logger.error(
+          error,
+          `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
+        );
+      });
 
-      ctx.services.mail
-        .send({
-          to: input.email,
-          payload: input,
-          template: 'contact-us/user',
-        })
-        .catch((error) => {
-          logger.error(error, `Failed to send email to user`);
-        });
+      MailService.send({
+        to: input.email,
+        payload: input,
+        template: 'contact-us/user',
+      }).catch((error) => {
+        logger.error(error, `Failed to send email to user`);
+      });
 
       AuthService.clearAuthPocketBase();
 
