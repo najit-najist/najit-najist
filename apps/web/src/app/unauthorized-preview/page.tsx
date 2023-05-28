@@ -27,7 +27,7 @@ export default function Page() {
             rootClassName="w-full"
             name="code"
           />
-          <Button className="flex-none !px-3" appearance="small">
+          <Button type="submit" className="flex-none !px-3" appearance="small">
             <ArrowRightIcon className="w-8 h-8" />{' '}
           </Button>
         </form>
