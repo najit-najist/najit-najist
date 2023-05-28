@@ -43,7 +43,7 @@
     "class-variance-authority": "^0.3.0",
     "clsx": "^1.2.1",
     "html-react-parser": "^3.0.16",
-    "next": "^13.4.2",
+    "next": "^13.4.4",
     "react-dropzone": "^14.2.3",
     "react-editor-js": "^2.1.0",
     "react-quill": "2.0.0"
