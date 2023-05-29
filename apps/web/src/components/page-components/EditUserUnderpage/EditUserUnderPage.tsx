@@ -29,10 +29,10 @@ export const EditUserUnderPage: FC<{
 
   return (
     <form
-      className="container grid grid-cols-6 mx-auto my-5"
+      className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
       onSubmit={onSubmit}
     >
-      <div className="col-span-2 px-10 pt-5">
+      <div className="col-span-2 px-10 mb-5 md:mb-0 pt-5">
         <UserAvatarPicker userId={userId} />
       </div>
       <div className="col-span-4">
@@ -51,7 +51,7 @@ export const EditUserUnderPage: FC<{
 
           <div className="px-10">
             <div className="grid gap-4 mt-5">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid sm:grid-cols-2 gap-4">
                 <Input
                   required
                   label="Jméno"
@@ -85,7 +85,11 @@ export const EditUserUnderPage: FC<{
               />
             </div>
             <div className="pt-5 text-right">
-              <Button isLoading={formState.isSubmitting}>
+              <Button
+                type="submit"
+                isLoading={formState.isSubmitting}
+                disabled={!Object.keys(formState.dirtyFields).length}
+              >
                 {formState.isSubmitting
                   ? buttonText.working
                   : buttonText.normal}

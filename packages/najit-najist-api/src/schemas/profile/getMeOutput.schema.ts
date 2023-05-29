@@ -6,6 +6,7 @@ export const getMeOutputSchema = z.object({
   email: z.string(),
   firstName: z.string(),
   lastName: z.string(),
+  avatar: z.string().optional(),
   createdAt: z.string().or(z.date()).optional(),
   telephoneNumber: z.string().nullish(),
   role: z.nativeEnum(UserRoles),

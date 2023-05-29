@@ -1,109 +1,124 @@
+import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { CameraIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import { User, getFileUrl, AvailableModels } from '@najit-najist/api';
+import {
+  getFileUrl,
+  AvailableModels,
+  IMAGE_FILE_REGEX,
+  isFileBase64,
+} from '@najit-najist/api';
+import { readFile } from '@utils';
 import Image from 'next/image';
-import { useRef, ChangeEventHandler, FC, useMemo } from 'react';
+import { useRef, ChangeEventHandler, FC, useMemo, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+const FIELD_NAME = 'avatar';
+const IMAGE_SIZE = 300;
+
 const AvatarSelect = () => {
-  const { setValue } = useFormContext<User>();
+  const [isUploadingToMemory, setIsUploadingToMemory] = useState(false);
+  const { setValue, setError, formState } = useFormContext<{
+    avatar?: string;
+  }>();
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeImageClick = () => {
     inputRef.current?.click();
   };
 
-  const onFileChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+  const onFileChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     const files = event.target.files;
+    const [file] = files ?? [];
 
-    if (!files) {
+    if (!file) {
       return;
     }
 
-    Array.from(files).forEach((file, index) => {
-      const reader = new FileReader();
+    console.log({ file });
 
-      reader.onabort = () => console.log('file reading was aborted');
-      reader.onerror = () => console.log('file reading has failed');
-      reader.onload = () => {
-        if (!reader.result) {
-          return;
-        }
-
-        setValue('avatar', reader.result as string);
-      };
-
-      reader.readAsDataURL(file);
-    });
+    setIsUploadingToMemory(true);
+    try {
+      setValue(FIELD_NAME, await readFile(file, IMAGE_FILE_REGEX), {
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+    } catch (error) {
+      setError(FIELD_NAME, {
+        message: (error as Error).message,
+      });
+    } finally {
+      setIsUploadingToMemory(false);
+    }
   };
 
   return (
     <>
       <button
-        className="absolute bottom-4 right-4 bg-white rounded-full p-3 border-2 border-gray-100"
+        className="absolute bottom-1 right-1 lg:bottom-4 lg:right-4 bg-white rounded-full p-3 border-2 border-gray-100"
         title="Změnit profilový obrázek"
         type="button"
         onClick={onChangeImageClick}
+        disabled={isUploadingToMemory || formState.isSubmitting}
       >
-        <CameraIcon className="w-7 h-7" />
+        {isUploadingToMemory ? (
+          <ArrowPathIcon className="w-7 h-7 animate-spin" />
+        ) : (
+          <CameraIcon className="w-7 h-7" />
+        )}
       </button>
       <input
         ref={inputRef}
         type="file"
         className="sr-only"
         onChange={onFileChange}
+        accept=".png,.img,.jpg,.gif,.svg,.jpeg"
       />
     </>
   );
 };
 
 const Avatar: FC<{ userId?: string }> = ({ userId }) => {
-  const { watch } = useFormContext();
-
-  const avatar = watch('avatar');
-
-  const isPreview = useMemo(() => {
-    const [, probableBase64] = (avatar ?? '').split(';');
-
-    if (!probableBase64) {
-      return false;
-    }
-
-    // Little bit hacky but works
-    return probableBase64.startsWith('base64,');
-  }, [avatar]);
+  const { watch, formState } = useFormContext<{ avatar?: string }>();
+  const avatar = watch(FIELD_NAME);
 
   const imageUrl = useMemo(() => {
-    if (isPreview || !userId) {
+    if (isFileBase64(avatar ?? '') || !userId) {
       return avatar ?? '';
     }
 
     return getFileUrl(AvailableModels.USER, userId, avatar ?? '', {
-      width: 200,
-      height: 200,
+      width: IMAGE_SIZE,
+      height: IMAGE_SIZE,
     });
-  }, [avatar, isPreview, userId]);
+  }, [avatar, userId]);
 
-  if (!avatar) {
-    return (
-      <PhotoIcon className="absolute top-1/2 left-1/2 text-gray-600 -translate-y-1/2 w-20 h-20 -translate-x-1/2" />
-    );
-  }
-
-  return (
+  const content = !avatar ? (
+    <PhotoIcon className="absolute top-1/2 left-1/2 text-gray-600 -translate-y-1/2 w-20 h-20 -translate-x-1/2" />
+  ) : (
     <Image
       alt="image"
       src={imageUrl}
-      width={100}
-      height={100}
-      unoptimized={!isPreview}
+      width={IMAGE_SIZE}
+      height={IMAGE_SIZE}
+      unoptimized={imageUrl.startsWith('data:')}
       className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-full"
     />
+  );
+
+  return (
+    <>
+      {content}
+      {formState.errors.avatar ? (
+        <div className="text-red-500 rounded-md bg-white after:content-[''] after:bg-white after:rotate-90 after:w-10 after:h-10 absolute bottom-0 translate-y-full z-10">
+          {formState.errors.avatar.message}
+        </div>
+      ) : null}
+    </>
   );
 };
 
 export const UserAvatarPicker: FC<{ userId?: string }> = ({ userId }) => {
   return (
-    <div className="w-full aspect-square relative bg-gray-100 rounded-full">
+    <div className="w-full aspect-square relative bg-gray-100 rounded-full mx-auto max-w-lg">
       <Avatar userId={userId} />
       <AvatarSelect />
     </div>

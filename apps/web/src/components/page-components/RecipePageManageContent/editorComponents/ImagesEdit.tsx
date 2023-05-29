@@ -7,7 +7,7 @@ import { ChangeEventHandler, FC, PropsWithChildren, useRef } from 'react';
 import { Controller } from 'react-hook-form';
 import { CustomImage } from '../CustomImage';
 
-const isBase64 = (input: string) => input.includes('base64,');
+const isBase64 = (input: string) => input.includes(';base64,');
 
 const ImagePicker: FC<
   PropsWithChildren<{ onChange: (incomingValue: string) => void }>

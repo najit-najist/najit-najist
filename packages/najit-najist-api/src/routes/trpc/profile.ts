@@ -16,11 +16,12 @@ import { TRPCError } from '@trpc/server';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { config } from '@config';
 import { ApplicationError } from '@errors';
-import { array, z } from 'zod';
+import { z } from 'zod';
 import { logger } from '@logger';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, UserService } from '@services';
+import { objectToFormData } from '@utils/internal';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -34,7 +35,7 @@ export const profileRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       return pocketbase
         .collection(AvailableModels.USER)
-        .update<User>(ctx.sessionData.userId, input);
+        .update<User>(ctx.sessionData.userId, await objectToFormData(input));
     }),
   me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
     return pocketbase

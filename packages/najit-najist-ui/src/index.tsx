@@ -42,7 +42,12 @@ export type {
   FormControlWrapperProps,
 } from './form';
 
-export { Switch as HeadlessSwitch, Transition, Menu } from '@headlessui/react';
+export {
+  Switch as HeadlessSwitch,
+  Transition,
+  Menu,
+  Popover,
+} from '@headlessui/react';
 export type {
   SwitchProps as HeadlessSwitchProps,
   TransitionRootProps,
@@ -52,4 +57,9 @@ export type {
   MenuButtonProps,
   MenuItemsProps,
   MenuItemProps,
+  PopoverProps,
+  PopoverButtonProps,
+  PopoverGroupProps,
+  PopoverOverlayProps,
+  PopoverPanelProps,
 } from '@headlessui/react';

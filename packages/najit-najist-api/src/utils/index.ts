@@ -6,7 +6,6 @@ export * from './getFileUrl';
 export * from './getLoggedInUser';
 export * from './getPasswordStrength';
 export * from './getSessionFromCookies';
-export * from './isBase64';
 export * from './removeDiacritics';
 export * from './setSessionToCookies';
 export * from './slugify';
