@@ -2,7 +2,7 @@ import { cva, VariantProps } from 'class-variance-authority';
 import { FC, PropsWithChildren } from 'react';
 
 const badgeStyles = cva(
-  'inline-flex gap-x-1.5 items-center rounded-md text-xs font-medium',
+  'inline-flex gap-x-1.5 items-center rounded-md font-medium',
   {
     variants: {
       color: {
@@ -16,8 +16,9 @@ const badgeStyles = cva(
         pink: 'bg-pink-100 text-pink-700',
       },
       size: {
-        normal: 'px-2 py-1',
-        small: 'px-1.5 py-0.5',
+        normal: 'px-2 py-1 text-xs',
+        small: 'px-1.5 py-0.5 text-xs',
+        lg: 'px-3 py-1 text-base',
       },
       withNotification: {
         true: '',

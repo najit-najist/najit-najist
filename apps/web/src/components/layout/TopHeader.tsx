@@ -88,7 +88,9 @@ export const TopHeader = () => {
           <div className="container flex">
             <div className="ml-auto flex gap-3">
               <Suspense
-                fallback={<Skeleton className="h-[32px] w-[100px] my-2" />}
+                fallback={
+                  <Skeleton className="h-[32px] w-[100px] my-2 rounded-full" />
+                }
               >
                 <Content menuIsOpen={menuIsOpen} />
               </Suspense>

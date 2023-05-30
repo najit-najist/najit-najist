@@ -37,7 +37,7 @@ export const Form: FC<
     async (values) => {
       if (viewType === 'edit') {
         await updateRecipe({
-          id: values.id,
+          id: recipe!.id,
           data: {
             title: values.title,
             description: values.description,
@@ -45,8 +45,11 @@ export const Form: FC<
             steps: values.steps,
             difficulty: getStringId(values.difficulty),
             type: getStringId(values.type),
+            images: values.images,
           },
         });
+
+        router.refresh();
       } else if (viewType === 'create') {
         const data = await createRecipe({
           title: values.title,
@@ -55,13 +58,13 @@ export const Form: FC<
           steps: values.steps,
           difficulty: getStringId(values.difficulty),
           type: getStringId(values.type),
-          images: [],
+          images: values.images,
         });
 
         router.push(`/recepty/${data.slug}`);
       }
     },
-    [createRecipe, router, updateRecipe, viewType]
+    [createRecipe, router, updateRecipe, viewType, recipe]
   );
 
   return (

@@ -2,7 +2,6 @@
 
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { Recipe } from '@najit-najist/api';
 import { Button, Input, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { FC, useCallback } from 'react';
@@ -26,7 +25,7 @@ export const StepsEdit: FC = () => {
   const stepGroups = watch('steps');
 
   const onAddGroup = useCallback(() => {
-    setValue('steps', [...getValues().steps, { parts: [], title: '' }]);
+    setValue('steps', [...(getValues().steps ?? []), { parts: [], title: '' }]);
   }, [setValue, getValues]);
 
   const onAddStep = useCallback(
@@ -94,6 +93,7 @@ export const StepsEdit: FC = () => {
                       label="Délka kroku"
                       rootClassName="mb-3"
                       disabled={formState.isSubmitting}
+                      type="number"
                       {...register(
                         `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
                         {

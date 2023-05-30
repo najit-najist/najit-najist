@@ -21,7 +21,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
 
   const onAdd = useCallback(() => {
     setValue('resources', [
-      ...getValues().resources,
+      ...(getValues().resources ?? []),
       { count: 0, title: '', isOptional: false, metric: '', description: '' },
     ]);
   }, [setValue, getValues]);

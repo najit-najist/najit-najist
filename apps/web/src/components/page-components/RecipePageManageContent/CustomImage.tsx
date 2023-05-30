@@ -1,24 +1,29 @@
 import { FC } from 'react';
-import NextImage from 'next/image';
-import { Badge } from '@najit-najist/ui';
+import NextImage, { ImageProps } from 'next/image';
 
-export const CustomImage: FC<{ src: string }> = ({ src }) => {
+export const CustomImage: FC<
+  Omit<ImageProps, 'alt'> & { onlyImage?: boolean }
+> = ({ src, onlyImage, ...rest }) => {
   // Simple check
-  const isPreview = src.includes('base64,');
+  const isPreview = src.toString().includes('base64,');
+
+  const image = (
+    <NextImage
+      width={300}
+      height={300}
+      src={src}
+      alt=""
+      unoptimized={isPreview}
+      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-md"
+      {...rest}
+    />
+  );
+
+  if (onlyImage) {
+    return image;
+  }
 
   return (
-    <div className="relative w-full col-span-2 aspect-square">
-      <NextImage
-        width={300}
-        height={300}
-        src={src}
-        alt=""
-        unoptimized={isPreview}
-        className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-md"
-      />
-      <div className="absolute top-0 right-0 m-2">
-        {isPreview ? <Badge color="green">Nový</Badge> : null}
-      </div>
-    </div>
+    <div className="relative w-full col-span-2 aspect-square">{image}</div>
   );
 };

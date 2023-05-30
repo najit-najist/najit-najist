@@ -1,5 +1,7 @@
 import { entrySchema } from '../entry.schema';
 import { z } from 'zod';
+import { isFileBase64 } from '@utils/isFileBase64';
+import { IMAGE_FILE_REGEX } from '@constants';
 
 export const recipeTypeSchema = entrySchema.extend({
   title: z.string(),
@@ -40,9 +42,20 @@ export const recipeStepGroupSchema = z.object({
 });
 
 export const recipeSchema = entrySchema.extend({
-  title: z.string(),
+  title: z.string({ required_error: 'Vyžadováno' }),
   slug: z.string(),
-  images: z.array(z.string()),
+  images: z.array(
+    z
+      .string()
+      .min(1)
+      .refine((input) => {
+        if (input.startsWith('data:')) {
+          return isFileBase64(input, IMAGE_FILE_REGEX);
+        }
+
+        return true;
+      })
+  ),
   description: z.string().describe('A html description'),
   type: recipeTypeSchema,
   numberOfPortions: z.number().optional(),

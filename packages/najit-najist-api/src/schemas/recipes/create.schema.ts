@@ -13,6 +13,7 @@ export const createRecipeInputSchema = recipeSchema
   .extend({
     type: z.string(),
     difficulty: z.string(),
-  });
+  })
+  .partial();
 
 export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>;

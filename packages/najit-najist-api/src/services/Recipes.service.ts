@@ -10,6 +10,7 @@ import {
   UpdateRecipeInput,
 } from '@schemas';
 import { slugify } from '@utils';
+import { objectToFormData } from '@utils/internal';
 import { RecipeDifficultyService } from './RecipeDifficulty.service';
 import { RecipeResourceMetricService } from './RecipeResourceMetric.service';
 import { RecipeTypeService } from './RecipeType.service';
@@ -59,15 +60,20 @@ export class RecipesService {
     };
   }
 
-  static async update(id: string, input: UpdateRecipeInput): Promise<Recipe> {
+  static async update(
+    id: string,
+    { resources, steps, title, ...input }: UpdateRecipeInput
+  ): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase.collection(PocketbaseCollections.RECIPES).update(
           id,
-          {
+          await objectToFormData({
             ...input,
-            ...(input.title ? { slug: slugify(input.title) } : null),
-          },
+            ...(title ? { slug: slugify(title), title } : null),
+            ...(resources ? { resources: JSON.stringify(resources) } : null),
+            ...(steps ? { steps: JSON.stringify(steps) } : null),
+          }),
           { expand: BASE_EXPAND }
         )
       );
@@ -84,15 +90,23 @@ export class RecipesService {
     }
   }
 
-  static async create(input: CreateRecipeInput): Promise<Recipe> {
+  static async create({
+    resources,
+    steps,
+    title,
+    ...input
+  }: CreateRecipeInput): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
-        await pocketbase
-          .collection(PocketbaseCollections.RECIPES)
-          .create(
-            { ...input, slug: slugify(input.title) },
-            { expand: BASE_EXPAND }
-          )
+        await pocketbase.collection(PocketbaseCollections.RECIPES).create(
+          await objectToFormData({
+            ...input,
+            ...(title ? { slug: slugify(title), title } : null),
+            ...(resources ? { resources: JSON.stringify(resources) } : null),
+            ...(steps ? { steps: JSON.stringify(steps) } : null),
+          }),
+          { expand: BASE_EXPAND }
+        )
       );
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {

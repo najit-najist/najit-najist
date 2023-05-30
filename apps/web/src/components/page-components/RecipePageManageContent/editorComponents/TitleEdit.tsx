@@ -14,6 +14,7 @@ export const TitleEdit: FC = () => {
       className="!text-4xl font-suez"
       disabled={formState.isSubmitting}
       placeholder="Název receptu"
+      error={formState.errors.title}
       {...register('title')}
     />
   );

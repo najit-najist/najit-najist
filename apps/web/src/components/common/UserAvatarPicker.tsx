@@ -1,3 +1,4 @@
+import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { CameraIcon, PhotoIcon } from '@heroicons/react/24/solid';
 import {
@@ -70,7 +71,7 @@ const AvatarSelect = () => {
         type="file"
         className="sr-only"
         onChange={onFileChange}
-        accept=".png,.img,.jpg,.gif,.svg,.jpeg"
+        accept={ACCEPT_FILES_IMAGE}
       />
     </>
   );

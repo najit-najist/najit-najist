@@ -52,6 +52,7 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
       borderColor: theme('colors.gray.200'),
 
       '.ql-toolbar': {
+        marginTop: '-40px',
         opacity: 0,
         transitionProperty: 'opacity, margin',
         transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
@@ -61,15 +62,15 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
         stroke: `${theme('colors.gray.400')}!important`,
       },
 
+      '.ql-editor': {
+        minHeight: '300px',
+      },
+
       '&.is-focusing': {
         '.ql-toolbar': {
           opacity: 1,
           marginTop: '0',
         },
-      },
-
-      '&.ql-toolbar': {
-        marginTop: '-40px',
       },
     },
     '.ql-container, .ql-toolbar': {
