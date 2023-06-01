@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
         .split('=');
 
       const url = request.nextUrl.clone();
-      url.basePath = 'https://dev.larokinvest.cz';
+      url.hostname = 'dev.najitnajist.cz';
 
       // If key is not code then do nothing
       if (key !== 'code') {
