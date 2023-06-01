@@ -1,3 +1,4 @@
+import Compressor from 'compressorjs';
 import {
   getMediaTypeFromBase64Url,
   setFileNameToBase64,
@@ -8,8 +9,20 @@ export enum ReadFileError {
   NOT_VALID = 'not-valid',
 }
 
-export const readFile = (file: File, mediaTypeFilter: RegExp) =>
-  new Promise<string>((resolve, reject) => {
+export const readFile = async (
+  file: File,
+  { filter, width }: { filter: RegExp; width?: number }
+) => {
+  const compressedFile = await new Promise<File>((resolve, reject) => {
+    new Compressor(file, {
+      quality: 0.8,
+      width,
+      success: (result) => resolve(result as File),
+      error: reject,
+    });
+  });
+
+  return new Promise<string>((resolve, reject) => {
     const reader = new FileReader();
     reader.onabort = () => console.log('file reading was aborted');
     reader.onerror = () =>
@@ -23,12 +36,13 @@ export const readFile = (file: File, mediaTypeFilter: RegExp) =>
       const result = String(reader.result);
       const mimeType = getMediaTypeFromBase64Url(result);
 
-      if (mediaTypeFilter.test(mimeType)) {
+      if (filter.test(mimeType)) {
         resolve(setFileNameToBase64(result, file.name));
       } else {
         reject(new Error(`Soubor '${file.name}' není správný formát`));
       }
     };
 
-    reader.readAsDataURL(file);
+    reader.readAsDataURL(compressedFile);
   });
+};

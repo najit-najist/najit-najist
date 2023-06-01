@@ -75,7 +75,10 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
       for (const file of files) {
         try {
-          const uploadedFile = await readFile(file, IMAGE_FILE_REGEX);
+          const uploadedFile = await readFile(file, {
+            filter: IMAGE_FILE_REGEX,
+            width: 700,
+          });
           onItemUploadEnd(uploadedFile, value);
         } catch (error) {
           onItemUploadEnd(error as Error);

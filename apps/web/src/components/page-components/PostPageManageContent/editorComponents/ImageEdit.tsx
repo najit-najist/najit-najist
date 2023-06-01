@@ -36,7 +36,10 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
     const file = Array.from(files)[0];
     setIsLoadingIntoMemory(true);
     try {
-      setValue(FIELD_NAME, await readFile(file, IMAGE_FILE_REGEX));
+      setValue(
+        FIELD_NAME,
+        await readFile(file, { filter: IMAGE_FILE_REGEX, width: 600 })
+      );
     } catch (error) {
       setError(FIELD_NAME, {
         message: (error as Error).message,

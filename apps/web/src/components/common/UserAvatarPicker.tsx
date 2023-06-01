@@ -38,10 +38,14 @@ const AvatarSelect = () => {
 
     setIsUploadingToMemory(true);
     try {
-      setValue(FIELD_NAME, await readFile(file, IMAGE_FILE_REGEX), {
-        shouldDirty: true,
-        shouldTouch: true,
-      });
+      setValue(
+        FIELD_NAME,
+        await readFile(file, { filter: IMAGE_FILE_REGEX, width: 450 }),
+        {
+          shouldDirty: true,
+          shouldTouch: true,
+        }
+      );
     } catch (error) {
       setError(FIELD_NAME, {
         message: (error as Error).message,
