@@ -1,57 +1,52 @@
 'use client';
 
-import { PhotoIcon } from '@heroicons/react/24/outline';
-import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
+import { ACCEPT_FILES_IMAGE } from '@constants';
+import { ArrowPathIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import {
+  AvailableModels,
+  getFileUrl,
+  IMAGE_FILE_REGEX,
+  isFileBase64,
+  Post,
+} from '@najit-najist/api';
+import { readFile } from '@utils';
 import Image from 'next/image';
-import { ChangeEventHandler, FC, useMemo, useRef } from 'react';
+import { ChangeEventHandler, FC, useMemo, useRef, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+const FIELD_NAME = 'image';
+
 export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
-  const { watch, setValue } = useFormContext<Post>();
-  const value = watch('image');
+  const [isLoadingIntoMemory, setIsLoadingIntoMemory] = useState(false);
+  const { watch, setValue, setError } = useFormContext<Post>();
+  const value = watch(FIELD_NAME);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeImageClick = () => {
     inputRef.current?.click();
   };
 
-  const onFileChange: ChangeEventHandler<HTMLInputElement> = (event) => {
+  const onFileChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
     const files = event.target.files;
 
-    if (!files) {
+    if (!files?.length) {
       return;
     }
 
-    Array.from(files).forEach((file, index) => {
-      const reader = new FileReader();
-
-      reader.onabort = () => console.log('file reading was aborted');
-      reader.onerror = () => console.log('file reading has failed');
-      reader.onload = () => {
-        if (!reader.result) {
-          return;
-        }
-
-        setValue('image', reader.result as string);
-      };
-
-      reader.readAsDataURL(file);
-    });
+    const file = Array.from(files)[0];
+    setIsLoadingIntoMemory(true);
+    try {
+      setValue(FIELD_NAME, await readFile(file, IMAGE_FILE_REGEX));
+    } catch (error) {
+      setError(FIELD_NAME, {
+        message: (error as Error).message,
+      });
+    }
+    setIsLoadingIntoMemory(false);
   };
 
-  const isPreview = useMemo(() => {
-    const [, probableBase64] = (value ?? '').split(';');
-
-    if (!probableBase64) {
-      return false;
-    }
-
-    // Little bit hacky but works
-    return probableBase64.startsWith('base64,');
-  }, [value]);
-
   const imageUrl = useMemo(() => {
-    if (isPreview || !postId) {
+    if (isFileBase64(value ?? '') || !postId) {
       return value ?? '';
     }
 
@@ -59,7 +54,7 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
       width: 200,
       height: 200,
     });
-  }, [value, isPreview, postId]);
+  }, [value, postId]);
 
   const content = value ? (
     <Image
@@ -67,18 +62,22 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
       src={imageUrl}
       width={200}
       height={200}
-      unoptimized={!isPreview}
+      unoptimized={imageUrl.startsWith('data:')}
       className="absolute top-0 left-0 w-full h-full object-center object-cover"
       onClick={onChangeImageClick}
     />
   ) : (
-    <div className="absolute w-full h-full flex items-center justify-center bg-white">
-      <div className="text-center">
-        <PhotoIcon
-          className="text-gray-600 w-20 h-20 mx-auto"
-          onClick={onChangeImageClick}
-        />
-        <p>Upravte kliknutím</p>
+    <div
+      className="absolute w-full h-full flex items-center justify-center bg-white cursor-pointer"
+      onClick={onChangeImageClick}
+    >
+      <div className="text-center text-green-600">
+        {isLoadingIntoMemory ? (
+          <ArrowPathIcon className=" w-20 h-20 mx-auto animate-spin" />
+        ) : (
+          <PhotoIcon className=" w-20 h-20 mx-auto" />
+        )}
+        <p className="text-gray-400">Upravte kliknutím...</p>
       </div>
     </div>
   );
@@ -87,10 +86,12 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
     <>
       {content}
       <input
+        disabled={isLoadingIntoMemory}
         ref={inputRef}
         type="file"
         className="sr-only"
         onChange={onFileChange}
+        accept={ACCEPT_FILES_IMAGE}
       />
     </>
   );

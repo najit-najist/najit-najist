@@ -13,12 +13,14 @@ export async function generateMetadata({
   params: { slug: postSlug },
   searchParams,
 }: PageParams): Promise<Metadata> {
-  const post = await getTrpcCaller().posts.getOne({
-    slug: postSlug,
-  });
+  const post = await getTrpcCaller()
+    .posts.getOne({
+      slug: postSlug,
+    })
+    .catch(() => {});
 
   return {
-    title: !!searchParams.editor ? `Upravení ${post.title}` : post.title,
+    title: !!searchParams.editor ? `Upravení ${post?.title}` : post?.title,
   };
 }
 

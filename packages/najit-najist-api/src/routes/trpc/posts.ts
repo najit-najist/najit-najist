@@ -9,6 +9,7 @@ import {
 import { PocketbaseCollections, Post } from '@custom-types';
 import { slugify } from '@utils';
 import { pocketbase } from '@najit-najist/pb';
+import { z } from 'zod';
 
 export const postsRoute = t.router({
   create: protectedProcedure
@@ -22,7 +23,7 @@ export const postsRoute = t.router({
     ),
 
   update: protectedProcedure
-    .input(updateOnePostInputSchema)
+    .input(z.object({ id: z.string(), data: updateOnePostInputSchema }))
     .mutation(async ({ ctx, input }) =>
       pocketbase
         .collection(PocketbaseCollections.POSTS)

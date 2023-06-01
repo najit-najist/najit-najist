@@ -5,10 +5,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import {
   createPostInputSchema,
   Post,
-  Recipe,
   updateOnePostInputSchema,
 } from '@najit-najist/api';
 import { trpc } from '@trpc';
+import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -19,8 +19,14 @@ export const Form: FC<
 > = ({ post, children, viewType }) => {
   const router = useRouter();
   const editorReferences = useEditorJSInstances();
-  const formMethods = useForm<Recipe>({
-    defaultValues: post,
+  const formMethods = useForm<Post>({
+    defaultValues: {
+      ...post,
+      // @ts-ignore -- TODO
+      publishedAt: post?.publishedAt
+        ? dayjs(post.publishedAt).toDate()
+        : undefined,
+    },
     resolver: zodResolver(
       viewType === 'create' ? createPostInputSchema : updateOnePostInputSchema
     ),
@@ -41,7 +47,7 @@ export const Form: FC<
         router.push(`/clanky/${newData.slug}`);
       } else if (viewType === 'edit') {
         const newData = await updatePost({
-          id: values.id,
+          id: post!.id,
           data: {
             title: values.title,
             content: await editorReferences.get('content')?.save(),
@@ -56,7 +62,7 @@ export const Form: FC<
         }
       }
     },
-    [viewType, createPost, editorReferences, router, updatePost]
+    [viewType, createPost, editorReferences, post, router, updatePost]
   );
 
   return (

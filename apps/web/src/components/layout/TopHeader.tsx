@@ -8,10 +8,11 @@ import { Menu, Skeleton, Transition } from '@najit-najist/ui';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
+import { usePathname } from 'next/navigation';
 import { FC, forwardRef, PropsWithChildren, Suspense } from 'react';
 
 const pillStyles = clsx(
-  'inline-flex items-center duration-100 whitespace-nowrap bg-white hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white hover:shadow-md shadow-black rounded-full py-1 px-3 my-2 ring ring-gray-100'
+  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-black rounded-full py-1 px-3 my-2 ring ring-gray-100'
 );
 
 const Column: FC<PropsWithChildren<{ title: string }>> = ({
@@ -36,6 +37,7 @@ const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
 );
 
 const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
+  const pathname = usePathname();
   const { data: loggedInUser } = useCurrentUser({
     useErrorBoundary: false,
     suspense: true,
@@ -49,7 +51,15 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
     <>
       {loggedInUser ? (
         <>
-          <Link className={pillStyles} href={'/muj-ucet/profil'}>
+          <Link
+            className={clsx(
+              pillStyles,
+              pathname === '/muj-ucet/profil'
+                ? 'bg-deep-green-400 ring-deep-green-400 text-white'
+                : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white'
+            )}
+            href={'/muj-ucet/profil'}
+          >
             Můj profil
           </Link>
           <Menu.Button
@@ -89,7 +99,10 @@ export const TopHeader = () => {
             <div className="ml-auto flex gap-3">
               <Suspense
                 fallback={
-                  <Skeleton className="h-[32px] w-[100px] my-2 rounded-full" />
+                  <Skeleton
+                    rounded={false}
+                    className="h-[32px] w-[100px] my-2 rounded-full"
+                  />
                 }
               >
                 <Content menuIsOpen={menuIsOpen} />
