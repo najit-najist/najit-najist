@@ -62,6 +62,16 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
           >
             Můj profil
           </Link>
+
+          <Link
+            className={clsx(
+              pillStyles,
+              'bg-red-100 hover:bg-red-200 text-red-600 ring-red-100'
+            )}
+            href={'/logout'}
+          >
+            Odhlásit se
+          </Link>
           <Menu.Button
             className={clsx(
               'h-full aspect-square flex',
