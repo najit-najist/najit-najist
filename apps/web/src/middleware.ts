@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
         .split('=');
 
       const url = request.nextUrl.clone();
+      url.protocol = 'https:';
       url.hostname = 'dev.najitnajist.cz';
       url.port = '';
 
