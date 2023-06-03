@@ -43,7 +43,7 @@ export default async function PostUnderPage({
       slug: postSlug,
     });
 
-    if (!post.publishedAt) {
+    if (!post.publishedAt && !userLoggedIn) {
       throw new Error('Not published');
     }
   } catch (error) {

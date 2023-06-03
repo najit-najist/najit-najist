@@ -1,6 +1,8 @@
 import {
+  ArrowLeftOnRectangleIcon,
   Bars2Icon,
   UserCircleIcon,
+  UserIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useCurrentUser } from '@hooks';
@@ -12,7 +14,7 @@ import { usePathname } from 'next/navigation';
 import { FC, forwardRef, PropsWithChildren, Suspense } from 'react';
 
 const pillStyles = clsx(
-  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-black rounded-full py-1 px-3 my-2 ring ring-gray-100'
+  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3 my-2 ring ring-transparent'
 );
 
 const Column: FC<PropsWithChildren<{ title: string }>> = ({
@@ -54,24 +56,32 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
           <Link
             className={clsx(
               pillStyles,
-              pathname === '/muj-ucet/profil'
-                ? 'bg-deep-green-400 ring-deep-green-400 text-white'
-                : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white'
+              'bg-red-100 hover:bg-red-200 text-red-600'
             )}
-            href={'/muj-ucet/profil'}
-          >
-            Můj profil
-          </Link>
-
-          <Link
-            className={clsx(
-              pillStyles,
-              'bg-red-100 hover:bg-red-200 text-red-600 ring-red-100'
-            )}
-            href={'/logout'}
+            href="/logout"
+            onClick={(event) => {
+              if (!confirm('Opravdu odhlásit?')) {
+                event.preventDefault();
+              }
+            }}
+            prefetch={false}
           >
             Odhlásit se
           </Link>
+
+          <Link
+            className={clsx([
+              pillStyles,
+              'w-10 !px-0 flex justify-center',
+              pathname === '/muj-ucet/profil'
+                ? 'bg-deep-green-400 ring-deep-green-400 text-white'
+                : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white',
+            ])}
+            href={'/muj-ucet/profil'}
+          >
+            <UserIcon className="w-5 h-5" />
+          </Link>
+
           <Menu.Button
             className={clsx(
               'h-full aspect-square flex',
@@ -90,7 +100,13 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
       ) : (
         <Link
           href="/login"
-          className={clsx('inline-flex items-center', pillStyles)}
+          className={clsx(
+            'inline-flex items-center',
+            pillStyles,
+            pathname === '/muj-ucet/profil'
+              ? 'bg-deep-green-400 ring-deep-green-400 text-white'
+              : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white'
+          )}
         >
           <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
           se
@@ -106,13 +122,19 @@ export const TopHeader = () => {
       {({ open: menuIsOpen }) => (
         <div className="bg-transparent relative z-30">
           <div className="container flex">
-            <div className="ml-auto flex gap-3">
+            <div className="ml-auto flex gap-3 relative">
               <Suspense
                 fallback={
-                  <Skeleton
-                    rounded={false}
-                    className="h-[32px] w-[100px] my-2 rounded-full"
-                  />
+                  <>
+                    <Skeleton
+                      rounded={false}
+                      className="h-[37px] w-[130px] rounded-full my-2"
+                    />
+                    <Skeleton
+                      rounded={false}
+                      className="h-[37px] w-[37px] rounded-full my-2"
+                    />
+                  </>
                 }
               >
                 <Content menuIsOpen={menuIsOpen} />

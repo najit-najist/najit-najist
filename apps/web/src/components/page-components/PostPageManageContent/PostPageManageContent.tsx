@@ -29,12 +29,16 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
       <div>
         <PageHeader className="container">
           {props.viewType == 'view' ? (
-            <time
-              dateTime={props.post.publishedAt as string}
-              className="text-gray-500 font-semibold"
-            >
-              {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
-            </time>
+            props.post.publishedAt ? (
+              <time
+                dateTime={props.post.publishedAt as string}
+                className="text-gray-500 font-semibold"
+              >
+                {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
+              </time>
+            ) : (
+              <p className="text-gray-500 font-semibold">Nepublikováno</p>
+            )
           ) : (
             <PublishedAtEdit />
           )}
@@ -74,9 +78,9 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
 
             <div className="font-suez text-xl leading-9 max-w-4xl w-full">
               {props.viewType === 'view' ? (
-                <p className="text-white">
+                <div className="text-white">
                   {HTMLReactParser(props.post.description)}
-                </p>
+                </div>
               ) : (
                 <DescriptionEdit />
               )}

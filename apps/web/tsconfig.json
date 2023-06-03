@@ -58,8 +58,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
-, "src/app/logout/route.ts"  ],
+    ".next/types/**/*.ts"  ],
   "exclude": [
     "out",
     "build",

@@ -1,7 +1,14 @@
 import { isFileBase64 } from '@utils/isFileBase64';
 import { splitBase64Url } from '@utils/splitBase64Url';
 
-type Primitives = string | number | boolean;
+type Primitives =
+  | string
+  | number
+  | boolean
+  | undefined
+  | Date
+  | null
+  | Record<string, string>;
 
 export const objectToFormData = async (
   input: Record<string, Primitives | Primitives[]>
@@ -10,7 +17,14 @@ export const objectToFormData = async (
 
   for (const [key, value] of Object.entries(input)) {
     const append = async (primitive: Primitives) => {
-      const stringValue = String(primitive);
+      if (primitive === undefined || primitive === null) {
+        return;
+      }
+
+      const stringValue =
+        typeof primitive === 'object'
+          ? JSON.stringify(primitive)
+          : String(primitive);
 
       if (isFileBase64(stringValue)) {
         const { mediaType, filename } = splitBase64Url(stringValue);

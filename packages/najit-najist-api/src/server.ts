@@ -7,6 +7,7 @@ export * from './utils/isUserLoggedIn';
 export * from './utils/getSessionFromCookies';
 export * from './utils/deserializePocketToken';
 export * from './utils/getLoggedInUser';
+export * from './utils/logoutUser';
 export type { PocketBase } from '@najit-najist/pb';
 
 declare module 'iron-session' {

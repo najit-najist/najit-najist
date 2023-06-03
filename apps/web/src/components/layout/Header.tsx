@@ -10,7 +10,7 @@ import { TopHeader } from './TopHeader';
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
-  { text: 'Recepty', href: '/recepty' },
+  // { text: 'Recepty', href: '/recepty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];

@@ -37,22 +37,24 @@ export const Form: FC<
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
+      const payload = {
+        title: values.title,
+        description: values.description,
+        content: await editorReferences.get('content')?.save(),
+        publishedAt: values.publishedAt
+          ? dayjs(values.publishedAt).toDate()
+          : undefined,
+        image: values.image,
+      };
+
       if (viewType === 'create') {
-        const newData = await createPost({
-          title: values.title,
-          description: values.description,
-          content: await editorReferences.get('content')?.save(),
-        });
+        const newData = await createPost(payload);
 
         router.push(`/clanky/${newData.slug}`);
       } else if (viewType === 'edit') {
         const newData = await updatePost({
           id: post!.id,
-          data: {
-            title: values.title,
-            content: await editorReferences.get('content')?.save(),
-            description: values.description,
-          },
+          data: payload,
         });
 
         if (newData.slug !== newData.slug) {

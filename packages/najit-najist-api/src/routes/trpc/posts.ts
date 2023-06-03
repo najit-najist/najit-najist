@@ -10,29 +10,40 @@ import { PocketbaseCollections, Post } from '@custom-types';
 import { slugify } from '@utils';
 import { pocketbase } from '@najit-najist/pb';
 import { z } from 'zod';
+import { objectToFormData } from '@utils/internal';
+import { revalidatePath } from 'next/cache';
 
 export const postsRoute = t.router({
   create: protectedProcedure
     .input(createPostInputSchema)
     .mutation(async ({ ctx, input }) =>
-      pocketbase.collection(PocketbaseCollections.POSTS).create<Post>({
-        ...input,
-        slug: slugify(input.title),
-        createdBy: ctx.sessionData.userId,
-      })
+      pocketbase.collection(PocketbaseCollections.POSTS).create<Post>(
+        await objectToFormData({
+          ...input,
+          slug: slugify(input.title),
+          createdBy: ctx.sessionData.userId,
+        })
+      )
     ),
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), data: updateOnePostInputSchema }))
-    .mutation(async ({ ctx, input }) =>
-      pocketbase
+    .mutation(async ({ ctx, input }) => {
+      const result = await pocketbase
         .collection(PocketbaseCollections.POSTS)
-        .update<Post>(input.id, {
-          ...input.data,
-          updateBy: ctx.sessionData.userId,
-          ...(input.data.title ? { slug: slugify(input.data.title) } : null),
-        })
-    ),
+        .update<Post>(
+          input.id,
+          await objectToFormData({
+            ...input.data,
+            updateBy: ctx.sessionData.userId,
+            ...(input.data.title ? { slug: slugify(input.data.title) } : null),
+          })
+        );
+
+      revalidatePath(`/clanky/${result.slug}`);
+
+      return result;
+    }),
 
   getMany: t.procedure
     .input(getManyPostsInputSchema.optional())
