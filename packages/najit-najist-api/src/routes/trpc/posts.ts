@@ -16,15 +16,21 @@ import { revalidatePath } from 'next/cache';
 export const postsRoute = t.router({
   create: protectedProcedure
     .input(createPostInputSchema)
-    .mutation(async ({ ctx, input }) =>
-      pocketbase.collection(PocketbaseCollections.POSTS).create<Post>(
-        await objectToFormData({
-          ...input,
-          slug: slugify(input.title),
-          createdBy: ctx.sessionData.userId,
-        })
-      )
-    ),
+    .mutation(async ({ ctx, input }) => {
+      const result = await pocketbase
+        .collection(PocketbaseCollections.POSTS)
+        .create<Post>(
+          await objectToFormData({
+            ...input,
+            slug: slugify(input.title),
+            createdBy: ctx.sessionData.userId,
+          })
+        );
+
+      revalidatePath('/clanky');
+
+      return result;
+    }),
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), data: updateOnePostInputSchema }))
@@ -41,6 +47,7 @@ export const postsRoute = t.router({
         );
 
       revalidatePath(`/clanky/${result.slug}`);
+      revalidatePath('/clanky');
 
       return result;
     }),

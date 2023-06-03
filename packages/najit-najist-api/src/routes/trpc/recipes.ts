@@ -15,7 +15,14 @@ import { z } from 'zod';
 export const recipesRouter = t.router({
   create: protectedProcedure
     .input(createRecipeInputSchema)
-    .mutation<Recipe>(async ({ ctx, input }) => RecipesService.create(input)),
+    .mutation<Recipe>(async ({ ctx, input }) => {
+      const result = await RecipesService.create(input);
+
+      revalidatePath(`/recepty/${result.slug}`);
+      revalidatePath(`/recepty`);
+
+      return result;
+    }),
 
   update: protectedProcedure
     .input(z.object({ id: z.string(), data: updateRecipeInputSchema }))
@@ -23,6 +30,7 @@ export const recipesRouter = t.router({
       const result = await RecipesService.update(input.id, input.data);
 
       revalidatePath(`/recepty/${result.slug}`);
+      revalidatePath(`/recepty`);
 
       return result;
     }),
