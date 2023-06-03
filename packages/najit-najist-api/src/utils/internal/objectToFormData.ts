@@ -1,5 +1,6 @@
 import { isFileBase64 } from '@utils/isFileBase64';
 import { splitBase64Url } from '@utils/splitBase64Url';
+import dayjs from 'dayjs';
 
 type Primitives =
   | string
@@ -21,10 +22,14 @@ export const objectToFormData = async (
         return;
       }
 
-      const stringValue =
+      let stringValue =
         typeof primitive === 'object'
           ? JSON.stringify(primitive)
           : String(primitive);
+
+      if (primitive instanceof Date) {
+        stringValue = dayjs(primitive).utc().format();
+      }
 
       if (isFileBase64(stringValue)) {
         const { mediaType, filename } = splitBase64Url(stringValue);

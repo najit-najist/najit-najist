@@ -1,3 +1,12 @@
+import timezone from 'dayjs/plugin/timezone';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import utc from 'dayjs/plugin/utc';
+import dayjs from 'dayjs';
+
+dayjs.extend(timezone);
+dayjs.extend(relativeTime);
+dayjs.extend(utc);
+
 export * from './trpc';
 export * from './utils/server';
 export * from './config';
