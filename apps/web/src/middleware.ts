@@ -48,6 +48,7 @@ export async function middleware(request: NextRequest) {
 
       const url = request.nextUrl.clone();
       url.hostname = 'dev.najitnajist.cz';
+      url.port = '';
 
       // If key is not code then do nothing
       if (key !== 'code') {
