@@ -1,5 +1,6 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
+import HTMLReactParser from 'html-react-parser';
 import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -49,7 +50,7 @@ export const Item: FC<Post> = (post) => {
             </Link>
           </h3>
           <p className="mt-5 text-sm leading-6 text-gray-600">
-            {post.description}
+            {HTMLReactParser(post.description)}
           </p>
         </div>
         {/* <div className="mt-6 flex border-t border-gray-900/5 pt-6">
