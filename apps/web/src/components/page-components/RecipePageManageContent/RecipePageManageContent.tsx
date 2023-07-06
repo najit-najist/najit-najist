@@ -63,8 +63,8 @@ export const RecipePageManageContent = async ({
 
   const content = (
     <>
-      <div className="grid grid-cols-12 w-full gap-5 my-5 px-5 max-w-[1920px] mx-auto">
-        <div className="col-span-4">
+      <div className="flex flex-wrap lg:grid grid-cols-12 w-full gap-y-5 lg:gap-x-5 my-5 px-5 max-w-[1920px] mx-auto">
+        <div className="w-full md:w-4/12 lg:w-auto lg:col-span-4">
           {props.viewType === 'view' ? (
             <>
               <CustomImage
@@ -94,7 +94,7 @@ export const RecipePageManageContent = async ({
           )}
         </div>
 
-        <div className="col-span-6 pl-5">
+        <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
           <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block">
             Recept
           </span>
@@ -178,7 +178,7 @@ export const RecipePageManageContent = async ({
           </div>
         </div>
 
-        <aside className="col-span-2">
+        <aside className="w-full lg:w-auto lg:col-span-2">
           {isEditorEnabled ? (
             <Aside created={created} updated={updated} />
           ) : null}

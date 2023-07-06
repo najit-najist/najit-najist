@@ -24,8 +24,8 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
   const linkHref = `/recepty/${slug}` as const;
 
   return (
-    <div className="max-w-sm bg-white border border-ocean-300 rounded-lg shadow">
-      <div className="relative block w-full aspect-square">
+    <div className="max-w-sm bg-white border border-ocean-300 rounded-lg shadow flex flex-col">
+      <div className="relative block w-full aspect-square flex-none">
         <ImageSlider
           imageUrls={images.slice(0, 4)}
           itemId={id}
@@ -44,16 +44,18 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
           </Badge>
         </div>
       </div>
-      <div className="p-5">
-        <Link href={linkHref}>
-          <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-            {title}
-          </h5>
-        </Link>
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3">
-          {stripHtml(description).result}
-        </p>
-        <div className="flex justify-between">
+      <div className="p-5 flex flex-col justify-between h-full">
+        <div className="flex-none">
+          <Link href={linkHref}>
+            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+              {title}
+            </h5>
+          </Link>
+          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3">
+            {stripHtml(description).result}
+          </p>
+        </div>
+        <div className="flex justify-between mt-auto">
           {/* @ts-ignore */}
           <ItemLink href={linkHref} />
           {/* @ts-ignore */}
