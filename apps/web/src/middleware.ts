@@ -69,6 +69,10 @@ export async function middleware(request: NextRequest) {
         session.previewAuthorized = true;
         await session.save();
 
+        console.log({
+          redirectsTo: url.toString(),
+        });
+
         return NextResponse.redirect(url, {
           headers: new Headers(response.headers),
         });
