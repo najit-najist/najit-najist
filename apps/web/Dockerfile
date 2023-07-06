@@ -70,6 +70,7 @@ COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     /workspace-builder/apps/web/package.json \
                     /workspace-builder/apps/web/next-env.d.ts \
                     /workspace-builder/apps/web/public/ \
+                    /workspace-builder/apps/web/private/ \
                     /workspace-builder/apps/web/src/ \
                     ./apps/web/
 

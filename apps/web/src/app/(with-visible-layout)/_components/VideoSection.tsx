@@ -15,8 +15,8 @@ export const VideoSection: FC = () => {
           className="sm:aspect-video bg-black relative"
           controls
         >
-          <source src="/our-story.webm" type="video/webm" />
-          <source src="/our-story.min.mp4" type="video/mp4" />
+          <source src="/api/videos/our-story" type="video/webm" />
+          <source src="/api/videos/our-story?type=mp4" type="video/mp4" />
         </video>
       </div>
     </div>
