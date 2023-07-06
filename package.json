@@ -12,7 +12,9 @@
     "build:web": "turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",
     "lint": "turbo run lint",
-    "test": "turbo run test",
+    "test": "turbo run test --no-daemon",
+    "reinstall": "npm run uninstall && npm install",
+    "uninstall": "del-cli ./**/node_modules ./package-lock.json",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
   "devDependencies": {
@@ -22,6 +24,7 @@
     "prettier-plugin-astro": "^0.5.5",
     "rimraf": "^3.0.2",
     "concurrently": "^7.4.0",
+    "del-cli": "^5.0.0",
     "turbo": "latest"
   },
   "engines": {
