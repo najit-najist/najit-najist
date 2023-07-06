@@ -3,6 +3,7 @@
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
 import { Alert, Button, Input } from '@najit-najist/ui';
 import { useSearchParams } from 'next/navigation';
+import { initiateSecretSession } from './_action';
 
 export default function Page() {
   const params = useSearchParams();
@@ -17,8 +18,8 @@ export default function Page() {
           <Alert color="error" heading="Nesprávný kód" />
         ) : null}
         <form
-          method="POST"
-          action="/unauthorized-preview-post"
+          // @ts-ignore
+          action={initiateSecretSession}
           className="bg-white p-5 border-2 border-gray-100 space-y-5 rounded-lg flex w-full space-x-5"
         >
           <Input
