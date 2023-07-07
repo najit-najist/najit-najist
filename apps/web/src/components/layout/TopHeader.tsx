@@ -1,3 +1,4 @@
+import { Logo } from '@components/common/Logo';
 import {
   ArrowLeftOnRectangleIcon,
   Bars2Icon,
@@ -14,14 +15,15 @@ import { usePathname } from 'next/navigation';
 import { FC, forwardRef, PropsWithChildren, Suspense } from 'react';
 
 const pillStyles = clsx(
-  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3 my-2 ring ring-transparent'
+  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-1 sm:px-3 my-2 ring ring-transparent'
 );
 
-const Column: FC<PropsWithChildren<{ title: string }>> = ({
+const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
   children,
   title,
+  className,
 }) => (
-  <div>
+  <div className={className}>
     <p className="font-bold text-lg text-deep-green-300">{title}</p>
     <div className="grid gap-1 mt-2">{children}</div>
   </div>
@@ -66,18 +68,19 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
             }}
             prefetch={false}
           >
-            Odhlásit se
+            <span className="hidden sm:inline">Odhlásit se</span>
+            <ArrowLeftOnRectangleIcon className="inline sm:hidden w-5 h-5" />
           </Link>
 
           <Link
             className={clsx([
               pillStyles,
-              'w-10 !px-0 flex justify-center',
+              'flex justify-center',
               pathname === '/muj-ucet/profil'
                 ? 'bg-deep-green-400 ring-deep-green-400 text-white'
                 : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white',
             ])}
-            href={'/muj-ucet/profil'}
+            href="/muj-ucet/profil"
           >
             <UserIcon className="w-5 h-5" />
           </Link>
@@ -121,7 +124,11 @@ export const TopHeader = () => {
     <Menu>
       {({ open: menuIsOpen }) => (
         <div className="bg-transparent relative z-30">
-          <div className="container flex">
+          <div className="container flex items-center">
+            <Link href="/" className="lg:hidden flex-none">
+              <Logo className="h-10 w-auto" />
+            </Link>
+
             <div className="ml-auto flex gap-3 relative">
               <Suspense
                 fallback={
@@ -145,13 +152,27 @@ export const TopHeader = () => {
             show={menuIsOpen}
             enter="transition duration-200 ease-out"
             enterFrom="transform max-h-0 opacity-0"
-            enterTo="transform max-h-40 opacity-100"
+            enterTo="transform max-h-[300px]opacity-100"
             leave="transition duration-200 ease-out"
-            leaveFrom="transform max-h-40 opacity-100"
+            leaveFrom="transform max-h-[300px] opacity-100"
             leaveTo="transform max-h-0 opacity-0"
             className=" bg-white w-full pt-6 pb-10 rounded-md h-full transition-all overflow-hidden"
           >
-            <Menu.Items className="container flex gap-5 justify-end" static>
+            <Menu.Items
+              className="container flex flex-wrap text-right sm:text-left justify-end gap-5"
+              static
+            >
+              <Column title="Obecné" className="block lg:hidden">
+                <Menu.Item>
+                  <StyledLink href="/">Úvod</StyledLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <StyledLink href="/#nas-pribeh">Náš příběh</StyledLink>
+                </Menu.Item>
+                <Menu.Item>
+                  <StyledLink href="/kontakt">Kontakt</StyledLink>
+                </Menu.Item>
+              </Column>
               <Column title="Uživatele">
                 <Menu.Item>
                   <StyledLink href="/administrace/uzivatele">

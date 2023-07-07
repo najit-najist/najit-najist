@@ -39,8 +39,10 @@ export const Content: FC = () => {
       try {
         await doLogin(values);
         await utils.profile.me.refetch();
+        const redirectTo =
+          searchParams?.get('redirectTo') ?? '/muj-ucet/profil';
 
-        router.push('/muj-ucet/profil');
+        router.push(redirectTo as any);
       } catch (error) {
         const message = (error as TRPCError).message;
 
@@ -59,7 +61,7 @@ export const Content: FC = () => {
         }
       }
     },
-    [doLogin, router, setError, utils.profile.me]
+    [doLogin, router, setError, utils.profile.me, searchParams]
   );
 
   return (

@@ -18,7 +18,7 @@ export const NewsletterSubscribe: FC = () => {
             Buďte vždy v obraze o novinkách a akcích z našeho webu.
           </p>
         </div>
-        <div className="mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
+        <div className="mt-6 sm:mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
           <form className="sm:flex">
             <Input
               id="email-address"
@@ -34,7 +34,7 @@ export const NewsletterSubscribe: FC = () => {
             <Button
               type="submit"
               color="sweet"
-              className="whitespace-nowrap ml-3"
+              className="whitespace-nowrap sm:ml-3 mt-3 sm:mt-0 w-full sm:w-auto"
             >
               Přihlásit se
             </Button>

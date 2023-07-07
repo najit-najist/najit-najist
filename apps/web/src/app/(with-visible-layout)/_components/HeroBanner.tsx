@@ -12,8 +12,8 @@ export const HeroBanner: FC = () => {
         className="absolute left-0 top-0 w-full h-full object-cover object-center"
       />
       <div className="h-40" />
-      <div className="container relative pb-52 pt-24">
-        <h2 className="font-suez text-6xl max-w-[52rem] leading-relaxed text-deep-green-300">
+      <div className="container relative pb-40 sm:pb-52 pt-10 sm:pt-24">
+        <h2 className="font-suez text-4xl sm:text-6xl leading-relaxed max-w-[52rem] sm:leading-relaxed text-deep-green-300">
           U nás můžete NAJÍT řešení jak jíst bez lepku a laktózy a konečně se
           NAJÍST téměř jako dřív...
         </h2>

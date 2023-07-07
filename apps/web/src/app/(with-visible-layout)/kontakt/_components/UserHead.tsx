@@ -12,7 +12,7 @@ export const UserHead: FC<{
 }> = ({ image, name, position, imagePosition = 'top' }) => {
   return (
     <div className="text-center">
-      <div className="w-[225px] h-[225px] rounded-full shadow-md overflow-hidden relative">
+      <div className="w-[200px] h-[200px] sm:w-[225px] sm:h-[225px] rounded-full shadow-md overflow-hidden relative">
         <Image
           alt=""
           width={225}

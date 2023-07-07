@@ -10,7 +10,7 @@ import { TopHeader } from './TopHeader';
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
-  // { text: 'Recepty', href: '/recepty' },
+  { text: 'Recepty', href: '/recepty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];
@@ -24,11 +24,11 @@ export const Header: FC<PropsWithChildren> = () => {
       <header
         className={clsx('sm:block sm:sticky top-[-1px] left-0 z-20 bg-white')}
       >
-        <nav className="container flex items-center">
-          <Link href="/">
+        <nav className="container hidden lg:flex items-center">
+          <Link href="/" className="flex-none">
             <Logo className="h-16 w-auto" />
           </Link>
-          <ul className="ml-auto hidden sm:flex text-right sm:text-left items-center gap-2 text-lg">
+          <ul className="ml-auto flex text-right sm:text-left items-center gap-2 text-lg">
             {navLinks.map(({ text, href }) => (
               <li key={href}>
                 <a
