@@ -1,13 +1,13 @@
 import { config } from '@config';
 import { IronSessionData, sealData } from 'iron-session';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { headers } from 'next/headers';
 import { normalizeStringPasswordToMap } from './normalizeStringPasswordToMap';
 
 export const setSessionToCookies = async (
   session: IronSessionData,
-  headers: Headers
+  cookies: ResponseCookies
 ) => {
-  const cookies = new ResponseCookies(headers);
   const passwordsAsMap = normalizeStringPasswordToMap(
     config.server.session.password
   );

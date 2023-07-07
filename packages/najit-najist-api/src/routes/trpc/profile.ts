@@ -19,6 +19,7 @@ import { ApplicationError } from '@errors';
 import { z } from 'zod';
 import { logger } from '@logger';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, UserService } from '@services';
 import { objectToFormData } from '@utils/internal';
@@ -99,7 +100,7 @@ export const profileRouter = t.router({
             token,
           },
         },
-        ctx.resHeaders
+        new ResponseCookies(ctx.resHeaders)
       );
 
       return {

@@ -1,6 +1,7 @@
 import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
 import { isTokenExpired } from '@najit-najist/pb';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import {
   deserializePocketToken,
   getSessionFromCookies,
@@ -17,7 +18,10 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
 
   if (!session.authContent || isTokenExpired(session.authContent.token)) {
     // If token is expired then its probably good idea to destroy auth session and return unauthorized
-    setSessionToCookies({ ...session, authContent: undefined }, ctx.resHeaders);
+    setSessionToCookies(
+      { ...session, authContent: undefined },
+      new ResponseCookies(ctx.resHeaders)
+    );
 
     throw UNAUTHORIZED_ERROR;
   }
