@@ -22,7 +22,7 @@ const items: Item[] = [
 const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
   <a
     href={href}
-    className="w-full aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] hover:scale-[1.02] duration-100 hover:shadow-2xl lg:w-full"
+    className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] hover:scale-[1.02] duration-100 hover:shadow-2xl lg:w-full"
   >
     <div className="rounded-xl overflow-hidden relative w-full h-full hover:ring-2 ring-deep-green-300">
       <Image
