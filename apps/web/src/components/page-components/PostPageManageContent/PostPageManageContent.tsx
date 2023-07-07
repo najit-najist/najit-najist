@@ -32,7 +32,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
             props.post.publishedAt ? (
               <time
                 dateTime={props.post.publishedAt as string}
-                className="text-gray-500 font-semibold"
+                className="text-gray-500 text-xs md:text-inherit font-semibold"
               >
                 {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
               </time>
@@ -49,10 +49,10 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           )}
         </PageHeader>
 
-        <div className="bg-[#388659] py-10 my-7">
+        <div className="bg-[#388659] py-7 sm:py-10 my-7">
           <div className="container flex items-start space-x-10">
             {props.viewType !== 'view' || props.post.image ? (
-              <div className="w-1/2 aspect-[16/10] relative flex-none  rounded-md overflow-hidden shadow-sm">
+              <div className="w-full sm:w-1/2 aspect-[16/10] relative flex-none rounded-md overflow-hidden shadow-sm">
                 {props.viewType === 'view' ? (
                   <Image
                     width={300}
@@ -76,7 +76,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
               </div>
             ) : null}
 
-            <div className="font-suez text-xl leading-9 max-w-4xl w-full">
+            <div className="font-suez sm:text-xl leading-9 max-w-4xl w-full">
               {props.viewType === 'view' ? (
                 <div className="text-white">
                   {HTMLReactParser(props.post.description)}
@@ -88,7 +88,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           </div>
         </div>
 
-        <div className="container text-xl pb-10">
+        <div className="container sm:text-xl pb-10">
           {props.viewType === 'view' ? (
             props.post.content ? (
               <BlockEditorRenderer data={props.post.content} />

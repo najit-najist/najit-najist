@@ -10,7 +10,7 @@ export const Section: FC<
   <Paper className={clsx('w-full', rootClassName)}>
     <div
       className={clsx(
-        'py-5 w-full space-y-8 divide-y divide-gray-200 sm:space-y-5',
+        'py-5 w-full space-y-4 divide-y divide-gray-200 sm:space-y-5',
         className
       )}
     >

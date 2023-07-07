@@ -16,7 +16,7 @@ export const PageHeader: FC<PropsWithChildren<PageHeaderProps>> = ({
   className,
   ...rest
 }) => (
-  <header className={clsx('py-10', className)} {...rest}>
+  <header className={clsx('pt-7 pb-4 sm:pt-10 sm:pb-10', className)} {...rest}>
     {children}
   </header>
 );
