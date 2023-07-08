@@ -16,4 +16,11 @@ export const updateRecipeInputSchema = recipeSchema
   })
   .partial();
 
+export const likeRecipeInputSchema = recipeSchema.pick({ id: true });
+export const dislikeRecipeInputSchema = z.object({
+  itemId: z.string(),
+});
+
 export type UpdateRecipeInput = z.infer<typeof updateRecipeInputSchema>;
+export type LikedRecipeInput = z.infer<typeof likeRecipeInputSchema>;
+export type DislikedRecipeInput = z.infer<typeof dislikeRecipeInputSchema>;

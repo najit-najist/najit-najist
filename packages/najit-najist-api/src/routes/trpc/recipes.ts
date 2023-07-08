@@ -1,13 +1,15 @@
 import { ListResult } from '@najit-najist/pb';
 import {
   createRecipeInputSchema,
+  dislikeRecipeInputSchema,
   getManyRecipesInputSchema,
   getOneRecipeInputSchema,
+  likeRecipeInputSchema,
   Recipe,
   updateRecipeInputSchema,
 } from '@schemas';
 import { t } from '@trpc';
-import { RecipesService } from '@services';
+import { RecipesService, UserLikedRecipesService } from '@services';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -46,4 +48,23 @@ export const recipesRouter = t.router({
     .query<Recipe>(async ({ ctx, input }) =>
       RecipesService.getBy('id', input.where.id)
     ),
+
+  likeOne: protectedProcedure
+    .input(likeRecipeInputSchema)
+    .mutation(async ({ input, ctx }) =>
+      UserLikedRecipesService.create({
+        likedBy: ctx.sessionData.userId,
+        likedItem: input.id,
+      })
+    ),
+
+  dislikeOne: protectedProcedure
+    .input(dislikeRecipeInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const recipe = await UserLikedRecipesService.getOne({
+        likedItem: input.itemId,
+      });
+
+      await UserLikedRecipesService.delete(recipe.id);
+    }),
 });

@@ -2,8 +2,10 @@ import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import {
   createPostInputSchema,
+  dislikePostInputSchema,
   getManyPostsInputSchema,
   getOnePostInputSchema,
+  likePostInputSchema,
   updateOnePostInputSchema,
 } from '@schemas';
 import { PocketbaseCollections, Post } from '@custom-types';
@@ -12,6 +14,7 @@ import { pocketbase } from '@najit-najist/pb';
 import { z } from 'zod';
 import { objectToFormData } from '@utils/internal';
 import { revalidatePath } from 'next/cache';
+import { UserLikedPostsService } from 'server';
 
 export const postsRoute = t.router({
   create: protectedProcedure
@@ -87,4 +90,23 @@ export const postsRoute = t.router({
           expand: `categories`,
         })
     ),
+
+  likeOne: protectedProcedure
+    .input(likePostInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      UserLikedPostsService.create({
+        likedBy: ctx.sessionData.userId,
+        likedItem: input.id,
+      });
+    }),
+
+  dislikeOne: protectedProcedure
+    .input(dislikePostInputSchema)
+    .mutation(async ({ input, ctx }) => {
+      const recipe = await UserLikedPostsService.getOne({
+        likedItem: input.itemId,
+      });
+
+      await UserLikedPostsService.delete(recipe.id);
+    }),
 });

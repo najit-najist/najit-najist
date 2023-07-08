@@ -6,3 +6,5 @@ export * from './Recipes.service';
 export * from './RecipeType.service';
 export * from './Token.service';
 export * from './User.service';
+export * from './UserLikedPosts.service';
+export * from './UserLikedRecipe.service';

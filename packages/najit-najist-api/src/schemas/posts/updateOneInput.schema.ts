@@ -1,5 +1,6 @@
 import { IMAGE_FILE_REGEX } from '@constants';
 import { isFileBase64 } from '@utils/isFileBase64';
+import { entrySchema } from 'schemas/entry.schema';
 import { z } from 'zod';
 
 export const updateOnePostInputSchema = z.object({
@@ -19,4 +20,11 @@ export const updateOnePostInputSchema = z.object({
     .optional(),
 });
 
+export const likePostInputSchema = entrySchema.pick({ id: true });
+export const dislikePostInputSchema = z.object({
+  itemId: z.string(),
+});
+
 export type UpdateOnePostInput = z.infer<typeof updateOnePostInputSchema>;
+export type LikedPostInput = z.infer<typeof likePostInputSchema>;
+export type DislikedPostInput = z.infer<typeof dislikePostInputSchema>;

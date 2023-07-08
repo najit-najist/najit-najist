@@ -8,3 +8,5 @@ export const entrySchema = z.object({
   updated: z.string(),
   created: z.string(),
 });
+
+export type EntryType = z.infer<typeof entrySchema>;
