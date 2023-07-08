@@ -60,6 +60,7 @@ export const profileRouter = t.router({
 
         user = record;
       } catch (e) {
+        console.log(e);
         throw INVALID_CREDENTIALS_ERROR;
       }
 

@@ -13,7 +13,8 @@
     }
   },
   "scripts": {
-    "dev": "npm run dev:server",
+    "dev": "echo \"Disabled\"",
+    "dev:old": "npm run dev:server",
     "dev:server": "docker compose up",
     "prebuild": "rimraf dist",
     "build": "npm run build:package && npm run build:types",

@@ -1,14 +1,21 @@
-import { NotLoggedInPageContent } from '@components/page-components/NotLoggedInPageContent';
-import { getLoggedInUser } from '@najit-najist/api/server';
+import {
+  LOGIN_THEN_REDIRECT_TO_PARAMETER,
+  X_REQUEST_PATH_HEADER_NAME,
+} from '@constants';
+import { isUserLoggedIn } from '@najit-najist/api/server';
+import { headers } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
-export default async function Layout({ children }: { children: ReactNode }) {
-  try {
-    // This throws when user is not logged in
-    await getLoggedInUser();
-
-    return <>{children}</>;
-  } catch {
-    return <NotLoggedInPageContent />;
+export default async function Layout({
+  children,
+}: {
+  children: ReactNode;
+}): Promise<ReactNode> {
+  if (!(await isUserLoggedIn())) {
+    const redirectTo = headers().get(X_REQUEST_PATH_HEADER_NAME);
+    redirect(`/login?${LOGIN_THEN_REDIRECT_TO_PARAMETER}=${redirectTo}`);
   }
+
+  return children;
 }

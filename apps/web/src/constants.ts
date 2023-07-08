@@ -8,6 +8,9 @@ export const DATETIME_LOCAL_INPUT_FORMAT = 'YYYY-MM-DDTHH:mm' as const;
 export const DATABASE_TIME_FORMAT = 'YYYY-MM-DDTHH:mm:ssZ';
 export const ACCEPT_FILES_IMAGE = '.png,.img,.jpg,.gif,.svg,.jpeg';
 
+export const LOGIN_THEN_REDIRECT_TO_PARAMETER = 'loginBeforeContinue';
+export const X_REQUEST_PATH_HEADER_NAME = 'x-invoke-path';
+
 /**
  * Custom trpc link that logs out user in app when not logged in
  */

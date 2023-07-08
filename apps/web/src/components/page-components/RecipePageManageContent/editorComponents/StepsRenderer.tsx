@@ -5,12 +5,12 @@ import { FC } from 'react';
 
 export const StepsRenderer: FC<Pick<Recipe, 'steps'>> = ({ steps }) => {
   return (
-    <ul className="list-inside">
+    <ul className="list-inside grid gap-4">
       {steps.length
         ? steps.map(({ parts, title }) => (
             <li key={title}>
               {steps.length > 1 ? (
-                <h4 className="text-xl font-semibold">
+                <h4 className="text-xl font-semibold mb-2">
                   <span className="text-green-400">{title}</span>
                 </h4>
               ) : null}

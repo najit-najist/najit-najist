@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Alert } from '@najit-najist/ui';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
 
 type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
 
@@ -33,6 +34,9 @@ export const Content: FC = () => {
   } = formMethods;
   const router = useRouter();
   const isRegistrationCallback = searchParams?.has('registrationCallback');
+  const userNeedsToLoginBeforeContinuing = searchParams?.has(
+    LOGIN_THEN_REDIRECT_TO_PARAMETER
+  );
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (values) => {
@@ -40,7 +44,8 @@ export const Content: FC = () => {
         await doLogin(values);
         await utils.profile.me.refetch();
         const redirectTo =
-          searchParams?.get('redirectTo') ?? '/muj-ucet/profil';
+          searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
+          '/muj-ucet/profil';
 
         router.push(redirectTo as any);
       } catch (error) {
@@ -69,11 +74,21 @@ export const Content: FC = () => {
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        {userNeedsToLoginBeforeContinuing ? (
+          <Alert
+            icon={InformationCircleIcon}
+            color="warning"
+            className="mb-5 shadow-md"
+            heading="Sekce pouze pro přihlášené"
+          >
+            Pro pokračování se prosím přihlašte nebo se registrujte.
+          </Alert>
+        ) : null}
         {isRegistrationCallback ? (
           <Alert
             icon={InformationCircleIcon}
             color="success"
-            className="mb-8 shadow-md"
+            className="mb-5 shadow-md"
             heading="Úspěšná registrace!"
           >
             Nyní dokončete registraci přes link, který Vám byl zaslán na email.

@@ -42,7 +42,7 @@ const iconStyles = cva('h-5 w-5', {
   },
 });
 
-const titleStyles = cva('text-sm font-medium', {
+const titleStyles = cva('text-sm font-bold', {
   variants: {
     color: {
       default: 'text-blue-800',
