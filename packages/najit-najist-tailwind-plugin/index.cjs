@@ -1,5 +1,6 @@
 const formPlugin = require('@tailwindcss/forms');
 const plugin = require('tailwindcss/plugin');
+const animatePlugin = require('tailwindcss-animate');
 
 const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
   addUtilities({
@@ -139,6 +140,15 @@ const getTheme = () => ({
           950: '#0A2636',
         },
       },
+      keyframes: {
+        bounceZ: {
+          '0%, 100%': { transform: 'scale(1.10)' },
+          '50%': { transform: 'scale(0.85)' },
+        },
+      },
+      animation: {
+        'bounce-z': 'bounceZ 12s linear infinite',
+      },
     },
     fontFamily: {
       sans: ['var(--font-montserrat)'],
@@ -156,7 +166,7 @@ const getTheme = () => ({
       },
     },
   },
-  plugins: [formPlugin, tailwindPlugin],
+  plugins: [formPlugin, tailwindPlugin, animatePlugin],
 });
 
 module.exports = {

@@ -4,7 +4,7 @@ import {
   getFileUrl,
   Recipe,
 } from '@najit-najist/api';
-import { FC, PropsWithChildren, ReactElement } from 'react';
+import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
 import { Aside } from './Aside';
 import HTMLReactParser from 'html-react-parser';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
@@ -23,6 +23,8 @@ import {
 } from '@najit-najist/api/server';
 import { TypeEdit } from './editorComponents/TypeEdit';
 import { DifficultyEdit } from './editorComponents/DifficultyEdit';
+import { UserListActions } from './UserListActions';
+import { Skeleton } from '@najit-najist/ui';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-xl font-semibold">{children}</h3>
@@ -67,13 +69,28 @@ export const RecipePageManageContent = async ({
         <div className="w-full md:w-4/12 lg:w-auto lg:col-span-4">
           {props.viewType === 'view' ? (
             <>
-              <CustomImage
-                src={getFileUrl(
-                  AvailableModels.RECIPES,
-                  props.recipe.id,
-                  props.recipe.images[0]
-                )}
-              />
+              <div className="relative w-full col-span-2 aspect-square">
+                <CustomImage
+                  onlyImage
+                  src={getFileUrl(
+                    AvailableModels.RECIPES,
+                    props.recipe.id,
+                    props.recipe.images[0]
+                  )}
+                />
+                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
+                  <Suspense
+                    fallback={
+                      <>
+                        <Skeleton className="w-9 h-9" />
+                        <Skeleton className="w-9 h-9" />
+                      </>
+                    }
+                  >
+                    <UserListActions recipeId={props.recipe.id} />
+                  </Suspense>
+                </div>
+              </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
                 {props.recipe.images.slice(1, -1).map((imageUrl) => (
                   <CustomImage

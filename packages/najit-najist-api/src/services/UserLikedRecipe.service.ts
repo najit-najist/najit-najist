@@ -1,6 +1,7 @@
 import {
   ErrorCodes,
   PocketbaseCollections,
+  User,
   UserLikedPost,
   UserLikedRecipe,
 } from '@custom-types';
@@ -15,7 +16,15 @@ export class UserLikedRecipesService {
       .create<UserLikedRecipe>(input);
   }
 
-  static async getOne(input: Pick<UserLikedRecipe, 'likedItem'>) {
+  static async getManyByUser(userId: User['id']) {
+    return pocketbase
+      .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+      .getFullList<UserLikedRecipe>({
+        filter: `likedBy="${userId}"`,
+      });
+  }
+
+  static async getOne(input: Pick<UserLikedRecipe, 'likedItem' | 'likedBy'>) {
     try {
       return pocketbase
         .collection(PocketbaseCollections.USER_LIKED_RECIPES)
