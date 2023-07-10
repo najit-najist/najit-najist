@@ -13,6 +13,7 @@ export const buttonStyles = cva(
   {
     variants: {
       color: {
+        noColor: '',
         normal:
           'bg-deep-green-500 focus:ring-deep-green-400 text-white disabled:bg-opacity-50',
         white:

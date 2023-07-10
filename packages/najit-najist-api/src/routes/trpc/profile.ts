@@ -23,6 +23,7 @@ import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, UserService } from '@services';
 import { objectToFormData } from '@utils/internal';
+import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -30,6 +31,8 @@ const INVALID_CREDENTIALS_ERROR = new TRPCError({
 });
 
 export const profileRouter = t.router({
+  liked: userLikedRoutes,
+
   update: protectedProcedure
     .input(updateUserInputSchema)
     .output(getMeOutputSchema)
@@ -38,11 +41,13 @@ export const profileRouter = t.router({
         .collection(AvailableModels.USER)
         .update<User>(ctx.sessionData.userId, await objectToFormData(input));
     }),
+
   me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
     return pocketbase
       .collection(AvailableModels.USER)
       .getOne<User>(ctx.sessionData.userId, {});
   }),
+
   login: t.procedure
     .input(loginInputSchema)
     .output(loginOutputSchema)
@@ -108,6 +113,7 @@ export const profileRouter = t.router({
         token,
       };
     }),
+
   register: t.procedure
     .input(registerInputSchema)
     .mutation(async ({ ctx, input }) => {

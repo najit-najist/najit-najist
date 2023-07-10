@@ -7,15 +7,11 @@ import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
-export default async function Layout({
-  children,
-}: {
-  children: ReactNode;
-}): Promise<ReactNode> {
+export default async function Layout({ children }: { children: ReactNode }) {
   if (!(await isUserLoggedIn())) {
     const redirectTo = headers().get(X_REQUEST_PATH_HEADER_NAME);
     redirect(`/login?${LOGIN_THEN_REDIRECT_TO_PARAMETER}=${redirectTo}`);
   }
 
-  return children;
+  return <>{children}</>;
 }
