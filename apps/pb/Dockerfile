@@ -1,4 +1,4 @@
-FROM alpine:3.18 as downloader
+FROM alpine:3 as downloader
 
 ARG VERSION=0.16.8
 
@@ -8,7 +8,7 @@ RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/
 
 COPY /apps/pb/migrations /migrations
 
-FROM alpine:3.18
+FROM alpine:3
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
 EXPOSE 8090
