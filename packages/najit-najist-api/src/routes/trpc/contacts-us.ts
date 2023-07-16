@@ -44,7 +44,7 @@ export const contactUsRoutes = t.router({
               username: input.email.split('@')[0],
               telephoneNumber: input.telephone ?? null,
               status: UserStates.SUBSCRIBED,
-              role: UserRoles.NORMAL,
+              role: UserRoles.BASIC,
               newsletter: true,
             });
           } catch (error) {

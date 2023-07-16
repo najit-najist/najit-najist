@@ -33,6 +33,18 @@ const ruleSet: RuleSet = {
       [UserActions.VIEW]: true,
     },
     [AvailableModels.USER]: false,
+    [AvailableModels.RECIPES]: {
+      [UserActions.VIEW]: true,
+    },
+  },
+  [UserRoles.BASIC]: {
+    [AvailableModels.POST]: {
+      [UserActions.VIEW]: true,
+    },
+    [AvailableModels.USER]: false,
+    [AvailableModels.RECIPES]: {
+      [UserActions.VIEW]: true,
+    },
   },
   [UserRoles.PREMIUM]: false,
 };
