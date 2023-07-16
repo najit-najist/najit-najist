@@ -25,8 +25,8 @@ export const Header: FC<PropsWithChildren> = () => {
         className={clsx('sm:block sm:sticky top-[-1px] left-0 z-20 bg-white')}
       >
         <nav className="container hidden lg:flex items-center">
-          <Link href="/" className="flex-none">
-            <Logo className="h-16 w-auto" />
+          <Link href="/" className="flex-none py-2">
+            <Logo className="h-20 w-auto" />
           </Link>
           <ul className="ml-auto flex text-right sm:text-left items-center gap-2 text-lg">
             {navLinks.map(({ text, href }) => (
