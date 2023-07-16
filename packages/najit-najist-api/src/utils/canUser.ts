@@ -13,15 +13,22 @@ export enum AvailableModels {
   RECIPES = 'recipes',
 }
 
+export enum SpecialSections {
+  OG_PREVIEW = 'og-preview',
+}
+
 export type CanUserOptions = {
   action: UserActions;
-  onModel: AvailableModels;
+  onModel: AvailableModels | SpecialSections;
 };
 
 export type RuleSet = Record<
   UserRoles,
   | Partial<
-      Record<AvailableModels, Partial<Record<UserActions, boolean>> | boolean>
+      Record<
+        AvailableModels | SpecialSections,
+        Partial<Record<UserActions, boolean>> | boolean
+      >
     >
   | boolean
 >;
@@ -34,6 +41,9 @@ const ruleSet: RuleSet = {
     },
     [AvailableModels.USER]: false,
     [AvailableModels.RECIPES]: {
+      [UserActions.VIEW]: true,
+    },
+    [SpecialSections.OG_PREVIEW]: {
       [UserActions.VIEW]: true,
     },
   },
