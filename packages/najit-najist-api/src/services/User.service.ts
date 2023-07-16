@@ -45,7 +45,7 @@ export class UserService {
           lastLoggedIn: null,
           notes: null,
           emailVisibility: true,
-          role: UserRoles.NORMAL,
+          role: UserRoles.BASIC,
           // User first have to finish registration
           status: UserStates.ACTIVE,
           ...params,

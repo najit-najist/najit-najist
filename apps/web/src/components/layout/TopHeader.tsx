@@ -4,9 +4,11 @@ import {
   Bars2Icon,
   UserCircleIcon,
   UserIcon,
+  VideoCameraIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { useCurrentUser } from '@hooks';
+import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
 import { Menu, Skeleton, Transition } from '@najit-najist/ui';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
@@ -55,6 +57,23 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
     <>
       {loggedInUser ? (
         <>
+          {canUser(loggedInUser, {
+            action: UserActions.VIEW,
+            onModel: SpecialSections.OG_PREVIEW,
+          }) ? (
+            <Link
+              className={clsx(
+                pillStyles,
+                'bg-sky-100 hover:bg-sky-200 text-sky-600'
+              )}
+              href="/preview-special"
+              prefetch={false}
+            >
+              <span className="hidden sm:inline">Speciál</span>
+              <VideoCameraIcon className="inline sm:hidden w-5 h-5" />
+            </Link>
+          ) : null}
+
           <Link
             className={clsx(
               pillStyles,

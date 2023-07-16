@@ -1,7 +1,11 @@
 export enum UserRoles {
   ADMIN = 'ADMIN',
+  /**
+   * @deprecated - use BASIC instead, this is for users that were registered through intro-web
+   */
   NORMAL = 'NORMAL',
   PREMIUM = 'PREMIUM',
+  BASIC = 'BASIC',
 }
 
 export enum UserStates {
