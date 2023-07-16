@@ -69,12 +69,12 @@ RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     /workspace-builder/apps/web/package.json \
                     /workspace-builder/apps/web/next-env.d.ts \
-                    /workspace-builder/apps/web/public/ \
-                    /workspace-builder/apps/web/private/ \
                     /workspace-builder/apps/web/src/ \
                     ./apps/web/
 
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next
+COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/private ./apps/web/private
+COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./apps/web/public
 
 # Include api package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/packages/najit-najist-api/package.json \
