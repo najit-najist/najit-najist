@@ -6,12 +6,13 @@ export const revalidate = 0;
 export function GET(request: NextRequest) {
   const headersList = new Headers();
 
-  console.log('Logout executed' + request.nextUrl.basePath);
+  console.log('Logout executed' + String(request.nextUrl));
   logoutUser(headersList);
 
-  const url = request.nextUrl.clone();
-  url.pathname = '/login';
-  headersList.set('Location', url.toString());
+  headersList.set(
+    'Location',
+    new URL('/login', 'https://dev.najitnajist.cz').toString()
+  );
 
   return new Response(null, {
     headers: headersList,
