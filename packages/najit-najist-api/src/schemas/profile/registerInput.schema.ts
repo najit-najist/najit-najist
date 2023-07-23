@@ -1,21 +1,9 @@
-import {
-  getPasswordStrength,
-  PasswordStrength,
-} from '@utils/getPasswordStrength';
+import { zodPassword } from '../zodPassword';
 import { z } from 'zod';
 
 export const registerInputSchema = z.object({
   email: z.string(),
-  password: z
-    .string()
-    .min(8, { message: 'Heslo musí být alespoň osm znaků' })
-    .max(22, { message: 'Heslo musí být maximálně 22 znaků' })
-    .refine(
-      (value) => getPasswordStrength(value).score !== PasswordStrength.BAD,
-      {
-        message: 'Heslo je přiliš slabé',
-      }
-    ),
+  password: zodPassword,
   firstName: z.string(),
   lastName: z.string(),
   telephoneNumber: z

@@ -6,10 +6,12 @@ import {
 } from '@custom-types';
 import { t } from '@trpc';
 import {
+  finalizeResetPasswordSchema,
   getMeOutputSchema,
   loginInputSchema,
   loginOutputSchema,
   registerInputSchema,
+  resetPasswordSchema,
   updateUserInputSchema,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
@@ -28,6 +30,27 @@ import { userLikedRoutes } from './profile/liked';
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
   message: 'Invalid credentials',
+});
+
+const passwordResetRoutes = t.router({
+  do: t.procedure
+    .input(resetPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      await pocketbase
+        .collection(AvailableModels.USER)
+        .requestPasswordReset(input.email);
+
+      return null;
+    }),
+  finalize: t.procedure
+    .input(finalizeResetPasswordSchema)
+    .mutation(async ({ ctx, input }) => {
+      await pocketbase
+        .collection(AvailableModels.USER)
+        .confirmPasswordReset(input.token, input.password, input.password);
+
+      return null;
+    }),
 });
 
 export const profileRouter = t.router({
@@ -150,6 +173,8 @@ export const profileRouter = t.router({
         throw error;
       }
     }),
+
+  passwordReset: passwordResetRoutes,
 
   verifyRegistration: t.procedure
     .input(z.object({ token: z.string() }))

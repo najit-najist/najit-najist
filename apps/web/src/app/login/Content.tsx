@@ -33,6 +33,11 @@ export const Content: FC = () => {
     formState: { isSubmitting, errors, isSubmitSuccessful },
   } = formMethods;
   const router = useRouter();
+
+  const isPasswordResetSuccessfulCallback = searchParams?.has(
+    'passwordResetSuccessful'
+  );
+  const isPasswordResetCallback = searchParams?.has('passwordResetCallback');
   const isRegistrationCallback = searchParams?.has('registrationCallback');
   const userNeedsToLoginBeforeContinuing = searchParams?.has(
     LOGIN_THEN_REDIRECT_TO_PARAMETER
@@ -74,6 +79,28 @@ export const Content: FC = () => {
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        {isPasswordResetCallback ? (
+          <Alert
+            icon={InformationCircleIcon}
+            color="success"
+            className="mb-5 shadow-md"
+            heading="Požadavek zpracován"
+          >
+            Dokončete změnu Vašeho hesla přes odkaz, který Vám byl zaslán na
+            Vaši emailovou adresu.
+          </Alert>
+        ) : null}
+        {isPasswordResetSuccessfulCallback ? (
+          <Alert
+            icon={InformationCircleIcon}
+            color="success"
+            className="mb-5 shadow-md"
+            heading="Heslo změněno"
+          >
+            Vaše heslo bylo úspěšně změněno! Nyní se můžete přihlásit pod novým
+            heslem.
+          </Alert>
+        ) : null}
         {userNeedsToLoginBeforeContinuing ? (
           <Alert
             icon={InformationCircleIcon}

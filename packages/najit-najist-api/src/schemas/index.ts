@@ -7,3 +7,4 @@ export * from './user-liked-recipes';
 export * from './users';
 export * from './entry.schema';
 export * from './contactUs.schema';
+export * from './zodPassword';
