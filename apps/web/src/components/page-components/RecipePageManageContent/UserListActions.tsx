@@ -1,10 +1,7 @@
 'use client';
 
-import { BookmarkIcon, HeartIcon } from '@heroicons/react/24/solid';
-import {
-  HeartIcon as HeartIconOutline,
-  BookmarkIcon as BookmarkIconOutline,
-} from '@heroicons/react/24/outline';
+import { HeartIcon } from '@heroicons/react/24/solid';
+import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { Button, ButtonProps } from '@najit-najist/ui';
 import { FC } from 'react';
 import clsx from 'clsx';
@@ -64,7 +61,12 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
     data: likedRecipeInfo,
     refetch,
     isRefetching,
-  } = trpc.profile.liked.recipes.has.useQuery(recipeId);
+  } = trpc.profile.liked.recipes.has.useQuery(recipeId, {
+    suspense: true,
+    refetchInterval: 0,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+  });
   const { mutateAsync: likeRecipe, isLoading } =
     trpc.profile.liked.recipes.add.useMutation({
       async onSuccess() {

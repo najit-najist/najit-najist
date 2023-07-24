@@ -25,6 +25,7 @@ import { TypeEdit } from './editorComponents/TypeEdit';
 import { DifficultyEdit } from './editorComponents/DifficultyEdit';
 import { UserListActions } from './UserListActions';
 import { Skeleton } from '@najit-najist/ui';
+import { LazyUserListActions } from './LazyUserListActions';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-xl font-semibold">{children}</h3>
@@ -87,7 +88,7 @@ export const RecipePageManageContent = async ({
                       </>
                     }
                   >
-                    <UserListActions recipeId={props.recipe.id} />
+                    <LazyUserListActions recipeId={props.recipe.id} />
                   </Suspense>
                 </div>
               </div>
