@@ -1,5 +1,6 @@
 import { ListResult } from '@najit-najist/pb';
 import {
+  createRecipeDifficultyInputSchema,
   createRecipeInputSchema,
   createRecipeResourceMetricInputSchema,
   getManyRecipesInputSchema,
@@ -27,6 +28,19 @@ const metricsRouter = t.router({
   create: onlyAdminProcedure
     .input(createRecipeResourceMetricInputSchema)
     .mutation(({ input }) => RecipesService.resourceMetrics.create(input)),
+});
+
+const difficultiesRouter = t.router({
+  getMany: protectedProcedure.query(() =>
+    RecipesService.difficulties.getMany({
+      page: 1,
+      perPage: 999,
+    })
+  ),
+
+  create: onlyAdminProcedure
+    .input(createRecipeDifficultyInputSchema)
+    .mutation(({ input }) => RecipesService.difficulties.create(input)),
 });
 
 export const recipesRouter = t.router({
@@ -65,4 +79,5 @@ export const recipesRouter = t.router({
     ),
 
   metrics: metricsRouter,
+  difficulties: difficultiesRouter,
 });

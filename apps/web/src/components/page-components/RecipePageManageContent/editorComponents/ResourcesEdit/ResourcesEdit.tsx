@@ -6,7 +6,7 @@ import { RecipeResourceMetric } from '@najit-najist/api';
 import { Button, Input, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 import { RecipeFormData } from '../../_types';
 import { AddMetricModal } from './AddMetricModal';
 
@@ -45,9 +45,9 @@ const MetricSelect: FC<{
           <Select
             name={name}
             selected={metricsSet.get(value)}
+            items={metrics.items}
             formatter={({ name }) => name}
             onChange={({ id }) => onChange(id)}
-            items={metrics.items}
             disabled={formState.isSubmitting}
             error={fieldState.error}
             className="min-w-[140px]"
@@ -69,25 +69,28 @@ const MetricSelect: FC<{
 export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
   metrics: initialMetrics,
 }) => {
-  const { watch, register, setValue, getValues, formState } =
-    useFormContext<RecipeFormData>();
-  const resources = watch('resources');
+  const { register, formState } = useFormContext<RecipeFormData>();
+  const {
+    fields: resources,
+    append,
+    remove,
+  } = useFieldArray<RecipeFormData>({ name: 'resources' });
 
   const onAdd = useCallback(() => {
-    setValue('resources', [
-      ...(getValues().resources ?? []),
-      { count: 0, title: '', isOptional: false, metric: '', description: '' },
-    ]);
-  }, [setValue, getValues]);
+    append({
+      count: 0,
+      title: '',
+      isOptional: false,
+      metric: '',
+      description: '',
+    });
+  }, [append]);
 
   const onRemove = useCallback(
     (index: number) => () => {
-      const newResources = [...getValues().resources];
-      delete newResources[index];
-
-      setValue('resources', newResources);
+      remove(index);
     },
-    [setValue, getValues]
+    [remove]
   );
 
   return (
@@ -95,7 +98,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
       <ul className="grid gap-2">
         {(resources ?? []).map((item, index) => (
           <li
-            key={index}
+            key={item.id}
             className=" gap-2 flex items-end rounded-md hover:bg-gray-50"
           >
             <div className="bg-white aspect-square flex items-center justify-center h-[38px] border-gray-300 border rounded-md">
@@ -119,10 +122,10 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
               onClick={onRemove(index)}
               color="softRed"
               appearance="spaceless"
-              className="px-2 pt-1.5 pb-0.5 flex-none"
+              className="w-10 h-10 flex-none"
               disabled={formState.isSubmitting}
             >
-              <TrashIcon className="w-5 h-5" />
+              <TrashIcon className="w-5 h-5 m-auto" />
             </Button>
           </li>
         ))}

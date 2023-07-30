@@ -24,6 +24,7 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({ types }) => {
           disabled={formState.isSubmitting}
           onChange={({ id }) => field.onChange(id)}
           error={fieldState.error}
+          className="min-w-[150px]"
         />
       )}
     />

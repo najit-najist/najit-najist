@@ -80,6 +80,12 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
     '.ql-toolbar': {
       fontSize: '1rem',
     },
+    '.rcp-body': {
+      padding: '15px 0',
+    },
+    '.rcp-fields-element-label': {
+      display: 'none',
+    },
     '.ql-toolbar': {
       '.ql-picker, .ql-formats>button': {
         borderRadius: theme('borderRadius.md'),
