@@ -62,9 +62,11 @@ export const Footer: FC<PropsWithChildren> = () => {
           <div className="space-y-8 xl:col-span-1">
             <Logo className="h-20 w-auto" />
             <address className="text-base text-gray-500 not-italic">
-              Dlouhá Ulice 13, druhé patro <br />
-              Praha, Středočeský kraj <br />
-              100 00
+              Tomkova 1230/4a
+              <br />
+              Hradec Králové
+              <br />
+              500 03
             </address>
             <div className="flex space-x-6">
               {navigationItems.social.map((item) => (
