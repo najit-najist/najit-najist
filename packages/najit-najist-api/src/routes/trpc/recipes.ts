@@ -3,6 +3,7 @@ import {
   createRecipeDifficultyInputSchema,
   createRecipeInputSchema,
   createRecipeResourceMetricInputSchema,
+  createRecipeTypeInputSchema,
   getManyRecipesInputSchema,
   getOneRecipeInputSchema,
   Recipe,
@@ -43,6 +44,19 @@ const difficultiesRouter = t.router({
     .mutation(({ input }) => RecipesService.difficulties.create(input)),
 });
 
+const typesRouter = t.router({
+  getMany: protectedProcedure.query(() =>
+    RecipesService.types.getMany({
+      page: 1,
+      perPage: 999,
+    })
+  ),
+
+  create: onlyAdminProcedure
+    .input(createRecipeTypeInputSchema)
+    .mutation(({ input }) => RecipesService.types.create(input)),
+});
+
 export const recipesRouter = t.router({
   create: onlyAdminProcedure
     .input(createRecipeInputSchema)
@@ -80,4 +94,5 @@ export const recipesRouter = t.router({
 
   metrics: metricsRouter,
   difficulties: difficultiesRouter,
+  types: typesRouter,
 });

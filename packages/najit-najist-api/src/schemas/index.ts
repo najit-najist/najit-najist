@@ -2,6 +2,7 @@ export * from './posts';
 export * from './profile';
 export * from './recipe-difficulty';
 export * from './recipe-resource-metrics';
+export * from './recipe-type';
 export * from './recipes';
 export * from './user-liked-posts';
 export * from './user-liked-recipes';
