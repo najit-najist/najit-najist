@@ -9,7 +9,7 @@ import { Aside } from './Aside';
 import HTMLReactParser from 'html-react-parser';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { Form } from './editorComponents/Form';
-import { ResourcesEdit } from './editorComponents/ResourcesEdit';
+import { ResourcesEdit } from './editorComponents/ResourcesEdit/ResourcesEdit';
 import { ResourcesRenderer } from './editorComponents/ResourcesRenderer';
 import { StepsEdit } from './editorComponents/StepsEdit';
 import { StepsRenderer } from './editorComponents/StepsRenderer';

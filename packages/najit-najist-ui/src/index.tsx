@@ -22,6 +22,7 @@ export { Alert } from './Alert';
 export { Badge } from './Badge';
 export { Button, buttonStyles } from './Button';
 export { Paper, paperStyles } from './Paper';
+export { Modal, type ModalProps } from './Modal';
 export { Skeleton } from './Skeleton';
 
 export type { AlertProps } from './Alert';

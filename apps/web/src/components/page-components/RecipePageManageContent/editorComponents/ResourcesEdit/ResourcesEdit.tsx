@@ -2,22 +2,76 @@
 
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { Recipe, RecipeResourceMetric } from '@najit-najist/api';
+import { RecipeResourceMetric } from '@najit-najist/api';
 import { Button, Input, Select } from '@najit-najist/ui';
-import { FC, useCallback, useMemo } from 'react';
+import { trpc } from '@trpc';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { RecipeFormData } from '../_types';
+import { RecipeFormData } from '../../_types';
+import { AddMetricModal } from './AddMetricModal';
+
+const MetricSelect: FC<{
+  initialMetrics: RecipeResourceMetric[];
+  index: number;
+}> = ({ initialMetrics, index }) => {
+  const [addNewItemModalOpen, setAddNewItemModalOpen] = useState(false);
+  const { data: metrics, refetch } = trpc.recipes.metrics.getMany.useQuery(
+    undefined,
+    {
+      initialData: { items: initialMetrics },
+      refetchInterval: 0,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+  const metricsSet = useMemo(
+    () => new Map(metrics.items.map((item) => [item.id, item])),
+    [metrics]
+  );
+
+  const addNewResourceMetric = useCallback(() => {
+    setAddNewItemModalOpen(true);
+  }, []);
+
+  return (
+    <>
+      <Controller
+        name={`resources.${index}.metric`}
+        render={({
+          field: { name, onChange, value },
+          formState,
+          fieldState,
+        }) => (
+          <Select
+            name={name}
+            selected={metricsSet.get(value)}
+            formatter={({ name }) => name}
+            onChange={({ id }) => onChange(id)}
+            items={metrics.items}
+            disabled={formState.isSubmitting}
+            error={fieldState.error}
+            className="min-w-[140px]"
+            onAddNewItem={addNewResourceMetric}
+          />
+        )}
+      />
+      <AddMetricModal
+        onClose={() => {
+          setAddNewItemModalOpen(false);
+          refetch();
+        }}
+        open={addNewItemModalOpen}
+      />
+    </>
+  );
+};
 
 export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
-  metrics,
+  metrics: initialMetrics,
 }) => {
   const { watch, register, setValue, getValues, formState } =
     useFormContext<RecipeFormData>();
   const resources = watch('resources');
-  const metricsSet = useMemo(
-    () => new Map(metrics.map((item) => [item.id, item])),
-    [metrics]
-  );
 
   const onAdd = useCallback(() => {
     setValue('resources', [
@@ -54,28 +108,13 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
               {...register(`resources.${index}.title`)}
             />
             <Input
-              label="Metric count"
+              label="Počet"
               disabled={formState.isSubmitting}
               {...register(`resources.${index}.count`, { valueAsNumber: true })}
             />
-            <Controller
-              name={`resources.${index}.metric`}
-              render={({
-                field: { name, onChange, value },
-                formState,
-                fieldState,
-              }) => (
-                <Select
-                  name={name}
-                  selected={metricsSet.get(value)}
-                  formatter={({ name }) => name}
-                  onChange={({ id }) => onChange(id)}
-                  items={metrics}
-                  disabled={formState.isSubmitting}
-                  error={fieldState.error}
-                />
-              )}
-            />
+
+            <MetricSelect index={index} initialMetrics={initialMetrics} />
+
             <Button
               onClick={onRemove(index)}
               color="softRed"
