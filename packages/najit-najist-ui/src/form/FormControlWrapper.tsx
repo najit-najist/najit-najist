@@ -1,28 +1,45 @@
 import clsx from 'clsx';
-import type {
+import {
   DetailedHTMLProps,
   FC,
   HTMLAttributes,
   HTMLInputTypeAttribute,
   PropsWithChildren,
+  useId,
 } from 'react';
 import { FieldError } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
 import { Label } from './Label';
 
-export interface FormControlWrapperProps
-  extends DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement> {
+export interface FormControlWrapperBaseProps {
   title?: string;
   description?: string;
   error?: string | FieldError;
-  id: string;
+  id?: string;
   required?: boolean;
   type?: HTMLInputTypeAttribute;
 }
 
+export interface FormControlWrapperProps
+  extends Omit<
+      DetailedHTMLProps<HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+      'id'
+    >,
+    FormControlWrapperBaseProps {}
+
 export const FormControlWrapper: FC<
   PropsWithChildren<FormControlWrapperProps>
-> = ({ children, title, id, description, error, required, ...rest }) => {
+> = ({
+  children,
+  title,
+  id: idOverride,
+  description,
+  error,
+  required,
+  ...rest
+}) => {
+  const fallbackId = useId();
+  const id = idOverride ?? fallbackId;
   const isCheckbox = rest.type === 'checkbox';
 
   const content = (

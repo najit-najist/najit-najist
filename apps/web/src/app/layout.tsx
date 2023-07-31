@@ -1,3 +1,4 @@
+import 'react-color-palette/lib/css/styles.css';
 import '../globals.css';
 import 'keen-slider/keen-slider.min.css';
 import { LayoutComponent } from '@custom-types';

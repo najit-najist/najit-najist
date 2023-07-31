@@ -17,30 +17,31 @@ export {
   Textarea,
   checkboxStyles,
   PasswordInput,
+  ColorPicker,
+  type ColorPickerProps,
+  type ErrorMessageProps,
+  type InputProps,
+  type LabelProps,
+  type SelectProps,
+  type SwitchProps,
+  type TextareaProps,
+  type FormBreakProps,
+  type FileSelectProps,
+  type ImageSelectProps,
+  type PasswordInputProps,
+  type FormControlWrapperProps,
 } from './form';
 export { Alert } from './Alert';
 export { Badge } from './Badge';
 export { Button, buttonStyles } from './Button';
 export { Paper, paperStyles } from './Paper';
+export { Modal, type ModalProps } from './Modal';
 export { Skeleton } from './Skeleton';
 
 export type { AlertProps } from './Alert';
 export type { ButtonProps } from './Button';
 export type { PaperProps } from './Paper';
 export type { SkeletonProps } from './Skeleton';
-export type {
-  ErrorMessageProps,
-  InputProps,
-  LabelProps,
-  SelectProps,
-  SwitchProps,
-  TextareaProps,
-  FormBreakProps,
-  FileSelectProps,
-  ImageSelectProps,
-  PasswordInputProps,
-  FormControlWrapperProps,
-} from './form';
 
 export {
   Switch as HeadlessSwitch,

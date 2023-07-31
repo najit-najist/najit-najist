@@ -21,6 +21,9 @@ export const Form: FC<
   const router = useRouter();
   const formMethods = useForm<RecipeFormData>({
     defaultValues: {
+      numberOfPortions: 1,
+      steps: [],
+      resources: [],
       ...recipe,
       type: recipe?.type.id,
       difficulty: recipe?.difficulty.id,
@@ -59,6 +62,7 @@ export const Form: FC<
           difficulty: getStringId(values.difficulty),
           type: getStringId(values.type),
           images: values.images,
+          numberOfPortions: values.numberOfPortions,
         });
 
         router.push(`/recepty/${data.slug}`);

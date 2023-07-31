@@ -1,12 +1,11 @@
 import { Logo } from '@components/common/Logo';
 import {
   ArrowLeftOnRectangleIcon,
-  Bars2Icon,
   UserCircleIcon,
   UserIcon,
-  VideoCameraIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
+import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useCurrentUser } from '@hooks';
 import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
 import { Menu, Skeleton, Transition } from '@najit-najist/ui';
@@ -64,13 +63,13 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
             <Link
               className={clsx(
                 pillStyles,
-                'bg-sky-100 hover:bg-sky-200 text-sky-600'
+                'bg-sky-100 hover:bg-sky-200 text-sky-500 relative'
               )}
               href="/preview-special"
               prefetch={false}
             >
-              <span className="hidden sm:inline">Speciál</span>
-              <VideoCameraIcon className="inline sm:hidden w-5 h-5" />
+              <SparklesIcon className="inline text-yellow-400 w-6 h-6 mr-2" />
+              <span className="hidden sm:inline">BONUS</span>
             </Link>
           ) : null}
 
@@ -94,7 +93,7 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
           <Link
             className={clsx([
               pillStyles,
-              'flex justify-center',
+              'flex justify-center !px-2',
               pathname === '/muj-ucet/profil'
                 ? 'bg-deep-green-400 ring-deep-green-400 text-white'
                 : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white',
@@ -113,9 +112,9 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
             )}
           >
             {menuIsOpen ? (
-              <XMarkIcon className="w-10 h-8 m-auto" />
+              <XMarkIcon className="w-12 h-10 m-auto" />
             ) : (
-              <Bars2Icon className="w-10 h-8 m-auto" />
+              <Bars3Icon className="w-12 h-10 m-auto" />
             )}
           </Menu.Button>
         </>

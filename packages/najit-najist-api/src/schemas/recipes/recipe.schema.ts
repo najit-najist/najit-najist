@@ -4,30 +4,30 @@ import { isFileBase64 } from '@utils/isFileBase64';
 import { IMAGE_FILE_REGEX } from '@constants';
 
 export const recipeTypeSchema = entrySchema.extend({
-  title: z.string(),
-  slug: z.string(),
+  title: z.string().trim().min(1, 'Název je povinný'),
+  slug: z.string().trim(),
 });
 
 export const recipeResourceMetricSchema = entrySchema.extend({
-  name: z.string(),
+  name: z.string().trim().min(1, 'Název je povinný'),
 });
 
 export const recipeDifficultySchema = entrySchema.extend({
-  name: z.string(),
+  name: z.string().trim().min(1, 'Název je povinný'),
   color: z.string(),
-  slug: z.string(),
+  slug: z.string().trim(),
 });
 
 export const recipeResourceSchema = z.object({
   count: z.number(),
-  metric: z.string(),
-  title: z.string(),
+  metric: z.string().trim(),
+  title: z.string().trim().min(1, 'Název je povinný'),
   description: z.string().optional(),
   isOptional: z.boolean().optional().default(false),
 });
 
 export const recipeResourceGroupSchema = z.object({
-  title: z.string().describe('Group title'),
+  title: z.string().min(1, 'Název je povinný').describe('Group title'),
   parts: z.array(recipeResourceSchema).min(1),
 });
 
@@ -37,30 +37,37 @@ export const recipeStepSchema = z.object({
 });
 
 export const recipeStepGroupSchema = z.object({
-  title: z.string().describe('Group title'),
+  title: z.string().trim().describe('Group title'),
   parts: z.array(recipeStepSchema).min(1),
 });
 
 export const recipeSchema = entrySchema.extend({
-  title: z.string({ required_error: 'Vyžadováno' }),
-  slug: z.string(),
-  images: z.array(
-    z
-      .string()
-      .min(1)
-      .refine((input) => {
-        if (input.startsWith('data:')) {
-          return isFileBase64(input, IMAGE_FILE_REGEX);
-        }
+  title: z
+    .string({ required_error: 'Vyžadováno' })
+    .trim()
+    .min(1, 'Název je povinný'),
+  slug: z.string().trim(),
+  images: z
+    .array(
+      z
+        .string()
+        .min(1)
+        .refine((input) => {
+          if (input.startsWith('data:')) {
+            return isFileBase64(input, IMAGE_FILE_REGEX);
+          }
 
-        return true;
-      })
-  ),
-  description: z.string().describe('A html description'),
+          return true;
+        })
+    )
+    .min(1, 'Toto pole je povinné'),
+  description: z
+    .string({ required_error: 'Toto pole je povinné' })
+    .describe('A html description'),
   type: recipeTypeSchema,
-  numberOfPortions: z.number().optional(),
-  resources: z.array(recipeResourceSchema),
-  steps: z.array(recipeStepGroupSchema),
+  numberOfPortions: z.number({ required_error: 'Toto pole je povinné' }).min(1),
+  resources: z.array(recipeResourceSchema).min(1, 'Alespoň jedna ingredience'),
+  steps: z.array(recipeStepGroupSchema).min(1, 'Alespoň jeden krok'),
   difficulty: recipeDifficultySchema,
 });
 

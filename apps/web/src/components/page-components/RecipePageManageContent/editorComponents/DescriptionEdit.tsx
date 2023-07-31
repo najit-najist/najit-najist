@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@najit-najist/ui';
+import { FormControlWrapper, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { Controller } from 'react-hook-form';
 
@@ -19,7 +19,11 @@ export const DescriptionEdit = () => {
   return (
     <Controller
       name="description"
-      render={({ field: { ref, ...field } }) => <LazyEditor {...field} />}
+      render={({ field: { ref, ...field }, fieldState }) => (
+        <FormControlWrapper error={fieldState.error}>
+          <LazyEditor {...field} />
+        </FormControlWrapper>
+      )}
     />
   );
 };

@@ -174,20 +174,6 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
   const [isMainImageUploading, setIsMainImageUploading] = useState(false);
   const [numberOfUploadingFiles, setNumberOfUploadingFiles] = useState(0);
 
-  const firstImageUrl = useMemo(() => {
-    const value = field.value?.at(0);
-
-    if (!value) {
-      return undefined;
-    }
-
-    return recipeId
-      ? isBase64(value)
-        ? value
-        : getFileUrl(AvailableModels.RECIPES, recipeId, value)
-      : value;
-  }, [field.value, recipeId]);
-
   const onItemRemove = useCallback(
     (atIndex: number) => {
       const values = getValues(FIELD_NAME);
@@ -228,7 +214,7 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
       if (pickedFile instanceof Error) {
         console.error(pickedFile);
       } else {
-        const values = getValues(FIELD_NAME) ?? [];
+        const values = [...(getValues(FIELD_NAME) ?? [])];
 
         if (prevFile) {
           values[values.findIndex((item) => item === prevFile)] = pickedFile;
@@ -240,7 +226,7 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
           setIsMainImageUploading(false);
         }
 
-        field.onChange([...values]);
+        field.onChange(values);
         field.onBlur();
       }
       setNumberOfUploadingFiles((prev) => {
@@ -265,9 +251,10 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
       {
         <ImagePicker
           canBeOnlyEdited
+          recipeId={recipeId}
           error={fieldState.error}
           onUploadStart={onFirstUploadStart}
-          value={firstImageUrl}
+          value={field.value?.at(0)}
           onItemUploadEnd={onUploadMultipleItemEnd}
           fallback={
             isMainImageUploading ? (

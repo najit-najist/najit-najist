@@ -2,7 +2,7 @@ import { Recipe, RecipeResourceMetric } from '@najit-najist/api';
 import HTMLReactParser from 'html-react-parser';
 import { FC, PropsWithChildren } from 'react';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
-import { ResourcesEdit } from './editorComponents/ResourcesEdit';
+import { ResourcesEdit } from './editorComponents/ResourcesEdit/ResourcesEdit';
 import { ResourcesRenderer } from './editorComponents/ResourcesRenderer';
 import { StepsEdit } from './editorComponents/StepsEdit';
 import { StepsRenderer } from './editorComponents/StepsRenderer';

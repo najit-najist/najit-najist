@@ -102,14 +102,17 @@ export class RecipesService {
           await objectToFormData({
             ...input,
             ...(title ? { slug: slugify(title), title } : null),
-            ...(resources ? { resources: JSON.stringify(resources) } : null),
-            ...(steps ? { steps: JSON.stringify(steps) } : null),
+            ...(resources
+              ? { resources: JSON.stringify(resources ?? []) }
+              : null),
+            ...(steps ? { steps: JSON.stringify(steps ?? []) } : null),
           }),
           { expand: BASE_EXPAND }
         )
       );
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {
+        console.log({ e: error.data.data });
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
           message: `Recept nemůže být vytvořen`,

@@ -1,6 +1,10 @@
 import { Fragment, ReactElement } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+import {
+  CheckIcon,
+  ChevronUpDownIcon,
+  PlusIcon,
+} from '@heroicons/react/20/solid';
 import { cva, cx } from 'class-variance-authority';
 import { labelStyles } from './Label';
 import { ErrorMessage } from './ErrorMessage';
@@ -37,6 +41,8 @@ export type SelectProps<T extends ItemBase> = {
   multiple?: boolean;
   error?: string | FieldError;
   className?: string;
+  onAddNewItem?: () => void;
+  addNewItemLabel?: string;
 };
 
 export function Select<T extends ItemBase>({
@@ -50,6 +56,8 @@ export function Select<T extends ItemBase>({
   multiple,
   error,
   className,
+  onAddNewItem,
+  addNewItemLabel = 'Přidat nový',
 }: SelectProps<T>): ReactElement {
   return (
     <Listbox
@@ -123,6 +131,27 @@ export function Select<T extends ItemBase>({
                     )}
                   </Listbox.Option>
                 ))}
+                {onAddNewItem ? (
+                  <Listbox.Option
+                    className={
+                      'relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-ocean-600 hover:text-white text-ocean-600 w-full text-left group border-t-2'
+                    }
+                    onClick={onAddNewItem}
+                    value={selected}
+                  >
+                    <span className="block truncate font-normal">
+                      {addNewItemLabel}
+                    </span>
+
+                    <span
+                      className={cx(
+                        'absolute inset-y-0 right-0 flex items-center pr-4 text-ocean-600 group-hover:text-white'
+                      )}
+                    >
+                      <PlusIcon className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                  </Listbox.Option>
+                ) : null}
               </Listbox.Options>
             </Transition>
           </div>

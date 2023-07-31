@@ -11,7 +11,7 @@ import { ErrorMessage } from './ErrorMessage';
 
 import { Label } from './Label';
 
-type InputVariantProps = VariantProps<typeof inputStyles>;
+export type InputVariantProps = VariantProps<typeof inputStyles>;
 
 export interface InputProps
   extends Omit<

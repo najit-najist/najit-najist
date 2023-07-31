@@ -4,10 +4,12 @@ import { isTokenExpired } from '@najit-najist/pb';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import {
   deserializePocketToken,
+  getLoggedInUser,
   getSessionFromCookies,
   setSessionToCookies,
 } from '@utils';
 import { AuthService } from '@services';
+import { UserRoles } from '@custom-types';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',
@@ -34,10 +36,23 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
       sessionData: {
         userId: result.id,
         authModel: result.collectionId,
+        user: await getLoggedInUser(),
       },
     },
   });
 });
+
+export const isAuthedAdmin = isAuthed.unstable_pipe(({ next, ctx }) => {
+  console.log({ ctx: ctx.sessionData.user });
+
+  if (ctx.sessionData.user.role !== UserRoles.ADMIN) {
+    throw new TRPCError({ code: 'FORBIDDEN' });
+  }
+
+  return next();
+});
+
+export const onlyAdminProcedure = t.procedure.use(isAuthedAdmin);
 
 /**
  * Protected procedure

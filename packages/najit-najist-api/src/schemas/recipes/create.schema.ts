@@ -11,9 +11,12 @@ export const createRecipeInputSchema = recipeSchema
     updated: true,
   })
   .extend({
-    type: z.string(),
-    difficulty: z.string(),
-  })
-  .partial();
+    type: z
+      .string({ required_error: 'Toto pole je povinné' })
+      .min(1, 'Toto pole je povinné'),
+    difficulty: z
+      .string({ required_error: 'Toto pole je povinné' })
+      .min(1, 'Toto pole je povinné'),
+  });
 
 export type CreateRecipeInput = z.infer<typeof createRecipeInputSchema>;
