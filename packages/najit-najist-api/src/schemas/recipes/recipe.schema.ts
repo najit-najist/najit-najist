@@ -47,23 +47,27 @@ export const recipeSchema = entrySchema.extend({
     .trim()
     .min(1, 'Název je povinný'),
   slug: z.string().trim(),
-  images: z.array(
-    z
-      .string()
-      .min(1)
-      .refine((input) => {
-        if (input.startsWith('data:')) {
-          return isFileBase64(input, IMAGE_FILE_REGEX);
-        }
+  images: z
+    .array(
+      z
+        .string()
+        .min(1)
+        .refine((input) => {
+          if (input.startsWith('data:')) {
+            return isFileBase64(input, IMAGE_FILE_REGEX);
+          }
 
-        return true;
-      })
-  ),
-  description: z.string().describe('A html description'),
+          return true;
+        })
+    )
+    .min(1, 'Toto pole je povinné'),
+  description: z
+    .string({ required_error: 'Toto pole je povinné' })
+    .describe('A html description'),
   type: recipeTypeSchema,
-  numberOfPortions: z.number().optional(),
-  resources: z.array(recipeResourceSchema),
-  steps: z.array(recipeStepGroupSchema),
+  numberOfPortions: z.number({ required_error: 'Toto pole je povinné' }).min(1),
+  resources: z.array(recipeResourceSchema).min(1, 'Alespoň jedna ingredience'),
+  steps: z.array(recipeStepGroupSchema).min(1, 'Alespoň jeden krok'),
   difficulty: recipeDifficultySchema,
 });
 

@@ -1,9 +1,9 @@
 'use client';
 
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { RecipeResourceMetric } from '@najit-najist/api';
-import { Button, Input, Select } from '@najit-najist/ui';
+import { Button, ErrorMessage, Input, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -77,13 +77,16 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
   } = useFieldArray<RecipeFormData>({ name: 'resources' });
 
   const onAdd = useCallback(() => {
-    append({
-      count: 0,
-      title: '',
-      isOptional: false,
-      metric: '',
-      description: '',
-    });
+    append(
+      {
+        count: 0,
+        title: '',
+        isOptional: false,
+        metric: '',
+        description: '',
+      },
+      { shouldFocus: true }
+    );
   }, [append]);
 
   const onRemove = useCallback(
@@ -95,6 +98,12 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
 
   return (
     <>
+      {formState.errors.resources ? (
+        <ErrorMessage>
+          <ExclamationCircleIcon className="w-5 h-5 inline -mt-1" />{' '}
+          {formState.errors.resources?.message}
+        </ErrorMessage>
+      ) : null}
       <ul className="grid gap-2">
         {(resources ?? []).map((item, index) => (
           <li

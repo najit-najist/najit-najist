@@ -26,6 +26,7 @@ import { DifficultyEdit } from './editorComponents/DifficultyEdit';
 import { UserListActions } from './UserListActions';
 import { Skeleton } from '@najit-najist/ui';
 import { LazyUserListActions } from './LazyUserListActions';
+import { PortionsEdit } from './editorComponents/PortionsEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-xl font-semibold">{children}</h3>
@@ -158,7 +159,7 @@ export const RecipePageManageContent = async ({
                     </b>
                   </span>
                 ) : (
-                  <>Portions editor</>
+                  <PortionsEdit />
                 )}
               </div>
             </div>
@@ -182,9 +183,7 @@ export const RecipePageManageContent = async ({
                     Celkem:{' '}
                     <b>{extractTimeFromSteps(props.recipe.steps)} minut</b>
                   </span>
-                ) : (
-                  <></>
-                )}
+                ) : null}
               </div>
             </div>
             {hrComponent}

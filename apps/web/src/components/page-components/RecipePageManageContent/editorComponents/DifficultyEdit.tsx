@@ -54,10 +54,17 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
         error instanceof TRPCClientError &&
         error.message.includes(ErrorCodes.ENTITY_DUPLICATE)
       ) {
-        setError('name', {
-          message: 'Tato složitost již existuje',
-          type: PocketbaseErrorCodes.NOT_UNIQUE,
-        });
+        if (error.message.includes('color')) {
+          setError('name', {
+            message: 'Tato složitost již existuje',
+            type: PocketbaseErrorCodes.NOT_UNIQUE,
+          });
+        } else {
+          setError('color', {
+            message: 'Tato barva patří už k jiné složitosti',
+            type: PocketbaseErrorCodes.NOT_UNIQUE,
+          });
+        }
       } else {
         throw error;
       }
@@ -98,7 +105,12 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
               error={formState.errors.name}
               {...register('name')}
             />
-            <ColorPicker name="color" title="Barva" wrapperClassName="mt-3" />
+            <ColorPicker
+              name="color"
+              title="Barva"
+              wrapperClassName="mt-3"
+              error={formState.errors.color}
+            />
             <div className="mt-5 flex gap-2">
               <Button
                 isLoading={formState.isSubmitting}

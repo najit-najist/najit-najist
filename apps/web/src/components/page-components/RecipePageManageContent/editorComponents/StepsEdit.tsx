@@ -1,8 +1,14 @@
 'use client';
 
-import { TrashIcon } from '@heroicons/react/24/outline';
+import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { Button, Input, Skeleton } from '@najit-najist/ui';
+import {
+  Button,
+  ErrorMessage,
+  FormControlWrapper,
+  Input,
+  Skeleton,
+} from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { FC, useCallback } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
@@ -65,6 +71,7 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
               rootClassName="mb-3"
               disabled={formState.isSubmitting}
               type="number"
+              placeholder="v minutách"
               {...register(
                 `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
                 {
@@ -120,6 +127,12 @@ export const StepsEdit: FC = () => {
 
   return (
     <>
+      {formState.errors.steps ? (
+        <ErrorMessage>
+          <ExclamationCircleIcon className="w-5 h-5 inline -mt-1" />{' '}
+          {formState.errors.steps?.message}
+        </ErrorMessage>
+      ) : null}
       <ul className="grid gap-2">
         {(groups ?? []).map((item, groupIndex) => (
           <li key={item.id}>
