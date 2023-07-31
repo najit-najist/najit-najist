@@ -53,7 +53,7 @@ const teamMembers: {
   },
   {
     name: 'Kristýna Žižková',
-    title: 'Prodejna Fénix',
+    title: 'Prodejna Hradec Králové',
     imageUrl: kristynaZizkovaUrl,
     imagePosition: 'center',
   },
@@ -65,7 +65,7 @@ const ContactPage: FC = () => {
       <div className="mx-auto text-center">
         <h2 className="text-5xl font-bold mt-10 mb-7">Náš tým</h2>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-5">
+      <div className="flex flex-wrap items-center mx-auto justify-center gap-5 max-w-7xl">
         {teamMembers.map((memberInfo) => (
           <UserHead
             key={memberInfo.name}
