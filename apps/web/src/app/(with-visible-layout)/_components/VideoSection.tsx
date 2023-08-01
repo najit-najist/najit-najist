@@ -4,7 +4,7 @@ import { FC } from 'react';
 
 export const VideoSection: FC = () => {
   return (
-    <div className="container px-4 mx-auto mt-20">
+    <div className="container px-4 mx-auto mt-20" id="o-nas">
       <div className="mx-auto text-center">
         <h2 className="text-3xl sm:text-5xl font-bold mt-10 mb-7">
           Náš příběh
@@ -13,8 +13,9 @@ export const VideoSection: FC = () => {
       <div className="relative">
         {/* <FloatingImages /> */}
         <video
+          poster="/images/video-thumbnail.jpg"
           width="100%"
-          className="sm:aspect-video bg-black relative"
+          className="sm:aspect-video bg-black relative shadow-lg shadow-deep-green-300"
           controls
         >
           <source src="/api/videos/our-story" type="video/webm" />

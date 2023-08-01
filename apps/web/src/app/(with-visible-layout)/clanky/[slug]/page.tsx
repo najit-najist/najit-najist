@@ -1,6 +1,10 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
-import { Post } from '@najit-najist/api';
-import { getTrpcCaller, isUserLoggedIn } from '@najit-najist/api/server';
+import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
+import {
+  getLoggedInUser,
+  getTrpcCaller,
+  isUserLoggedIn,
+} from '@najit-najist/api/server';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
@@ -32,9 +36,21 @@ export default async function PostUnderPage({
 }: PageParams) {
   let post: Post;
   const isEditorEnabled = !!searchParams.editor;
-  const userLoggedIn = await isUserLoggedIn();
+  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const canEdit =
+    loggedInUser &&
+    canUser(loggedInUser, {
+      action: UserActions.UPDATE,
+      onModel: AvailableModels.POST,
+    });
+  const canCreate =
+    loggedInUser &&
+    canUser(loggedInUser, {
+      action: UserActions.CREATE,
+      onModel: AvailableModels.POST,
+    });
 
-  if (isEditorEnabled && !userLoggedIn) {
+  if (isEditorEnabled && !canEdit) {
     redirect('/');
   }
 
@@ -43,7 +59,7 @@ export default async function PostUnderPage({
       slug: postSlug,
     });
 
-    if (!post.publishedAt && !userLoggedIn) {
+    if (!post.publishedAt && !canCreate) {
       throw new Error('Not published');
     }
   } catch (error) {
@@ -52,7 +68,7 @@ export default async function PostUnderPage({
 
   return (
     <PostPageManageContent
-      isEditorHeaderShown={userLoggedIn}
+      isEditorHeaderShown={canEdit}
       viewType={isEditorEnabled ? 'edit' : 'view'}
       post={post}
     />

@@ -49,9 +49,9 @@ export const Item: FC<Post> = (post) => {
               {post.title}
             </Link>
           </h3>
-          <p className="mt-5 text-sm leading-6 text-gray-600">
+          <div className="mt-5 text-sm leading-6 text-gray-600">
             {HTMLReactParser(post.description)}
-          </p>
+          </div>
         </div>
         {/* <div className="mt-6 flex border-t border-gray-900/5 pt-6">
     <div className="relative flex items-center gap-x-4">

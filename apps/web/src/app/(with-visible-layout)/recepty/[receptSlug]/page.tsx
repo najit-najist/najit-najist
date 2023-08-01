@@ -1,5 +1,10 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { isUserLoggedIn, RecipesService } from '@najit-najist/api/server';
+import { UserRoles } from '@najit-najist/api';
+import {
+  getLoggedInUser,
+  isUserLoggedIn,
+  RecipesService,
+} from '@najit-najist/api/server';
 import { notFound, redirect } from 'next/navigation';
 
 export const revalidate = 120;
@@ -25,9 +30,10 @@ export async function generateMetadata({ params, searchParams }: Params) {
 export default async function Page({ params, searchParams }: Params) {
   const { receptSlug } = params;
   const isEditorEnabled = !!searchParams.editor;
-  const isLoggedIn = await isUserLoggedIn();
+  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const isAdmin = loggedInUser?.role === UserRoles.ADMIN;
 
-  if (!isLoggedIn && isEditorEnabled) {
+  if ((!loggedInUser || !isAdmin) && isEditorEnabled) {
     redirect('/');
   }
 
@@ -38,7 +44,7 @@ export default async function Page({ params, searchParams }: Params) {
   return (
     // @ts-ignore
     <RecipePageManageContent
-      isEditorHeaderShown={isLoggedIn}
+      isEditorHeaderShown={isAdmin}
       viewType={isEditorEnabled ? 'edit' : 'view'}
       recipe={recipe}
     />
