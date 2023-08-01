@@ -94,7 +94,7 @@ export const RecipePageManageContent = async ({
                 </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
-                {props.recipe.images.slice(1, -1).map((imageUrl) => (
+                {props.recipe.images.slice(1).map((imageUrl) => (
                   <CustomImage
                     key={imageUrl}
                     src={getFileUrl(
