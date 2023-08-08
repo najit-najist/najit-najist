@@ -1,10 +1,17 @@
-import { cookies } from 'next/headers';
+import { cookies as getCookies } from 'next/headers';
 import { config } from '@config';
 import { IronSessionData, unsealData } from 'iron-session';
 import { normalizeStringPasswordToMap } from './normalizeStringPasswordToMap';
+import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 
-export const getSessionFromCookies = async () => {
-  const cookiesList = cookies();
+export type GetSessionFromCookiesOptions = {
+  cookies?: RequestCookies;
+};
+
+export const getSessionFromCookies = async ({
+  cookies,
+}: GetSessionFromCookiesOptions = {}) => {
+  const cookiesList = cookies ?? getCookies();
   const sealFromCookies = cookiesList.get(config.server.session.cookieName);
 
   const passwordsAsMap = normalizeStringPasswordToMap(

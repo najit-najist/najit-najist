@@ -2,6 +2,7 @@ import { User } from '@custom-types';
 import { logger } from '@logger';
 import { pocketbase, Record } from '@najit-najist/pb';
 import { getSessionFromCookies } from '@utils';
+import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { PasswordService } from './Password.service';
 import { UserService } from './User.service';
 
@@ -29,8 +30,8 @@ export class AuthService {
   /**
    * Attaches current user into PocketBase
    */
-  static async authPocketBase() {
-    const { authContent } = await getSessionFromCookies();
+  static async authPocketBase({ cookies }: { cookies?: RequestCookies } = {}) {
+    const { authContent } = await getSessionFromCookies({ cookies });
 
     if (!authContent) {
       throw new Error('Cannot attach auth when user is not logged in');
@@ -45,5 +46,9 @@ export class AuthService {
 
   static clearAuthPocketBase() {
     pocketbase.authStore.clear();
+  }
+
+  static isPocketBaseAuthorized() {
+    return pocketbase.authStore.isValid;
   }
 }

@@ -18,8 +18,8 @@ export const VideoSection: FC = () => {
           className="sm:aspect-video bg-black relative shadow-lg shadow-deep-green-300"
           controls
         >
-          <source src="/api/videos/our-story" type="video/webm" />
-          <source src="/api/videos/our-story?type=mp4" type="video/mp4" />
+          <source src="/api/videos/intro" type="video/webm" />
+          <source src="/api/videos/intro?type=mp4" type="video/mp4" />
         </video>
       </div>
     </div>
