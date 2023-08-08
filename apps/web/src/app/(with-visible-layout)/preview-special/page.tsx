@@ -71,12 +71,14 @@ export default async function Page() {
 
       <div className="container mt-10">
         <video
+          poster="/images/video-thumbnail.jpg"
           width="100%"
           className="sm:aspect-video bg-black relative shadow-lg shadow-green-600"
           controls
+          controlsList="nodownload"
         >
-          <source src="/api/videos/our-story" type="video/webm" />
-          <source src="/api/videos/our-story?type=mp4" type="video/mp4" />
+          <source src="/api/videos/bonus" type="video/webm" />
+          <source src="/api/videos/bonus?type=mp4" type="video/mp4" />
         </video>
       </div>
     </>
