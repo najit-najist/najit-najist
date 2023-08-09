@@ -1,5 +1,4 @@
-import { EntryType, Recipe } from '@schemas';
-import { User } from './User';
+import { EntryType, Recipe, User } from '@schemas';
 
 export type UserLikedRecipe = EntryType & {
   likedBy: User['id'];

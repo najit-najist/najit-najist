@@ -1,32 +1,8 @@
-import { User } from '@custom-types';
-import { logger } from '@logger';
 import { pocketbase, Record } from '@najit-najist/pb';
 import { getSessionFromCookies } from '@utils';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { PasswordService } from './Password.service';
-import { UserService } from './User.service';
 
 export class AuthService {
-  static async validateUser(
-    email: string,
-    pass: string
-  ): Promise<Omit<User, 'password'> | null> {
-    try {
-      const user = await UserService.getBy('email', email);
-
-      if (await PasswordService.validate(user.password!, pass)) {
-        // remove password
-        const { password, ...result } = user;
-
-        return result;
-      }
-    } catch (e) {
-      logger.error(e, `validateUser: validation failed because:`);
-    }
-
-    return null;
-  }
-
   /**
    * Attaches current user into PocketBase
    */

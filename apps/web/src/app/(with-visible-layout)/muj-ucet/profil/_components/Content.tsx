@@ -9,7 +9,7 @@ import {
 } from 'react-hook-form';
 import { trpc } from '@trpc';
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
-import { getMeOutputSchema, updateUserInputSchema } from '@najit-najist/api';
+import { updateUserInputSchema, userSchema } from '@najit-najist/api';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -27,7 +27,7 @@ export function getChangedValues<G extends Record<any, any>>(
   ) as Partial<G>;
 }
 
-export const Content: FC<{ user: z.output<typeof getMeOutputSchema> }> = ({
+export const Content: FC<{ user: z.output<typeof userSchema> }> = ({
   user,
 }) => {
   const { mutateAsync: updateProfile } = trpc.profile.update.useMutation();
@@ -37,14 +37,13 @@ export const Content: FC<{ user: z.output<typeof getMeOutputSchema> }> = ({
   });
   const { handleSubmit, formState, reset } = formMethods;
 
-  const onSubmit: SubmitHandler<z.output<typeof getMeOutputSchema>> =
-    useCallback(
-      async (values) => {
-        await updateProfile(getChangedValues(values, formState.dirtyFields));
-        reset(undefined, { keepValues: true });
-      },
-      [updateProfile, formState.dirtyFields, reset]
-    );
+  const onSubmit: SubmitHandler<z.output<typeof userSchema>> = useCallback(
+    async (values) => {
+      await updateProfile(getChangedValues(values, formState.dirtyFields));
+      reset(undefined, { keepValues: true });
+    },
+    [updateProfile, formState.dirtyFields, reset]
+  );
 
   return (
     <FormProvider {...formMethods}>

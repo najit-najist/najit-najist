@@ -9,7 +9,7 @@ import {
   setSessionToCookies,
 } from '@utils';
 import { AuthService } from '@services';
-import { UserRoles } from '@custom-types';
+import { UserRoles } from '@schemas';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',

@@ -3,33 +3,44 @@ import {
   ErrorMessages,
   PocketbaseCollections,
   PocketbaseErrorCodes,
-  User,
-  UserRoles,
-  UserStates,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { faker } from '@faker-js/faker';
 import { formatErrorMessage, removeDiacritics } from '@utils';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
-import { GetManyUsersOptions } from '@schemas';
+import {
+  GetManyUsersOptions,
+  RegisterUser,
+  User,
+  UserRoles,
+  UserStates,
+} from '@schemas';
 import { logger } from '@logger';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
+type CreateUserOptions = Omit<
+  User,
+  | 'password'
+  | 'newsletterUuid'
+  | 'id'
+  | 'username'
+  | 'status'
+  | 'role'
+  | 'emailVisibility'
+  | 'created'
+  | 'verified'
+  | 'address'
+> &
+  Partial<Pick<User, 'username' | 'status' | 'role' | 'emailVisibility'>> & {
+    password?: string;
+    address?: RegisterUser['address'];
+  };
+
 export class UserService {
   static async create(
-    params: Omit<
-      User,
-      | 'password'
-      | 'newsletterUuid'
-      | 'id'
-      | 'createdAt'
-      | 'username'
-      | 'status'
-      | 'role'
-    > &
-      Partial<Pick<User, 'password' | 'username' | 'status' | 'role'>>,
+    params: CreateUserOptions,
     requestVerification?: boolean
   ) {
     try {
@@ -37,6 +48,13 @@ export class UserService {
       let username = removeDiacritics(
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
+
+      let addressId: string | undefined;
+
+      // TODO - create address for a user first
+
+      if (params.address?.municipality) {
+      }
 
       const user = await pocketbase
         .collection(PocketbaseCollections.USERS)
@@ -53,6 +71,7 @@ export class UserService {
           password,
           passwordConfirm: password,
           newsletterUuid: randomUUID(),
+          address: addressId,
         });
 
       logger.info(

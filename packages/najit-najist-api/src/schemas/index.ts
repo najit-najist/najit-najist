@@ -7,6 +7,12 @@ export * from './recipes';
 export * from './user-liked-posts';
 export * from './user-liked-recipes';
 export * from './users';
+
+export * from './address.schema';
+export * from './auth.collection.schema';
+export * from './base.collection.schema';
 export * from './entry.schema';
 export * from './contactUs.schema';
+export * from './municipality.schema';
+export * from './user.schema';
 export * from './zodPassword';

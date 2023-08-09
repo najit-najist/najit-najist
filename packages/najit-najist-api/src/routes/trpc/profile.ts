@@ -1,18 +1,15 @@
-import {
-  ErrorCodes,
-  PocketbaseCollections,
-  User,
-  UserStates,
-} from '@custom-types';
+import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { t } from '@trpc';
 import {
   finalizeResetPasswordSchema,
-  getMeOutputSchema,
   loginInputSchema,
   loginOutputSchema,
-  registerInputSchema,
+  registerUserSchema,
   resetPasswordSchema,
   updateUserInputSchema,
+  User,
+  userSchema,
+  UserStates,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
@@ -58,14 +55,14 @@ export const profileRouter = t.router({
 
   update: protectedProcedure
     .input(updateUserInputSchema)
-    .output(getMeOutputSchema)
+    .output(userSchema)
     .mutation(async ({ ctx, input }) => {
       return pocketbase
         .collection(AvailableModels.USER)
         .update<User>(ctx.sessionData.userId, await objectToFormData(input));
     }),
 
-  me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
+  me: protectedProcedure.output(userSchema).query(async ({ ctx }) => {
     return pocketbase
       .collection(AvailableModels.USER)
       .getOne<User>(ctx.sessionData.userId, {});
@@ -75,16 +72,13 @@ export const profileRouter = t.router({
     .input(loginInputSchema)
     .output(loginOutputSchema)
     .mutation(async ({ ctx, input }) => {
-      let user: (User & { verified?: boolean }) | undefined;
+      let user: User | undefined;
 
       try {
         // Try to log in
         const { record } = await pocketbase
           .collection(AvailableModels.USER)
-          .authWithPassword<NonNullable<typeof user>>(
-            input.email,
-            input.password
-          );
+          .authWithPassword<User>(input.email, input.password);
 
         user = record;
       } catch (e) {
@@ -138,7 +132,7 @@ export const profileRouter = t.router({
     }),
 
   register: t.procedure
-    .input(registerInputSchema)
+    .input(registerUserSchema)
     .mutation(async ({ ctx, input }) => {
       await config.pb.loginWithAccount('contactForm');
 

@@ -1,5 +1,5 @@
 'use client';
-import { registerInputSchema } from '@najit-najist/api';
+
 import { Button, Input, FormBreak } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -15,8 +15,9 @@ import { Checkbox } from '@najit-najist/ui';
 import { TRPCClientError } from '@trpc/client';
 import { PasswordInputs } from './PasswordInputs';
 import { FormValues } from '../_types/FormValues';
+import { registerUserSchema } from '@najit-najist/api';
 
-const schema = registerInputSchema
+const schema = registerUserSchema
   .extend({
     passwordAgain: z.string(),
   })
