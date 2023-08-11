@@ -1,21 +1,12 @@
-import { IMAGE_FILE_REGEX } from '@constants';
-import { isFileBase64 } from '@utils/isFileBase64';
+import { createAddressSchema, updateAddressSchema } from '../address.schema';
+import { zodImage } from '../zodImage';
 import { z } from 'zod';
 
-export const updateUserInputSchema = z.object({
+export const updateProfileSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
-  avatar: z
-    .string()
-    .min(1)
-    .refine((input) => {
-      if (input.startsWith('data:')) {
-        return isFileBase64(input, IMAGE_FILE_REGEX);
-      }
-
-      return true;
-    })
-    .optional(),
+  avatar: zodImage.optional(),
+  address: updateAddressSchema.or(createAddressSchema).optional(),
 });
 
-export type UpdateUserInput = z.infer<typeof updateUserInputSchema>;
+export type UpdateProfile = z.input<typeof updateProfileSchema>;

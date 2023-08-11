@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { addressSchema } from './address.schema';
 import { authCollectionSchema } from './auth.collection.schema';
+import { municipalitySchema } from './municipality.schema';
 import { zodPassword } from './zodPassword';
 
 export enum UserRoles {
@@ -49,8 +50,15 @@ export const userSchema = authCollectionSchema.extend({
   status: z.nativeEnum(UserStates),
   newsletter: z.boolean().default(true),
   address: addressSchema.optional(),
-  notes: z.string().optional(),
-  lastLoggedIn: z.string().datetime().nullable().optional(),
+  notes: z
+    .string()
+    .transform((item) => (!!item ? item : undefined))
+    .optional(),
+  lastLoggedIn: z
+    .string()
+    .transform((item) => (!!item ? item : undefined))
+    .nullable()
+    .optional(),
 });
 
 export const registerUserSchema = userSchema
@@ -69,7 +77,7 @@ export const registerUserSchema = userSchema
   })
   .extend({
     address: z.object({
-      municipality: z.string(),
+      municipality: municipalitySchema.pick({ id: true }),
     }),
     password: zodPassword,
   });

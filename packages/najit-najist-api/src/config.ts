@@ -88,7 +88,8 @@ export const config = {
           .authWithPassword(account.email, account.password);
       } catch (error) {
         console.log(
-          'Failed to login with contactForm account in api controllers'
+          'Failed to login with contactForm account in api controllers: ' +
+            (error as Error).message
         );
 
         throw new Error('Error happened');

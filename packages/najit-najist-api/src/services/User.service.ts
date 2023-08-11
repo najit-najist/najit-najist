@@ -6,17 +6,24 @@ import {
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { faker } from '@faker-js/faker';
-import { formatErrorMessage, removeDiacritics } from '@utils';
+import {
+  expandPocketFields,
+  formatErrorMessage,
+  removeDiacritics,
+} from '@utils';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
 import {
+  Address,
   GetManyUsersOptions,
   RegisterUser,
+  UpdateProfile,
   User,
   UserRoles,
   UserStates,
 } from '@schemas';
 import { logger } from '@logger';
+import { objectToFormData } from '@utils/internal';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -38,23 +45,21 @@ type CreateUserOptions = Omit<
     address?: RegisterUser['address'];
   };
 
+type UserWithExpand = User & { expand: { address: Address } };
+type AddressWithExpand = Address & { expand: { address: Address } };
+
+const expand = `${PocketbaseCollections.USER_ADDRESSES}(owner).municipality`;
+
 export class UserService {
   static async create(
     params: CreateUserOptions,
     requestVerification?: boolean
-  ) {
+  ): Promise<User> {
     try {
       const password = params.password || faker.internet.password(15);
       let username = removeDiacritics(
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
-
-      let addressId: string | undefined;
-
-      // TODO - create address for a user first
-
-      if (params.address?.municipality) {
-      }
 
       const user = await pocketbase
         .collection(PocketbaseCollections.USERS)
@@ -71,8 +76,23 @@ export class UserService {
           password,
           passwordConfirm: password,
           newsletterUuid: randomUUID(),
-          address: addressId,
         });
+
+      let address: Address | undefined;
+      if (Object.keys(params.address ?? {}).length > 0) {
+        const createAddressPayload = {
+          ...params.address,
+          owner: user.id,
+          municipality: params.address?.municipality.id,
+        };
+
+        address = await pocketbase
+          .collection(PocketbaseCollections.USER_ADDRESSES)
+          .create<AddressWithExpand>(createAddressPayload, {
+            expand: 'municipality',
+          })
+          .then(expandPocketFields<Address>);
+      }
 
       logger.info(
         { email: user.email },
@@ -85,7 +105,10 @@ export class UserService {
           .requestVerification(user.email);
       }
 
-      return user;
+      return expandPocketFields<User>({
+        ...user,
+        expand: { address },
+      });
     } catch (error) {
       // The "validation_invalid_email" error code does not entirely mean that its a duplicate, but we already check input in API
       if (error instanceof ClientResponseError) {
@@ -108,11 +131,12 @@ export class UserService {
     }
   }
 
-  static async getBy(type: GetByType, value: any) {
+  static async getBy(type: GetByType, value: any): Promise<User> {
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getFirstListItem<User>(`${type}="${value}"`);
+        .getFirstListItem<UserWithExpand>(`${type}="${value}"`, { expand })
+        .then(expandPocketFields<User>);
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
@@ -126,15 +150,56 @@ export class UserService {
     }
   }
 
-  static async getMany(options?: GetManyUsersOptions) {
+  static async getMany(options?: GetManyUsersOptions): Promise<User[]> {
     const { page = 1, perPage = 40 } = options ?? {};
 
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getList<User>(page, perPage);
+        .getList<UserWithExpand>(page, perPage, { expand })
+        .then((items) => items.items.map(expandPocketFields<User>));
     } catch (error) {
       throw error;
     }
+  }
+
+  static async update(where: { id: string }, payload: UpdateProfile) {
+    const {
+      address = {} as NonNullable<(typeof payload)['address']>,
+      ...rest
+    } = {
+      ...payload,
+    };
+    const addressAsKeys = Object.keys(address);
+
+    if (addressAsKeys.length > 0) {
+      const morphedAddress = {
+        ...address,
+        ...(address.municipality
+          ? { municipality: address.municipality.id }
+          : {}),
+      };
+
+      if ('id' in address) {
+        await pocketbase
+          .collection(PocketbaseCollections.USER_ADDRESSES)
+          .update(address.id, morphedAddress);
+      } else {
+        // TODO - ensuring that address for one user is created once is kind of handled
+        // in schemas, but it would be better to check it here too. Due to nature of pocketbase we kind of
+        // Need to do two round trips to database
+
+        await pocketbase
+          .collection(PocketbaseCollections.USER_ADDRESSES)
+          .create(morphedAddress);
+      }
+    }
+
+    return pocketbase
+      .collection(PocketbaseCollections.USERS)
+      .update<UserWithExpand>(where.id, await objectToFormData(rest), {
+        expand,
+      })
+      .then(expandPocketFields<User>);
   }
 }

@@ -6,7 +6,7 @@ import {
   loginOutputSchema,
   registerUserSchema,
   resetPasswordSchema,
-  updateUserInputSchema,
+  updateProfileSchema,
   User,
   userSchema,
   UserStates,
@@ -54,19 +54,15 @@ export const profileRouter = t.router({
   liked: userLikedRoutes,
 
   update: protectedProcedure
-    .input(updateUserInputSchema)
+    .input(updateProfileSchema)
     .output(userSchema)
-    .mutation(async ({ ctx, input }) => {
-      return pocketbase
-        .collection(AvailableModels.USER)
-        .update<User>(ctx.sessionData.userId, await objectToFormData(input));
-    }),
+    .mutation(async ({ ctx, input }) =>
+      UserService.update({ id: ctx.sessionData.userId }, input)
+    ),
 
-  me: protectedProcedure.output(userSchema).query(async ({ ctx }) => {
-    return pocketbase
-      .collection(AvailableModels.USER)
-      .getOne<User>(ctx.sessionData.userId, {});
-  }),
+  me: protectedProcedure
+    .output(userSchema)
+    .query(async ({ ctx }) => UserService.getBy('id', ctx.sessionData.userId)),
 
   login: t.procedure
     .input(loginInputSchema)
