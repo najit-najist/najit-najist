@@ -11,7 +11,7 @@ import {
   formatErrorMessage,
   removeDiacritics,
 } from '@utils';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
 import {
   Address,
@@ -151,14 +151,20 @@ export class UserService {
     }
   }
 
-  static async getMany(options?: GetManyUsersOptions): Promise<User[]> {
+  static async getMany(
+    options?: GetManyUsersOptions
+  ): Promise<ListResult<User>> {
     const { page = 1, perPage = 40 } = options ?? {};
 
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
         .getList<UserWithExpand>(page, perPage, { expand })
-        .then((items) => items.items.map(expandPocketFields<User>));
+        .then((values) => {
+          (values.items as any) = values.items.map(expandPocketFields<User>);
+
+          return values as ListResult<User>;
+        });
     } catch (error) {
       throw error;
     }
