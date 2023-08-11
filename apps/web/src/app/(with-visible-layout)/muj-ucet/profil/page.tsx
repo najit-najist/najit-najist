@@ -27,5 +27,5 @@ export default async function Page() {
   // Clear auth for other connections
   AuthService.clearAuthPocketBase();
 
-  return <Content user={user} />;
+  return <Content userId={user.id} initialData={user} />;
 }

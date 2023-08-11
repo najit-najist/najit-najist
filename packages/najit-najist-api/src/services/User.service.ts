@@ -24,6 +24,7 @@ import {
 } from '@schemas';
 import { logger } from '@logger';
 import { objectToFormData } from '@utils/internal';
+import { config } from '@config';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -181,6 +182,7 @@ export class UserService {
       };
 
       if ('id' in address) {
+        console.log(`User has address already`);
         await pocketbase
           .collection(PocketbaseCollections.USER_ADDRESSES)
           .update(address.id, morphedAddress);
@@ -188,10 +190,10 @@ export class UserService {
         // TODO - ensuring that address for one user is created once is kind of handled
         // in schemas, but it would be better to check it here too. Due to nature of pocketbase we kind of
         // Need to do two round trips to database
-
+        console.log(`Creating new address for a user`);
         await pocketbase
           .collection(PocketbaseCollections.USER_ADDRESSES)
-          .create(morphedAddress);
+          .create({ ...morphedAddress, owner: where.id });
       }
     }
 

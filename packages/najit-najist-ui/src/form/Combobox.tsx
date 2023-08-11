@@ -16,6 +16,7 @@ export type ComboboxProps<I extends Item = Item> = {
   items: I[];
   required?: boolean;
   placeholder?: string;
+  className?: string;
 
   itemLabelFormatter: (item: I) => string;
 
@@ -37,12 +38,14 @@ export function Combobox<I extends Item>({
   error,
   required,
   placeholder,
+  className,
 }: ComboboxProps<I>): ReturnType<FC<ComboboxProps<I>>> {
   return (
     <ComboboxDefault
       as="div"
       value={selectedValue}
       onChange={onSelectedValueChange}
+      className={className}
     >
       {label ? (
         <ComboboxDefault.Label as={Label}>

@@ -1,9 +1,10 @@
 import { Section } from '@components/portal';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { FC, FormEventHandler } from 'react';
-import { Button, Input } from '@najit-najist/ui';
-import { useFormContext } from 'react-hook-form';
-import { User } from '@najit-najist/api';
+import { Button, FormBreak, Input } from '@najit-najist/ui';
+import { useFormContext, useWatch } from 'react-hook-form';
+import { UpdateProfile, User } from '@najit-najist/api';
+import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 
 export type ViewType = 'edit' | 'create' | 'edit-myself';
 
@@ -21,8 +22,8 @@ export const EditUserUnderPage: FC<{
   userId?: User['id'];
   viewType: ViewType;
 }> = ({ onSubmit, userId, viewType }) => {
-  const { register, formState } = useFormContext<User>();
-  const { errors } = formState;
+  const { register, formState } = useFormContext<UpdateProfile>();
+  const email = useWatch({ name: 'email' });
 
   const fieldsAreDisabled = formState.isSubmitting;
   const buttonText = viewTypeToButtonText[viewType];
@@ -78,12 +79,16 @@ export const EditUserUnderPage: FC<{
                 label="Email"
                 placeholder="tomas.bezlepek@ukazka.cz"
                 required
-                error={errors['email']}
                 disabled={true}
                 title="Prozatím nemůžete změnit svůj email"
-                {...register('email', {})}
+                value={email}
               />
             </div>
+            <div className="mt-5" />
+            <FormBreak label="Adresa" />
+
+            <MunicipalitySelect name="address.municipality" />
+
             <div className="pt-5 text-right">
               <Button
                 type="submit"

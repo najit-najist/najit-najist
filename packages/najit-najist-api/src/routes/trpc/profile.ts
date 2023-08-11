@@ -21,7 +21,6 @@ import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, UserService } from '@services';
-import { objectToFormData } from '@utils/internal';
 import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
