@@ -5,6 +5,7 @@ import {
   TextareaHTMLAttributes,
   useId,
 } from 'react';
+import { FieldError } from 'react-hook-form';
 import { FormControlWrapper } from './FormControlWrapper';
 import { inputStyles } from './Input';
 
@@ -17,7 +18,7 @@ type ParentProps = Omit<
 >;
 export interface TextareaProps extends ParentProps {
   label?: string;
-  error?: string;
+  error?: string | FieldError;
   wrapperClassName?: string;
 }
 

@@ -1,18 +1,15 @@
-import {
-  ErrorCodes,
-  PocketbaseCollections,
-  User,
-  UserStates,
-} from '@custom-types';
+import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { t } from '@trpc';
 import {
   finalizeResetPasswordSchema,
-  getMeOutputSchema,
   loginInputSchema,
   loginOutputSchema,
-  registerInputSchema,
+  registerUserSchema,
   resetPasswordSchema,
-  updateUserInputSchema,
+  updateProfileSchema,
+  User,
+  userSchema,
+  UserStates,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
@@ -24,7 +21,6 @@ import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, UserService } from '@services';
-import { objectToFormData } from '@utils/internal';
 import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
@@ -57,34 +53,27 @@ export const profileRouter = t.router({
   liked: userLikedRoutes,
 
   update: protectedProcedure
-    .input(updateUserInputSchema)
-    .output(getMeOutputSchema)
-    .mutation(async ({ ctx, input }) => {
-      return pocketbase
-        .collection(AvailableModels.USER)
-        .update<User>(ctx.sessionData.userId, await objectToFormData(input));
-    }),
+    .input(updateProfileSchema)
+    .output(userSchema)
+    .mutation(async ({ ctx, input }) =>
+      UserService.update({ id: ctx.sessionData.userId }, input)
+    ),
 
-  me: protectedProcedure.output(getMeOutputSchema).query(async ({ ctx }) => {
-    return pocketbase
-      .collection(AvailableModels.USER)
-      .getOne<User>(ctx.sessionData.userId, {});
-  }),
+  me: protectedProcedure
+    .output(userSchema)
+    .query(async ({ ctx }) => UserService.getBy('id', ctx.sessionData.userId)),
 
   login: t.procedure
     .input(loginInputSchema)
     .output(loginOutputSchema)
     .mutation(async ({ ctx, input }) => {
-      let user: (User & { verified?: boolean }) | undefined;
+      let user: User | undefined;
 
       try {
         // Try to log in
         const { record } = await pocketbase
           .collection(AvailableModels.USER)
-          .authWithPassword<NonNullable<typeof user>>(
-            input.email,
-            input.password
-          );
+          .authWithPassword<User>(input.email, input.password);
 
         user = record;
       } catch (e) {
@@ -138,7 +127,7 @@ export const profileRouter = t.router({
     }),
 
   register: t.procedure
-    .input(registerInputSchema)
+    .input(registerUserSchema)
     .mutation(async ({ ctx, input }) => {
       await config.pb.loginWithAccount('contactForm');
 

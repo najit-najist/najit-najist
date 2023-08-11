@@ -9,9 +9,9 @@ import {
 } from 'react-hook-form';
 import { trpc } from '@trpc';
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
-import { getMeOutputSchema, updateUserInputSchema } from '@najit-najist/api';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { UpdateProfile, updateProfileSchema, User } from '@najit-najist/api';
 
 export function getChangedValues<G extends Record<any, any>>(
   allValues: G,
@@ -27,23 +27,33 @@ export function getChangedValues<G extends Record<any, any>>(
   ) as Partial<G>;
 }
 
-export const Content: FC<{ user: z.output<typeof getMeOutputSchema> }> = ({
-  user,
-}) => {
+export const Content: FC<{
+  initialData: UpdateProfile;
+  userId: User['id'];
+}> = ({ initialData, userId }) => {
   const { mutateAsync: updateProfile } = trpc.profile.update.useMutation();
-  const formMethods = useForm({
-    defaultValues: user,
-    resolver: zodResolver(updateUserInputSchema),
+  const formMethods = useForm<UpdateProfile>({
+    defaultValues: initialData,
+    resolver: zodResolver(updateProfileSchema),
   });
   const { handleSubmit, formState, reset } = formMethods;
 
-  const onSubmit: SubmitHandler<z.output<typeof getMeOutputSchema>> =
+  const onSubmit: SubmitHandler<z.input<typeof updateProfileSchema>> =
     useCallback(
       async (values) => {
-        await updateProfile(getChangedValues(values, formState.dirtyFields));
+        const nextValues = getChangedValues(values, formState.dirtyFields);
+
+        // TODO provide correct typings
+        // @ts-ignore
+        if (nextValues.address && initialData.address?.id) {
+          // @ts-ignore
+          nextValues.address.id = initialData.address?.id;
+        }
+
+        await updateProfile(nextValues);
         reset(undefined, { keepValues: true });
       },
-      [updateProfile, formState.dirtyFields, reset]
+      [updateProfile, initialData, formState.dirtyFields, reset]
     );
 
   return (
@@ -51,7 +61,7 @@ export const Content: FC<{ user: z.output<typeof getMeOutputSchema> }> = ({
       <EditUserUnderPage
         onSubmit={handleSubmit(onSubmit)}
         viewType="edit-myself"
-        userId={user.id}
+        userId={userId}
       />
     </FormProvider>
   );

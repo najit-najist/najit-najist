@@ -1,5 +1,4 @@
 'use client';
-import { registerInputSchema } from '@najit-najist/api';
 import { Button, PasswordInput } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -10,12 +9,13 @@ import { z } from 'zod';
 
 import { BottomLinks } from './_components/BottomLinks';
 import { Title } from './_components/Title';
+import { registerUserSchema } from '@najit-najist/api';
 
-type FormValues = z.infer<typeof registerInputSchema> & {
+type FormValues = z.infer<typeof registerUserSchema> & {
   passwordAgain: string;
 };
 
-const schema = registerInputSchema.extend({
+const schema = registerUserSchema.extend({
   passwordAgain: z.string(),
 });
 

@@ -21,6 +21,4 @@ export const contactUsSchema = z.object({
   message: z
     .string({ required_error: ERROR_MESSAGES.MISSING_MESSAGE })
     .min(1, ERROR_MESSAGES.MISSING_MESSAGE),
-
-  subscribeToNewsletter: z.boolean().optional().nullable(),
 });

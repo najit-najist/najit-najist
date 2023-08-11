@@ -1,14 +1,14 @@
 import { t } from '@trpc';
 import { getManyInputSchema, getOneUserInputSchema } from '@schemas';
-import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { UserService } from '@services';
+import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
 
 export const usersRoute = t.router({
-  getMany: protectedProcedure
+  getMany: onlyAdminProcedure
     .input(getManyInputSchema)
     .query(async ({ ctx, input }) => UserService.getMany(input)),
 
-  getOne: protectedProcedure
+  getOne: onlyAdminProcedure
     .input(getOneUserInputSchema)
     .query(async ({ ctx, input }) => UserService.getBy('id', input.where.id)),
 });

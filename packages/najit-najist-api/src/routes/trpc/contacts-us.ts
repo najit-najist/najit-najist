@@ -1,12 +1,7 @@
 import { config } from '@config';
 import { t } from '@trpc';
-import {
-  PocketbaseCollections,
-  User,
-  UserRoles,
-  UserStates,
-} from '@custom-types';
-import { contactUsSchema } from '@schemas';
+import { PocketbaseCollections } from '@custom-types';
+import { contactUsSchema, User, UserRoles, UserStates } from '@schemas';
 import { z } from 'zod';
 import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
@@ -17,59 +12,23 @@ export const contactUsRoutes = t.router({
     .input(contactUsSchema)
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
-      let user: User | undefined = undefined;
       await config.pb.loginWithAccount('contactForm');
-
-      // If user want to subscribe to our newsletter we will create basic account for them
-      if (input.subscribeToNewsletter) {
-        try {
-          user = await UserService.getBy('email', input.email);
-
-          if (!user.newsletter) {
-            user = await pocketbase
-              .collection(PocketbaseCollections.USERS)
-              .update(String(user.id), { newsletter: true });
-          }
-        } catch (e) {
-          logger.info(
-            e,
-            `User under ${input.email} does not exist, creating new...`
-          );
-
-          try {
-            user = await UserService.create({
-              email: input.email,
-              firstName: input.firstName,
-              lastName: input.lastName,
-              username: input.email.split('@')[0],
-              telephoneNumber: input.telephone ?? null,
-              status: UserStates.SUBSCRIBED,
-              role: UserRoles.BASIC,
-              newsletter: true,
-            });
-          } catch (error) {
-            logger.error(
-              error,
-              'An error happened during contact form create unique user'
-            );
-
-            throw error;
-          }
-        }
-      }
 
       const createdResponse = await pocketbase
         .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
         .create({
-          email: user!.email,
-          firstName: user?.firstName,
-          lastName: user?.lastName,
+          email: input.email,
+          firstName: input.firstName,
+          lastName: input.lastName,
           message: input.message,
           telephone: input.telephone,
-          subscribeToNewsletter: input.subscribeToNewsletter,
+          subscribeToNewsletter: false,
         })
         .catch((error) => {
-          logger.error(error, `Failed to save a reponse from form to database`);
+          logger.error(
+            error,
+            `Failed to save a response from form to database`
+          );
 
           throw new Error('Error happened');
         });

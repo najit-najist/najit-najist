@@ -4,12 +4,14 @@ import { TvIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
 
 import InstagramIcon from '../../../public/icons/instagram.svg';
 import { Logo } from '@components/common/Logo';
+import Link from 'next/link';
 
 const iconSize = 21;
 
 type NavigationItem = {
   name: string;
   href: string;
+  newTab?: boolean;
 };
 
 type NavigationItems = {
@@ -38,11 +40,11 @@ const navigationItems: NavigationItems = {
   ],
   main: {
     useful: [
-      { name: 'O nás', href: '/about' },
+      { name: 'O nás', href: '/#o-nas' },
       { name: 'Kontakt', href: '/kontakt' },
       { name: 'Náš team', href: '/kontakt#nas-team' },
-      { name: 'VOP', href: '/vop' },
-      { name: 'GDPR', href: '/gdpr' },
+      { name: 'VOP', href: '/documents/vop.pdf', newTab: true },
+      // { name: 'GDPR', href: '/gdpr' },
     ],
     actual: [
       { name: 'Události', href: '/udalosti' },
@@ -70,9 +72,9 @@ export const Footer: FC<PropsWithChildren> = () => {
             </address>
             <div className="flex space-x-6">
               {navigationItems.social.map((item) => (
-                <a
+                <Link
                   key={item.name}
-                  href={item.href}
+                  href={item.href as any}
                   className="text-gray-400 hover:text-gray-500"
                 >
                   <span className="sr-only">{item.name}</span>
@@ -81,42 +83,44 @@ export const Footer: FC<PropsWithChildren> = () => {
                     height={item.iconSize ?? iconSize}
                     aria-hidden="true"
                   />
-                </a>
+                </Link>
               ))}
             </div>
           </div>
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-base font-medium text-deep-green-300">
                   Užitečné
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
                   {navigationItems.main.useful.map((item) => (
                     <li key={item.name}>
-                      <a
-                        href={item.href}
+                      <Link
+                        href={item.href as any}
                         className="text-base text-gray-500 hover:text-gray-900"
+                        target={item.newTab ? '_blank' : undefined}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-base font-medium text-deep-green-300">
                   Aktuální
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
                   {navigationItems.main.actual.map((item) => (
                     <li key={item.name}>
-                      <a
-                        href={item.href}
+                      <Link
+                        href={item.href as any}
                         className="text-base text-gray-500 hover:text-gray-900"
+                        target={item.newTab ? '_blank' : undefined}
                       >
                         {item.name}
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

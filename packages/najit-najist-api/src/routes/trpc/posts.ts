@@ -1,5 +1,8 @@
 import { t } from '@trpc';
-import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import {
+  onlyAdminProcedure,
+  protectedProcedure,
+} from '@trpc-procedures/protectedProcedure';
 import {
   createPostInputSchema,
   dislikePostInputSchema,
@@ -17,7 +20,7 @@ import { revalidatePath } from 'next/cache';
 import { UserLikedPostsService } from 'server';
 
 export const postsRoute = t.router({
-  create: protectedProcedure
+  create: onlyAdminProcedure
     .input(createPostInputSchema)
     .mutation(async ({ ctx, input }) => {
       const result = await pocketbase
@@ -35,7 +38,7 @@ export const postsRoute = t.router({
       return result;
     }),
 
-  update: protectedProcedure
+  update: onlyAdminProcedure
     .input(z.object({ id: z.string(), data: updateOnePostInputSchema }))
     .mutation(async ({ ctx, input }) => {
       const result = await pocketbase

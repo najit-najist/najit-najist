@@ -1,4 +1,4 @@
-import { User, UserRoles } from '@custom-types';
+import { User, UserRoles } from '@schemas';
 
 export enum UserActions {
   DELETE = 'delete',

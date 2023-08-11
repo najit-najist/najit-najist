@@ -1,13 +1,12 @@
 import {
   ErrorCodes,
   PocketbaseCollections,
-  User,
   UserLikedPost,
   UserLikedRecipe,
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { CreateUserLikedRecipesInput } from '@schemas';
+import { CreateUserLikedRecipesInput, User } from '@schemas';
 
 export class UserLikedRecipesService {
   static async create(input: CreateUserLikedRecipesInput) {

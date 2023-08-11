@@ -7,7 +7,6 @@ export * from './PocketbaseCollections';
 export * from './PocketbaseErrorCodes';
 export * from './Post';
 export * from './PostCategories';
-export * from './User';
 export * from './UserLikedPost';
 export * from './UserLikedRecipe';
 export * from './UserTokenData';

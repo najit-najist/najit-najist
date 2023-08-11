@@ -1,5 +1,5 @@
 'use client';
-import { registerInputSchema } from '@najit-najist/api';
+
 import { Button, Input, FormBreak } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -15,8 +15,10 @@ import { Checkbox } from '@najit-najist/ui';
 import { TRPCClientError } from '@trpc/client';
 import { PasswordInputs } from './PasswordInputs';
 import { FormValues } from '../_types/FormValues';
+import { registerUserSchema } from '@najit-najist/api';
+import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 
-const schema = registerInputSchema
+const schema = registerUserSchema
   .extend({
     passwordAgain: z.string(),
   })
@@ -50,9 +52,7 @@ export const Content: FC = () => {
 
   const onSubmit = handleSubmit(async (values) => {
     try {
-      const result = await doRegister(values);
-
-      console.log({ values, result });
+      await doRegister(values);
     } catch (error) {
       if (error instanceof TRPCClientError && error.data.code === 'CONFLICT') {
         setError('email', {
@@ -100,6 +100,11 @@ export const Content: FC = () => {
                 {...register('lastName')}
               />
 
+              <FormBreak label="Adresa" />
+
+              <MunicipalitySelect name="address.municipality" required />
+
+              <FormBreak label="Přihlašovací údaje" />
               <Input
                 required
                 label="Emailová adresa"
@@ -110,8 +115,9 @@ export const Content: FC = () => {
                 disabled={fieldsAreDisabled}
                 {...register('email')}
               />
+              <PasswordInputs />
 
-              <FormBreak />
+              <FormBreak label="Obecné" />
 
               <Input
                 label="Telefonní číslo"
@@ -125,8 +131,6 @@ export const Content: FC = () => {
                 {...register('telephoneNumber')}
               />
 
-              <FormBreak />
-              <PasswordInputs />
               <FormBreak />
 
               <CheckboxWrapper

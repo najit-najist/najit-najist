@@ -1,7 +1,6 @@
 import { entrySchema } from '../entry.schema';
 import { z } from 'zod';
-import { isFileBase64 } from '@utils/isFileBase64';
-import { IMAGE_FILE_REGEX } from '@constants';
+import { zodImage } from 'schemas/zodImage';
 
 export const recipeTypeSchema = entrySchema.extend({
   title: z.string().trim().min(1, 'Název je povinný'),
@@ -47,20 +46,7 @@ export const recipeSchema = entrySchema.extend({
     .trim()
     .min(1, 'Název je povinný'),
   slug: z.string().trim(),
-  images: z
-    .array(
-      z
-        .string()
-        .min(1)
-        .refine((input) => {
-          if (input.startsWith('data:')) {
-            return isFileBase64(input, IMAGE_FILE_REGEX);
-          }
-
-          return true;
-        })
-    )
-    .min(1, 'Toto pole je povinné'),
+  images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z
     .string({ required_error: 'Toto pole je povinné' })
     .describe('A html description'),
