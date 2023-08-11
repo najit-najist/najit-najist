@@ -12,4 +12,5 @@ export enum PocketbaseCollections {
   CONTACT_FORM_REPLIES = 'contact_form_replies',
   USER_ADDRESSES = 'user_addresses',
   MUNICIPALITY = 'municipality',
+  NEWSLETTER_SUBSCRIPTIONS = 'newsletter_subscriptions',
 }

@@ -14,6 +14,7 @@ export * from './base.collection.schema';
 export * from './entry.schema';
 export * from './contactUs.schema';
 export * from './municipality.schema';
+export * from './newsletterSubscription.schema';
 export * from './user.schema';
 export * from './zodImage';
 export * from './zodPassword';

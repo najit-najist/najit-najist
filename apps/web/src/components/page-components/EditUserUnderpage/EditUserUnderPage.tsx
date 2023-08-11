@@ -1,7 +1,13 @@
 import { Section } from '@components/portal';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { FC, FormEventHandler } from 'react';
-import { Button, FormBreak, Input } from '@najit-najist/ui';
+import {
+  Button,
+  Checkbox,
+  CheckboxWrapper,
+  FormBreak,
+  Input,
+} from '@najit-najist/ui';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { UpdateProfile, User } from '@najit-najist/api';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
@@ -88,6 +94,17 @@ export const EditUserUnderPage: FC<{
             <FormBreak label="Adresa" />
 
             <MunicipalitySelect name="address.municipality" />
+
+            <div className="mt-5" />
+            <FormBreak className="mb-3" />
+
+            <CheckboxWrapper childId="newsletter" title="Odebírat newsletter">
+              <Checkbox
+                id="newsletter"
+                disabled={fieldsAreDisabled}
+                {...register('newsletter')}
+              />
+            </CheckboxWrapper>
 
             <div className="pt-5 text-right">
               <Button

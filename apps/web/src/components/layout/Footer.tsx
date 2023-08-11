@@ -40,7 +40,7 @@ const navigationItems: NavigationItems = {
   ],
   main: {
     useful: [
-      { name: 'O nás', href: '/about' },
+      { name: 'O nás', href: '/#o-nas' },
       { name: 'Kontakt', href: '/kontakt' },
       { name: 'Náš team', href: '/kontakt#nas-team' },
       { name: 'VOP', href: '/documents/vop.pdf', newTab: true },
@@ -90,7 +90,7 @@ export const Footer: FC<PropsWithChildren> = () => {
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-base font-medium text-deep-green-300">
                   Užitečné
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
@@ -108,7 +108,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-base font-medium text-deep-green-300">
                   Aktuální
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">

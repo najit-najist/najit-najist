@@ -7,6 +7,7 @@ export const updateProfileSchema = z.object({
   lastName: z.string().optional(),
   avatar: zodImage.optional(),
   address: updateAddressSchema.or(createAddressSchema).optional(),
+  newsletter: z.boolean().optional(),
 });
 
 export type UpdateProfile = z.input<typeof updateProfileSchema>;
