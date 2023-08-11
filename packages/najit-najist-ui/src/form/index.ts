@@ -1,6 +1,7 @@
 export * from './Input';
 export * from './Checkbox';
 export * from './ColorPicker';
+export * from './Combobox';
 export * from './CheckboxWrapper';
 export * from './ErrorMessage';
 export * from './FileSelect';

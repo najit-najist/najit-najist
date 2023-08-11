@@ -4,8 +4,15 @@ import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 export type FormBreakProps = DetailedHTMLProps<
   HTMLAttributes<HTMLHRElement>,
   HTMLHRElement
->;
+> & { label?: string };
 
-export const FormBreak: FC<FormBreakProps> = ({ className, ...rest }) => (
-  <hr className={clsx('h-0.5 bg-gray-100 w-full', className)} {...rest} />
+export const FormBreak: FC<FormBreakProps> = ({
+  className,
+  label,
+  ...rest
+}) => (
+  <div>
+    {label ? <p className="text-sm text-deep-green-300">{label}</p> : null}
+    <hr className={clsx('h-0.5 bg-gray-100 w-full', className)} {...rest} />
+  </div>
 );

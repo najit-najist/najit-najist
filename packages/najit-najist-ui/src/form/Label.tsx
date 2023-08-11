@@ -1,6 +1,7 @@
 import {
   DetailedHTMLProps,
   FC,
+  forwardRef,
   LabelHTMLAttributes,
   PropsWithChildren,
 } from 'react';
@@ -21,12 +22,13 @@ export const labelStyles = cva('block text-sm font-medium text-gray-700', {
   },
 });
 
-export const Label: FC<PropsWithChildren<LabelProps>> = ({
-  children,
-  className,
-  ...rest
-}) => (
-  <label className={labelStyles({ className, ...rest })} {...rest}>
-    {children}
-  </label>
-);
+export const Label = forwardRef<
+  HTMLLabelElement,
+  PropsWithChildren<LabelProps>
+>(function Label({ children, className, ...rest }, ref) {
+  return (
+    <label ref={ref} className={labelStyles({ className, ...rest })} {...rest}>
+      {children}
+    </label>
+  );
+});
