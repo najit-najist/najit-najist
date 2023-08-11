@@ -20,11 +20,8 @@ const items: Item[] = [
 ];
 
 const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
-  <a
-    href={href}
-    className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] hover:scale-[1.02] duration-100 hover:shadow-2xl lg:w-full"
-  >
-    <div className="rounded-xl overflow-hidden relative w-full h-full hover:ring-2 ring-deep-green-300">
+  <a className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] --hover:scale-[1.02] duration-100 --hover:shadow-2xl lg:w-full">
+    <div className="rounded-xl overflow-hidden relative w-full h-full --hover:ring-2 ring-deep-green-300">
       <Image
         className="absolute top-0 left-0 w-full h-full object-cover content-center"
         src={imageSrc}
@@ -41,10 +38,15 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
 
 export const QuickLinks: FC = () => {
   return (
-    <section className="container w-full mx-auto flex-wrap lg:flex-nowrap flex gap-5 -mt-32">
-      {items.map((data) => (
-        <LinkItem key={data.title} {...data} />
-      ))}
+    <section className="container w-full mx-auto-mt-32">
+      <div className="relative w-full flex-wrap lg:flex-nowrap flex gap-5">
+        {items.map((data) => (
+          <LinkItem key={data.title} {...data} />
+        ))}
+        <div className="absolute top-0 inset-0 backdrop-blur-sm flex items-center justify-center font-bold text-4xl uppercase text-red-500 rounded-xl overflow-hidden">
+          Připravujeme
+        </div>
+      </div>
     </section>
   );
 };
