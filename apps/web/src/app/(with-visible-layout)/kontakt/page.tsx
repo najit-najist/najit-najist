@@ -22,24 +22,20 @@ const teamMembers: {
   imagePosition?: imagePosition;
 }[] = [
   {
-    name: 'Martin Starý',
-    title: 'Marketing',
-    imageUrl: martinStaryUrl,
-  },
-  {
-    name: 'Ondřej Langr',
-    title: 'Programátor',
-    imageUrl: ondrejLangrUrl,
-  },
-  {
     name: 'Arnošt Žižka',
     title: 'Jednatel',
     imageUrl: arnostZizkaUrl,
   },
   {
-    name: 'Tereza Žižková',
-    title: 'Grafik',
-    imageUrl: terezaZizkovaUrl,
+    name: 'Martin Starý',
+    title: 'Marketing',
+    imageUrl: martinStaryUrl,
+  },
+  {
+    name: 'Lenka Černoušková',
+    title: 'Finance',
+    imageUrl: lenkaCernouskovaUrl,
+    imagePosition: 'center',
   },
   {
     name: 'Vojtěch Žižka',
@@ -47,10 +43,14 @@ const teamMembers: {
     imageUrl: vojtechZizkaUrl,
   },
   {
-    name: 'Lenka Černoušková',
-    title: 'Finance',
-    imageUrl: lenkaCernouskovaUrl,
-    imagePosition: 'center',
+    name: 'Tereza Žižková',
+    title: 'Grafik',
+    imageUrl: terezaZizkovaUrl,
+  },
+  {
+    name: 'Ondřej Langr',
+    title: 'Programátor',
+    imageUrl: ondrejLangrUrl,
   },
   {
     name: 'Kristýna Žižková',
@@ -91,7 +91,7 @@ const ContactPage: FC = () => {
         <div className="mx-auto">
           <h2 className="text-5xl font-bold mt-10 mb-7">Náš tým</h2>
         </div>
-        <div className="flex flex-wrap mx-auto gap-5">
+        <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
           {teamMembers.map((memberInfo) => (
             <UserHead
               key={memberInfo.name}
@@ -108,7 +108,7 @@ const ContactPage: FC = () => {
         <div className="mx-auto">
           <h2 className="text-5xl font-bold mt-10 mb-7">Prodejny</h2>
         </div>
-        <div className="grid grid-cols-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {locations.map((item) => (
             <div className="p-2 bg-white rounded-lg shadow-lg">
               <iframe

@@ -11,7 +11,12 @@ export const ResourcesRenderer: FC<
       {resources.map(({ title, description, count, isOptional, metric }) => (
         <li key={title}>
           <>
-            {title} - {count} {metricsMap.get(metric)?.name}
+            {title}
+            {count ? (
+              <>
+                - {count} {metricsMap.get(metric)?.name}
+              </>
+            ) : null}
           </>
         </li>
       ))}

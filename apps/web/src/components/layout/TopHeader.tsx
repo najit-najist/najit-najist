@@ -7,7 +7,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useCurrentUser } from '@hooks';
-import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
+import {
+  canUser,
+  SpecialSections,
+  UserActions,
+  UserRoles,
+} from '@najit-najist/api';
 import { Menu, Skeleton, Transition } from '@najit-najist/ui';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
@@ -16,7 +21,7 @@ import { usePathname } from 'next/navigation';
 import { FC, forwardRef, PropsWithChildren, Suspense } from 'react';
 
 const pillStyles = clsx(
-  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-1 sm:px-3 my-2 ring ring-transparent'
+  'inline-flex items-center duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-1 sm:px-3 my-2 ring ring-white'
 );
 
 const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
@@ -60,23 +65,28 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
             action: UserActions.VIEW,
             onModel: SpecialSections.OG_PREVIEW,
           }) ? (
-            <Link
-              className={clsx(
-                pillStyles,
-                'bg-sky-100 hover:bg-sky-200 text-sky-500 relative'
-              )}
-              href="/preview-special"
-              prefetch={false}
-            >
-              <SparklesIcon className="inline text-yellow-400 w-6 h-6 mr-2" />
-              <span className="hidden sm:inline">BONUS</span>
+            <Link className="relative" href="/preview-special" prefetch={false}>
+              {pathname !== '/preview-special' ? (
+                <div className="absolute h-[40%] w-[60%] left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 duration-500">
+                  <span className="animate-ping absolute inline-flex rounded-full w-full h-full bg-sky-400 opacity-75"></span>
+                </div>
+              ) : null}
+              <div
+                className={clsx(
+                  pillStyles,
+                  'bg-sky-100 hover:bg-sky-200 !ring-sky-100 hover:!ring-sky-200 text-sky-500 relative'
+                )}
+              >
+                <SparklesIcon className="inline text-yellow-400 w-6 h-6 mr-2" />
+                <span className="hidden sm:inline">BONUS</span>
+              </div>
             </Link>
           ) : null}
 
           <Link
             className={clsx(
               pillStyles,
-              'bg-red-100 hover:bg-red-200 text-red-600'
+              'bg-red-100 hover:bg-red-200 !ring-red-100 hover:!ring-red-200 text-red-600'
             )}
             href="/logout"
             onClick={(event) => {
@@ -103,35 +113,46 @@ const Content: FC<{ menuIsOpen: boolean }> = ({ menuIsOpen }) => {
             <UserIcon className="w-5 h-5" />
           </Link>
 
-          <Menu.Button
-            className={clsx(
-              'h-full aspect-square flex',
-              menuIsOpen
-                ? 'bg-red-100 text-red-400 hover:bg-red-200 hover:text-red-600'
-                : 'bg-white hover:bg-deep-green-400 hover:text-white'
-            )}
-          >
-            {menuIsOpen ? (
-              <XMarkIcon className="w-12 h-10 m-auto" />
-            ) : (
-              <Bars3Icon className="w-12 h-10 m-auto" />
-            )}
-          </Menu.Button>
+          {loggedInUser.role === UserRoles.ADMIN ? (
+            <Menu.Button
+              className={clsx(
+                'h-full aspect-square flex',
+                menuIsOpen
+                  ? 'bg-red-100 text-red-400 hover:bg-red-200 hover:text-red-600'
+                  : 'bg-white hover:bg-deep-green-400 hover:text-white'
+              )}
+            >
+              {menuIsOpen ? (
+                <XMarkIcon className="w-12 h-10 m-auto" />
+              ) : (
+                <Bars3Icon className="w-12 h-10 m-auto" />
+              )}
+            </Menu.Button>
+          ) : null}
         </>
       ) : (
-        <Link
-          href="/login"
-          className={clsx(
-            'inline-flex items-center',
-            pillStyles,
-            pathname === '/muj-ucet/profil'
-              ? 'bg-deep-green-400 ring-deep-green-400 text-white'
-              : 'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white'
-          )}
-        >
-          <UserCircleIcon width={25} height={25} className="mr-3" /> Přihlásit
-          se
-        </Link>
+        <>
+          <Link
+            href="/registrace"
+            className={clsx(
+              'inline-flex items-center',
+              pillStyles,
+              'hover:bg-deep-green-400  hover:ring-deep-green-400 hover:text-white bg-white'
+            )}
+          >
+            Registrovat
+          </Link>
+          <Link
+            href="/login"
+            className={clsx(
+              'inline-flex items-center',
+              pillStyles,
+              'bg-deep-green-400 !ring-deep-green-400 text-white'
+            )}
+          >
+            Přihlásit se
+          </Link>
+        </>
       )}
     </>
   );

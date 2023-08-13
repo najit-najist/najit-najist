@@ -160,7 +160,7 @@ export class RecipesService {
     try {
       const filter = [
         difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
-        typeSlug ? `type.slug = '${difficultySlug}'` : undefined,
+        typeSlug ? `type.slug = '${typeSlug}'` : undefined,
         search
           ? `(title ~ '${search}' || slug ~ '${search}' || steps ~ '${search}')`
           : undefined,

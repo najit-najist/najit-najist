@@ -1,12 +1,13 @@
+import { LazyUserListActions } from '@components/page-components/RecipePageManageContent/LazyUserListActions';
 import {
   AcademicCapIcon,
   ArchiveBoxIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
 import { extractTimeFromSteps, Recipe, stripHtml } from '@najit-najist/api';
-import { Badge } from '@najit-najist/ui';
+import { Badge, Skeleton } from '@najit-najist/ui';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 import { ItemLink } from './ItemLink';
@@ -42,6 +43,19 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
           <Badge className="whitespace-nowrap">
             <ArchiveBoxIcon className="w-4 h-4" /> {type.title}
           </Badge>
+        </div>
+
+        <div className="m-1 absolute top-0 left-0 rounded-md p-1 flex gap-2">
+          <Suspense
+            fallback={
+              <>
+                <Skeleton className="w-9 h-9" />
+                {/* <Skeleton className="w-9 h-9" /> */}
+              </>
+            }
+          >
+            <LazyUserListActions recipeId={id} />
+          </Suspense>
         </div>
       </div>
       <div className="p-5 flex flex-col justify-between h-full">

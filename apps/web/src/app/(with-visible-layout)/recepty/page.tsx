@@ -1,9 +1,11 @@
 import {
   RecipesService,
   RecipeDifficultyService,
+  RecipeTypeService,
 } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
+import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -15,11 +17,19 @@ export const metadata = {
 
 export const revalidate = 30;
 
-const fallbackDifficulty = {
+const fallbackDifficulty: RecipeDifficulty = {
   id: 'default',
   slug: '',
   name: 'Všechny',
   color: '',
+  created: '',
+  updated: '',
+};
+
+const fallbackType: RecipeType = {
+  id: 'default',
+  slug: '',
+  title: 'Všechny',
   created: '',
   updated: '',
 };
@@ -31,7 +41,12 @@ export default async function RecipesPage({ searchParams }: Params) {
     type: typeSlugFromUrl,
   } = searchParams;
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
-  const { items: recipeDifficulties } = await RecipeDifficultyService.getMany();
+  const { items: recipeDifficulties } = await RecipeDifficultyService.getMany({
+    perPage: 999,
+  });
+  const { items: recipeTypes } = await RecipesService.types.getMany({
+    perPage: 999,
+  });
 
   const { items: recipes } = await RecipesService.getMany({
     difficultySlug: difficultySlugFromUrl,
@@ -42,6 +57,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   return (
     <>
       <SearchForm
+        types={[fallbackType, ...recipeTypes]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
         initialValues={{ query, difficultySlug: difficultySlugFromUrl ?? '' }}
       />

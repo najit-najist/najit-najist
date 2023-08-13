@@ -21,9 +21,7 @@ export const Header: FC<PropsWithChildren> = () => {
   return (
     <>
       <TopHeader />
-      <header
-        className={clsx('sm:block sm:sticky top-[-1px] left-0 z-20 bg-white')}
-      >
+      <header className="sm:block sm:sticky top-[-1px] left-0 z-20 backdrop-blur-sm bg-white bg-opacity-50">
         <nav className="container hidden lg:flex items-center">
           <Link href="/" className="flex-none py-2">
             <Logo className="h-20 w-auto" />

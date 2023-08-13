@@ -4,7 +4,7 @@ import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { RecipeDifficulty } from '@najit-najist/api';
+import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
 import { Input, Select } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
@@ -12,15 +12,18 @@ import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 const typeLabelFormatter = (value: RecipeDifficulty) => value.name;
+const typesLabelFormatter = (value: RecipeType) => value.title;
 type FormValues = {
   query?: string;
   difficultySlug?: string;
+  typeSlug?: string;
 };
 
 export const SearchForm: FC<{
   difficulties: RecipeDifficulty[];
+  types: RecipeType[];
   initialValues?: Partial<FormValues>;
-}> = ({ difficulties, initialValues }) => {
+}> = ({ difficulties, types, initialValues }) => {
   const router = useRouter();
   const [isRefreshing, startRefreshing] = useTransition();
   const formMethods = useForm<FormValues>({
@@ -31,13 +34,18 @@ export const SearchForm: FC<{
     () => new Map(difficulties.map((item) => [item.slug, item])),
     [difficulties]
   );
+  const typesAsMap = useMemo(
+    () => new Map(types.map((item) => [item.slug, item])),
+    [types]
+  );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ difficultySlug, query }) => {
+    ({ difficultySlug, query, typeSlug }) => {
       let route = '/recepty';
       const params = [
         ['query', query],
         ['difficulty', difficultySlug],
+        ['type', typeSlug],
       ].filter(([_, value]) => !!value) as string[][];
 
       if (params.length) {
@@ -65,7 +73,7 @@ export const SearchForm: FC<{
     <FormProvider {...formMethods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="container my-10 flex w-full gap-5 items-end"
+        className="container my-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end"
       >
         <Input
           placeholder="Vyhledávání..."
@@ -80,6 +88,20 @@ export const SearchForm: FC<{
           {...register('query')}
         />
         <Controller<FormValues>
+          name="typeSlug"
+          render={({ field: { name, value, onChange } }) => (
+            <Select<RecipeType>
+              name={name}
+              label="Typ"
+              selected={typesAsMap.get(value ?? '')}
+              onChange={(item) => onChange(item.slug)}
+              formatter={typesLabelFormatter}
+              items={types}
+              className="md:max-w-[240px] w-full"
+            />
+          )}
+        />
+        <Controller<FormValues>
           name="difficultySlug"
           render={({ field: { name, value, onChange } }) => (
             <Select<RecipeDifficulty>
@@ -89,7 +111,7 @@ export const SearchForm: FC<{
               onChange={(item) => onChange(item.slug)}
               formatter={typeLabelFormatter}
               items={difficulties}
-              className="max-w-xs w-full"
+              className="md:max-w-[240px] w-full"
             />
           )}
         />

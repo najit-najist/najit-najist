@@ -41,12 +41,18 @@ const CustomButton: FC<
       <IconComponent
         className={clsx(
           'w-full h-full duration-100',
-          isActive ? '' : 'group-hover:opacity-100 opacity-0'
+          isActive ? '' : 'group-hover:opacity-40 opacity-0'
         )}
       />
       <OutlinedIconComponent
         className={clsx(
           'w-full h-full absolute top-0 left-0 group-hover:animate-ping group-hover:repeat-1',
+          isActive ? 'hidden' : ''
+        )}
+      />
+      <OutlinedIconComponent
+        className={clsx(
+          'w-full h-full absolute top-0 left-0',
           isActive ? 'hidden' : ''
         )}
       />

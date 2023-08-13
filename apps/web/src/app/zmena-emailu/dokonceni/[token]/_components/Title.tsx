@@ -5,7 +5,7 @@ import { FC } from 'react';
 export const Title: FC = () => (
   <div className="sm:mx-auto sm:w-full sm:max-w-md">
     <Link href="/">
-      <Logo className="h-16 w-auto mx-auto" />
+      <Logo className="h-28 w-auto mx-auto" />
     </Link>
     <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
       Registrace nového účtu

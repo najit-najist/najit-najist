@@ -128,7 +128,7 @@ export const Content: FC = () => {
                 htmlFor="email"
                 className="block text-sm font-medium text-gray-700"
               >
-                Email address
+                Emailová adresa
               </label>
               <div className="mt-1">
                 <Input
@@ -148,7 +148,7 @@ export const Content: FC = () => {
                 htmlFor="password"
                 className="block text-sm font-medium text-gray-700"
               >
-                Password
+                Heslo
               </label>
               <div className="mt-1">
                 <PasswordInput

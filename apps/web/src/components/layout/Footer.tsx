@@ -43,8 +43,8 @@ const navigationItems: NavigationItems = {
       { name: 'O nás', href: '/#o-nas' },
       { name: 'Kontakt', href: '/kontakt' },
       { name: 'Náš team', href: '/kontakt#nas-team' },
-      { name: 'VOP', href: '/documents/vop.pdf', newTab: true },
-      // { name: 'GDPR', href: '/gdpr' },
+      { name: 'VOP', href: '/vop', newTab: true },
+      { name: 'GDPR', href: '/gdpr', newTab: true },
     ],
     actual: [
       { name: 'Události', href: '/udalosti' },

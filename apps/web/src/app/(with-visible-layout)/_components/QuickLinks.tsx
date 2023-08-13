@@ -38,7 +38,7 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
 
 export const QuickLinks: FC = () => {
   return (
-    <section className="container w-full mx-auto-mt-32">
+    <section className="container w-full mx-auto -mt-32">
       <div className="relative w-full flex-wrap lg:flex-nowrap flex gap-5">
         {items.map((data) => (
           <LinkItem key={data.title} {...data} />
