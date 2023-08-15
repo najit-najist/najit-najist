@@ -9,6 +9,7 @@ import timezone from 'dayjs/plugin/timezone';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+import { CookieBanner } from '@components/common/CookieBanner';
 
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -63,6 +64,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
       >
         <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>
           {children}
+          <CookieBanner />
         </ContextProviders>
       </body>
     </html>

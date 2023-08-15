@@ -14,7 +14,7 @@ export const checkboxStyles = cva('h-4 w-4 rounded', {
       default: 'border-gray-300 text-green-600 focus:ring-green-600',
     },
     disabled: {
-      true: 'opacity-60 bg-gray-100',
+      true: 'opacity-50 bg-gray-100',
       false: '',
     },
   },
@@ -28,12 +28,13 @@ export const Checkbox = forwardRef<
   HTMLInputElement,
   DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> &
     CheckboxVariantProps
->(({ className, color, size, ...rest }, ref) => {
+>(({ className, color, size, disabled, ...rest }, ref) => {
   return (
     <input
       ref={ref}
       type="checkbox"
-      className={checkboxStyles({ className, color, size })}
+      className={checkboxStyles({ className, color, size, disabled })}
+      disabled={disabled}
       {...rest}
     />
   );
