@@ -15,12 +15,13 @@ const MAX_CHUNK_SIZE = 10 ** 6;
 export const createVideoRequestHandler = ({
   videoPath,
 }: CreateVideoRequestHandlerOptions): NextApiHandler => {
+  console.log({ videoPath });
+  console.log('Before exists');
   if (fs.pathExistsSync(videoPath) === false) {
     throw new Error(
       `File under absolute path "${videoPath}" to handle does not exist`
     );
   }
-  console.log({ videoPath });
 
   const stats = fs.statSync(videoPath);
   console.log({ stats });
