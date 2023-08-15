@@ -13,28 +13,17 @@ const handler: NextApiHandler = async (request, response) => {
 
   const videoPath = path.join(PRIVATE_VIDEOS_DIRECTORY_PATH, 'bonus', file);
 
-  console.log({ videoPath });
   const cookies = new RequestCookies(
     new Headers({ ...request.headers } as any)
   );
 
-  console.log('has cookies');
-
   await AuthService.authPocketBase({ cookies });
-  console.log('Before logged in user');
   const user = await getLoggedInUser({ cookies });
-  console.log('before clear auth');
   AuthService.clearAuthPocketBase();
 
-  console.log('before check', {
-    role: user.role,
-    sdf: UserRoles.NORMAL,
-    da: user.role !== UserRoles.NORMAL,
-  });
-  if (user.role !== UserRoles.NORMAL) {
+  if (user.role !== UserRoles.NORMAL && user.role !== UserRoles.ADMIN) {
     return response.status(401);
   }
-  console.log('before return');
 
   return createVideoRequestHandler({
     videoPath,
