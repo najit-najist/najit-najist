@@ -44,7 +44,7 @@ const teamMembers: {
   },
   {
     name: 'Tereza Žižková',
-    title: 'Grafik',
+    title: 'PR, Marketing a Grafik',
     imageUrl: terezaZizkovaUrl,
   },
   {
