@@ -1,9 +1,8 @@
 {
   "name": "@najit-najist/pb",
-  "type": "module",
   "version": "0.0.0",
   "private": true,
-  "types": "dist/index.d.ts",
+  "type": "module",
   "exports": {
     "./*": "./*",
     "./package.json": "./package.json",
@@ -12,14 +11,15 @@
       "types": "./dist/index.d.ts"
     }
   },
+  "types": "dist/index.d.ts",
   "scripts": {
-    "dev:old": "echo \"Disabled\"",
-    "dev": "npm run dev:server",
-    "dev:server": "docker compose up",
     "prebuild": "rimraf dist",
     "build": "npm run build:package && npm run build:types",
     "build:package": "swc ./src -d dist --config jsc.target=esnext",
-    "build:types": "tsc"
+    "build:types": "tsc",
+    "dev": "npm run dev:server",
+    "dev:old": "echo \"Disabled\"",
+    "dev:server": "docker compose up"
   },
   "dependencies": {
     "pocketbase": "^0.14.3"

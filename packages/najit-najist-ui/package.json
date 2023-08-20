@@ -1,9 +1,8 @@
 {
   "name": "@najit-najist/ui",
-  "type": "module",
   "version": "0.0.0",
-  "types": "dist/index.d.ts",
-  "main": "dist/index.js",
+  "license": "MIT",
+  "type": "module",
   "exports": {
     "./*": "./*",
     "./package.json": "./package.json",
@@ -23,16 +22,17 @@
       "types": "./dist/BlockEditorRenderer/index.d.ts"
     }
   },
-  "license": "MIT",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint *.ts*",
-    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
-    "dev:package": "npm run build:package -- --watch",
-    "dev:package:types": "npm run build:types -- --watch",
     "prebuild": "rimraf dist",
     "build": "npm run build:package && npm run build:types",
     "build:package": "swc ./src -d dist",
-    "build:types": "tsc"
+    "build:types": "tsc",
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
+    "lint": "eslint *.ts*"
   },
   "dependencies": {
     "@editorjs/editorjs": "^2.26.5",

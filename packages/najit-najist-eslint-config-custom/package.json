@@ -1,15 +1,15 @@
 {
   "name": "@najit-najist/eslint-config-custom",
   "version": "0.0.0",
-  "main": "index.cjs",
-  "type": "module",
   "license": "MIT",
+  "type": "module",
+  "main": "index.cjs",
   "dependencies": {
     "eslint": "7.24.0",
     "eslint-config-next": "13",
     "eslint-config-prettier": "^7",
-    "eslint-plugin-react": "^7.32.2",
-    "eslint-config-turbo": "latest"
+    "eslint-config-turbo": "latest",
+    "eslint-plugin-react": "^7.32.2"
   },
   "devDependencies": {
     "typescript": "^4.9.5"
