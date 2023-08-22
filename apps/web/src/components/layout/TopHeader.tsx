@@ -104,6 +104,24 @@ const RegisterPill: FC<{ hideOnMobile?: boolean }> = ({ hideOnMobile }) => {
   );
 };
 
+const AdministrationPill: FC<{ hideOnMobile?: boolean }> = ({
+  hideOnMobile,
+}) => {
+  return (
+    <Link
+      href="/administrace"
+      className={clsx(
+        'items-center',
+        hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
+        pillStyles,
+        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400'
+      )}
+    >
+      Administrace
+    </Link>
+  );
+};
+
 export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
   const pathname = usePathname();
 
@@ -150,6 +168,10 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     >
                       <UserIcon className="w-5 h-5" />
                     </Link>
+
+                    {loggedInUser.role === UserRoles.ADMIN ? (
+                      <AdministrationPill hideOnMobile />
+                    ) : null}
                   </>
                 ) : (
                   <>
@@ -196,6 +218,9 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
           >
             <Menu.Items className="container" static>
               <div className="flex gap-3 justify-end mb-3 flex-wrap">
+                {loggedInUser && loggedInUser.role === UserRoles.ADMIN ? (
+                  <AdministrationPill />
+                ) : null}
                 <BonusPill loggedInUser={loggedInUser} />
                 <RegisterPill />
               </div>
