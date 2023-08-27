@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCurrentUser } from '@hooks';
+import { useCurrentUser, useGtag } from '@hooks';
 import { subscribeToNewsletterSchema } from '@najit-najist/api';
 import { Button, buttonStyles, Input } from '@najit-najist/ui';
 import { trpc } from '@trpc';
@@ -18,6 +18,7 @@ export const NewsletterSubscribe: FC = () => {
     },
     resolver: zodResolver(subscribeToNewsletterSchema),
   });
+  const { trackEvent } = useGtag();
   const { handleSubmit, register, formState } = formMethods;
   const { data } = useCurrentUser({
     useErrorBoundary: false,
@@ -30,6 +31,7 @@ export const NewsletterSubscribe: FC = () => {
   const { mutateAsync: subscribe } = trpc.newsletter.subscribe.useMutation();
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async ({ email }) => {
     await subscribe({ email });
+    trackEvent('footer_newsletter_subscribe');
   };
 
   return (

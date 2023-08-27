@@ -1,5 +1,12 @@
 import { ReactNode } from 'react';
 
+export type GA_EVENTS =
+  | 'page_view'
+  | 'user_registration'
+  | 'contact_send'
+  | 'footer_newsletter_subscribe'
+  | 'interact_recipe';
+
 export interface LayoutProps {
   children: ReactNode;
   params: any;

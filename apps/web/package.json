@@ -40,6 +40,7 @@
   "devDependencies": {
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tailwind-plugin": "*",
+    "@types/gtag.js": "^0.0.13",
     "@najit-najist/tsconfig": "*",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",

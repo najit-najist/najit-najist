@@ -9,6 +9,8 @@ import SuperJSON from 'superjson';
 import { httpBatchLink } from '@trpc/client';
 import { EditorJsInstancesProvider } from './editorJsInstancesContext';
 import { customTrpcLink } from '@constants';
+// import { usePathname } from 'next/navigation';
+// import { useGtag } from '@hooks';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -22,6 +24,8 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
   children,
   cookies,
 }) => {
+  // const pathname = usePathname();
+  // const { track } = useGtag();
   const [trpcClient] = useState(() =>
     trpc.createClient({
       transformer: SuperJSON,
@@ -41,6 +45,14 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
       ],
     })
   );
+
+  // TODO: is this really necessary?
+  // useEffect(() => {
+  //   track({
+  //     event: 'page_view',
+  //     pageUrl: pathname,
+  //   });
+  // }, [pathname, track]);
 
   return (
     <EditorJsInstancesProvider>

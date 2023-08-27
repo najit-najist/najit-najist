@@ -10,6 +10,8 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { CookieBanner } from '@components/common/CookieBanner';
+import Script from 'next/script';
+import { GA_KEY } from '@constants';
 
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -51,6 +53,12 @@ const RootLayout: LayoutComponent = ({ children }) => {
 
   return (
     <html lang="cs">
+      <head>
+        <Script
+          key="googletagmanager"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GA_KEY}`}
+        />
+      </head>
       <body
         className={clsx(
           'bg-gradient-to-b from-[#fbf9ebd3] to-white data-scroll-container min-h-screen flex',

@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useGtag } from '@hooks';
 import { contactUsSchema } from '@najit-najist/api';
 import { Alert, Button, Input, Textarea } from '@najit-najist/ui';
 import { trpc } from '@trpc';
@@ -12,6 +13,7 @@ export const ContactForm: FC = () => {
   const formMethods = useForm<z.infer<typeof contactUsSchema>>({
     resolver: zodResolver(contactUsSchema),
   });
+  const { trackEvent } = useGtag();
   const { formState, register, handleSubmit, setError } = formMethods;
   const { mutateAsync: sendContents } = trpc.contactSend.useMutation({
     onError() {
@@ -23,6 +25,7 @@ export const ContactForm: FC = () => {
 
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async (values) => {
     await sendContents(values);
+    trackEvent('contact_send');
   };
 
   return (

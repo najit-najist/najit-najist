@@ -5,38 +5,14 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { ConsentForm, ConsentFormProps } from './ConsentForm';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline/index.js';
+import { useGtag } from '@hooks';
 
 const ANALYTICS_CONSENT_COOKIE_NAME = 'enable-najit-najist-analytics';
 const MARKETING_CONSENT_COOKIE_NAME = 'enable-najit-najist-marketing';
 const COOKIE_CONSENT_SHOWN = 'najit-najist-cookie-consent-shown';
-let wasInitialized = false;
-
-declare global {
-  interface Window {
-    dataLayer?: any[];
-    expandGtag?: (...params: any[]) => void;
-  }
-}
-
-const initGoogleAnalytics = async () => {
-  if (wasInitialized) {
-    return;
-  }
-
-  window.dataLayer ||= [];
-  window.expandGtag ||= (...params) => {
-    window.dataLayer ||= [];
-
-    window.dataLayer.push(params);
-  };
-
-  window.expandGtag('js', new Date());
-  window.expandGtag('config', 'G-DB0JE2EGYH');
-  console.log('[gtag] initialized');
-  wasInitialized = true;
-};
 
 export const CookieBanner: FC = () => {
+  const { init: initGA } = useGtag();
   const [
     {
       'enable-najit-najist-analytics': analyticsCookie,
@@ -64,9 +40,9 @@ export const CookieBanner: FC = () => {
 
   useEffect(() => {
     if (analyticsCookie === 'true') {
-      initGoogleAnalytics();
+      initGA();
     }
-  }, [analyticsCookie]);
+  }, [analyticsCookie, initGA]);
 
   const onFormSubmit = useCallback<ConsentFormProps['onSubmit']>(
     ({ analytics, marketing }) => {

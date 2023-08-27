@@ -17,6 +17,7 @@ import { PasswordInputs } from './PasswordInputs';
 import { FormValues } from '../_types/FormValues';
 import { registerUserSchema } from '@najit-najist/api';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { useGtag } from '@hooks';
 
 const schema = registerUserSchema
   .extend({
@@ -43,6 +44,7 @@ const schema = registerUserSchema
   });
 
 export const Content: FC = () => {
+  const { trackEvent } = useGtag();
   const { mutateAsync: doRegister } = trpc.profile.register.useMutation();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(schema),
@@ -53,6 +55,7 @@ export const Content: FC = () => {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await doRegister(values);
+      trackEvent('user_registration');
     } catch (error) {
       if (error instanceof TRPCClientError && error.data.code === 'CONFLICT') {
         setError('email', {

@@ -13,6 +13,7 @@ export const X_REQUEST_PATH_HEADER_NAME = 'x-invoke-path';
 export const loginPageCallbacks = {
   previewRegistrationFinished: 'registrationPreviewCallback',
 };
+export const GA_KEY = process.env.NEXT_PUBLIC_GA_KEY;
 
 /**
  * Custom trpc link that logs out user in app when not logged in
