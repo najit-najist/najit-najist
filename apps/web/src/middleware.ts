@@ -5,7 +5,10 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
   const session = await getEdgeSession(request, response);
 
-  if (process.env.NODE_ENV === 'production') {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    !!process.env.PREVIEW_AUTH_PASSWORD
+  ) {
     const UNAUTHORIZED_URL = '/unauthorized-preview';
     const requestUrl = request.nextUrl;
 
