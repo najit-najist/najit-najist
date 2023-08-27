@@ -1,27 +1,72 @@
 {
   "name": "@najit-najist/ui",
   "version": "0.0.0",
-  "main": "src/index.tsx",
-  "module": "dist/index.cjs",
-  "types": "dist/index.d.ts",
   "license": "MIT",
   "type": "module",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./editor": {
+      "import": "./dist/editor/index.js",
+      "require": "./dist/editor/index.js",
+      "types": "./dist/editor/index.d.ts"
+    },
+    "./editor-renderer": {
+      "import": "./dist/BlockEditorRenderer/index.js",
+      "require": "./dist/BlockEditorRenderer/index.js",
+      "types": "./dist/BlockEditorRenderer/index.d.ts"
+    }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "lint": "eslint *.ts*",
-    "dev": "tsup --watch"
+    "prebuild": "rimraf dist",
+    "build": "npm run build:package && npm run build:types",
+    "build:package": "swc ./src -d dist",
+    "build:types": "tsc",
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
+    "lint": "eslint *.ts*"
+  },
+  "dependencies": {
+    "@editorjs/editorjs": "^2.26.5",
+    "@editorjs/paragraph": "^2.9.0",
+    "@headlessui/react": "^1.7.13",
+    "@heroicons/react": "^2.0.12",
+    "@najit-najist/api": "*",
+    "class-variance-authority": "^0.3.0",
+    "clsx": "^1.2.1",
+    "html-react-parser": "^3.0.16",
+    "next": "^13.4.8",
+    "react-dropzone": "^14.2.3",
+    "react-editor-js": "^2.1.0",
+    "react-quill": "2.0.0"
   },
   "devDependencies": {
-    "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
-    "eslint": "^7.32.0",
+    "@editorjs/delimiter": "^1.3.0",
+    "@editorjs/header": "^2.7.0",
+    "@editorjs/link": "^2.5.0",
+    "@editorjs/nested-list": "^1.3.0",
+    "@editorjs/underline": "^1.1.0",
     "@najit-najist/eslint-config-custom": "*",
+    "@najit-najist/tsconfig": "*",
+    "@swc/core": "^1.3.41",
+    "@types/react": "^18.0.25",
+    "@types/react-dom": "^18.0.9",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "@najit-najist/tsconfig": "*",
-    "typescript": "^4.5.2"
+    "react-hook-form": "^7.37.0",
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.37.0"
   }
 }

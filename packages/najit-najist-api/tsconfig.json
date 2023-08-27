@@ -1,0 +1,27 @@
+{
+  "extends": "@najit-najist/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": false,
+    "module": "ESNext",
+    "target": "ESNext",
+    "baseUrl": "./src",
+    "rootDir": "src",
+    "outDir": "./dist",
+    "paths": {
+      "@custom-types": ["./types"],
+      "@schemas": ["./schemas"],
+      "@middleware": ["./middleware"],
+      "@errors": ["./errors"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
+      "@config": ["./config"],
+      "@constants": ["./constants"],
+      "@services/*": ["./services/*"],
+      "@services": ["./services"],
+      "@trpc": ["./trpc/index.js"],
+      "@trpc-procedures/*": ["./trpc/procedures/*"],
+      "@logger": ["./logger"]
+    }
+  },
+  "include": ["src"]
+}

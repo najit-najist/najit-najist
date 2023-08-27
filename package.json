@@ -8,25 +8,28 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:api": "turbo run build --filter=@najit-najist/api",
-    "build:intro-web": "turbo run build --filter=@najit-najist/intro-web",
+    "build:packages": "turbo run build --filter=./packages/*",
+    "build:web": "turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "lint": "turbo run lint",
-    "test": "turbo run test",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "reinstall": "npm run uninstall && npm install",
+    "test": "turbo run test --no-daemon",
+    "uninstall": "del-cli ./**/node_modules ./package-lock.json"
   },
   "devDependencies": {
-    "eslint-config-custom": "*",
-    "prettier": "^2.7.1",
+    "@swc/cli": "^0.1.62",
+    "chokidar": "^3.5.3",
+    "concurrently": "^7.4.0",
+    "del-cli": "^5.0.0",
+    "prettier": "^2.8.8",
     "prettier-plugin-astro": "^0.5.5",
-    "tsup": "^6.3.0",
+    "prettier-plugin-packagejson": "^2.4.5",
+    "rimraf": "^3.0.2",
     "turbo": "latest"
   },
+  "packageManager": "npm@8.19.2",
   "engines": {
     "node": ">=14.0.0"
-  },
-  "packageManager": "npm@8.19.2",
-  "dependencies": {
-    "concurrently": "^7.4.0"
   }
 }

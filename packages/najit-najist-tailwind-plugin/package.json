@@ -1,0 +1,25 @@
+{
+  "name": "@najit-najist/tailwind-plugin",
+  "version": "0.0.0",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": "./index.cjs"
+  },
+  "main": "index.cjs",
+  "scripts": {
+    "lint": "eslint *.ts*"
+  },
+  "devDependencies": {
+    "@najit-najist/eslint-config-custom": "*",
+    "@najit-najist/tsconfig": "*",
+    "@tailwindcss/forms": "^0.5.3",
+    "tailwindcss": "^3.2.4",
+    "tailwindcss-animate": "1.0.6"
+  },
+  "peerDependencies": {
+    "tailwindcss": "^3.2.4"
+  }
+}

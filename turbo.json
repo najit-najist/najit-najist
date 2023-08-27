@@ -3,7 +3,8 @@
   "pipeline": {
     "build": {
       "dependsOn": ["^build"],
-      "outputs": ["dist/**", ".next/**"]
+      "outputs": ["dist/**", ".next/**"],
+      "env": ["POCKETBASE_ORIGIN"]
     },
     "lint": {
       "outputs": []
@@ -14,5 +15,6 @@
     "test": {
       "cache": false
     }
-  }
+  },
+  "globalDependencies": ["**/.env"]
 }

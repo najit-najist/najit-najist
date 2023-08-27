@@ -4,7 +4,9 @@
   "compilerOptions": {
     "composite": false,
     "declaration": true,
+    "strictNullChecks": true,
     "declarationMap": true,
+    "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "inlineSources": false,
@@ -16,5 +18,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["dist", "node_modules"]
 }

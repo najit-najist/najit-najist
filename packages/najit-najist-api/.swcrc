@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json.schemastore.org/swcrc",
+  "module": {
+    "type": "es6"
+  },
+  "jsc": {
+    "target": "es5",
+    "baseUrl": "./src",
+    "parser": {
+      "syntax": "typescript"
+    },
+    "paths": {
+      "@custom-types": ["./types/index.ts"],
+      "@schemas": ["./schemas"],
+      "@middleware": ["./middleware"],
+      "@errors": ["./errors"],
+      "@utils": ["./utils"],
+      "@utils/*": ["./utils/*"],
+      "@config": ["./config.ts"],
+      "@constants": ["./constants/index.ts"],
+      "@services/*": ["./services/*"],
+      "@trpc": ["./trpc/index.ts"],
+      "@logger": ["./logger.ts"]
+    }
+  }
+}
