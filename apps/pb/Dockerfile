@@ -1,6 +1,6 @@
 FROM alpine:3 as downloader
 
-ARG VERSION=0.17.7
+ARG VERSION=0.17.4
 
 RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/pocketbase_${VERSION}_linux_amd64.zip \
     && unzip pocketbase_${VERSION}_linux_amd64.zip \
