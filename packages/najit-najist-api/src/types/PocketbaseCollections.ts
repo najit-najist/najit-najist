@@ -8,9 +8,9 @@ export enum PocketbaseCollections {
   USER_LIKED_RECIPES = 'user_liked_recipes',
   RECIPE_DIFFICULTY = 'recipe_difficulty',
   POST_CATEGORIES = 'post_categories',
-  API_CONTROLLERS = 'api_controllers',
   CONTACT_FORM_REPLIES = 'contact_form_replies',
   USER_ADDRESSES = 'user_addresses',
   MUNICIPALITY = 'municipality',
   NEWSLETTER_SUBSCRIPTIONS = 'newsletter_subscriptions',
+  PREVIEW_SUBSCRIBERS_TOKENS = 'preview_subscribers_tokens',
 }

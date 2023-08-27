@@ -83,9 +83,10 @@ export const config = {
       }
 
       try {
-        await pocketbase
-          .collection(PocketbaseCollections.API_CONTROLLERS)
-          .authWithPassword(account.email, account.password);
+        await pocketbase.admins.authWithPassword(
+          account.email,
+          account.password
+        );
       } catch (error) {
         console.log(
           'Failed to login with contactForm account in api controllers: ' +
