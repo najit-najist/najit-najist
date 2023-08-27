@@ -24,7 +24,6 @@ import {
 } from '@schemas';
 import { logger } from '@logger';
 import { objectToFormData } from '@utils/internal';
-import { config } from '@config';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -50,6 +49,11 @@ type UserWithExpand = User & { expand: { address: Address } };
 type AddressWithExpand = Address & { expand: { address: Address } };
 
 const expand = `${PocketbaseCollections.USER_ADDRESSES}(owner).municipality`;
+
+export type UserServiceUpdateOptions = UpdateProfile & {
+  password?: string;
+  verified?: boolean;
+};
 
 export class UserService {
   static async create(
@@ -170,7 +174,10 @@ export class UserService {
     }
   }
 
-  static async update(where: { id: string }, payload: UpdateProfile) {
+  static async update(
+    where: { id: string },
+    payload: UserServiceUpdateOptions
+  ) {
     const {
       address = {} as NonNullable<(typeof payload)['address']>,
       ...rest
@@ -201,6 +208,10 @@ export class UserService {
           .collection(PocketbaseCollections.USER_ADDRESSES)
           .create({ ...morphedAddress, owner: where.id });
       }
+    }
+
+    if (rest.password) {
+      (rest as any).passwordConfirm = rest.password;
     }
 
     return pocketbase

@@ -10,6 +10,8 @@ import {
   User,
   userSchema,
   UserStates,
+  verifyRegistrationFromPreviewInputSchema,
+  zodPassword,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
@@ -20,7 +22,7 @@ import { logger } from '@logger';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
-import { AuthService, UserService } from '@services';
+import { AuthService, PreviewSubscribersService, UserService } from '@services';
 import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
@@ -189,5 +191,13 @@ export const profileRouter = t.router({
 
         throw error;
       }
+    }),
+
+  verifyRegistrationFromPreview: t.procedure
+    .input(verifyRegistrationFromPreviewInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      await PreviewSubscribersService.finishRegistration(input);
+
+      return null;
     }),
 });

@@ -1,11 +1,11 @@
 import { config } from '@config';
 import { t } from '@trpc';
 import { PocketbaseCollections } from '@custom-types';
-import { contactUsSchema, User, UserRoles, UserStates } from '@schemas';
+import { contactUsSchema } from '@schemas';
 import { z } from 'zod';
 import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
-import { AuthService, MailService, UserService } from '@services';
+import { AuthService, MailService } from '@services';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure

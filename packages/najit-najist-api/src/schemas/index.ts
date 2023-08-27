@@ -15,6 +15,7 @@ export * from './entry.schema';
 export * from './contactUs.schema';
 export * from './municipality.schema';
 export * from './newsletterSubscription.schema';
+export * from './previewSubscribers.schema.js';
 export * from './user.schema';
 export * from './zodImage';
 export * from './zodPassword';

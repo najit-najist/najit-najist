@@ -10,6 +10,9 @@ export const ACCEPT_FILES_IMAGE = '.png,.img,.jpg,.gif,.svg,.jpeg';
 
 export const LOGIN_THEN_REDIRECT_TO_PARAMETER = 'loginBeforeContinue';
 export const X_REQUEST_PATH_HEADER_NAME = 'x-invoke-path';
+export const loginPageCallbacks = {
+  previewRegistrationFinished: 'registrationPreviewCallback',
+};
 
 /**
  * Custom trpc link that logs out user in app when not logged in

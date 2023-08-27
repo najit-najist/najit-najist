@@ -15,7 +15,10 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Alert } from '@najit-najist/ui';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
+import {
+  loginPageCallbacks,
+  LOGIN_THEN_REDIRECT_TO_PARAMETER,
+} from '@constants';
 
 type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
 
@@ -39,6 +42,9 @@ export const Content: FC = () => {
   );
   const isPasswordResetCallback = searchParams?.has('passwordResetCallback');
   const isRegistrationCallback = searchParams?.has('registrationCallback');
+  const isRegistrationPreviewCallback = searchParams?.has(
+    loginPageCallbacks.previewRegistrationFinished
+  );
   const userNeedsToLoginBeforeContinuing = searchParams?.has(
     LOGIN_THEN_REDIRECT_TO_PARAMETER
   );
@@ -119,6 +125,17 @@ export const Content: FC = () => {
             heading="Úspěšná registrace!"
           >
             Nyní dokončete registraci přes link, který Vám byl zaslán na email.
+          </Alert>
+        ) : null}
+        {isRegistrationPreviewCallback ? (
+          <Alert
+            icon={InformationCircleIcon}
+            color="success"
+            className="mb-5 shadow-md"
+            heading="Úspěšné dokončení registrace!"
+          >
+            Dokončení registrace bylo úspěšné a nyní se můžete přihlásit!
+            Přejeme hodně štěstí!
           </Alert>
         ) : null}
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
