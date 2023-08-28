@@ -24,7 +24,7 @@ const renderers = {
 export const BlockEditorRenderer: FC<DataRendererProps> = ({ data }) => {
   return (
     <>
-      {data.blocks.map((block) => {
+      {data?.blocks?.map((block) => {
         if (block.type.toString() in renderers) {
           // @ts-ignore Todo: find a fix
           const Tag = renderers[block.type];
