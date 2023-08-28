@@ -1,5 +1,4 @@
 import { APP_NAME, SESSION_NAME } from '@constants';
-import { PocketbaseCollections } from '@custom-types';
 import { pocketbase } from '@najit-najist/pb';
 
 // Server

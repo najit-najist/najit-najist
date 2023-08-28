@@ -43,8 +43,6 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
 });
 
 export const isAuthedAdmin = isAuthed.unstable_pipe(({ next, ctx }) => {
-  console.log({ ctx: ctx.sessionData.user });
-
   if (ctx.sessionData.user.role !== UserRoles.ADMIN) {
     throw new TRPCError({ code: 'FORBIDDEN' });
   }

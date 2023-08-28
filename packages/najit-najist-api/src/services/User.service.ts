@@ -141,7 +141,21 @@ export class UserService {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
         .getFirstListItem<UserWithExpand>(`${type}="${value}"`, { expand })
-        .then(expandPocketFields<User>);
+        .then((res) => {
+          console.log('before');
+
+          console.log(console.log);
+
+          return res;
+        })
+        .then(expandPocketFields<User>)
+        .then((res) => {
+          console.log('after');
+
+          console.log(console.log);
+
+          return res;
+        });
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
