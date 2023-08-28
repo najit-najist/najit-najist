@@ -14,7 +14,7 @@ export function GET(request: NextRequest) {
     new URL(
       '/login',
       process.env.NODE_ENV === 'production'
-        ? 'https://dev.najitnajist.cz'
+        ? 'https://najitnajist.cz'
         : 'http://localhost:3000'
     ).toString()
   );
