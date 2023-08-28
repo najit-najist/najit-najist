@@ -53,6 +53,7 @@ const expand = `${PocketbaseCollections.USER_ADDRESSES}(owner).municipality`;
 export type UserServiceUpdateOptions = UpdateProfile & {
   password?: string;
   verified?: boolean;
+  status?: UserStates | string;
 };
 
 export class UserService {

@@ -3,6 +3,7 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import {
   PreviewSubscribersTokens,
+  UserStates,
   VerifyRegistrationFromPreviewInput,
 } from '@schemas';
 import { expandPocketFields } from '@utils';
@@ -56,6 +57,7 @@ export class PreviewSubscribersService {
       {
         address,
         password,
+        status: UserStates.ACTIVE,
         verified: true,
       }
     );
