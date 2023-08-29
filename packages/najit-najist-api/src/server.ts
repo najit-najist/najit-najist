@@ -15,7 +15,7 @@ export * from './services';
 export * from './utils/isUserLoggedIn';
 export * from './utils/getSessionFromCookies';
 export * from './utils/deserializePocketToken';
-export * from './utils/getLoggedInUser';
+export * from './utils/server/getLoggedInUser';
 export * from './utils/logoutUser';
 export type { PocketBase } from '@najit-najist/pb';
 

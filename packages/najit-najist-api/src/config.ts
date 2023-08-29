@@ -1,5 +1,4 @@
 import { APP_NAME, SESSION_NAME } from '@constants';
-import { pocketbase } from '@najit-najist/pb';
 
 // Server
 const baseDomain = process.env.DOMAIN ?? 'najitnajist.cz';
@@ -74,27 +73,6 @@ export const config = {
           return [key, { password, email }];
         })
     ),
-    async loginWithAccount(userName: string) {
-      const account = this.accounts.get(userName);
-
-      if (!account) {
-        throw new Error('Missing account for contactForm');
-      }
-
-      try {
-        await pocketbase.admins.authWithPassword(
-          account.email,
-          account.password
-        );
-      } catch (error) {
-        console.log(
-          'Failed to login with contactForm account in api controllers: ' +
-            (error as Error).message
-        );
-
-        throw new Error('Error happened');
-      }
-    },
   },
   mail: {
     user: mailUser,

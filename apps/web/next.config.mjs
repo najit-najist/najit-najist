@@ -15,6 +15,7 @@ const nextConfig = {
     '@najit-najist/tailwind-plugin',
   ],
   webpack(config, { isServer }) {
+    config.externals.push('pino-pretty', 'thread-stream', 'encoding');
     config.module.rules.push(
       {
         test: /\.svg$/,

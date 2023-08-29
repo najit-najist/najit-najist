@@ -4,7 +4,7 @@ export * from './expandPocketFields';
 export * from './extractTimeFromSteps';
 export * from './formatErrorMessage';
 export * from './getFileUrl';
-export * from './getLoggedInUser';
+export * from './server/getLoggedInUser';
 export * from './getPasswordStrength';
 export * from './getSessionFromCookies';
 export * from './removeDiacritics';

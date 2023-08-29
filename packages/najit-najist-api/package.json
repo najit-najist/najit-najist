@@ -22,6 +22,10 @@
     "./edge": {
       "import": "./dist/edge.js",
       "types": "./dist/edge.d.ts"
+    },
+    "./logger": {
+      "import": "./dist/logger.js",
+      "types": "./dist/logger.d.ts"
     }
   },
   "main": "dist/index.js",
@@ -47,7 +51,10 @@
     "@najit-najist/pb": "*",
     "@trpc/server": "^10.14.0",
     "bcrypt": "^5.1.0",
+    "@logtail/node": "^0.4.6",
+    "@logtail/pino": "^0.4.6",
     "chalk": "5.2.0",
+    "pino": "^8.15.0",
     "concurrently": "^7.5.0",
     "cross-fetch": "^3.1.5",
     "dayjs": "1.11.7",
