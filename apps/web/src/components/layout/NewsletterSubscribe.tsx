@@ -6,7 +6,7 @@ import { subscribeToNewsletterSchema } from '@najit-najist/api';
 import { Button, buttonStyles, Input } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 
 // TODO: make this work
