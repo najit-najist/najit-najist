@@ -46,10 +46,6 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
     })
   );
 
-  useEffect(() => {
-    throw new Error('message');
-  }, []);
-
   return (
     <EditorJsInstancesProvider>
       <trpc.Provider client={trpcClient} queryClient={queryClient}>
