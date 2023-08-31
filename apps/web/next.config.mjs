@@ -6,12 +6,12 @@ const nextConfig = {
     appDir: true,
     typedRoutes: true,
     serverActions: true,
-    serverComponentsExternalPackages: ['email-templates'],
   },
   transpilePackages: [
     '@najitnajist/ui',
     '@najitnajist/api',
     '@najitnajist/pb',
+    '@najitnajist/email-templates',
     '@najit-najist/tailwind-plugin',
   ],
   webpack(config, { isServer }) {

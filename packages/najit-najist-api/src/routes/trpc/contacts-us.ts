@@ -7,6 +7,11 @@ import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
 import { AuthService, MailService } from '@services';
 import { loginWithAccount } from '@utils/pocketbase';
+import {
+  renderAsync,
+  ContactUsAdminReply,
+  ContactUsUserReply,
+} from '@najit-najist/email-templates';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
@@ -37,8 +42,14 @@ export const contactUsRoutes = t.router({
       MailService.send({
         to: config.mail.baseEmail,
         subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
-        payload: input,
-        template: 'contact-us/admin',
+        body: await renderAsync(
+          ContactUsAdminReply({
+            email: input.email,
+            fullName: `${input.firstName} ${input.lastName}`,
+            message: input.message,
+            telephone: input.telephone ?? undefined,
+          })
+        ),
       }).catch((error) => {
         logger.error(
           { error, createdResponse },
@@ -48,8 +59,15 @@ export const contactUsRoutes = t.router({
 
       MailService.send({
         to: input.email,
-        payload: input,
-        template: 'contact-us/user',
+        subject: 'Děkujeme za Váš zájem',
+        body: await renderAsync(
+          ContactUsUserReply({
+            email: input.email,
+            fullName: `${input.firstName} ${input.lastName}`,
+            message: input.message,
+            telephone: input.telephone ?? undefined,
+          })
+        ),
       }).catch((error) => {
         logger.error(
           { error, input },

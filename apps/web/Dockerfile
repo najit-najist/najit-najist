@@ -79,9 +79,13 @@ COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./a
 # Include api package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/packages/najit-najist-api/package.json \
                     /workspace-builder/packages/najit-najist-api/node_modules/ \
-                    /workspace-builder/packages/najit-najist-api/email-templates/ \
                     /workspace-builder/packages/najit-najist-api/dist/ \
                     ./packages/najit-najist-api/
+
+COPY --from=builder /workspace-builder/packages/email-templates/package.json \
+                    /workspace-builder/packages/email-templates/node_modules/ \
+                    /workspace-builder/packages/email-templates/dist/ \
+                    ./packages/email-templates/
 
 # Include ui package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/packages/najit-najist-ui/package.json \
