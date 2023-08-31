@@ -83,7 +83,6 @@ COPY --from=builder /workspace-builder/packages/najit-najist-api/package.json \
                     ./packages/najit-najist-api/
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
-                    /workspace-builder/packages/email-templates/node_modules/ \
                     /workspace-builder/packages/email-templates/dist/ \
                     ./packages/email-templates/
 
