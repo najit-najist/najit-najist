@@ -5,6 +5,8 @@ import { HeroBanner } from './_components/HeroBanner';
 import { QuickLinks } from './_components/QuickLinks';
 import { VideoSection } from './_components/VideoSection';
 
+export const revalidate = 0;
+
 const MainPage: FC = () => {
   return (
     <>
