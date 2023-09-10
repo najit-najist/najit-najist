@@ -41,7 +41,7 @@ const montserrat = Montserrat({
 export const metadata = {
   title: {
     template: '%s | Najít Najíst',
-    default: 'Hlavní stránka',
+    default: 'Hlavní stránka | Najít Najíst',
   },
   viewport: 'width=device-width',
   creator: 'Ondřej Langr <hi@ondrejlangr.cz>',

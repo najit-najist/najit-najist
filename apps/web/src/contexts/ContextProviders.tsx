@@ -1,6 +1,6 @@
 'use client';
 
-import { FC, PropsWithChildren, useState } from 'react';
+import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { trpc } from '../trpc';
@@ -45,14 +45,6 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
       ],
     })
   );
-
-  // TODO: is this really necessary?
-  // useEffect(() => {
-  //   track({
-  //     event: 'page_view',
-  //     pageUrl: pathname,
-  //   });
-  // }, [pathname, track]);
 
   return (
     <EditorJsInstancesProvider>

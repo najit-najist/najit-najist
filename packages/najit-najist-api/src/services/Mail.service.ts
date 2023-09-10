@@ -1,10 +1,6 @@
-import Email from 'email-templates';
 import nodemailer from 'nodemailer';
 import { config } from '@config';
-import path from 'path';
 import { logger } from '@logger';
-
-export type AvailableTemplates = 'contact-us/admin' | 'contact-us/user';
 
 export class MailService {
   private static transport = nodemailer.createTransport({
@@ -15,58 +11,44 @@ export class MailService {
       user: config.mail.user,
       pass: config.mail.password,
     },
-  });
-
-  public static mailer = new Email({
-    send: !config.env.isDev,
-    preview: config.env.isDev,
-    message: {
-      from: '"Najít&Najist pošťák" <info@najitnajist.cz>',
-    },
-    views: {
-      root: path.resolve(path.join(config.app.root, 'email-templates')),
-      options: {
-        extension: 'ejs',
-      },
-    },
-    juiceResources: {
-      webResources: {
-        relativeTo: config.app.root,
-      },
-    },
-    transport: this.transport,
+    from: `"Najít&Najist pošťák" <${config.mail.baseEmail}>`,
   });
 
   static async send({
-    payload,
     subject,
-    template,
     to,
+    body,
   }: {
-    payload: Record<string, any>;
+    body: string;
     subject?: string;
     to: string | string[];
-    template: AvailableTemplates;
   }) {
     let result;
     try {
-      result = await this.mailer.send({
-        template,
-        message: {
-          to,
-          subject,
-        },
-        locals: payload,
+      result = await this.transport.sendMail({
+        from: config.mail.baseEmail,
+        to,
+        subject: subject,
+        html: body,
+        replyTo: config.mail.baseEmail,
       });
+
       logger.info(
         {
           rejected: result?.rejected,
           response: result?.response,
+          payload: { body, subject, to },
         },
-        `MailService: Mail has been sent to email: ${to}`
+        `MailService - success`
       );
-    } catch (e) {
-      logger.error(e, 'Mail sending has error');
+    } catch (error) {
+      logger.error(
+        {
+          error,
+          payload: { body, subject, to },
+        },
+        'MailService - sending failed'
+      );
 
       throw Error('Posílání emailu nebylo úspěšné.');
     }

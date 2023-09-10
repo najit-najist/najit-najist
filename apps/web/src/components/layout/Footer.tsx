@@ -19,7 +19,7 @@ type NavigationItems = {
   main: { useful: NavigationItem[]; actual: NavigationItem[] };
 };
 
-const navigationItems: NavigationItems = {
+export const footerNavigationItems: NavigationItems = {
   social: [
     {
       name: 'Mail',
@@ -71,7 +71,7 @@ export const Footer: FC<PropsWithChildren> = () => {
               500 03
             </address>
             <div className="flex space-x-6">
-              {navigationItems.social.map((item) => (
+              {footerNavigationItems.social.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href as any}
@@ -94,7 +94,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                   Užitečné
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
-                  {navigationItems.main.useful.map((item) => (
+                  {footerNavigationItems.main.useful.map((item) => (
                     <li key={item.name}>
                       <Link
                         href={item.href as any}
@@ -112,7 +112,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                   Aktuální
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
-                  {navigationItems.main.actual.map((item) => (
+                  {footerNavigationItems.main.actual.map((item) => (
                     <li key={item.name}>
                       <Link
                         href={item.href as any}

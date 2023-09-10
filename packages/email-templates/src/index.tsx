@@ -1,4 +1,17 @@
-export { default as ContactFormReply } from './ContactFormReply';
+export {
+  default as ContactUsAdminReply,
+  type ContactUsAdminReplyProps,
+} from './ContactUsAdminReply';
+export {
+  default as ContactUsUserReply,
+  type ContactUsUserReplyProps,
+} from './ContactUsUserReply';
+
+export {
+  default as FinishRegistrationFromPreview,
+  type FinishRegistrationFromPreviewProps,
+} from './FinishRegistrationFromPreview';
+
 export type {
   Attachment,
   BaseEmailProps,

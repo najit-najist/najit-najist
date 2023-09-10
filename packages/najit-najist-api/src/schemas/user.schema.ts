@@ -37,7 +37,10 @@ export const userSchema = authCollectionSchema.extend({
     .refine(
       (value) => {
         return (
-          value === undefined || value === '' || String(value).length === 9
+          value === undefined ||
+          value === null ||
+          value === '' ||
+          String(value).length === 9
         );
       },
       {

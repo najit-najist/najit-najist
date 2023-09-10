@@ -1,7 +1,7 @@
-import { Heading } from "./components/Heading";
-import { Text } from "./components/Text";
+import { Heading } from './components/Heading';
+import { Text } from './components/Text';
 import { Layout } from './components/Layout';
-import { Button } from "@react-email/button";
+import { Button } from '@react-email/button';
 
 export interface FinishRegistrationFromPreviewProps {
   fullName: string;
@@ -16,14 +16,19 @@ export default function FinishRegistrationFromPreview({
 
   return (
     <Layout title={title}>
-      <Heading as="h2">
+      <Heading className="text-center" as="h2">
         {title}
       </Heading>
 
-      <Text>
+      <Text className="text-center">
         Děkujeme za projevení zájmu. <br />
-        Spustili jsme pro Vás nový web kde už nyní můžete využít našich receptů a dočíst se více v našich článcích. Dále postupně připravujeme spoustu novinek a výhod!
-        <Button href={`https://najitnajist.cz/registrace/dokonceni-vernostniku/${token}`} className="px-3 py-3 bg-deep-green-300 text-white font-semibold rounded-lg mt-5">
+        Spustili jsme pro Vás nový web kde už nyní můžete využít našich receptů
+        a dočíst se více v našich článcích. Dále postupně připravujeme spoustu
+        novinek a výhod!
+        <Button
+          href={`https://najitnajist.cz/registrace/dokonceni-vernostniku/${token}`}
+          className="px-3 py-3 bg-deep-green-300 text-white font-semibold rounded-lg mt-5"
+        >
           Pokračovat v registraci zde!
         </Button>
       </Text>

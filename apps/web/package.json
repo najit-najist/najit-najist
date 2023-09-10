@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.0.12",
     "@hookform/resolvers": "^2.9.10",
     "@najit-najist/api": "*",
+    "@logtail/browser": "^0.4.7",
     "@najit-najist/pb": "*",
     "@najit-najist/ui": "*",
     "@svgr/webpack": "^6.5.1",

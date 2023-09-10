@@ -1,10 +1,10 @@
 import { pocketbase } from '@najit-najist/pb';
 import { User } from '@schemas';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { AvailableModels } from './canUser';
-import { deserializePocketToken } from './deserializePocketToken';
-import { getSessionFromCookies } from './getSessionFromCookies';
-import { isUserLoggedIn } from './isUserLoggedIn';
+import { AvailableModels } from '../canUser';
+import { deserializePocketToken } from '../deserializePocketToken';
+import { getSessionFromCookies } from '../getSessionFromCookies';
+import { isUserLoggedIn } from '../isUserLoggedIn';
 
 export type GetLoggedInUserOptions = {
   cookies?: RequestCookies;

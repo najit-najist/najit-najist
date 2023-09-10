@@ -1,10 +1,6 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
-import {
-  getLoggedInUser,
-  getTrpcCaller,
-  isUserLoggedIn,
-} from '@najit-najist/api/server';
+import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 

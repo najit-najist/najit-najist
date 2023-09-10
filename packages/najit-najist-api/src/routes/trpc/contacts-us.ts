@@ -6,13 +6,19 @@ import { z } from 'zod';
 import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
 import { AuthService, MailService } from '@services';
+import { loginWithAccount } from '@utils/pocketbase';
+import {
+  renderAsync,
+  ContactUsAdminReply,
+  ContactUsUserReply,
+} from '@najit-najist/email-templates';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
     .input(contactUsSchema)
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
-      await config.pb.loginWithAccount('contactForm');
+      await loginWithAccount('contactForm');
 
       const createdResponse = await pocketbase
         .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
@@ -26,8 +32,8 @@ export const contactUsRoutes = t.router({
         })
         .catch((error) => {
           logger.error(
-            error,
-            `Failed to save a response from form to database`
+            { error },
+            `Contact Us Flow - Failed to create entry in database`
           );
 
           throw new Error('Error happened');
@@ -36,24 +42,42 @@ export const contactUsRoutes = t.router({
       MailService.send({
         to: config.mail.baseEmail,
         subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
-        payload: input,
-        template: 'contact-us/admin',
+        body: await renderAsync(
+          ContactUsAdminReply({
+            email: input.email,
+            fullName: `${input.firstName} ${input.lastName}`,
+            message: input.message,
+            telephone: input.telephone ?? undefined,
+          })
+        ),
       }).catch((error) => {
         logger.error(
-          error,
-          `Failed to send email with contact form, but should be created under id '${createdResponse.id}'`
+          { error, createdResponse },
+          `Contact Us Flow - Failed to send email with contact form, but should be created in database`
         );
       });
 
       MailService.send({
         to: input.email,
-        payload: input,
-        template: 'contact-us/user',
+        subject: 'Děkujeme za Váš zájem',
+        body: await renderAsync(
+          ContactUsUserReply({
+            email: input.email,
+            fullName: `${input.firstName} ${input.lastName}`,
+            message: input.message,
+            telephone: input.telephone ?? undefined,
+          })
+        ),
       }).catch((error) => {
-        logger.error(error, `Failed to send email to user`);
+        logger.error(
+          { error, input },
+          `Contact Us Flow - email sending to user failed`
+        );
       });
 
       AuthService.clearAuthPocketBase();
+
+      logger.info({ input }, 'Contact Us Flow - finished');
 
       return true;
     }),

@@ -17,23 +17,24 @@ export const Layout: FC<
   >
 > = ({ title, newsletterUuid, children, attachments }) => {
   return (
-    <Tailwind 
-    config={{
-      theme: {
-        extend: {
-          colors: {
-            deep: {
-              green: {
-                300: '#0D8F3C',
-                400: '#119447',
-                500: '#3f7652',
-                700: '#0a4924',
+    <Tailwind
+      config={{
+        theme: {
+          extend: {
+            colors: {
+              deep: {
+                green: {
+                  300: '#0D8F3C',
+                  400: '#119447',
+                  500: '#3f7652',
+                  700: '#0a4924',
+                },
               },
             },
           },
         },
-      },
-    }}>
+      }}
+    >
       <Html lang="cs">
         <Head>
           <title>{title}</title>
@@ -60,9 +61,7 @@ export const Layout: FC<
                 height="90"
               />
             </div>
-            <div className="p-5 rounded-md text-center bg-white">
-              {children}
-            </div>
+            <div className="p-5 rounded-md bg-white">{children}</div>
             <footer className="text-center text-[#898989]">
               <Text
                 spacing={false}
@@ -70,7 +69,12 @@ export const Layout: FC<
                 size="small"
                 className="font-bold my-3"
               >
-                <Link className="text-deep-green-400" href="https://www.najitnajist.cz">Najít&Najíst Team</Link>
+                <Link
+                  className="text-deep-green-400"
+                  href="https://www.najitnajist.cz"
+                >
+                  Najít&Najíst Team
+                </Link>
                 {' @ '}
                 {new Date().getFullYear()}
               </Text>

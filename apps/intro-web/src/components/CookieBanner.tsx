@@ -21,6 +21,10 @@ const initGoogleAnalytics = async () => {
 
   window.expandGtag('js', new Date());
   window.expandGtag('config', 'G-DB0JE2EGYH');
+  window.expandGtag({
+    event: 'page_view',
+    pageUrl: '/',
+  });
   console.log('[gtag] initialized');
   wasInitialized = true;
 };

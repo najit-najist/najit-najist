@@ -3,18 +3,19 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import {
   PreviewSubscribersTokens,
+  UserStates,
   VerifyRegistrationFromPreviewInput,
 } from '@schemas';
 import { expandPocketFields } from '@utils';
-import { config } from '@config';
 import { AuthService } from './Auth.service';
 import { UserService } from './User.service';
+import { loginWithAccount } from '@utils/pocketbase';
 
 export class PreviewSubscribersService {
   static async getUserByToken(token: string, auth = true) {
     try {
       if (auth) {
-        await config.pb.loginWithAccount('contactForm');
+        await loginWithAccount('contactForm');
       }
       const result = await pocketbase
         .collection(PocketbaseCollections.PREVIEW_SUBSCRIBERS_TOKENS)
@@ -44,7 +45,7 @@ export class PreviewSubscribersService {
   static async finishRegistration(input: VerifyRegistrationFromPreviewInput) {
     const { address, password, token } = input;
 
-    await config.pb.loginWithAccount('contactForm');
+    await loginWithAccount('contactForm');
     const { for: user } = await this.getUserByToken(token, false);
 
     if (user.verified) {
@@ -56,6 +57,7 @@ export class PreviewSubscribersService {
       {
         address,
         password,
+        status: UserStates.ACTIVE,
         verified: true,
       }
     );

@@ -12,7 +12,7 @@ import { redirect } from 'next/navigation';
 const UNAUTHORIZED_URL = '/unauthorized-preview';
 
 export const initiateSecretSession = async (data: FormData) => {
-  const url = new URL('/', 'https://dev.najitnajist.cz');
+  const url = new URL('/', 'https://najitnajist.cz');
   const code = data.get('code');
 
   if (code != PREVIEW_AUTH_PASSWORD) {

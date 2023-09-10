@@ -11,11 +11,9 @@ import {
   userSchema,
   UserStates,
   verifyRegistrationFromPreviewInputSchema,
-  zodPassword,
 } from '@schemas';
 import { TRPCError } from '@trpc/server';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { config } from '@config';
 import { ApplicationError } from '@errors';
 import { z } from 'zod';
 import { logger } from '@logger';
@@ -24,6 +22,8 @@ import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, PreviewSubscribersService, UserService } from '@services';
 import { userLikedRoutes } from './profile/liked';
+import omit from 'lodash/omit';
+import { loginWithAccount } from '@utils/pocketbase';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -34,18 +34,34 @@ const passwordResetRoutes = t.router({
   do: t.procedure
     .input(resetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
-      await pocketbase
-        .collection(AvailableModels.USER)
-        .requestPasswordReset(input.email);
+      try {
+        await pocketbase
+          .collection(AvailableModels.USER)
+          .requestPasswordReset(input.email);
+      } catch (error) {
+        logger.info({ input, error }, 'Request user password reset failed');
+
+        throw error;
+      }
+
+      logger.info(input, 'Request user password reset done');
 
       return null;
     }),
   finalize: t.procedure
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
-      await pocketbase
-        .collection(AvailableModels.USER)
-        .confirmPasswordReset(input.token, input.password, input.password);
+      try {
+        await pocketbase
+          .collection(AvailableModels.USER)
+          .confirmPasswordReset(input.token, input.password, input.password);
+      } catch (error) {
+        logger.info({ error }, 'User password reset finalize failed');
+
+        throw error;
+      }
+
+      logger.info({}, 'User password reset finalize done');
 
       return null;
     }),
@@ -78,18 +94,29 @@ export const profileRouter = t.router({
           .authWithPassword<User>(input.email, input.password);
 
         user = record;
-      } catch (e) {
-        console.log(e);
+      } catch (error) {
+        logger.info(
+          { email: input.email, error },
+          'User invalid credentials - invalid email'
+        );
+
         throw INVALID_CREDENTIALS_ERROR;
       }
 
       const { isValid, token, model } = pocketbase.authStore;
 
       if (!isValid || !user) {
+        logger.info(
+          { email: input.email, isUser: !!user, isTokenValid: isValid },
+          'User invalid credentials'
+        );
+
         throw INVALID_CREDENTIALS_ERROR;
       }
 
       if (!user.verified) {
+        logger.info({ email: input.email }, 'Unverified user tried to log in');
+
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Váš učet ještě není aktivován',
@@ -100,12 +127,18 @@ export const profileRouter = t.router({
         user.status === UserStates.BANNED ||
         user.status === UserStates.DEACTIVATED
       ) {
+        logger.info(
+          { email: input.email, status: user.status },
+          'User banned or deactivated tried to log in'
+        );
+
         throw new TRPCError({
           code: 'FORBIDDEN',
           message: 'Váš účet je deaktivován nebo byl zablokován',
         });
       }
 
+      logger.info({ email: input.email }, 'User successfully logged in');
       // add user token to session
       await setSessionToCookies(
         {
@@ -131,10 +164,17 @@ export const profileRouter = t.router({
   register: t.procedure
     .input(registerUserSchema)
     .mutation(async ({ ctx, input }) => {
-      await config.pb.loginWithAccount('contactForm');
+      await loginWithAccount('contactForm');
 
       try {
         const user = await UserService.create(input, true);
+        logger.info(
+          {
+            user: omit(user, ['password']),
+            input: omit(input, ['password']),
+          },
+          'Registering user - user created'
+        );
         AuthService.clearAuthPocketBase();
 
         return {
@@ -143,9 +183,12 @@ export const profileRouter = t.router({
       } catch (error) {
         AuthService.clearAuthPocketBase();
 
-        logger.error(error, 'An error happened during user registration');
-
         if (error instanceof ClientResponseError) {
+          logger.error(
+            { error, email: input.email },
+            'Registering user - bad request from pocketbase'
+          );
+
           throw new TRPCError({
             code: 'BAD_REQUEST',
             cause: error,
@@ -155,11 +198,18 @@ export const profileRouter = t.router({
           error instanceof ApplicationError &&
           error.code === ErrorCodes.ENTITY_DUPLICATE
         ) {
+          logger.error(
+            { error, email: input.email },
+            'Registering user - user already exists'
+          );
+
           throw new TRPCError({
             code: 'CONFLICT',
             message: 'Uživatel pod tímto emailem už existuje',
           });
         }
+
+        logger.error(error, 'Registering user - failed');
 
         throw error;
       }
@@ -175,19 +225,20 @@ export const profileRouter = t.router({
           .collection(PocketbaseCollections.USERS)
           .confirmVerification(input.token);
 
+        logger.info({}, 'Registering user - verify - finished');
+
         return true;
       } catch (error) {
-        logger.error(
-          error,
-          'An error happened during user verify registration'
-        );
-
         if (error instanceof ClientResponseError && error.status === 400) {
+          logger.error(error, 'Registering user - verify - invalid token');
+
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Invalid token',
           });
         }
+
+        logger.error(error, 'Registering user - verify - error');
 
         throw error;
       }
