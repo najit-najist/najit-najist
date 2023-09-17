@@ -13,4 +13,9 @@ export enum PocketbaseCollections {
   MUNICIPALITY = 'municipality',
   NEWSLETTER_SUBSCRIPTIONS = 'newsletter_subscriptions',
   PREVIEW_SUBSCRIBERS_TOKENS = 'preview_subscribers_tokens',
+
+  PRODUCTS = 'products',
+  PRODUCT_STOCK = 'product_stock',
+  PRODUCT_PRICES = 'product_prices',
+  PRODUCT_CATEGORIES = 'product_categories',
 }
