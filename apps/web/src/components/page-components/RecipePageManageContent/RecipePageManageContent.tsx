@@ -114,11 +114,11 @@ export const RecipePageManageContent = async ({
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block">
+          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title">
             Recept
           </span>
           {!isEditorEnabled ? (
-            <h1 className="text-4xl font-suez">{title}</h1>
+            <h1 className="text-4xl font-title">{title}</h1>
           ) : (
             <TitleEdit />
           )}

@@ -61,7 +61,7 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
       <div className="p-5 flex flex-col justify-between h-full">
         <div className="flex-none">
           <Link href={linkHref}>
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+            <h5 className="mb-2 text-3xl font-bold tracking-tight text-gray-900 font-title">
               {title}
             </h5>
           </Link>

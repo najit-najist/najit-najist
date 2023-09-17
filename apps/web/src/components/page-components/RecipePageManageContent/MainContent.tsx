@@ -9,7 +9,7 @@ import { StepsRenderer } from './editorComponents/StepsRenderer';
 import { TitleEdit } from './editorComponents/TitleEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
-  <h3 className="mb-2 text-xl font-semibold">{children}</h3>
+  <h3 className="mb-2 text-xl font-semibold font-title">{children}</h3>
 );
 
 export const MainContent: FC<{
@@ -30,11 +30,11 @@ export const MainContent: FC<{
   return (
     <>
       <div className="col-span-6 pl-5">
-        <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block">
+        <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title">
           Recept
         </span>
         {!isEditorEnabled ? (
-          <h1 className="text-4xl font-suez">{title}</h1>
+          <h1 className="text-4xl font-title">{title}</h1>
         ) : (
           <TitleEdit />
         )}

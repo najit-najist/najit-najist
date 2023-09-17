@@ -45,7 +45,7 @@ export const EditUserUnderPage: FC<{
       <div className="col-span-4">
         <Section>
           <div className="px-5 sm:px-10">
-            <h1 className="text-2xl">
+            <h1 className="text-3xl font-title tracking-wide">
               {viewType == 'create'
                 ? 'Nový uživatel'
                 : viewType == 'edit'

@@ -42,10 +42,10 @@ export default async function Page() {
   return (
     <>
       <div className="container text-center">
-        <h1 className="text-4xl text-deep-green-400 mt-20 font-semibold">
+        <h1 className="text-5xl text-deep-green-400 mt-20 font-semibold font-title">
           Děkujeme za Vaší přízeň!
         </h1>
-        <p className="text-lg mt-3 max-w-4xl mx-auto">
+        <p className="text-lg mt-5 max-w-4xl mx-auto">
           Připravili jsme pro Vás speciální video v podobě rozhovoru s našim
           poradcem pro oblast výživy a zdraví s paní{' '}
           <Link

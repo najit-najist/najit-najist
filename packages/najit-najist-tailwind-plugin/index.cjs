@@ -158,8 +158,10 @@ const getTheme = () => ({
     },
     fontFamily: {
       sans: ['var(--font-montserrat)'],
-      fancy: ['var(--font-playfair-display)'],
       suez: ['var(--font-suez)'],
+      // By size
+      normal: ['var(--font-montserrat)'],
+      title: ['var(--font-dm-serif-display)'],
     },
     container: {
       center: true,

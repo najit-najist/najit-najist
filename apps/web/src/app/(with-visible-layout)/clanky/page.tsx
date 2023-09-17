@@ -28,7 +28,7 @@ export default async function Page({ searchParams }: Params) {
   return (
     <div className="container">
       <PageHeader>
-        <PageTitle>Blog</PageTitle>
+        <PageTitle>Články</PageTitle>
         <PageDescription>Vyberte si z naší knihovny článků</PageDescription>
       </PageHeader>
       <SearchForm initialData={{ query }} />

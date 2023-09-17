@@ -80,16 +80,20 @@ const ContactPage: FC = () => {
     <>
       <div className="container">
         <div className="mx-auto">
-          <h2 className="text-5xl font-bold mt-10 mb-7">Kontakt</h2>
+          <h2 className="text-5xl font-bold font-title tracking-wide mt-10 mb-7">
+            {metadata.title}
+          </h2>
         </div>
         <div>
           <ContactForm />
         </div>
       </div>
 
-      <div className="container" id="nas-team">
+      <div className="container my-20" id="nas-team">
         <div className="mx-auto">
-          <h2 className="text-5xl font-bold mt-10 mb-7">Náš tým</h2>
+          <h2 className="text-5xl font-bold mt-10 mb-7 font-title tracking-wide">
+            Náš tým
+          </h2>
         </div>
         <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
           {teamMembers.map((memberInfo) => (
@@ -106,7 +110,9 @@ const ContactPage: FC = () => {
 
       <div className="container">
         <div className="mx-auto">
-          <h2 className="text-5xl font-bold mt-10 mb-7">Prodejny</h2>
+          <h2 className="text-5xl font-bold mt-10 mb-7 font-title tracking-wide">
+            Prodejny
+          </h2>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {locations.map((item) => (
@@ -119,7 +125,7 @@ const ContactPage: FC = () => {
               ></iframe>
 
               <div className="p-2">
-                <p className="text-deep-green-300 text-xl font-semibold mt-4">
+                <p className="text-deep-green-300 text-2xl font-semibold mt-4 font-title">
                   {item.name}
                 </p>
 
