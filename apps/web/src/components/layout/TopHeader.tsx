@@ -96,7 +96,7 @@ const RegisterPill: FC<{ hideOnMobile?: boolean }> = ({ hideOnMobile }) => {
         ' items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400'
+        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400 font-small'
       )}
     >
       Registrovat

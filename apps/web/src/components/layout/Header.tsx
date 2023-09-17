@@ -41,7 +41,7 @@ export async function Header(): Promise<ReturnType<FC>> {
               <li key={href}>
                 <a
                   className={clsx(
-                    'font-bold py-3 sm:py-8 px-6 block duration-200',
+                    'font-bold py-3 sm:py-8 px-6 block duration-200 font-title',
                     currentPathname === href
                       ? 'bg-deep-green-400 text-white '
                       : 'hover:bg-deep-green-400 hover:text-white '

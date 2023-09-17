@@ -152,7 +152,7 @@ export const Content: FC = () => {
                   isLoading={fieldsAreDisabled}
                   type="submit"
                   appearance="normal"
-                  className="shadow-sm w-full"
+                  className="shadow-sm w-full font-title"
                 >
                   Registrovat
                 </Button>

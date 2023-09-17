@@ -61,7 +61,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
               isLoading={fieldsAreDisabled}
               type="submit"
               appearance="normal"
-              className="shadow-sm w-full"
+              className="shadow-sm w-full font-title"
             >
               Registrovat
             </Button>

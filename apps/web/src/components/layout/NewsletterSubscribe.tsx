@@ -47,7 +47,7 @@ export const NewsletterSubscribe: FC = () => {
         ) : (
           <>
             <div className="lg:w-0 lg:flex-1">
-              <h2 className="text-3xl font-bold tracking-tight text-white">
+              <h2 className="text-4xl font-bold tracking-tight text-white font-title">
                 Přihlašte se k našemu newsletteru
               </h2>
               <p className="mt-4 max-w-3xl text-lg text-cyan-100">

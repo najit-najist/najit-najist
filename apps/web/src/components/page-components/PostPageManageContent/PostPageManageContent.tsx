@@ -76,7 +76,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
               </div>
             ) : null}
 
-            <div className="font-suez sm:text-xl leading-9 max-w-4xl w-full">
+            <div className="font-title sm:text-xl leading-9 spacing max-w-4xl tracking-wide w-full">
               {props.viewType === 'view' ? (
                 <div className="text-white">
                   {HTMLReactParser(props.post.description)}
@@ -88,7 +88,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           </div>
         </div>
 
-        <div className="container sm:text-xl pb-10">
+        <div className="container sm:text-lg pb-10">
           {props.viewType === 'view' ? (
             props.post.content ? (
               <BlockEditorRenderer data={props.post.content} />

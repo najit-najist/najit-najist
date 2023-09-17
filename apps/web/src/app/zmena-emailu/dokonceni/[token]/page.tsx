@@ -101,7 +101,7 @@ const ChangeEmailFinalizationPage: FC = () => {
               <Button
                 type="submit"
                 appearance="normal"
-                className="shadow-sm w-full"
+                className="shadow-sm w-full font-title"
               >
                 Registrovat
               </Button>

@@ -26,7 +26,7 @@ export const UserHead: FC<{
           )}
         />
       </div>
-      <h3 className="text-md mt-4">{name}</h3>
+      <h3 className="text-lg mt-4 font-title">{name}</h3>
       <p className="text-sm text-deep-green-300">{position}</p>
     </div>
   );

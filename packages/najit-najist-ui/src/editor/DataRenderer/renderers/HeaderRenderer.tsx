@@ -11,7 +11,7 @@ type AvailableLevel = (typeof AVAILABLE_LEVELS)[number];
 export const AVAILABLE_LEVELS = [2, 3, 4] as const;
 export const DEFAULT_LEVEL = AVAILABLE_LEVELS[0];
 
-const styles = cva('font-semibold mb-5 mt-10 font-suez', {
+const styles = cva('font-semibold mb-5 mt-10 font-title', {
   variants: {
     level: {
       2: 'text-5xl',

@@ -3,7 +3,7 @@ import '../globals.css';
 import 'keen-slider/keen-slider.min.css';
 import { LayoutComponent } from '@custom-types';
 import { ContextProviders } from '@contexts';
-import { Suez_One, Playfair_Display, Montserrat } from 'next/font/google';
+import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
 import { headers } from 'next/headers';
 import timezone from 'dayjs/plugin/timezone';
 import relativeTime from 'dayjs/plugin/relativeTime';
@@ -25,9 +25,9 @@ const inter = Suez_One({
   subsets: ['latin'],
   variable: '--font-suez',
 });
-const playfair = Playfair_Display({
-  weight: ['400', '700'],
-  variable: '--font-playfair-display',
+const dmSerifDisplay = DM_Serif_Display({
+  weight: ['400'],
+  variable: '--font-dm-serif-display',
   style: ['italic', 'normal'],
   subsets: ['latin'],
 });
@@ -62,11 +62,11 @@ const RootLayout: LayoutComponent = ({ children }) => {
       <body
         className={clsx(
           'bg-gradient-to-b from-[#fbf9ebd3] to-white data-scroll-container min-h-screen flex',
-          inter.className,
-          playfair.className,
+          // inter.className,
+          // dmSerifDisplay.className,
           montserrat.className,
           inter.variable,
-          playfair.variable,
+          dmSerifDisplay.variable,
           montserrat.variable
         )}
       >

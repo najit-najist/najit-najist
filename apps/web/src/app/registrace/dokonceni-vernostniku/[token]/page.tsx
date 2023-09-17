@@ -33,7 +33,7 @@ const RegistrationFinalizationPage = async ({
         <Logo className="h-20 w-auto mx-auto" />
       </Link>
       <div className="sm:mx-auto sm:w-full my-5">
-        <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900">
+        <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900 font-title">
           Děkujeme!
         </h2>
         {result.for.verified ? (

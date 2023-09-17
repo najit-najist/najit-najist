@@ -42,7 +42,7 @@ const RegistrationFinalizationPage = async ({
           </h2>
         ) : (
           <>
-            <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900">
+            <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900 font-title">
               Vítejte!
             </h2>
             <p className="mt-4 text-center text-xl text-gray-600">
