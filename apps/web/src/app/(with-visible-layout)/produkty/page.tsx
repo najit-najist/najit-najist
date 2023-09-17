@@ -13,7 +13,7 @@ type Params = {
 };
 
 export const metadata = {
-  title: 'Recepty',
+  title: 'Produkty',
 };
 
 export const revalidate = 30;
