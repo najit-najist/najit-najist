@@ -11,6 +11,7 @@ const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
   { text: 'Recepty', href: '/recepty' },
+  { text: 'Produkty', href: '/produkty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];
@@ -42,7 +43,11 @@ export async function Header(): Promise<ReturnType<FC>> {
                 <a
                   className={clsx(
                     'font-bold py-3 sm:py-8 px-6 block duration-200 font-title',
-                    currentPathname === href
+                    (
+                      href === '/'
+                        ? currentPathname === href
+                        : currentPathname?.startsWith(href)
+                    )
                       ? 'bg-deep-green-400 text-white '
                       : 'hover:bg-deep-green-400 hover:text-white '
                   )}
