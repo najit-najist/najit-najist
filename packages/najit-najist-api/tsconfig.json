@@ -14,14 +14,17 @@
       "@errors": ["./errors"],
       "@utils": ["./utils"],
       "@utils/*": ["./utils/*"],
-      "@config": ["./config"],
-      "@constants": ["./constants"],
+      "@config": ["./config/index.js"],
+      "@constants": ["./constants/index.js"],
       "@services/*": ["./services/*"],
       "@services": ["./services"],
       "@trpc": ["./trpc/index.js"],
       "@trpc-procedures/*": ["./trpc/procedures/*"],
-      "@logger": ["./logger"]
+      "@logger": ["./logger/index.js"]
     }
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
   },
   "include": ["src"]
 }

@@ -5,6 +5,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["dom"],
-    "rootDir": "src"
-  }
+    "baseUrl": "./src",
+    "rootDir": "src",
+  },
 }
