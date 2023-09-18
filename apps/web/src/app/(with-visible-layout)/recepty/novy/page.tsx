@@ -1,6 +1,6 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
 import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
-import { getLoggedInUser, isUserLoggedIn } from '@najit-najist/api/server';
+import { getLoggedInUser } from '@najit-najist/api/server';
 import { redirect } from 'next/navigation';
 
 export const metadata = {

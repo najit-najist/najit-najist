@@ -1,8 +1,5 @@
 import { PageTitle } from '@components/common/PageTitle';
-import { UserRoles } from '@najit-najist/api';
-import { getCachedLoggedInUser } from '@server-utils';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
 import { FC } from 'react';
 
 const Item: FC<{ title: string; href: string }> = ({ title, href }) => {
@@ -23,12 +20,6 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function Page() {
-  const loggedInUser = await getCachedLoggedInUser();
-
-  if (!loggedInUser || loggedInUser.role !== UserRoles.ADMIN) {
-    redirect('/');
-  }
-
   return (
     <div className="container py-20">
       <PageTitle>{metadata.title}</PageTitle>

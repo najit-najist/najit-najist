@@ -1,10 +1,4 @@
-import {
-  AuthService,
-  getLoggedInUser,
-  getTrpcCaller,
-  isUserLoggedIn,
-} from '@najit-najist/api/server';
-import { redirect } from 'next/navigation';
+import { AuthService, getTrpcCaller } from '@najit-najist/api/server';
 import { Content } from './_components/Content';
 
 export const revalidate = 0;
@@ -14,12 +8,6 @@ export const metadata = {
 };
 
 export default async function Page() {
-  const isLoggedIn = await isUserLoggedIn();
-
-  if (!isLoggedIn) {
-    redirect('/login');
-  }
-
   await AuthService.authPocketBase();
 
   let user = await getTrpcCaller().profile.me();

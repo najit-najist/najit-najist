@@ -1,28 +1,11 @@
-import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
-import { getLoggedInUser, isUserLoggedIn } from '@najit-najist/api/server';
-import { redirect } from 'next/navigation';
+import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 
 export const metadata = {
-  title: 'Vytvoření receptu',
+  title: 'Vytvoření produktu',
 };
 
-export const revalidate = 30;
+export const revalidate = 0;
 
 export default async function Page() {
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
-  if (
-    !loggedInUser ||
-    !canUser(loggedInUser, {
-      action: UserActions.CREATE,
-      onModel: AvailableModels.RECIPES,
-    })
-  ) {
-    redirect('/');
-  }
-
-  return (
-    // @ts-ignore
-    <RecipePageManageContent isEditorHeaderShown viewType={'create'} />
-  );
+  return <ProductPageManageContent isEditorHeaderShown viewType={'create'} />;
 }

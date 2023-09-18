@@ -1,10 +1,8 @@
 import { PageTitle } from '@components/common/PageTitle';
 import { FC, PropsWithChildren } from 'react';
-import { getCachedLoggedInUser, getCachedUsers } from '@server-utils';
+import { getCachedUsers } from '@server-utils';
 import { SearchForm } from './_components/SearchForm';
 import { Users } from './_components/Users';
-import { redirect } from 'next/navigation';
-import { UserRoles } from '@najit-najist/api';
 
 export const metadata = {
   title: 'Uživatelé',
@@ -22,12 +20,6 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
 );
 
 export default async function Page() {
-  const loggedInUser = await getCachedLoggedInUser();
-
-  if (!loggedInUser || loggedInUser.role !== UserRoles.ADMIN) {
-    redirect('/');
-  }
-
   const { items: users, totalItems } = await getCachedUsers();
 
   return (

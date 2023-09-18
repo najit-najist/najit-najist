@@ -11,6 +11,7 @@ export enum AvailableModels {
   USER = 'users',
   POST = 'posts',
   RECIPES = 'recipes',
+  PRODUCTS = 'products',
 }
 
 export enum SpecialSections {

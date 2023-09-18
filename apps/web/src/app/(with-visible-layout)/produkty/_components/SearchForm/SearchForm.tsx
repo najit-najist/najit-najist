@@ -11,42 +11,26 @@ import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
-const typeLabelFormatter = (value: RecipeDifficulty) => value.name;
-const typesLabelFormatter = (value: RecipeType) => value.title;
 type FormValues = {
   query?: string;
-  difficultySlug?: string;
-  typeSlug?: string;
 };
 
-export const SearchForm: FC<{
-  difficulties: RecipeDifficulty[];
-  types: RecipeType[];
-  initialValues?: Partial<FormValues>;
-}> = ({ difficulties, types, initialValues }) => {
+export const SearchForm: FC<{ initialValues?: FormValues }> = ({
+  initialValues,
+}) => {
   const router = useRouter();
   const [isRefreshing, startRefreshing] = useTransition();
   const formMethods = useForm<FormValues>({
     defaultValues: initialValues,
   });
   const { handleSubmit, register, watch } = formMethods;
-  const difficultiesMap = useMemo(
-    () => new Map(difficulties.map((item) => [item.slug, item])),
-    [difficulties]
-  );
-  const typesAsMap = useMemo(
-    () => new Map(types.map((item) => [item.slug, item])),
-    [types]
-  );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ difficultySlug, query, typeSlug }) => {
-      let route = '/recepty';
-      const params = [
-        ['query', query],
-        ['difficulty', difficultySlug],
-        ['type', typeSlug],
-      ].filter(([_, value]) => !!value) as string[][];
+    ({ query }) => {
+      let route = '/produkty';
+      const params = [['query', query]].filter(
+        ([_, value]) => !!value
+      ) as string[][];
 
       if (params.length) {
         const queryParams = new URLSearchParams(params);
@@ -86,34 +70,6 @@ export const SearchForm: FC<{
             )
           }
           {...register('query')}
-        />
-        <Controller<FormValues>
-          name="typeSlug"
-          render={({ field: { name, value, onChange } }) => (
-            <Select<RecipeType>
-              name={name}
-              label="Typ"
-              selected={typesAsMap.get(value ?? '')}
-              onChange={(item) => onChange(item.slug)}
-              formatter={typesLabelFormatter}
-              items={types}
-              className="md:max-w-[240px] w-full"
-            />
-          )}
-        />
-        <Controller<FormValues>
-          name="difficultySlug"
-          render={({ field: { name, value, onChange } }) => (
-            <Select<RecipeDifficulty>
-              name={name}
-              label="Náročnost"
-              selected={difficultiesMap.get(value ?? '')}
-              onChange={(item) => onChange(item.slug)}
-              formatter={typeLabelFormatter}
-              items={difficulties}
-              className="md:max-w-[240px] w-full"
-            />
-          )}
         />
       </form>
     </FormProvider>
