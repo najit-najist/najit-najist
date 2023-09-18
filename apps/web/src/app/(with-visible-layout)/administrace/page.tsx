@@ -1,5 +1,6 @@
+import { PageTitle } from '@components/common/PageTitle';
 import { UserRoles } from '@najit-najist/api';
-import { getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { FC } from 'react';
@@ -22,7 +23,7 @@ export const metadata = {
 export const revalidate = 0;
 
 export default async function Page() {
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const loggedInUser = await getCachedLoggedInUser();
 
   if (!loggedInUser || loggedInUser.role !== UserRoles.ADMIN) {
     redirect('/');
@@ -30,7 +31,7 @@ export default async function Page() {
 
   return (
     <div className="container py-20">
-      <h1 className="text-4xl font-semibold">Administrace</h1>
+      <PageTitle>{metadata.title}</PageTitle>
       <div className="flex flex-wrap gap-5 mt-5 divide-x-2 items-center">
         <div className="flex gap-5 flex-wrap">
           <Item title="Uživatelé" href="/administrace/uzivatele" />

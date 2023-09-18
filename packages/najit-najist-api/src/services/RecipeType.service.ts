@@ -7,7 +7,7 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import { GetManyUsersOptions, RecipeType } from '@schemas';
 import { CreateRecipeTypeInput } from 'schemas/recipe-type';
-import slugify from 'slugify';
+import { slugifyString } from '@utils';
 
 type GetByType = keyof Pick<RecipeType, 'id'>;
 
@@ -48,7 +48,7 @@ export class RecipeTypeService {
     try {
       return await pocketbase
         .collection(PocketbaseCollections.RECIPE_TYPES)
-        .create({ title, slug: slugify(title) });
+        .create({ title, slug: slugifyString(title) });
     } catch (error) {
       if (error instanceof ClientResponseError) {
         const data = error.data.data;

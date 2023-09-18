@@ -9,7 +9,7 @@ import {
   RecipeType,
   UpdateRecipeInput,
 } from '@schemas';
-import { slugify } from '@utils';
+import { slugifyString } from '@utils';
 import { objectToFormData } from '@utils/internal';
 import { RecipeDifficultyService } from './RecipeDifficulty.service';
 import { RecipeResourceMetricService } from './RecipeResourceMetric.service';
@@ -70,7 +70,7 @@ export class RecipesService {
           id,
           await objectToFormData({
             ...input,
-            ...(title ? { slug: slugify(title), title } : null),
+            ...(title ? { slug: slugifyString(title), title } : null),
             ...(resources ? { resources: JSON.stringify(resources) } : null),
             ...(steps ? { steps: JSON.stringify(steps) } : null),
           }),
@@ -101,7 +101,7 @@ export class RecipesService {
         await pocketbase.collection(PocketbaseCollections.RECIPES).create(
           await objectToFormData({
             ...input,
-            ...(title ? { slug: slugify(title), title } : null),
+            ...(title ? { slug: slugifyString(title), title } : null),
             ...(resources
               ? { resources: JSON.stringify(resources ?? []) }
               : null),

@@ -11,7 +11,7 @@ import {
   UpdateProduct,
   User,
 } from '@schemas';
-import { slugify } from '@utils';
+import { slugifyString } from '@utils';
 import { objectToFormData } from '@utils/internal';
 
 type GetByType = keyof Pick<Product, 'id'>;
@@ -67,7 +67,7 @@ export class ProductService {
           id,
           await objectToFormData({
             ...input,
-            ...(name ? { slug: slugify(name), name } : null),
+            ...(name ? { slug: slugifyString(name), name } : null),
           }),
           { expand: BASE_EXPAND }
         )
@@ -97,7 +97,7 @@ export class ProductService {
         .create<ProductWithExpand>(
           await objectToFormData({
             ...input,
-            ...(name ? { slug: slugify(name), name } : null),
+            ...(name ? { slug: slugifyString(name), name } : null),
           }),
           { expand: BASE_EXPAND }
         );

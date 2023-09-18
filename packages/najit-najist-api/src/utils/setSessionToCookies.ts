@@ -1,4 +1,4 @@
-import { config } from '@config';
+import { config } from 'config';
 import { IronSessionData, sealData } from 'iron-session';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { headers } from 'next/headers';

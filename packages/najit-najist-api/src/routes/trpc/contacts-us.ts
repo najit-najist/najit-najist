@@ -1,4 +1,4 @@
-import { config } from '@config';
+import { config } from 'config';
 import { t } from '@trpc';
 import { PocketbaseCollections } from '@custom-types';
 import { contactUsSchema } from '@schemas';

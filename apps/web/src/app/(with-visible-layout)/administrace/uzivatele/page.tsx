@@ -1,10 +1,16 @@
+import { PageTitle } from '@components/common/PageTitle';
 import { FC, PropsWithChildren } from 'react';
+import { getCachedLoggedInUser, getCachedUsers } from '@server-utils';
 import { SearchForm } from './_components/SearchForm';
 import { Users } from './_components/Users';
+import { redirect } from 'next/navigation';
+import { UserRoles } from '@najit-najist/api';
 
 export const metadata = {
   title: 'Uživatelé',
 };
+
+export const revalidate = 0;
 
 const Th: FC<PropsWithChildren> = ({ children }) => (
   <th
@@ -16,8 +22,17 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
 );
 
 export default async function Page() {
+  const loggedInUser = await getCachedLoggedInUser();
+
+  if (!loggedInUser || loggedInUser.role !== UserRoles.ADMIN) {
+    redirect('/');
+  }
+
+  const { items: users, totalItems } = await getCachedUsers();
+
   return (
     <div className="mt-8 flow-root !border-t-0 container">
+      <PageTitle>Uživatelé</PageTitle>
       <SearchForm />
       <div className="overflow-x-auto mb-10">
         <div className="inline-block min-w-full py-2 align-middle">
@@ -37,9 +52,12 @@ export default async function Page() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {/* @ts-ignore */}
-              <Users />
+              <Users users={users} />
             </tbody>
+            <tfoot className="flex flex-wrap justify-between items-center">
+              <div />
+              <div>Celkový počet: {totalItems}</div>
+            </tfoot>
           </table>
         </div>
       </div>

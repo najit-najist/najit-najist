@@ -1,9 +1,8 @@
-import { UserService } from '@najit-najist/api/server';
+import { User } from '@najit-najist/api';
 import Link from 'next/link';
+import { FC } from 'react';
 
-export const Users: () => Promise<JSX.Element> = async () => {
-  const { items: users } = await UserService.getMany();
-
+export const Users: FC<{ users: User[] }> = async ({ users }) => {
   return (
     <>
       {users.length ? (
