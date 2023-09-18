@@ -16,7 +16,7 @@ const navLinks = [
   { text: 'Kontakt', href: '/kontakt' },
 ];
 
-export async function Header(): Promise<ReturnType<FC>> {
+export const Header: FC = async () => {
   const headersList = headers();
   const currentPathname = headersList.get(X_REQUEST_PATH_HEADER_NAME);
   const loggedUser = await getLoggedInUser().catch(() => undefined);
@@ -62,4 +62,4 @@ export async function Header(): Promise<ReturnType<FC>> {
       </header>
     </>
   );
-}
+};

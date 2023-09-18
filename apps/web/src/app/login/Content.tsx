@@ -81,7 +81,7 @@ export const Content: FC = () => {
         }
       }
     },
-    [doLogin, router, setError, utils.profile.me, searchParams]
+    [doLogin, setError, utils.profile.me, searchParams]
   );
 
   return (
