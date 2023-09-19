@@ -23,13 +23,12 @@ import {
 } from '@najit-najist/api/server';
 import { TypeEdit } from './editorComponents/TypeEdit';
 import { DifficultyEdit } from './editorComponents/DifficultyEdit';
-import { UserListActions } from './UserListActions';
 import { Skeleton } from '@najit-najist/ui';
 import { LazyUserListActions } from './LazyUserListActions';
 import { PortionsEdit } from './editorComponents/PortionsEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
-  <h3 className="mb-2 text-xl font-semibold">{children}</h3>
+  <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
 );
 
 export type RecipePageManageContentProps = {
