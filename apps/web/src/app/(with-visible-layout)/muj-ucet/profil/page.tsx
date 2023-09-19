@@ -1,5 +1,6 @@
 import { AuthService, getTrpcCaller } from '@najit-najist/api/server';
 import { Content } from './_components/Content';
+import { getCachedLoggedInUser } from '@server-utils';
 
 export const revalidate = 0;
 
@@ -8,12 +9,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-  await AuthService.authPocketBase();
+  let user = await getCachedLoggedInUser();
 
-  let user = await getTrpcCaller().profile.me();
-
-  // Clear auth for other connections
-  AuthService.clearAuthPocketBase();
-
-  return <Content userId={user.id} initialData={user} />;
+  return <Content userId={user!.id} initialData={user!} />;
 }

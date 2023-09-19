@@ -4,6 +4,7 @@ import {
 } from '@constants';
 import { canUser, SpecialSections, User, UserActions } from '@najit-najist/api';
 import { AuthService, getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -15,14 +16,13 @@ export const metadata = {
 };
 
 export default async function Page() {
-  let user: User;
+  let user: User | undefined;
 
   try {
-    await AuthService.authPocketBase();
-
-    user = await getLoggedInUser();
+    user = await getCachedLoggedInUser();
 
     if (
+      !user ||
       !canUser(user, {
         action: UserActions.VIEW,
         onModel: SpecialSections.OG_PREVIEW,
