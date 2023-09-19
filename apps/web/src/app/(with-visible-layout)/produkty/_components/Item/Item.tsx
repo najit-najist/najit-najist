@@ -1,9 +1,9 @@
-import { Product, stripHtml } from '@najit-najist/api';
+import { Product } from '@najit-najist/api';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
-import { ItemLink } from './ItemLink';
+import HTMLReactParser from 'html-react-parser';
 
 export const Item: FC<Product & { showEditLink?: boolean }> = ({
   images,
@@ -26,20 +26,33 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
         />
       </div>
       <div className="p-5 flex flex-col justify-between w-full h-full">
-        <div className="flex-none">
+        <span className="mb-2 text-sm uppercase font-semibold text-ocean-400 block font-title">
+          Produkt
+        </span>
+        <div className="flex-none flex items-center justify-between">
           <Link href={linkHref}>
-            <h5 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 font-title">
+            <h5 className="mb-2 text-2xl sm:text-4xl font-bold tracking-tight text-gray-900 font-title">
               {name}
             </h5>
           </Link>
-          <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3">
-            {stripHtml(description ?? '').result}
-          </p>
+          <Suspense>
+            <EditLink href={linkHref as any} />
+          </Suspense>
         </div>
-        <div className="flex justify-between mt-auto">
+
+        <div className="text-5xl text-deep-green-500 font-bold my-3">
+          <span className="tracking-wider">{price.value}</span>
+          <span className="tracking-[-0.1rem] underline text-gray-700 text-3xl ml-1">
+            Kč
+          </span>
+        </div>
+
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 tracking-wide">
+          {HTMLReactParser(description ?? '')}
+        </p>
+        {/* <div className="flex justify-between mt-auto">
           <ItemLink href={linkHref} />
-          <EditLink href={linkHref} />
-        </div>
+        </div> */}
       </div>
     </div>
   );

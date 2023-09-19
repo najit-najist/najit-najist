@@ -13,7 +13,7 @@ import {
   AvailableModels,
   getFileUrl,
   IMAGE_FILE_REGEX,
-  Recipe,
+  Product,
 } from '@najit-najist/api';
 import { Alert, Badge, Button, Skeleton } from '@najit-najist/ui';
 import { readFile } from '@utils';
@@ -30,12 +30,12 @@ import {
 } from 'react';
 import { FieldError, useController, useFormContext } from 'react-hook-form';
 import { CustomImage } from '../CustomImage';
-import { RecipeFormData } from '../_types';
+import { ProductFormData } from '../_types';
 
 const isBase64 = (input: string) => input.includes(';base64,');
 type ImagePickerProps = {
   onUploadStart: (items: FileList) => void;
-  recipeId?: Recipe['id'];
+  productId?: Product['id'];
   onRemove?: () => void;
   onItemUploadEnd: (incomingValue: string | Error, prevValue?: string) => void;
   error?: FieldError;
@@ -54,7 +54,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
   multiple,
   canBeOnlyEdited,
   onRemove,
-  recipeId,
+  productId,
 }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const isPreview = value?.includes('base64,');
@@ -90,12 +90,12 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
   const src = useMemo(
     () =>
-      recipeId && value
+      productId && value
         ? isBase64(value)
           ? value
-          : getFileUrl(AvailableModels.RECIPES, recipeId, value)
+          : getFileUrl(AvailableModels.PRODUCTS, productId, value)
         : value,
-    [recipeId, value]
+    [productId, value]
   );
 
   return (
@@ -162,10 +162,10 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
 const FIELD_NAME = 'images';
 
-export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
-  const { getValues, resetField } = useFormContext<RecipeFormData>();
+export const ImagesEdit: FC<{ productId?: string }> = ({ productId }) => {
+  const { getValues, resetField } = useFormContext<ProductFormData>();
   const { field, fieldState } = useController<
-    Pick<RecipeFormData, typeof FIELD_NAME>
+    Pick<ProductFormData, typeof FIELD_NAME>
   >({
     name: FIELD_NAME,
   });
@@ -251,7 +251,7 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
       {
         <ImagePicker
           canBeOnlyEdited
-          recipeId={recipeId}
+          productId={productId}
           error={fieldState.error}
           onUploadStart={onFirstUploadStart}
           value={field.value?.at(0)}
@@ -273,7 +273,7 @@ export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
           <ImagePicker
             key={imageUrl}
             value={imageUrl}
-            recipeId={recipeId}
+            productId={productId}
             onRemove={() => onItemRemove(index + 1)}
             onUploadStart={onUploadMultipleStart}
             onItemUploadEnd={onUploadMultipleItemEnd}

@@ -2,7 +2,9 @@ import { z } from 'zod';
 import { baseCollectionSchema } from '../base.collection.schema';
 
 export const productStockSchema = baseCollectionSchema.extend({
-  count: z.number().min(0),
+  count: z
+    .number({ required_error: 'Toto pole je povinné' })
+    .min(0, 'Minimální hodnota je 0'),
 });
 
 export const createProductStockSchema = productStockSchema

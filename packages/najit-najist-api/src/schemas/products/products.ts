@@ -15,7 +15,7 @@ import {
 } from './product-stocks';
 
 export const productSchema = baseCollectionSchema.extend({
-  name: z.string().trim(),
+  name: z.string().min(1, 'Toto pole je povinné').trim(),
   slug: z.string().trim(),
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),

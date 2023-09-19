@@ -1,6 +1,7 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
 import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
@@ -32,7 +33,7 @@ export default async function PostUnderPage({
 }: PageParams) {
   let post: Post;
   const isEditorEnabled = !!searchParams.editor;
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const loggedInUser = await getCachedLoggedInUser();
   const canEdit =
     loggedInUser &&
     canUser(loggedInUser, {

@@ -6,7 +6,7 @@ import {
   UserActions,
   canUser,
 } from '@najit-najist/api/dist/utils/canUser';
-import { UserRoles } from '@najit-najist/api';
+import { UserRoles } from '@najit-najist/api/dist/schemas/user.schema';
 
 const loggedInPathsRegex = new RegExp(
   `\/(produkty\/[^\n]+|(administrace|muj-ucet|recepty|preview-special)[^\n]*|clanky\/novy)$`,

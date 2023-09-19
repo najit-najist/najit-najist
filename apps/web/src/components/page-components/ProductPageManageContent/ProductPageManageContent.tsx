@@ -1,68 +1,45 @@
-import {
-  AvailableModels,
-  extractTimeFromSteps,
-  getFileUrl,
-  Recipe,
-} from '@najit-najist/api';
-import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
+import { AvailableModels, getFileUrl, Product } from '@najit-najist/api';
+import { FC, PropsWithChildren } from 'react';
 import { Aside } from './Aside';
 import HTMLReactParser from 'html-react-parser';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { Form } from './editorComponents/Form';
-import { ResourcesEdit } from './editorComponents/ResourcesEdit/ResourcesEdit';
-import { ResourcesRenderer } from './editorComponents/ResourcesRenderer';
-import { StepsEdit } from './editorComponents/StepsEdit';
-import { StepsRenderer } from './editorComponents/StepsRenderer';
 import { TitleEdit } from './editorComponents/TitleEdit';
 import { EditorHeader } from './EditorHeader';
 import { CustomImage } from './CustomImage';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
-import {
-  RecipeDifficultyService,
-  RecipesService,
-} from '@najit-najist/api/server';
-import { TypeEdit } from './editorComponents/TypeEdit';
-import { DifficultyEdit } from './editorComponents/DifficultyEdit';
-import { Skeleton } from '@najit-najist/ui';
-import { LazyUserListActions } from './LazyUserListActions';
-import { PortionsEdit } from './editorComponents/PortionsEdit';
+import clsx from 'clsx';
+import { PriceEditor, PriceRenderer } from './editorComponents/Price';
+import { StarIcon } from '@heroicons/react/24/solid';
+import Link from 'next/link';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
-  <h3 className="mb-2 text-xl font-semibold">{children}</h3>
+  <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
 );
 
-export type RecipePageManageContentProps = {
+export type ProductPageManageContentProps = {
   isEditorHeaderShown?: boolean;
 } & (
-  | { viewType: 'edit'; recipe: Recipe }
+  | { viewType: 'edit'; product: Product }
   | {
       viewType: 'view';
-      recipe: Recipe;
+      product: Product;
     }
   | { viewType: 'create' }
 );
 
-export const ProductPageManageContent = async ({
-  isEditorHeaderShown,
-  ...props
-}: RecipePageManageContentProps): Promise<ReactElement> => {
-  const [{ items: metrics }, { items: types }, { items: difficulties }] =
-    await Promise.all([
-      RecipesService.resourceMetrics.getMany({
-        page: 1,
-        perPage: 999,
-      }),
-      RecipesService.types.getMany({ page: 1, perPage: 999 }),
-      RecipeDifficultyService.getMany({ page: 1, perPage: 999 }),
-    ]);
-
+export const ProductPageManageContent: FC<
+  ProductPageManageContentProps
+> = async ({ isEditorHeaderShown, ...props }) => {
   const { viewType } = props;
-  const recipe = props.viewType !== 'create' ? props.recipe : undefined;
-  const { created, updated, title } = recipe ?? {};
+  const product = props.viewType !== 'create' ? props.product : undefined;
+  const { created, updated, name } = product ?? {};
   const isEditorEnabled = props.viewType !== 'view';
   const hrComponent = (
     <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
   );
+
+  const star = <StarIcon className="text-gray-400 w-5" />;
 
   const content = (
     <>
@@ -74,31 +51,20 @@ export const ProductPageManageContent = async ({
                 <CustomImage
                   onlyImage
                   src={getFileUrl(
-                    AvailableModels.RECIPES,
-                    props.recipe.id,
-                    props.recipe.images[0]
+                    AvailableModels.PRODUCTS,
+                    props.product.id,
+                    props.product.images[0]
                   )}
                 />
-                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
-                  <Suspense
-                    fallback={
-                      <>
-                        <Skeleton className="w-9 h-9" />
-                        {/* <Skeleton className="w-9 h-9" /> */}
-                      </>
-                    }
-                  >
-                    <LazyUserListActions recipeId={props.recipe.id} />
-                  </Suspense>
-                </div>
+                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2"></div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
-                {props.recipe.images.slice(1).map((imageUrl) => (
+                {props.product.images.slice(1).map((imageUrl) => (
                   <CustomImage
                     key={imageUrl}
                     src={getFileUrl(
-                      AvailableModels.RECIPES,
-                      props.recipe.id,
+                      AvailableModels.PRODUCTS,
+                      props.product.id,
                       imageUrl
                     )}
                   />
@@ -107,30 +73,40 @@ export const ProductPageManageContent = async ({
             </>
           ) : (
             <ImagesEdit
-              recipeId={props.viewType === 'edit' ? props.recipe.id : undefined}
+              productId={
+                props.viewType === 'edit' ? props.product.id : undefined
+              }
             />
           )}
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title">
-            Recept
-          </span>
+          <Link
+            href="/produkty"
+            className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title"
+          >
+            Produkt
+          </Link>
           {!isEditorEnabled ? (
-            <h1 className="text-4xl font-title">{title}</h1>
+            <h1 className="text-4xl font-title">{name}</h1>
           ) : (
             <TitleEdit />
           )}
-          <div className="flex grid-cols-2 gap-1">
+
+          <div className="flex opacity-0">
+            {star}
+            {star}
+            {star}
+            {star}
+            {star}
+          </div>
+
+          {/* TODO: add reviews here */}
+          <div className="mt-5">
             {isEditorEnabled ? (
-              <>
-                <TypeEdit types={types} />
-                <DifficultyEdit difficulties={difficulties} />
-              </>
+              <PriceEditor />
             ) : (
-              <p className="mt-1">
-                {props.recipe.type.title}, {props.recipe.difficulty.name}
-              </p>
+              <PriceRenderer price={product!.price} />
             )}
           </div>
 
@@ -138,63 +114,25 @@ export const ProductPageManageContent = async ({
             <Title>Popisek</Title>
             {hrComponent}
             {!isEditorEnabled ? (
-              <div>{HTMLReactParser(props.recipe.description)}</div>
+              <div>
+                {product!.description ? (
+                  HTMLReactParser(product!.description ?? '')
+                ) : (
+                  <div>Zatím žádný popisek...</div>
+                )}
+              </div>
             ) : (
               <DescriptionEdit />
             )}
           </div>
-
-          <div className="my-10">
-            <div className="flex justify-between items-center">
-              <Title>Suroviny</Title>
-              <div>
-                {!isEditorEnabled ? (
-                  <span className="text-deep-green-300">
-                    Počet porcí:{' '}
-                    <b>
-                      {props.recipe.numberOfPortions
-                        ? `${props.recipe.numberOfPortions} porcí`
-                        : 'Neuvedeno'}
-                    </b>
-                  </span>
-                ) : (
-                  <PortionsEdit />
-                )}
-              </div>
-            </div>
-            {hrComponent}
-            {!isEditorEnabled ? (
-              <ResourcesRenderer
-                metrics={metrics}
-                resources={props.recipe.resources}
-              />
-            ) : (
-              <ResourcesEdit metrics={metrics} />
-            )}
-          </div>
-
-          <div className="my-10">
-            <div className="flex justify-between items-center">
-              <Title>Postup</Title>
-              <div>
-                {!isEditorEnabled ? (
-                  <span className="text-deep-green-300">
-                    Celkem:{' '}
-                    <b>{extractTimeFromSteps(props.recipe.steps)} minut</b>
-                  </span>
-                ) : null}
-              </div>
-            </div>
-            {hrComponent}
-            {!isEditorEnabled ? (
-              <StepsRenderer steps={props.recipe.steps} />
-            ) : (
-              <StepsEdit />
-            )}
-          </div>
         </div>
 
-        <aside className="w-full lg:w-auto lg:col-span-2">
+        <aside
+          className={clsx(
+            'w-full lg:w-auto lg:col-span-2',
+            viewType == 'create' ? 'opacity-0' : ''
+          )}
+        >
           {isEditorEnabled ? (
             <Aside created={created} updated={updated} />
           ) : null}
@@ -209,7 +147,7 @@ export const ProductPageManageContent = async ({
   }
 
   return (
-    <Form viewType={viewType} recipe={recipe}>
+    <Form viewType={viewType} product={product}>
       {content}
     </Form>
   );

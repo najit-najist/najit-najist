@@ -1,5 +1,6 @@
 import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { ApplicationError } from '@errors';
+import { logger } from '@logger';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import {
   CreateProduct,
@@ -14,8 +15,8 @@ import {
 import { slugifyString } from '@utils';
 import { objectToFormData } from '@utils/internal';
 
-type GetByType = keyof Pick<Product, 'id'>;
-const BASE_EXPAND = `categories,${PocketbaseCollections.PRODUCT_STOCK}(product).stock,${PocketbaseCollections.PRODUCT_PRICES}(product).price`;
+type GetByType = keyof Pick<Product, 'id' | 'slug'>;
+const BASE_EXPAND = `categories,${PocketbaseCollections.PRODUCT_STOCK}(product),${PocketbaseCollections.PRODUCT_PRICES}(product)`;
 
 type ProductWithExpand = Omit<Product, 'categories' | 'price' | 'stock'> & {
   categories: string[];
@@ -23,15 +24,19 @@ type ProductWithExpand = Omit<Product, 'categories' | 'price' | 'stock'> & {
   stock: string;
   expand: {
     categories: ProductCategory[];
-    price: ProductPrice;
-    stock: ProductStock;
+    'product_prices(product)': ProductPrice;
+    'product_stock(product)': ProductStock;
   };
 };
 
 export class ProductService {
   private static mapExpandToResponse(base: ProductWithExpand): Product {
     const {
-      expand: { categories, price, stock },
+      expand: {
+        'product_prices(product)': price,
+        'product_stock(product)': stock,
+        categories,
+      },
       ...rest
     } = base;
 
@@ -73,6 +78,8 @@ export class ProductService {
         )
       );
     } catch (error) {
+      logger.error(error, 'Failed to update product');
+
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
@@ -91,8 +98,10 @@ export class ProductService {
     name,
     ...input
   }: CreateProduct & { createdBy: User['id'] }): Promise<Product> {
+    let createdProduct: ProductWithExpand | undefined = undefined;
+
     try {
-      const result = await pocketbase
+      createdProduct = await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
         .create<ProductWithExpand>(
           await objectToFormData({
@@ -102,30 +111,50 @@ export class ProductService {
           { expand: BASE_EXPAND }
         );
 
-      const productPrice = await pocketbase
+      const createdProductPrice = await pocketbase
         .collection(PocketbaseCollections.PRODUCT_PRICES)
-        .create<ProductPrice>({ ...price, product: result.id });
+        .create<ProductPrice>({ ...price, product: createdProduct.id });
 
-      const productStock = await pocketbase
+      const createdProductStock = await pocketbase
         .collection(PocketbaseCollections.PRODUCT_STOCK)
-        .create<ProductStock>({ ...stock, product: result.id });
+        .create<ProductStock>({ ...stock, product: createdProduct.id });
 
       return this.mapExpandToResponse({
-        ...result,
+        ...createdProduct,
         expand: {
-          price: productPrice,
-          stock: productStock,
+          'product_prices(product)': createdProductPrice,
+          'product_stock(product)': createdProductStock,
           categories: [],
         },
       });
     } catch (error) {
+      logger.error(
+        {
+          error,
+        },
+        'Failed to create product'
+      );
+
       if (error instanceof ClientResponseError && error.status === 400) {
-        console.log({ e: error.data.data });
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
-          message: `Recept nemůže být vytvořen`,
+          message: `Produkt nemůže být vytvořen`,
           origin: ProductService.name,
         });
+      }
+
+      if (createdProduct) {
+        pocketbase
+          .collection(PocketbaseCollections.PRODUCTS)
+          .delete(createdProduct.id)
+          .catch((removalError) => {
+            logger.error(
+              {
+                removalError,
+              },
+              'FATAL: Failed to remove created product'
+            );
+          });
       }
 
       throw error;
@@ -136,12 +165,14 @@ export class ProductService {
     try {
       return this.mapExpandToResponse(
         await pocketbase
-          .collection(PocketbaseCollections.RECIPES)
+          .collection(PocketbaseCollections.PRODUCTS)
           .getFirstListItem<ProductWithExpand>(`${type}="${value}"`, {
             expand: BASE_EXPAND,
           })
       );
     } catch (error) {
+      logger.error(error, 'Failed to get product');
+
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
@@ -179,6 +210,8 @@ export class ProductService {
 
       return { ...result, items: result.items.map(this.mapExpandToResponse) };
     } catch (error) {
+      logger.error(error, 'Failed to get many products');
+
       throw error;
     }
   }

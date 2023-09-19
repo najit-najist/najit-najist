@@ -33,7 +33,7 @@ export const ImageSlider: FC<{
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(AvailableModels.RECIPES, itemId, imageName)}
+                src={getFileUrl(AvailableModels.PRODUCTS, itemId, imageName)}
                 alt=""
                 className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg absolute top-0 left-0 w-full h-full object-center object-cover"
               />
@@ -41,7 +41,7 @@ export const ImageSlider: FC<{
           ))}
         </div>
       </Link>
-      {imageUrls.length ? (
+      {imageUrls.length > 1 ? (
         <div className="absolute flex m-4 bottom-0 right-0">
           <button
             onClick={() => {

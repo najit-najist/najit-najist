@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { TopHeader } from './TopHeader';
 import { headers } from 'next/headers';
 import { getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 
 const navLinks = [
   { text: 'Úvod', href: '/' },
@@ -19,7 +20,7 @@ const navLinks = [
 export const Header: FC = async () => {
   const headersList = headers();
   const currentPathname = headersList.get(X_REQUEST_PATH_HEADER_NAME);
-  const loggedUser = await getLoggedInUser().catch(() => undefined);
+  const loggedUser = await getCachedLoggedInUser();
 
   return (
     <>

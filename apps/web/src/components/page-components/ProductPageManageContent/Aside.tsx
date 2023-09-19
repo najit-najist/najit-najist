@@ -1,12 +1,12 @@
 'use client';
 
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { Recipe } from '@najit-najist/api';
+import { Product } from '@najit-najist/api';
 import { Input, Paper } from '@najit-najist/ui';
 import dayjs from 'dayjs';
 import { FC } from 'react';
 
-export const Aside: FC<Partial<Pick<Recipe, 'updated' | 'created'>>> = ({
+export const Aside: FC<Partial<Pick<Product, 'updated' | 'created'>>> = ({
   updated,
   created,
 }) => {

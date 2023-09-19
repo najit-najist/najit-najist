@@ -1,12 +1,7 @@
 import { ProductService } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
-import {
-  AvailableModels,
-  UserActions,
-  UserRoles,
-  canUser,
-} from '@najit-najist/api';
+import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
 import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
