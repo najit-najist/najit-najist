@@ -6,6 +6,7 @@ import { QuickLinks } from './_components/QuickLinks';
 import { VideoSection } from './_components/VideoSection';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const MainPage: FC = () => {
   return (
