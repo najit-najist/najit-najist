@@ -1,4 +1,5 @@
 export * from './posts';
+export * from './products';
 export * from './profile';
 export * from './recipe-difficulty';
 export * from './recipe-resource-metrics';

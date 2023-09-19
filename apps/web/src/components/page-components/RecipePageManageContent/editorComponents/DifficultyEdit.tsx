@@ -20,7 +20,13 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
 }) => {
   const { data: difficulties, refetch } =
     trpc.recipes.difficulties.getMany.useQuery(undefined, {
-      initialData: { items: initialDifficulties },
+      initialData: {
+        items: initialDifficulties,
+        page: 1,
+        perPage: initialDifficulties.length,
+        totalItems: initialDifficulties.length,
+        totalPages: 1,
+      },
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,

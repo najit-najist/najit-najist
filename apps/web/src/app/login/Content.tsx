@@ -58,7 +58,11 @@ export const Content: FC = () => {
           searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
           '/muj-ucet/profil';
 
-        router.push(redirectTo as any);
+        // TODO: this is for reloading cache on client
+        window.location.href = new URL(
+          redirectTo,
+          window.location.origin
+        ).toString();
       } catch (error) {
         const message = (error as TRPCError).message;
 
@@ -77,7 +81,7 @@ export const Content: FC = () => {
         }
       }
     },
-    [doLogin, router, setError, utils.profile.me, searchParams]
+    [doLogin, setError, utils.profile.me, searchParams]
   );
 
   return (

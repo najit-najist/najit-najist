@@ -49,6 +49,8 @@ export const footerNavigationItems: NavigationItems = {
     actual: [
       { name: 'Události', href: '/udalosti' },
       { name: 'Recepty', href: '/recepty' },
+      { name: 'Články', href: '/clanky' },
+      { name: 'Produkty', href: '/produkty' },
     ],
   },
 };

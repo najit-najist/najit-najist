@@ -1,9 +1,7 @@
+import { defaultGetManySchema } from '../base.get-many.schema';
 import { z } from 'zod';
 
-export const getManyInputSchema = z.object({
-  page: z.number().min(1).default(1).optional(),
-  perPage: z.number().min(1).default(20).optional(),
-  search: z.string().optional(),
+export const getManyInputSchema = defaultGetManySchema.extend({
   typeSlug: z.string().optional(),
   difficultySlug: z.string().optional(),
 });

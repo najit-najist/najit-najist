@@ -23,13 +23,13 @@ import {
 } from '@najit-najist/api/server';
 import { TypeEdit } from './editorComponents/TypeEdit';
 import { DifficultyEdit } from './editorComponents/DifficultyEdit';
-import { UserListActions } from './UserListActions';
 import { Skeleton } from '@najit-najist/ui';
 import { LazyUserListActions } from './LazyUserListActions';
 import { PortionsEdit } from './editorComponents/PortionsEdit';
+import Link from 'next/link';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
-  <h3 className="mb-2 text-xl font-semibold">{children}</h3>
+  <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
 );
 
 export type RecipePageManageContentProps = {
@@ -114,9 +114,12 @@ export const RecipePageManageContent = async ({
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <span className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title">
+          <Link
+            href="/recepty"
+            className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title"
+          >
             Recept
-          </span>
+          </Link>
           {!isEditorEnabled ? (
             <h1 className="text-4xl font-title">{title}</h1>
           ) : (

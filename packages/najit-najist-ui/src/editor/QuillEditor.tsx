@@ -7,6 +7,20 @@ type QuillProp<T extends keyof ReactQuillProps> = NonNullable<
   ReactQuillProps[T]
 >;
 
+const modules = {
+  toolbar: [
+    ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+    [
+      { list: 'ordered' },
+      { list: 'bullet' },
+      { indent: '-1' },
+      { indent: '+1' },
+    ],
+    // ['link', 'image'],
+    ['clean'],
+  ],
+};
+
 export const QuillEditor = forwardRef<
   Quill,
   ReactQuillProps &
@@ -55,6 +69,7 @@ export const QuillEditor = forwardRef<
         ref={ref}
         className={cx([isFocusing ? 'is-focusing' : '', className])}
         onChangeSelection={handleSelectionChange}
+        modules={modules}
         {...rest}
       />
     </FormControlWrapper>

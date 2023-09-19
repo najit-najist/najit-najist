@@ -114,7 +114,7 @@ const AdministrationPill: FC<{ hideOnMobile?: boolean }> = ({
         'items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400'
+        'hover:bg-yellow-300 bg-yellow-200 text-yellow-600 shadow-sm shadow-yellow-400'
       )}
     >
       Administrace

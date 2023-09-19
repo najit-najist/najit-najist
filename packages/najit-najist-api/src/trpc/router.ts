@@ -6,6 +6,7 @@ import { usersRoute } from '../routes/trpc/users';
 import { recipesRouter } from '../routes/trpc/recipes';
 import { addressRoutes } from '../routes/trpc/address';
 import { newsletterRoutes } from '../routes/trpc/newsletter';
+import { productsRoutes } from '../routes/trpc/products';
 
 const normalRouter = t.router({
   profile: profileRouter,
@@ -14,6 +15,7 @@ const normalRouter = t.router({
   recipes: recipesRouter,
   address: addressRoutes,
   newsletter: newsletterRoutes,
+  products: productsRoutes,
 });
 
 export const appRouter = t.mergeRouters(contactUsRoutes, normalRouter);

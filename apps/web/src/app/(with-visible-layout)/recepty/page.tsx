@@ -6,6 +6,7 @@ import {
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
 import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
+import { PageTitle } from '@components/common/PageTitle';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -56,6 +57,9 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
+      <div className="container">
+        <PageTitle>{metadata.title}</PageTitle>
+      </div>
       <SearchForm
         types={[fallbackType, ...recipeTypes]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}

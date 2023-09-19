@@ -1,4 +1,4 @@
-import { config } from '@config';
+import { config } from 'config';
 import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiHandler } from 'next';
 import rateLimit from './rateLimit';

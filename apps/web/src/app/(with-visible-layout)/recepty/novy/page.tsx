@@ -1,6 +1,7 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
 import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
-import { getLoggedInUser, isUserLoggedIn } from '@najit-najist/api/server';
+import { getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import { redirect } from 'next/navigation';
 
 export const metadata = {
@@ -10,7 +11,7 @@ export const metadata = {
 export const revalidate = 30;
 
 export default async function Page() {
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const loggedInUser = await getCachedLoggedInUser();
   if (
     !loggedInUser ||
     !canUser(loggedInUser, {

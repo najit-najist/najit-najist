@@ -1,10 +1,7 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
 import { UserRoles } from '@najit-najist/api';
-import {
-  getLoggedInUser,
-  isUserLoggedIn,
-  RecipesService,
-} from '@najit-najist/api/server';
+import { getLoggedInUser, RecipesService } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import { notFound, redirect } from 'next/navigation';
 
 export const revalidate = 120;
@@ -30,7 +27,7 @@ export async function generateMetadata({ params, searchParams }: Params) {
 export default async function Page({ params, searchParams }: Params) {
   const { receptSlug } = params;
   const isEditorEnabled = !!searchParams.editor;
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const loggedInUser = await getCachedLoggedInUser();
   const isAdmin = loggedInUser?.role === UserRoles.ADMIN;
 
   if ((!loggedInUser || !isAdmin) && isEditorEnabled) {

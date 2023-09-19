@@ -12,7 +12,7 @@ import {
   updateOnePostInputSchema,
 } from '@schemas';
 import { PocketbaseCollections, Post } from '@custom-types';
-import { slugify } from '@utils';
+import { slugifyString } from '@utils';
 import { pocketbase } from '@najit-najist/pb';
 import { z } from 'zod';
 import { objectToFormData } from '@utils/internal';
@@ -28,7 +28,7 @@ export const postsRoute = t.router({
         .create<Post>(
           await objectToFormData({
             ...input,
-            slug: slugify(input.title),
+            slug: slugifyString(input.title),
             createdBy: ctx.sessionData.userId,
           })
         );
@@ -48,7 +48,9 @@ export const postsRoute = t.router({
           await objectToFormData({
             ...input.data,
             updateBy: ctx.sessionData.userId,
-            ...(input.data.title ? { slug: slugify(input.data.title) } : null),
+            ...(input.data.title
+              ? { slug: slugifyString(input.data.title) }
+              : null),
           })
         );
 

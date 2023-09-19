@@ -41,7 +41,7 @@ export const ImageSlider: FC<{
           ))}
         </div>
       </Link>
-      {imageUrls.length ? (
+      {imageUrls.length > 1 ? (
         <div className="absolute flex m-4 bottom-0 right-0">
           <button
             onClick={() => {

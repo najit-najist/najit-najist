@@ -6,19 +6,21 @@ import Link from 'next/link';
 import { TopHeader } from './TopHeader';
 import { headers } from 'next/headers';
 import { getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
   { text: 'Recepty', href: '/recepty' },
+  { text: 'Produkty', href: '/produkty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];
 
-export async function Header(): Promise<ReturnType<FC>> {
+export const Header: FC = async () => {
   const headersList = headers();
   const currentPathname = headersList.get(X_REQUEST_PATH_HEADER_NAME);
-  const loggedUser = await getLoggedInUser().catch(() => undefined);
+  const loggedUser = await getCachedLoggedInUser();
 
   return (
     <>
@@ -42,7 +44,11 @@ export async function Header(): Promise<ReturnType<FC>> {
                 <a
                   className={clsx(
                     'font-bold py-3 sm:py-8 px-6 block duration-200 font-title',
-                    currentPathname === href
+                    (
+                      href === '/'
+                        ? currentPathname === href
+                        : currentPathname?.startsWith(href)
+                    )
                       ? 'bg-deep-green-400 text-white '
                       : 'hover:bg-deep-green-400 hover:text-white '
                   )}
@@ -57,4 +63,4 @@ export async function Header(): Promise<ReturnType<FC>> {
       </header>
     </>
   );
-}
+};
