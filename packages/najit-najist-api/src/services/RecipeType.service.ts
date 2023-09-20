@@ -6,7 +6,7 @@ import {
 import { ApplicationError } from '@errors';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import { GetManyUsersOptions, RecipeType } from '@schemas';
-import { CreateRecipeTypeInput } from 'schemas/recipe-type';
+import { CreateRecipeTypeInput } from '../schemas/recipes';
 import { slugifyString } from '@utils';
 
 type GetByType = keyof Pick<RecipeType, 'id'>;
