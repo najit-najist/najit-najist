@@ -6,6 +6,8 @@ import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { getCachedLoggedInUser } from '@server-utils';
+import { PageHeader } from '@components/common/PageHeader';
+import { PageDescription } from '@components/common/PageDescription';
 
 type Params = {
   searchParams: { query?: string };
@@ -13,6 +15,7 @@ type Params = {
 
 export const metadata = {
   title: 'Produkty',
+  description: 'Vyberte si z naší kolekce vymazlených produktů',
 };
 
 export const revalidate = 0;
@@ -29,19 +32,21 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
-      <div className="container flex justify-between items-center">
-        <PageTitle>{metadata.title}</PageTitle>
-
-        {currentUser &&
-        canUser(currentUser, {
-          action: UserActions.CREATE,
-          onModel: AvailableModels.RECIPES,
-        }) ? (
-          <Link href="/produkty/novy" className="">
-            <PlusIcon className="inline w-12" />
-          </Link>
-        ) : null}
-      </div>
+      <PageHeader className="container">
+        <div className="flex justify-between items-center">
+          <PageTitle>{metadata.title}</PageTitle>
+          {currentUser &&
+          canUser(currentUser, {
+            action: UserActions.CREATE,
+            onModel: AvailableModels.PRODUCTS,
+          }) ? (
+            <Link href="/produkty/novy" className="">
+              <PlusIcon className="inline w-12" />
+            </Link>
+          ) : null}
+        </div>
+        <PageDescription>{metadata.description}</PageDescription>
+      </PageHeader>
       <SearchForm initialValues={{ query }} />
       <div className="container flex flex-col gap-5 my-10">
         {products.length ? (

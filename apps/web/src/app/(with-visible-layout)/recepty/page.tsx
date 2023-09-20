@@ -1,15 +1,19 @@
-import {
-  RecipesService,
-  RecipeDifficultyService,
-  RecipeTypeService,
-  AuthService,
-  getTrpcCaller,
-} from '@najit-najist/api/server';
+import { AuthService, getTrpcCaller } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
-import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
+import {
+  AvailableModels,
+  RecipeDifficulty,
+  RecipeType,
+  UserActions,
+  canUser,
+} from '@najit-najist/api';
 import { PageTitle } from '@components/common/PageTitle';
-import { pocketbase } from '@najit-najist/pb';
+import Link from 'next/link';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { getCachedLoggedInUser } from '@server-utils';
+import { PageHeader } from '@components/common/PageHeader';
+import { PageDescription } from '@components/common/PageDescription';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -17,6 +21,8 @@ type Params = {
 
 export const metadata = {
   title: 'Recepty',
+  description:
+    'Vyberte si z naší kolekce receptů zaměřenou pro lidi s intolerancí',
 };
 
 export const revalidate = 0;
@@ -45,6 +51,7 @@ export default async function RecipesPage({ searchParams }: Params) {
     type: typeSlugFromUrl,
   } = searchParams;
   await AuthService.authPocketBase();
+  const currentUser = await getCachedLoggedInUser();
 
   const trpc = getTrpcCaller();
 
@@ -66,9 +73,21 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
-      <div className="container">
-        <PageTitle>{metadata.title}</PageTitle>
-      </div>
+      <PageHeader className="container">
+        <div className="flex justify-between items-center">
+          <PageTitle>{metadata.title}</PageTitle>
+          {currentUser &&
+          canUser(currentUser, {
+            action: UserActions.CREATE,
+            onModel: AvailableModels.RECIPES,
+          }) ? (
+            <Link href="/recepty/novy" className="">
+              <PlusIcon className="inline w-12" />
+            </Link>
+          ) : null}
+        </div>
+        <PageDescription>{metadata.description}</PageDescription>
+      </PageHeader>
       <SearchForm
         types={[fallbackType, ...recipeTypes]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
