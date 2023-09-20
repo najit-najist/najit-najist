@@ -116,7 +116,7 @@ const ContactPage: FC = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
           {locations.map((item) => (
-            <div className="p-2 bg-white rounded-lg shadow-lg">
+            <div key={item.name} className="p-2 bg-white rounded-lg shadow-lg">
               <iframe
                 className="w-full top-0 left-0 rounded-lg shadow-white bg-white aspect-square"
                 scrolling="no"
