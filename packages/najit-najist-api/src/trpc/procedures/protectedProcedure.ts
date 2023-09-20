@@ -1,6 +1,6 @@
 import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
-import { isTokenExpired } from '@najit-najist/pb';
+import { isTokenExpired, pocketbase } from '@najit-najist/pb';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import {
   deserializePocketToken,

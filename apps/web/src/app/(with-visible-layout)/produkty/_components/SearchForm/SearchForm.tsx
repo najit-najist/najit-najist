@@ -61,7 +61,7 @@ export const SearchForm: FC<{ initialValues?: FormValues }> = ({
       >
         <Input
           placeholder="Vyhledávání..."
-          rootClassName="w-full"
+          rootClassName="w-full max-w-sm"
           suffix={
             formMethods.formState.isSubmitting || isRefreshing ? (
               <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />

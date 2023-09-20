@@ -17,9 +17,7 @@ const handler: NextApiHandler = async (request, response) => {
     new Headers({ ...request.headers } as any)
   );
 
-  await AuthService.authPocketBase({ cookies });
   const user = await getLoggedInUser({ cookies });
-  AuthService.clearAuthPocketBase();
 
   if (user.role !== UserRoles.NORMAL && user.role !== UserRoles.ADMIN) {
     return response.status(401);

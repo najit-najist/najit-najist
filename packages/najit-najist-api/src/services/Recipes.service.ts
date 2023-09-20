@@ -3,7 +3,7 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import {
   CreateRecipeInput,
-  GetManyUsersOptions,
+  GetManyRecipes,
   Recipe,
   RecipeDifficulty,
   RecipeType,
@@ -14,6 +14,7 @@ import { objectToFormData } from '@utils/internal';
 import { RecipeDifficultyService } from './RecipeDifficulty.service';
 import { RecipeResourceMetricService } from './RecipeResourceMetric.service';
 import { RecipeTypeService } from './RecipeType.service';
+import { logger } from '@logger';
 
 type GetByType = keyof Pick<Recipe, 'id' | 'slug'>;
 
@@ -111,8 +112,9 @@ export class RecipesService {
         )
       );
     } catch (error) {
+      logger.error(error, 'Could not create recipe');
+
       if (error instanceof ClientResponseError && error.status === 400) {
-        console.log({ e: error.data.data });
         throw new ApplicationError({
           code: ErrorCodes.ENTITY_MISSING,
           message: `Recept nemůže být vytvořen`,
@@ -146,9 +148,7 @@ export class RecipesService {
     }
   }
 
-  static async getMany(
-    options?: GetManyUsersOptions
-  ): Promise<ListResult<Recipe>> {
+  static async getMany(options?: GetManyRecipes): Promise<ListResult<Recipe>> {
     const {
       page = 1,
       perPage = 40,

@@ -27,6 +27,8 @@ export class AuthService {
     if (!authContent) {
       throw new Error('Cannot attach auth when user is not logged in');
     }
+    // Clear previous calls
+    pocketbase.authStore.clear();
 
     pocketbase.authStore.save(authContent.token, new Record(authContent.model));
 

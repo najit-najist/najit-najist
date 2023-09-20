@@ -24,16 +24,17 @@ export const getLoggedInUser = async ({
   const sessionData = deserializePocketToken(authContent!.token);
 
   if (authenticateApi) {
-    AuthService.authPocketBase({ authContent });
+    await AuthService.authPocketBase({ authContent });
   }
 
   const result = await pocketbase
     .collection(AvailableModels.USER)
     .getOne<User>(sessionData.id, {});
 
-  if (authenticateApi) {
-    AuthService.clearAuthPocketBase();
-  }
+  // TODO: refactor so this utility does not auth the pocketbase
+  // if (authenticateApi) {
+  //   AuthService.clearAuthPocketBase();
+  // }
 
   return result;
 };

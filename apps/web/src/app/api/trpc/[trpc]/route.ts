@@ -12,9 +12,11 @@ function handler(request: NextRequest) {
     req: request,
     router: appRouter,
     createContext,
-  });
+  }).then((resp) => {
+    AuthService.clearAuthPocketBase();
 
-  AuthService.clearAuthPocketBase();
+    return resp;
+  });
 
   return res;
 }

@@ -47,9 +47,9 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
           </span>
         </div>
 
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 tracking-wide">
+        <div className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 tracking-wide">
           {HTMLReactParser(description ?? '')}
-        </p>
+        </div>
         {/* <div className="flex justify-between mt-auto">
           <ItemLink href={linkHref} />
         </div> */}

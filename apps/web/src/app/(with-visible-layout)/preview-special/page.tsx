@@ -3,7 +3,6 @@ import {
   X_REQUEST_PATH_HEADER_NAME,
 } from '@constants';
 import { canUser, SpecialSections, User, UserActions } from '@najit-najist/api';
-import { AuthService, getLoggedInUser } from '@najit-najist/api/server';
 import { getCachedLoggedInUser } from '@server-utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -30,8 +29,6 @@ export default async function Page() {
     ) {
       throw new Error('User with this role cannot view this');
     }
-
-    AuthService.clearAuthPocketBase();
   } catch (error) {
     console.log({ error });
 

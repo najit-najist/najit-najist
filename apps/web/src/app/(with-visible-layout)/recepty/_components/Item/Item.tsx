@@ -25,7 +25,7 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
   const linkHref = `/recepty/${slug}` as const;
 
   return (
-    <div className="max-w-sm bg-white border border-ocean-300 rounded-lg shadow flex flex-col">
+    <div className="sm:max-w-sm bg-white border border-ocean-300 rounded-lg shadow flex flex-col">
       <div className="relative block w-full aspect-square flex-none">
         <ImageSlider
           imageUrls={images.slice(0, 4)}

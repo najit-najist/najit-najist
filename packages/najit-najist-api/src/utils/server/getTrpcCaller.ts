@@ -4,7 +4,6 @@ import { headers } from 'next/headers';
 export const getTrpcCaller = () => {
   return appRouter.createCaller({
     resHeaders: headers(),
-    // @ts-ignore
-    sessionData: {},
+    sessionData: undefined,
   });
 };

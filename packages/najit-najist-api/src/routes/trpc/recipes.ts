@@ -1,10 +1,12 @@
-import { ListResult } from '@najit-najist/pb';
+import { ListResult, pocketbase } from '@najit-najist/pb';
 import {
   createRecipeDifficultyInputSchema,
   createRecipeInputSchema,
   createRecipeResourceMetricInputSchema,
   createRecipeTypeInputSchema,
-  getManyRecipesInputSchema,
+  getManyRecipeDifficultiesSchema,
+  getManyRecipesSchema,
+  getManyRecipeTypesSchema,
   getOneRecipeInputSchema,
   Recipe,
   updateRecipeInputSchema,
@@ -32,12 +34,9 @@ const metricsRouter = t.router({
 });
 
 const difficultiesRouter = t.router({
-  getMany: protectedProcedure.query(() =>
-    RecipesService.difficulties.getMany({
-      page: 1,
-      perPage: 999,
-    })
-  ),
+  getMany: protectedProcedure
+    .input(getManyRecipeDifficultiesSchema.optional())
+    .query(({ input }) => RecipesService.difficulties.getMany(input)),
 
   create: onlyAdminProcedure
     .input(createRecipeDifficultyInputSchema)
@@ -45,12 +44,9 @@ const difficultiesRouter = t.router({
 });
 
 const typesRouter = t.router({
-  getMany: protectedProcedure.query(() =>
-    RecipesService.types.getMany({
-      page: 1,
-      perPage: 999,
-    })
-  ),
+  getMany: protectedProcedure
+    .input(getManyRecipeTypesSchema.optional())
+    .query(({ input }) => RecipesService.types.getMany(input)),
 
   create: onlyAdminProcedure
     .input(createRecipeTypeInputSchema)
@@ -81,7 +77,7 @@ export const recipesRouter = t.router({
     }),
 
   getMany: protectedProcedure
-    .input(getManyRecipesInputSchema)
+    .input(getManyRecipesSchema)
     .query<ListResult<Recipe>>(async ({ ctx, input }) =>
       RecipesService.getMany(input)
     ),

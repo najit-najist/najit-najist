@@ -7,7 +7,7 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import {
   CreateRecipeDifficultyInput,
-  GetManyUsersOptions,
+  GetManyRecipeDifficulties,
   RecipeDifficulty,
 } from '@schemas';
 import { slugifyString } from '@utils';
@@ -34,7 +34,7 @@ export class RecipeDifficultyService {
   }
 
   static async getMany(
-    options?: GetManyUsersOptions
+    options?: GetManyRecipeDifficulties
   ): Promise<ListResult<RecipeDifficulty>> {
     const { page = 1, perPage = 40 } = options ?? {};
 

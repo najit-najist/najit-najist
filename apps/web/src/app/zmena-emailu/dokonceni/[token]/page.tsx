@@ -28,9 +28,7 @@ const ChangeEmailFinalizationPage: FC = () => {
   const { register, handleSubmit } = formMethods;
 
   const onSubmit = handleSubmit(async (values) => {
-    const result = await doRegister(values);
-
-    console.log({ result });
+    await doRegister(values);
 
     router.push('/login');
   });

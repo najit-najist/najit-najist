@@ -2,11 +2,14 @@ import {
   RecipesService,
   RecipeDifficultyService,
   RecipeTypeService,
+  AuthService,
+  getTrpcCaller,
 } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
 import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
 import { PageTitle } from '@components/common/PageTitle';
+import { pocketbase } from '@najit-najist/pb';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -16,7 +19,7 @@ export const metadata = {
   title: 'Recepty',
 };
 
-export const revalidate = 30;
+export const revalidate = 0;
 
 const fallbackDifficulty: RecipeDifficulty = {
   id: 'default',
@@ -41,19 +44,25 @@ export default async function RecipesPage({ searchParams }: Params) {
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
   } = searchParams;
-  const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
-  const { items: recipeDifficulties } = await RecipeDifficultyService.getMany({
-    perPage: 999,
-  });
-  const { items: recipeTypes } = await RecipesService.types.getMany({
-    perPage: 999,
-  });
+  await AuthService.authPocketBase();
 
-  const { items: recipes } = await RecipesService.getMany({
-    difficultySlug: difficultySlugFromUrl,
-    typeSlug: typeSlugFromUrl,
-    search: query,
-  });
+  const trpc = getTrpcCaller();
+
+  const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
+  const [
+    { items: recipeDifficulties },
+    { items: recipeTypes },
+    { items: recipes },
+  ] = await Promise.all([
+    trpc.recipes.difficulties.getMany({ perPage: 999 }),
+    trpc.recipes.types.getMany({ perPage: 999 }),
+    trpc.recipes.getMany({
+      difficultySlug: difficultySlugFromUrl,
+      typeSlug: typeSlugFromUrl,
+      search: query,
+      perPage: 999,
+    }),
+  ]);
 
   return (
     <>

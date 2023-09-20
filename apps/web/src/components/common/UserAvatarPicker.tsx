@@ -34,8 +34,6 @@ const AvatarSelect = () => {
       return;
     }
 
-    console.log({ file });
-
     setIsUploadingToMemory(true);
     try {
       setValue(
