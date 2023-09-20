@@ -35,8 +35,8 @@ const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
 const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
   function StyledLink({ className, children, ...props }, ref) {
     return (
-      // @ts-ignore
       <Link
+        // @ts-ignore
         ref={ref}
         className="hover:underline tracking-wider text-3xl text-right font-title hover:text-deep-green-400 text-gray-800"
         {...props}
@@ -218,7 +218,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
             leave="transition duration-200 ease-out"
             leaveFrom="transform max-h-[600px] sm:max-h-[300px] opacity-100"
             leaveTo="transform max-h-0 opacity-0"
-            className=" bg-white w-full py-4 rounded-md h-full transition-all overflow-hidden"
+            className="bg-white w-full py-4 rounded-md h-full transition-all overflow-hidden"
           >
             <Menu.Items className="container" static>
               <div className="flex gap-3 justify-end mb-3 flex-wrap">
