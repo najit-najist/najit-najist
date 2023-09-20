@@ -1,8 +1,8 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
-import { UserRoles } from '@najit-najist/api';
+import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
 import { ProductService } from '@najit-najist/api/server';
 import { getCachedLoggedInUser } from '@server-utils';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 120;
 
@@ -28,11 +28,6 @@ export default async function Page({ params, searchParams }: Params) {
   const { productSlug } = params;
   const isEditorEnabled = !!searchParams.editor;
   const loggedInUser = await getCachedLoggedInUser();
-  const isAdmin = loggedInUser?.role === UserRoles.ADMIN;
-
-  if ((!loggedInUser || !isAdmin) && isEditorEnabled) {
-    redirect('/');
-  }
 
   const product = await ProductService.getBy('slug', productSlug).catch(() =>
     notFound()
@@ -40,7 +35,13 @@ export default async function Page({ params, searchParams }: Params) {
 
   return (
     <ProductPageManageContent
-      isEditorHeaderShown={isAdmin}
+      isEditorHeaderShown={
+        loggedInUser &&
+        canUser(loggedInUser, {
+          action: UserActions.UPDATE,
+          onModel: AvailableModels.PRODUCTS,
+        })
+      }
       viewType={isEditorEnabled ? 'edit' : 'view'}
       product={product}
     />

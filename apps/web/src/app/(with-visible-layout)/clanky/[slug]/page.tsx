@@ -1,9 +1,9 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
-import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
+import { getTrpcCaller } from '@najit-najist/api/server';
 import { getCachedLoggedInUser } from '@server-utils';
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 type PageParams = {
   params: { slug: string };
@@ -46,10 +46,6 @@ export default async function PostUnderPage({
       action: UserActions.CREATE,
       onModel: AvailableModels.POST,
     });
-
-  if (isEditorEnabled && !canEdit) {
-    redirect('/');
-  }
 
   try {
     post = await getTrpcCaller().posts.getOne({

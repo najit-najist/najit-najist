@@ -23,8 +23,7 @@ export async function middleware(request: NextRequest) {
   const requestUrl = request.nextUrl;
   const session = await getEdgeSession(request, response);
 
-  const toPathname = (pathname: string) => {
-    const url = requestUrl.clone();
+  const toPathname = (pathname: string, url = requestUrl.clone()) => {
     url.pathname = pathname;
 
     return NextResponse.redirect(url);
@@ -76,23 +75,32 @@ export async function middleware(request: NextRequest) {
     }
 
     if (currentUser && isLoggedInOnlyPath) {
-      const pathname = requestUrl.pathname;
+      const { pathname: requestPathname, searchParams: requestSearchParams } =
+        requestUrl;
+      const isUnderAdministration = requestPathname.includes('/administrace');
+      const isUnderRecipes = requestPathname.includes('/recepty');
+      const isUnderProducts = requestPathname.includes('/produkty');
+      const isUnderPosts = requestPathname.includes('/clanky');
+      const createNewPathnameChunk = '/novy';
+      const editorParamName = 'editor';
+      const currentModel = isUnderRecipes
+        ? AvailableModels.RECIPES
+        : isUnderProducts
+        ? AvailableModels.PRODUCTS
+        : isUnderPosts
+        ? AvailableModels.POST
+        : null;
 
-      if (
-        pathname.includes('/administrace') &&
-        currentUser.role !== UserRoles.ADMIN
-      ) {
+      if (isUnderAdministration && currentUser.role !== UserRoles.ADMIN) {
         // TODO: create new page that shows 401
         return toPathname('/muj-ucet/profil');
       }
 
       // Lock create new
-      if (pathname.includes('/novy')) {
-        let currentModel = pathname.includes('/recepty')
-          ? AvailableModels.RECIPES
-          : pathname.includes('/produkty')
-          ? AvailableModels.PRODUCTS
-          : AvailableModels.POST;
+      if (requestPathname.includes(createNewPathnameChunk)) {
+        if (!currentModel) {
+          throw new Error('Not implemented model rule for create new item');
+        }
 
         if (
           !canUser(currentUser, {
@@ -101,7 +109,29 @@ export async function middleware(request: NextRequest) {
           })
         ) {
           // TODO: create new page that shows 401
-          return toPathname(pathname.replace('/novy', ''));
+          return toPathname(
+            requestPathname.replace(createNewPathnameChunk, '')
+          );
+        }
+      }
+
+      if (requestSearchParams.has(editorParamName)) {
+        if (!currentModel) {
+          throw new Error('Not implemented model rule for update new item');
+        }
+
+        if (
+          !canUser(currentUser, {
+            action: UserActions.UPDATE,
+            onModel: currentModel,
+          })
+        ) {
+          const newUrl = requestUrl.clone();
+
+          // Just delete that param and editor wont activate :)
+          newUrl.searchParams.delete(editorParamName);
+
+          return NextResponse.redirect(newUrl);
         }
       }
     }
