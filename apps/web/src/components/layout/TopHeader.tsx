@@ -10,7 +10,7 @@ import {
   UserActions,
   UserRoles,
 } from '@najit-najist/api';
-import { Menu, Skeleton, Transition } from '@najit-najist/ui';
+import { Menu, Transition } from '@najit-najist/ui';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
@@ -36,7 +36,11 @@ const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
   function StyledLink({ className, children, ...props }, ref) {
     return (
       // @ts-ignore
-      <Link ref={ref} className="hover:underline text-right" {...props}>
+      <Link
+        ref={ref}
+        className="hover:underline tracking-wider text-3xl text-right font-title hover:text-deep-green-400 text-gray-800"
+        {...props}
+      >
         {children}
       </Link>
     );
@@ -240,6 +244,9 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                   </Menu.Item>
                   <Menu.Item>
                     <StyledLink href="/recepty">Recepty</StyledLink>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <StyledLink href="/clanky">Produkty</StyledLink>
                   </Menu.Item>
                 </Column>
                 {loggedInUser?.role === UserRoles.ADMIN ? (

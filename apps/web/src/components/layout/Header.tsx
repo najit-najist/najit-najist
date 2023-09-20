@@ -5,7 +5,6 @@ import { X_REQUEST_PATH_HEADER_NAME } from '@constants';
 import Link from 'next/link';
 import { TopHeader } from './TopHeader';
 import { headers } from 'next/headers';
-import { getLoggedInUser } from '@najit-najist/api/server';
 import { getCachedLoggedInUser } from '@server-utils';
 
 const navLinks = [
