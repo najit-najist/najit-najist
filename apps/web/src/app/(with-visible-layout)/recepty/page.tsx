@@ -1,4 +1,4 @@
-import { AuthService, getTrpcCaller } from '@najit-najist/api/server';
+import { AuthService } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
 import {
@@ -11,7 +11,7 @@ import {
 import { PageTitle } from '@components/common/PageTitle';
 import Link from 'next/link';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { getCachedLoggedInUser } from '@server-utils';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageDescription } from '@components/common/PageDescription';
 
@@ -53,7 +53,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   await AuthService.authPocketBase();
   const currentUser = await getCachedLoggedInUser();
 
-  const trpc = getTrpcCaller();
+  const trpc = getCachedTrpcCaller();
 
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
   const [

@@ -1,11 +1,10 @@
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { getTrpcCaller } from '@najit-najist/api/server';
 
 import { Item } from './_components/Item';
 import { SearchForm } from './_components/SearchForm';
-import { getCachedLoggedInUser } from '@server-utils';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
 import Link from 'next/link';
 import { PlusIcon } from '@heroicons/react/24/solid';
@@ -27,7 +26,7 @@ export default async function Page({ searchParams }: Params) {
   const { query } = searchParams;
   const currentUser = await getCachedLoggedInUser();
 
-  const { items: posts } = await getTrpcCaller().posts.getMany({
+  const { items: posts } = await getCachedTrpcCaller().posts.getMany({
     query,
   });
 

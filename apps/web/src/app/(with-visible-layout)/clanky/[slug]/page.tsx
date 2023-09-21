@@ -1,7 +1,7 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
 import { getTrpcCaller } from '@najit-najist/api/server';
-import { getCachedLoggedInUser } from '@server-utils';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -14,7 +14,7 @@ export async function generateMetadata({
   params: { slug: postSlug },
   searchParams,
 }: PageParams): Promise<Metadata> {
-  const post = await getTrpcCaller()
+  const post = await getCachedTrpcCaller()
     .posts.getOne({
       slug: postSlug,
     })
@@ -48,7 +48,7 @@ export default async function PostUnderPage({
     });
 
   try {
-    post = await getTrpcCaller().posts.getOne({
+    post = await getCachedTrpcCaller().posts.getOne({
       slug: postSlug,
     });
 

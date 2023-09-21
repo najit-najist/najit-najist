@@ -1,4 +1,3 @@
-import { AuthService, getTrpcCaller } from '@najit-najist/api/server';
 import { Content } from './_components/Content';
 import { getCachedLoggedInUser } from '@server-utils';
 

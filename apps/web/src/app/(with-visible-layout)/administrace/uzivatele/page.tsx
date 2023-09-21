@@ -46,9 +46,15 @@ export default async function Page() {
             <tbody className="divide-y divide-gray-200">
               <Users users={users} />
             </tbody>
-            <tfoot className="flex flex-wrap justify-between items-center">
-              <div />
-              <div>Celkový počet: {totalItems}</div>
+            <tfoot className=" w-full">
+              <tr>
+                <th colSpan={5} className="">
+                  <div className="flex flex-wrap items-center justify-between w-full py-3">
+                    <div />
+                    <div>Celkový počet: {totalItems}</div>
+                  </div>
+                </th>
+              </tr>
             </tfoot>
           </table>
         </div>
