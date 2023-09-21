@@ -171,7 +171,7 @@ export class ProductService {
           })
       );
     } catch (error) {
-      logger.error(error, 'Failed to get product');
+      logger.error({ error, type, value }, 'Failed to get product');
 
       if (error instanceof ClientResponseError && error.status === 400) {
         throw new ApplicationError({
