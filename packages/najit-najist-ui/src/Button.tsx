@@ -9,7 +9,7 @@ export type ButtonProps = DetailedHTMLProps<
   VariantProps<typeof buttonStyles>;
 
 export const buttonStyles = cva(
-  'rounded-md duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed',
+  'rounded-md duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
   {
     variants: {
       color: {

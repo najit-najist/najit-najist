@@ -5,6 +5,7 @@ import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 import HTMLReactParser from 'html-react-parser';
 import clsx from 'clsx';
+import { Badge } from '@najit-najist/ui';
 
 export const Item: FC<Product & { showEditLink?: boolean }> = ({
   images,
@@ -22,8 +23,7 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
     <div className="bg-white border border-ocean-300 rounded-lg shadow flex w-full items-stretch flex-col md:flex-row">
       <div
         className={clsx(
-          'relative block w-full md:w-72 aspect-square flex-none',
-          !publishedAt ? 'opacity-30' : ''
+          'relative block w-full md:w-72 aspect-square flex-none'
         )}
       >
         <ImageSlider
@@ -31,6 +31,18 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
           itemId={id}
           itemLink={linkHref}
         />
+        {!publishedAt ? (
+          <div
+            className={clsx(
+              'absolute w-full h-full bg-white opacity-50 top-0 left-0'
+            )}
+          />
+        ) : null}
+        <div className="absolute top-0 right-0 m-2 flex flex-col items-end gap-2">
+          {!publishedAt ? (
+            <Badge className="whitespace-nowrap">Nepublikováno</Badge>
+          ) : null}
+        </div>
       </div>
       <div className="p-5 flex flex-col justify-between w-full h-full">
         <span className="mb-2 text-sm uppercase font-semibold text-ocean-400 block font-title">
