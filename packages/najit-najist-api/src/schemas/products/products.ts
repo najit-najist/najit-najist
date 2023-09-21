@@ -1,6 +1,6 @@
-import { baseCollectionSchema } from 'schemas/base.collection.schema';
-import { defaultGetManySchema } from 'schemas/base.get-many.schema';
-import { zodImage } from 'schemas/zodImage';
+import { baseCollectionSchema } from '../base.collection.schema';
+import { defaultGetManySchema } from '../base.get-many.schema';
+import { zodImage } from '../zodImage';
 import { z } from 'zod';
 import { productCategorySchema } from './product-categories';
 import {
@@ -13,6 +13,7 @@ import {
   productStockSchema,
   updateProductStockSchema,
 } from './product-stocks';
+import { zodPublishedAt } from '../zodPublishedAt';
 
 export const productSchema = baseCollectionSchema.extend({
   name: z.string().min(1, 'Toto pole je povinné').trim(),
@@ -20,6 +21,7 @@ export const productSchema = baseCollectionSchema.extend({
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
   categories: z.array(productCategorySchema),
+  publishedAt: zodPublishedAt,
   price: productPriceSchema,
   stock: productStockSchema,
 });

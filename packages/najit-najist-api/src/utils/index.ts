@@ -9,4 +9,5 @@ export * from './getPasswordStrength';
 export * from './getSessionFromCookies';
 export * from './removeDiacritics';
 export * from './setSessionToCookies';
+export * from './getSuperJson';
 export * from './slugifyString';

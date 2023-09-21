@@ -1,10 +1,11 @@
 import { IMAGE_FILE_REGEX } from '@constants';
 import { isFileBase64 } from '@utils/isFileBase64';
+import { zodPublishedAt } from '../zodPublishedAt';
 import { z } from 'zod';
 
 export const createPostInputSchema = z.object({
   title: z.string().min(2, 'Minimálně dva znaky'),
-  publishedAt: z.date().nullable().optional(),
+  publishedAt: zodPublishedAt,
   content: z.record(z.any()).optional(),
   description: z.string().min(2, 'Minimálně dva znaky'),
   image: z

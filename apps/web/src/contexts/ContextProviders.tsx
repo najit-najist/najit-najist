@@ -4,8 +4,7 @@ import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { trpc } from '../trpc';
-import { serverPort } from '@najit-najist/api';
-import SuperJSON from 'superjson';
+import { getSuperJson, serverPort } from '@najit-najist/api';
 import { httpBatchLink } from '@trpc/client';
 import { EditorJsInstancesProvider } from './editorJsInstancesContext';
 import { customTrpcLink } from '@constants';
@@ -20,6 +19,8 @@ const queryClient = new QueryClient({
   },
 });
 
+const transformer = getSuperJson();
+
 export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
   children,
   cookies,
@@ -28,7 +29,7 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
   // const { track } = useGtag();
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      transformer: SuperJSON,
+      transformer,
       links: [
         customTrpcLink,
         httpBatchLink({

@@ -9,7 +9,7 @@ export type ButtonProps = DetailedHTMLProps<
   VariantProps<typeof buttonStyles>;
 
 export const buttonStyles = cva(
-  'rounded-md duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-lg disabled:shadow-none disabled:cursor-not-allowed',
+  'rounded-md duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed',
   {
     variants: {
       color: {
@@ -20,15 +20,20 @@ export const buttonStyles = cva(
           'bg-white text-deep-green-400 shadow font-semibold disabled:bg-gray-50',
         sweet:
           'bg-green-300 hover:bg-green-400 focus:ring-bg-green-400 text-white',
-        blue: 'bg-indigo-400 hover:bg-indigo-500 text-white border border-indigo-600',
+        blue: 'bg-blue-400 hover:bg-blue-500 text-white border border-blue-600',
         red: 'bg-red-700 hover:bg-red-600 text-white border border-red-700',
         softRed:
           'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
+        subtleRed: 'hover:bg-red-50 text-red-600 border-0',
       },
       appearance: {
         small: 'py-2 px-4 text-sm',
         spaceless: '',
         normal: 'py-2 px-8',
+      },
+      asLink: {
+        true: 'hover:underline',
+        false: '',
       },
       isLoading: {
         true: 'cursor-wait opacity-70',

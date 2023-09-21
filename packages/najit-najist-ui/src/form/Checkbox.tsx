@@ -1,5 +1,5 @@
 import { cva, VariantProps } from 'class-variance-authority';
-import { DetailedHTMLProps, FC, forwardRef, InputHTMLAttributes } from 'react';
+import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
 
 type CheckboxVariantProps = VariantProps<typeof checkboxStyles>;
 

@@ -18,7 +18,7 @@ export const objectToFormData = async (
 
   for (const [key, value] of Object.entries(input)) {
     const append = async (primitive: Primitives) => {
-      if (primitive === undefined || primitive === null) {
+      if (primitive === undefined) {
         return;
       }
 

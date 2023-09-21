@@ -4,6 +4,7 @@ import { FC, Suspense } from 'react';
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 import HTMLReactParser from 'html-react-parser';
+import clsx from 'clsx';
 
 export const Item: FC<Product & { showEditLink?: boolean }> = ({
   images,
@@ -13,12 +14,18 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
   slug,
   id,
   description,
+  publishedAt,
 }) => {
   const linkHref = `/produkty/${slug}` as const;
 
   return (
     <div className="bg-white border border-ocean-300 rounded-lg shadow flex w-full items-stretch flex-col md:flex-row">
-      <div className="relative block w-full md:w-72 aspect-square flex-none">
+      <div
+        className={clsx(
+          'relative block w-full md:w-72 aspect-square flex-none',
+          !publishedAt ? 'opacity-30' : ''
+        )}
+      >
         <ImageSlider
           imageUrls={images.slice(0, 4)}
           itemId={id}

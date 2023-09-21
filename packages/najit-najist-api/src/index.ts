@@ -8,5 +8,6 @@ export * from './utils/isFileBase64';
 export * from './utils/getMediaTypeFromBase64Url';
 export * from './utils/setFileNameToBase64';
 export * from './utils/splitBase64Url';
+export * from './utils/getSuperJson';
 export * from './schemas';
 export * from 'string-strip-html';

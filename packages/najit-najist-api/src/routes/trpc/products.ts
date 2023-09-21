@@ -1,7 +1,10 @@
+import { PocketbaseCollections } from '@custom-types';
+import { pocketbase } from '@najit-najist/pb';
 import {
   createProductSchema,
   getManyProductsSchema,
   getOneProductSchema,
+  productSchema,
   updateProductSchema,
 } from '@schemas';
 import { ProductService } from '@services/Product.service';
@@ -32,6 +35,20 @@ export const productsRoutes = t.router({
       revalidatePath(`/produkty`);
       return result;
     }),
+
+  delete: onlyAdminProcedure
+    .input(productSchema.pick({ id: true, slug: true }))
+    .mutation(async ({ input, ctx }) => {
+      await pocketbase
+        .collection(PocketbaseCollections.PRODUCTS)
+        .delete(input.id);
+
+      revalidatePath(`/produkty/${input.slug}`);
+      revalidatePath(`/produkty`);
+
+      return;
+    }),
+
   update: onlyAdminProcedure
     .input(z.object({ id: z.string(), payload: updateProductSchema }))
     .mutation(async ({ input }) => {

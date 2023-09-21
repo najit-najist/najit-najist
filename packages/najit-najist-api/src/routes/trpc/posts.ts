@@ -9,6 +9,7 @@ import {
   getManyPostsInputSchema,
   getOnePostInputSchema,
   likePostInputSchema,
+  outputPostSchema,
   updateOnePostInputSchema,
 } from '@schemas';
 import { PocketbaseCollections, Post } from '@custom-types';
@@ -47,7 +48,7 @@ export const postsRoute = t.router({
           input.id,
           await objectToFormData({
             ...input.data,
-            updateBy: ctx.sessionData.userId,
+            updatedBy: ctx.sessionData.userId,
             ...(input.data.title
               ? { slug: slugifyString(input.data.title) }
               : null),
@@ -60,31 +61,36 @@ export const postsRoute = t.router({
       return result;
     }),
 
+  delete: onlyAdminProcedure
+    .input(outputPostSchema.pick({ id: true, slug: true }))
+    .mutation(async ({ ctx, input }) => {
+      await pocketbase.collection(PocketbaseCollections.POSTS).delete(input.id);
+
+      revalidatePath(`/clanky/${input.slug}`);
+      revalidatePath('/clanky');
+
+      return;
+    }),
+
   getMany: t.procedure
     .input(getManyPostsInputSchema.optional())
-    .query(
-      async ({
-        ctx,
-        input = { page: 1, perPage: 20, onlyPublished: true, query: '' },
-      }) => {
-        const filter = [
-          input.onlyPublished ? `publishedAt != null` : undefined,
-          input.query
-            ? `(title ~ '${input.query}' || description ~ '${input.query}')`
-            : undefined,
-        ]
-          .filter(Boolean)
-          .join(' && ');
+    .query(async ({ ctx, input = { page: 1, perPage: 20, query: '' } }) => {
+      const filter = [
+        input.query
+          ? `(title ~ '${input.query}' || description ~ '${input.query}')`
+          : undefined,
+      ]
+        .filter(Boolean)
+        .join(' && ');
 
-        return pocketbase
-          .collection(PocketbaseCollections.POSTS)
-          .getList<Post>(input?.page, input?.perPage, {
-            filter,
-            expand: `categories`,
-            sort: '-publishedAt',
-          });
-      }
-    ),
+      return pocketbase
+        .collection(PocketbaseCollections.POSTS)
+        .getList<Post>(input?.page, input?.perPage, {
+          filter,
+          expand: `categories`,
+          sort: '-publishedAt',
+        });
+    }),
 
   getOne: t.procedure
     .input(getOnePostInputSchema)

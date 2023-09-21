@@ -204,7 +204,12 @@ export const RecipePageManageContent = async ({
           ) : null}
         </aside>
       </div>
-      {isEditorHeaderShown ? <EditorHeader viewType={props.viewType} /> : null}
+      {isEditorHeaderShown ? (
+        <EditorHeader
+          viewType={props.viewType}
+          recipe={recipe ? { id: recipe.id, slug: recipe.slug } : undefined}
+        />
+      ) : null}
     </>
   );
 

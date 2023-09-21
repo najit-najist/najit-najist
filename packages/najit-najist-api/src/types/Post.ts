@@ -9,7 +9,7 @@ export type Post = ContentTypeBase & {
   /**
    * Indicates that post is created and when
    */
-  publishedAt?: string | null;
+  publishedAt?: Date | null | undefined;
   content?: {
     /**
      * Editor's version

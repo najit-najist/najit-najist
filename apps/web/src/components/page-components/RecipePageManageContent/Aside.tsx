@@ -15,7 +15,7 @@ export const Aside: FC<Partial<Pick<Recipe, 'updated' | 'created'>>> = ({
       <div className="grid gap-5">
         {created ? (
           <Input
-            label="Vytvořeno dne"
+            label="Vytvořeno"
             value={dayjs(created).format(DEFAULT_DATE_FORMAT)}
             disabled
           />
@@ -23,7 +23,7 @@ export const Aside: FC<Partial<Pick<Recipe, 'updated' | 'created'>>> = ({
 
         {updated ? (
           <Input
-            label="Upraveno dne"
+            label="Upraveno"
             value={dayjs(updated).format(DEFAULT_DATE_FORMAT)}
             disabled
           />

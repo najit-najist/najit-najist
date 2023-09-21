@@ -31,7 +31,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           {props.viewType == 'view' ? (
             props.post.publishedAt ? (
               <time
-                dateTime={props.post.publishedAt as string}
+                dateTime={String(props.post.publishedAt)}
                 className="text-gray-500 text-xs md:text-inherit font-semibold"
               >
                 {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
@@ -99,7 +99,14 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
         </div>
       </div>
       {props.isEditorHeaderShown ? (
-        <EditorHeader viewType={props.viewType} />
+        <EditorHeader
+          post={
+            props.viewType === 'edit'
+              ? { id: props.post.id, slug: props.post.slug }
+              : undefined
+          }
+          viewType={props.viewType}
+        />
       ) : null}
     </>
   );

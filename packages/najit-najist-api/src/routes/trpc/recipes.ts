@@ -9,6 +9,7 @@ import {
   getManyRecipeTypesSchema,
   getOneRecipeInputSchema,
   Recipe,
+  recipeSchema,
   updateRecipeInputSchema,
 } from '@schemas';
 import { t } from '@trpc';
@@ -19,6 +20,7 @@ import {
 } from '@trpc-procedures/protectedProcedure';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { PocketbaseCollections } from '@custom-types';
 
 const metricsRouter = t.router({
   getMany: protectedProcedure.query(() =>
@@ -74,6 +76,19 @@ export const recipesRouter = t.router({
       revalidatePath(`/recepty`);
 
       return result;
+    }),
+
+  delete: onlyAdminProcedure
+    .input(recipeSchema.pick({ id: true, slug: true }))
+    .mutation(async ({ input, ctx }) => {
+      await pocketbase
+        .collection(PocketbaseCollections.RECIPES)
+        .delete(input.id);
+
+      revalidatePath(`/recepty/${input.slug}`);
+      revalidatePath(`/recepty`);
+
+      return;
     }),
 
   getMany: protectedProcedure

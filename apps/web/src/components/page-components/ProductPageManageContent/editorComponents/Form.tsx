@@ -39,6 +39,11 @@ export const Form: FC<
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
+      const publishedAt =
+        values.publishedAt instanceof Date
+          ? values.publishedAt.toString()
+          : values.publishedAt;
+
       if (viewType === 'edit') {
         const { id } = product!;
 
@@ -50,6 +55,7 @@ export const Form: FC<
             images: values.images,
             price: values.price,
             stock: values.stock,
+            publishedAt,
             // TODO: categories
           },
         });
@@ -62,6 +68,7 @@ export const Form: FC<
           images: values.images,
           price: values.price,
           stock: values.stock,
+          publishedAt,
           // TODO: categories
         });
 

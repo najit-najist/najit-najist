@@ -33,7 +33,7 @@ export const ProductPageManageContent: FC<
 > = async ({ isEditorHeaderShown, ...props }) => {
   const { viewType } = props;
   const product = props.viewType !== 'create' ? props.product : undefined;
-  const { created, updated, name } = product ?? {};
+  const { created, updated, name, publishedAt } = product ?? {};
   const isEditorEnabled = props.viewType !== 'view';
   const hrComponent = (
     <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
@@ -85,7 +85,10 @@ export const ProductPageManageContent: FC<
             href="/produkty"
             className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title"
           >
-            Produkt
+            Produkt{' '}
+            {!product?.publishedAt ? (
+              <span className="text-red-500">- Nepublikováno</span>
+            ) : null}
           </Link>
           {!isEditorEnabled ? (
             <h1 className="text-4xl font-title">{name}</h1>
@@ -134,11 +137,20 @@ export const ProductPageManageContent: FC<
           )}
         >
           {isEditorEnabled ? (
-            <Aside created={created} updated={updated} />
+            <Aside
+              created={created}
+              updated={updated}
+              publishedAt={publishedAt}
+            />
           ) : null}
         </aside>
       </div>
-      {isEditorHeaderShown ? <EditorHeader viewType={props.viewType} /> : null}
+      {isEditorHeaderShown ? (
+        <EditorHeader
+          viewType={props.viewType}
+          product={product ? { id: product.id, slug: product.slug } : undefined}
+        />
+      ) : null}
     </>
   );
 
