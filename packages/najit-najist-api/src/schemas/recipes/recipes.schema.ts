@@ -6,13 +6,14 @@ import { recipeTypeSchema } from './recipe-types.schema';
 import { recipeDifficultySchema } from './recipe-difficulty.schema';
 import { recipeResourceSchema } from './recipe-resources.schema';
 import { recipeStepGroupSchema } from './recipe-step-groups.schema';
+import { zodSlug } from '../zodSlug';
 
 export const recipeSchema = entrySchema.extend({
   title: z
     .string({ required_error: 'Vyžadováno' })
     .trim()
     .min(1, 'Název je povinný'),
-  slug: z.string().trim(),
+  slug: zodSlug,
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z
     .string({ required_error: 'Toto pole je povinné' })
@@ -58,8 +59,8 @@ export const updateRecipeInputSchema = recipeSchema
   .partial();
 
 export const getManyRecipesSchema = defaultGetManySchema.extend({
-  typeSlug: z.string().optional(),
-  difficultySlug: z.string().optional(),
+  typeSlug: zodSlug.optional(),
+  difficultySlug: zodSlug.optional(),
 });
 
 export const getOneRecipeInputSchema = z.object({

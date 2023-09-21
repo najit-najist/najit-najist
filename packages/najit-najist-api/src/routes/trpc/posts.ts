@@ -97,7 +97,7 @@ export const postsRoute = t.router({
     .query(async ({ ctx, input }) =>
       pocketbase
         .collection(PocketbaseCollections.POSTS)
-        .getFirstListItem<Post>(`slug="${decodeURIComponent(input.slug)}"`, {
+        .getFirstListItem<Post>(`slug="${input.slug}"`, {
           expand: `categories`,
         })
     ),

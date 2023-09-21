@@ -14,10 +14,11 @@ import {
   updateProductStockSchema,
 } from './product-stocks';
 import { zodPublishedAt } from '../zodPublishedAt';
+import { zodSlug } from '../zodSlug';
 
 export const productSchema = baseCollectionSchema.extend({
   name: z.string().min(1, 'Toto pole je povinné').trim(),
-  slug: z.string().trim(),
+  slug: zodSlug,
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
   categories: z.array(productCategorySchema),
@@ -55,7 +56,9 @@ export const updateProductSchema = createProductSchema
   .partial();
 
 export const getManyProductsSchema = defaultGetManySchema;
-export const getOneProductSchema = productSchema.pick({ id: true });
+export const getOneProductSchema = productSchema
+  .pick({ id: true })
+  .or(productSchema.pick({ slug: true }));
 
 export type Product = z.infer<typeof productSchema>;
 export type CreateProduct = z.infer<typeof createProductSchema>;

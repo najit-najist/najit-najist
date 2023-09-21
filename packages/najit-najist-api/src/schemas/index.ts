@@ -18,3 +18,4 @@ export * from './user.schema';
 export * from './zodImage';
 export * from './zodPassword';
 export * from './zodPublishedAt';
+export * from './zodSlug';

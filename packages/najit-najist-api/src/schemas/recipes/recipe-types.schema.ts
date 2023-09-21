@@ -1,10 +1,11 @@
 import { z } from 'zod';
 import { defaultGetManySchema } from '../base.get-many.schema';
 import { entrySchema } from '../entry.schema';
+import { zodSlug } from '../zodSlug';
 
 export const recipeTypeSchema = entrySchema.extend({
   title: z.string().trim().min(1, 'Název je povinný'),
-  slug: z.string().trim(),
+  slug: zodSlug,
 });
 
 export const createRecipeTypeInputSchema = recipeTypeSchema.omit({

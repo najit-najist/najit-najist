@@ -1,11 +1,12 @@
 import { entrySchema } from '../entry.schema';
 import { defaultGetManySchema } from '../base.get-many.schema';
 import { z } from 'zod';
+import { zodSlug } from '../zodSlug';
 
 export const recipeDifficultySchema = entrySchema.extend({
   name: z.string().trim().min(1, 'Název je povinný'),
   color: z.string(),
-  slug: z.string().trim(),
+  slug: zodSlug,
 });
 
 export const getManyRecipeDifficultiesSchema = defaultGetManySchema

@@ -131,12 +131,9 @@ export class RecipesService {
       return this.mapExpandToResponse(
         await pocketbase
           .collection(PocketbaseCollections.RECIPES)
-          .getFirstListItem<RecipeWithExpand>(
-            `${type}="${decodeURIComponent(value)}"`,
-            {
-              expand: BASE_EXPAND,
-            }
-          )
+          .getFirstListItem<RecipeWithExpand>(`${type}="${value}"`, {
+            expand: BASE_EXPAND,
+          })
       );
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {

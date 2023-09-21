@@ -14,9 +14,10 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 const getRoutes = t.router({
-  one: t.procedure
-    .input(getOneProductSchema)
-    .query(async ({ input }) => ProductService.getBy('id', input.id)),
+  one: t.procedure.input(getOneProductSchema).query(async ({ input }) => {
+    const by = 'id' in input ? 'id' : 'slug';
+    return ProductService.getBy(by, (input as any)[by]);
+  }),
   many: t.procedure
     .input(getManyProductsSchema)
     .query(async ({ input }) => ProductService.getMany(input)),

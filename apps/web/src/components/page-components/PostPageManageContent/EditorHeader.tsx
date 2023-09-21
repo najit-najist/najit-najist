@@ -114,7 +114,6 @@ export const EditorHeader: FC<{
               appearance="spaceless"
               color="red"
               className="ml-3 text-white h-full aspect-square"
-              type="submit"
               isLoading={isRemoving || isRemoved}
               onClick={onDeleteClick}
             >

@@ -1,7 +1,7 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
 import { ProductService } from '@najit-najist/api/server';
-import { getCachedLoggedInUser } from '@server-utils';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 120;
@@ -29,9 +29,9 @@ export default async function Page({ params, searchParams }: Params) {
   const isEditorEnabled = !!searchParams.editor;
   const loggedInUser = await getCachedLoggedInUser();
 
-  const product = await ProductService.getBy('slug', productSlug).catch(() =>
-    notFound()
-  );
+  const product = await getCachedTrpcCaller()
+    .products.get.one({ slug: productSlug })
+    .catch(() => notFound());
 
   return (
     <ProductPageManageContent
