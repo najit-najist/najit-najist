@@ -166,9 +166,12 @@ export class ProductService {
       return this.mapExpandToResponse(
         await pocketbase
           .collection(PocketbaseCollections.PRODUCTS)
-          .getFirstListItem<ProductWithExpand>(`${type}="${value}"`, {
-            expand: BASE_EXPAND,
-          })
+          .getFirstListItem<ProductWithExpand>(
+            `${type}="${decodeURIComponent(value)}"`,
+            {
+              expand: BASE_EXPAND,
+            }
+          )
       );
     } catch (error) {
       logger.error({ error, type, value }, 'Failed to get product');
