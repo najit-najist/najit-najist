@@ -51,11 +51,7 @@ export const Form: FC<
           data: payload,
         });
 
-        if (newData.slug !== newData.slug) {
-          router.push(`/clanky/${newData.slug}?editor=true`);
-        } else {
-          router.refresh();
-        }
+        router.push(`/clanky/${newData.slug}?editor=true`);
       }
     },
     [viewType, createPost, editorReferences, post, router, updatePost]

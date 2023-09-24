@@ -46,7 +46,7 @@ export const Form: FC<
       if (viewType === 'edit') {
         const { id } = product!;
 
-        await updateProduct({
+        const result = await updateProduct({
           id,
           payload: {
             name: values.name,
@@ -59,7 +59,7 @@ export const Form: FC<
           },
         });
 
-        router.refresh();
+        router.push(`/produkty/${result.slug}?editor=true`);
       } else if (viewType === 'create') {
         const data = await createProduct({
           name: values.name,
