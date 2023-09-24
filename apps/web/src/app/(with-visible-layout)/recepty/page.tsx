@@ -91,7 +91,11 @@ export default async function RecipesPage({ searchParams }: Params) {
       <SearchForm
         types={[fallbackType, ...recipeTypes]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
-        initialValues={{ query, difficultySlug: difficultySlugFromUrl ?? '' }}
+        initialValues={{
+          query,
+          difficultySlug: difficultySlugFromUrl ?? '',
+          typeSlug: typeSlugFromUrl ?? '',
+        }}
       />
       <div className="container grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
         {recipes.length ? (

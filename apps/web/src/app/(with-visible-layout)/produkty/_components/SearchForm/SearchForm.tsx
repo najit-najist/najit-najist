@@ -4,7 +4,7 @@ import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
+import { ProductCategory } from '@najit-najist/api';
 import { Input, Select } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
@@ -13,24 +13,33 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 type FormValues = {
   query?: string;
+  categorySlug?: string;
 };
 
-export const SearchForm: FC<{ initialValues?: FormValues }> = ({
-  initialValues,
-}) => {
+const categoryLabelFormatter = (value: ProductCategory) => value.name;
+
+export const SearchForm: FC<{
+  initialValues?: FormValues;
+  categories: ProductCategory[];
+}> = ({ initialValues, categories }) => {
   const router = useRouter();
   const [isRefreshing, startRefreshing] = useTransition();
   const formMethods = useForm<FormValues>({
     defaultValues: initialValues,
   });
   const { handleSubmit, register, watch } = formMethods;
+  const categoriesAsMap = useMemo(
+    () => new Map(categories.map((item) => [item.slug, item])),
+    [categories]
+  );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ query }) => {
+    ({ query, categorySlug }) => {
       let route = '/produkty';
-      const params = [['query', query]].filter(
-        ([_, value]) => !!value
-      ) as string[][];
+      const params = [
+        ['query', query],
+        ['category-slug', categorySlug],
+      ].filter(([_, value]) => !!value) as string[][];
 
       if (params.length) {
         const queryParams = new URLSearchParams(params);
@@ -61,7 +70,7 @@ export const SearchForm: FC<{ initialValues?: FormValues }> = ({
       >
         <Input
           placeholder="Vyhledávání..."
-          rootClassName="w-full max-w-sm"
+          rootClassName="w-full"
           suffix={
             formMethods.formState.isSubmitting || isRefreshing ? (
               <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
@@ -70,6 +79,20 @@ export const SearchForm: FC<{ initialValues?: FormValues }> = ({
             )
           }
           {...register('query')}
+        />
+        <Controller<FormValues>
+          name="categorySlug"
+          render={({ field: { name, value, onChange } }) => (
+            <Select<ProductCategory>
+              name={name}
+              label="Kategorie"
+              selected={categoriesAsMap.get(value ?? '')}
+              onChange={(item) => onChange(item?.slug)}
+              formatter={categoryLabelFormatter}
+              items={categories}
+              className="md:max-w-[240px] w-full"
+            />
+          )}
         />
       </form>
     </FormProvider>

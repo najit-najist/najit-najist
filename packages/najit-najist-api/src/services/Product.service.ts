@@ -191,12 +191,12 @@ export class ProductService {
   static async getMany(
     options?: GetManyProducts
   ): Promise<ListResult<Product>> {
-    const { page = 1, perPage = 40, search } = options ?? {};
+    const { page = 1, perPage = 40, search, categorySlug } = options ?? {};
 
     try {
       const filter = [
         // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
-        // typeSlug ? `type.slug = '${typeSlug}'` : undefined,
+        categorySlug ? `category.slug = '${categorySlug}'` : undefined,
         search
           ? `(name ~ '${search}' || description ~ '${search}')`
           : undefined,

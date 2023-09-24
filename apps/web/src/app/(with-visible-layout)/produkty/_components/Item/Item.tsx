@@ -11,11 +11,11 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
   images,
   name,
   price,
-  stock,
   slug,
   id,
   description,
   publishedAt,
+  category,
 }) => {
   const linkHref = `/produkty/${slug}` as const;
 
@@ -46,7 +46,7 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
       </div>
       <div className="p-5 flex flex-col justify-between w-full h-full">
         <span className="mb-2 text-sm uppercase font-semibold text-ocean-400 block font-title">
-          Produkt
+          Produkt - <Badge color="blue">{category?.name ?? 'Ostatní'}</Badge>
         </span>
         <div className="flex-none flex items-center justify-between">
           <Link href={linkHref}>

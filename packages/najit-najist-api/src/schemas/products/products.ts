@@ -55,7 +55,9 @@ export const updateProductSchema = createProductSchema
   })
   .partial();
 
-export const getManyProductsSchema = defaultGetManySchema;
+export const getManyProductsSchema = defaultGetManySchema.extend({
+  categorySlug: zodSlug.optional(),
+});
 export const getOneProductSchema = productSchema
   .pick({ id: true })
   .or(productSchema.pick({ slug: true }));

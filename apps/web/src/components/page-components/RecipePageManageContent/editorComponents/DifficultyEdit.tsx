@@ -90,7 +90,7 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
             formatter={({ name }) => name}
             items={difficulties.items}
             disabled={formState.isSubmitting}
-            onChange={({ id }) => field.onChange(id)}
+            onChange={(item) => field.onChange(item?.id)}
             error={fieldState.error}
             onAddNewItem={openModal}
             className="min-w-[150px]"

@@ -53,7 +53,7 @@ const MetricSelect: FC<{
             selected={metricsSet.get(value)}
             items={metrics.items}
             formatter={({ name }) => name}
-            onChange={({ id }) => onChange(id)}
+            onChange={(item) => onChange(item?.id)}
             disabled={formState.isSubmitting}
             error={fieldState.error}
             className="min-w-[140px]"

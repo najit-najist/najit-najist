@@ -94,7 +94,7 @@ export const SearchForm: FC<{
               name={name}
               label="Typ"
               selected={typesAsMap.get(value ?? '')}
-              onChange={(item) => onChange(item.slug)}
+              onChange={(item) => onChange(item?.slug)}
               formatter={typesLabelFormatter}
               items={types}
               className="md:max-w-[240px] w-full"
@@ -108,7 +108,7 @@ export const SearchForm: FC<{
               name={name}
               label="Náročnost"
               selected={difficultiesMap.get(value ?? '')}
-              onChange={(item) => onChange(item.slug)}
+              onChange={(item) => onChange(item?.slug)}
               formatter={typeLabelFormatter}
               items={difficulties}
               className="md:max-w-[240px] w-full"
