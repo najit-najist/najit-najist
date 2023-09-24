@@ -65,7 +65,10 @@ export default async function RecipesPage({ searchParams }: Params) {
   const categoriesWithProductsAsArray = [...categoriesWithProducts];
   // Move default group to end as that makes more sense
   const groupOther = categoriesWithProductsAsArray.shift()!;
-  categoriesWithProductsAsArray.push(groupOther);
+  // If it has some items then we add it to the end, if no items then don`t
+  if (groupOther[1].length) {
+    categoriesWithProductsAsArray.push(groupOther);
+  }
 
   return (
     <>
