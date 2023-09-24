@@ -21,7 +21,7 @@ export const productSchema = baseCollectionSchema.extend({
   slug: zodSlug,
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
-  categories: z.array(productCategorySchema),
+  category: productCategorySchema.optional(),
   publishedAt: zodPublishedAt,
   price: productPriceSchema,
   stock: productStockSchema,
@@ -29,7 +29,7 @@ export const productSchema = baseCollectionSchema.extend({
 
 export const createProductSchema = productSchema
   .omit({
-    categories: true,
+    category: true,
     price: true,
     stock: true,
     // Default
@@ -39,7 +39,7 @@ export const createProductSchema = productSchema
     updated: true,
   })
   .extend({
-    categories: z.array(productCategorySchema.pick({ id: true })).optional(),
+    category: productCategorySchema.pick({ id: true }).optional(),
     price: createProductPriceSchema.omit({ product: true }),
     stock: createProductStockSchema.omit({ product: true }),
   });

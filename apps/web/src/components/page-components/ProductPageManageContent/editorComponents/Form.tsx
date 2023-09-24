@@ -18,7 +18,6 @@ export const Form: FC<
   const router = useRouter();
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
-      categories: [],
       images: [],
       // TODO: implement stock
       stock: {
@@ -56,7 +55,7 @@ export const Form: FC<
             price: values.price,
             stock: values.stock,
             publishedAt,
-            // TODO: categories
+            category: values.category,
           },
         });
 
@@ -69,7 +68,7 @@ export const Form: FC<
           price: values.price,
           stock: values.stock,
           publishedAt,
-          // TODO: categories
+          category: values.category,
         });
 
         router.push(`/produkty/${data.slug}`);

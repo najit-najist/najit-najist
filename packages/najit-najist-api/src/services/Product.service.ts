@@ -16,14 +16,14 @@ import { slugifyString } from '@utils';
 import { objectToFormData } from '@utils/internal';
 
 type GetByType = keyof Pick<Product, 'id' | 'slug'>;
-const BASE_EXPAND = `categories,${PocketbaseCollections.PRODUCT_STOCK}(product),${PocketbaseCollections.PRODUCT_PRICES}(product)`;
+const BASE_EXPAND = `category,${PocketbaseCollections.PRODUCT_STOCK}(product),${PocketbaseCollections.PRODUCT_PRICES}(product)`;
 
-type ProductWithExpand = Omit<Product, 'categories' | 'price' | 'stock'> & {
+type ProductWithExpand = Omit<Product, 'category' | 'price' | 'stock'> & {
   categories: string[];
   price: string;
   stock: string;
   expand: {
-    categories: ProductCategory[];
+    category: ProductCategory;
     'product_prices(product)': ProductPrice;
     'product_stock(product)': ProductStock;
   };
@@ -35,14 +35,14 @@ export class ProductService {
       expand: {
         'product_prices(product)': price,
         'product_stock(product)': stock,
-        categories,
+        category,
       },
       ...rest
     } = base;
 
     return {
       ...rest,
-      categories,
+      category,
       price,
       stock,
     };
@@ -50,7 +50,7 @@ export class ProductService {
 
   static async update(
     id: string,
-    { price, stock, name, ...input }: UpdateProduct
+    { price, stock, name, category, ...input }: UpdateProduct
   ): Promise<Product> {
     try {
       if (price) {
@@ -73,6 +73,7 @@ export class ProductService {
           await objectToFormData({
             ...input,
             ...(name ? { slug: slugifyString(name), name } : null),
+            ...(category ? { category: category.id } : null),
           }),
           { expand: BASE_EXPAND }
         )
@@ -96,6 +97,7 @@ export class ProductService {
     price,
     stock,
     name,
+    category,
     ...input
   }: CreateProduct & { createdBy: User['id'] }): Promise<Product> {
     let createdProduct: ProductWithExpand | undefined = undefined;
@@ -107,6 +109,7 @@ export class ProductService {
           await objectToFormData({
             ...input,
             ...(name ? { slug: slugifyString(name), name } : null),
+            ...(category ? { category: category.id } : null),
           }),
           { expand: BASE_EXPAND }
         );
@@ -122,9 +125,9 @@ export class ProductService {
       return this.mapExpandToResponse({
         ...createdProduct,
         expand: {
+          ...createdProduct.expand,
           'product_prices(product)': createdProductPrice,
           'product_stock(product)': createdProductStock,
-          categories: [],
         },
       });
     } catch (error) {

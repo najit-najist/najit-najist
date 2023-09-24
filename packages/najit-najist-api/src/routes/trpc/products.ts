@@ -1,7 +1,16 @@
-import { PocketbaseCollections } from '@custom-types';
-import { pocketbase } from '@najit-najist/pb';
 import {
+  ErrorCodes,
+  PocketbaseCollections,
+  PocketbaseErrorCodes,
+} from '@custom-types';
+import { ApplicationError } from '@errors';
+import { logger } from '@logger';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+import {
+  ProductCategory,
+  createProductCategorySchema,
   createProductSchema,
+  getManyProductCategoriesSchema,
   getManyProductsSchema,
   getOneProductSchema,
   productSchema,
@@ -10,6 +19,7 @@ import {
 import { ProductService } from '@services/Product.service';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
+import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -21,6 +31,56 @@ const getRoutes = t.router({
   many: t.procedure
     .input(getManyProductsSchema)
     .query(async ({ input }) => ProductService.getMany(input)),
+});
+
+const getCategoriesRoutes = t.router({
+  many: t.procedure
+    .input(getManyProductCategoriesSchema.default({}))
+    .query(({ input }) => {
+      const { page, perPage } = input ?? {};
+
+      try {
+        return pocketbase
+          .collection(PocketbaseCollections.PRODUCT_CATEGORIES)
+          .getList<ProductCategory>(page, perPage);
+      } catch (error) {
+        throw error;
+      }
+    }),
+});
+
+const categoriesRoutes = t.router({
+  get: getCategoriesRoutes,
+
+  create: onlyAdminProcedure
+    .input(createProductCategorySchema.omit({ slug: true }))
+    .mutation(async ({ input }) => {
+      const { name } = input;
+      try {
+        return await pocketbase
+          .collection(PocketbaseCollections.PRODUCT_CATEGORIES)
+          .create({ name, slug: slugifyString(name) });
+      } catch (error) {
+        if (error instanceof ClientResponseError) {
+          const data = error.data.data;
+
+          if (
+            data.title?.code === PocketbaseErrorCodes.NOT_UNIQUE ||
+            data.slug?.code === PocketbaseErrorCodes.NOT_UNIQUE
+          ) {
+            throw new ApplicationError({
+              code: ErrorCodes.ENTITY_DUPLICATE,
+              message: `Název kategorie musí být unikátní`,
+              origin: '/products/categories/create',
+            });
+          }
+        }
+
+        logger.error(error, 'Could not create product category');
+
+        throw error;
+      }
+    }),
 });
 
 export const productsRoutes = t.router({
@@ -59,4 +119,6 @@ export const productsRoutes = t.router({
 
       return result;
     }),
+
+  categories: categoriesRoutes,
 });

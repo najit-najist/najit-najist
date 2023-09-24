@@ -34,7 +34,6 @@ export default async function Page({ params, searchParams }: Params) {
   );
 
   return (
-    // @ts-ignore
     <RecipePageManageContent
       isEditorHeaderShown={
         loggedInUser &&

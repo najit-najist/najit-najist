@@ -56,9 +56,11 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
-    const currentUser = await getEdgeLoggedInUser({ session }).catch(
-      (err) => undefined
-    );
+    const currentUser = await getEdgeLoggedInUser({ session }).catch((err) => {
+      console.log({ err });
+
+      return undefined;
+    });
 
     if (!currentUser && isLoggedInOnlyPath) {
       const url = requestUrl.clone();
@@ -71,7 +73,18 @@ export async function middleware(request: NextRequest) {
 
       return NextResponse.redirect(url);
     } else if (currentUser && isUnauthorizedOnlyPath) {
-      return toPathname('/muj-ucet/profil');
+      const url = requestUrl.clone();
+      url.pathname = '/muj-ucet/profil';
+
+      const nextPathname = url.searchParams.get(
+        LOGIN_THEN_REDIRECT_TO_PARAMETER
+      );
+      if (nextPathname) {
+        url.pathname = nextPathname;
+        url.searchParams.delete(LOGIN_THEN_REDIRECT_TO_PARAMETER);
+      }
+
+      return NextResponse.redirect(url);
     }
 
     if (currentUser && isLoggedInOnlyPath) {

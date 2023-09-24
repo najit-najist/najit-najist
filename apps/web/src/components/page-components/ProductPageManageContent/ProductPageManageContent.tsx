@@ -12,6 +12,9 @@ import clsx from 'clsx';
 import { PriceEditor, PriceRenderer } from './editorComponents/Price';
 import { StarIcon } from '@heroicons/react/24/solid';
 import Link from 'next/link';
+import { CategoryEdit } from './editorComponents/CategoryEdit';
+import { getCachedTrpcCaller } from '@server-utils';
+import { Badge } from '@najit-najist/ui';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
@@ -38,6 +41,7 @@ export const ProductPageManageContent: FC<
   const hrComponent = (
     <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
   );
+  const categories = await getCachedTrpcCaller().products.categories.get.many();
 
   const star = <StarIcon className="text-gray-400 w-5" />;
 
@@ -96,12 +100,29 @@ export const ProductPageManageContent: FC<
             <TitleEdit />
           )}
 
-          <div className="flex opacity-0">
-            {star}
-            {star}
-            {star}
-            {star}
-            {star}
+          <div className="flex flex-wrap items-center grid-cols-2 gap-2 mt-1">
+            {isEditorEnabled ? (
+              <>
+                <CategoryEdit categories={categories.items} />
+              </>
+            ) : (
+              <Badge color="blue">
+                {props.product.category?.name ?? 'Ostatní'}
+              </Badge>
+            )}
+
+            <div
+              className={clsx(
+                'flex',
+                process.env.NODE_ENV === 'production' ? 'opacity-0' : ''
+              )}
+            >
+              {star}
+              {star}
+              {star}
+              {star}
+              {star}
+            </div>
           </div>
 
           {/* TODO: add reviews here */}
