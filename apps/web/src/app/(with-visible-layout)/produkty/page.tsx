@@ -20,8 +20,9 @@ type Params = {
 };
 
 export const metadata = {
-  title: 'Produkty',
-  description: 'Vyberte si z naší kolekce vymazlených produktů',
+  title: 'Produkty k objednání',
+  description:
+    'Vytvořili jsme pro Vás jednoduchý seznam produktů, které si můžete objednat a nechat připravit na prodejně. Jednoduše si vyberte ze seznamu,  objednávku odešlete mailem z Vašeho registrovaného e-mailu na adresu  prodejnahk@najitnajist.cz  nebo si vše objednejte a zaplaťte přímo v prodejně na ulici Tomkova 1230/4a  v Hradci Králové.',
 };
 
 export const revalidate = 0;
@@ -85,7 +86,37 @@ export default async function RecipesPage({ searchParams }: Params) {
             </Link>
           ) : null}
         </div>
-        <PageDescription>{metadata.description}</PageDescription>
+        <PageDescription>
+          <p>
+            Vytvořili jsme pro Vás jednoduchý seznam produktů, které si můžete
+            objednat a nechat připravit na prodejně. Jednoduše si vyberte ze
+            seznamu, objednávku odešlete mailem z Vašeho registrovaného e-mailu
+            na adresu{' '}
+            <Link
+              href="maito:prodejnahk@najitnajist.cz"
+              className="text-blue-500 hover:underline"
+            >
+              prodejnahk@najitnajist.cz
+            </Link>{' '}
+            nebo si vše objednejte a zaplaťte přímo v prodejně na ulici Tomkova
+            1230/4a v Hradci Králové. <br /> Do mailu zapište kód produktu,
+            počet kusů a datum a přibližný čas vyzvednutí objednávky - např. B1,
+            2 ks, 26.9.2023 14:00 <br /> Seznam Produktů je zatím dostupný pouze
+            pro registrované a tedy přihlášené uživatele, chceme vědět, komu
+            budeme jídlo připravovat a v případě lehkého opomenutí koho
+            kontaktovat. Objednávku do 200,- Kč můžete zaplatit v prodejně při
+            vyzvednutí, objednávku nad 200,- Kč (např. na celý týden dopředu)
+            uhraďte předem celkovou částku jedním převodním příkazem na účet
+            131-823110227 / 0100 a do zprávy pro příjemce uveďte registrovaný
+            email.
+          </p>
+          <p>
+            Pracujeme na kompletním objednávkovém systému, kde si podobně
+            vyberete z aktuálně dostupných produktů, zaškrtnete si vyhovující
+            kombinaci, den a přibližný čas vyzvednutí objednávky a vše zaplatíte
+            přes platební bránu.
+          </p>
+        </PageDescription>
       </PageHeader>
       <SearchForm
         categories={[fallbackCategories, ...categories]}
