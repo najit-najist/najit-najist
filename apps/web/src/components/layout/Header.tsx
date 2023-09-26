@@ -1,24 +1,25 @@
 import { FC } from 'react';
-import { clsx } from 'clsx';
 import { Logo } from '@components/common/Logo';
 import { X_REQUEST_PATH_HEADER_NAME } from '@constants';
 import Link from 'next/link';
 import { TopHeader } from './TopHeader';
 import { headers } from 'next/headers';
-import { getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
+import { DesktopMenuItem } from './DesktopMenuItem';
 
 const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
   { text: 'Recepty', href: '/recepty' },
+  { text: 'Produkty', href: '/produkty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];
 
-export async function Header(): Promise<ReturnType<FC>> {
+export const Header: FC = async () => {
   const headersList = headers();
   const currentPathname = headersList.get(X_REQUEST_PATH_HEADER_NAME);
-  const loggedUser = await getLoggedInUser().catch(() => undefined);
+  const loggedUser = await getCachedLoggedInUser();
 
   return (
     <>
@@ -38,23 +39,11 @@ export async function Header(): Promise<ReturnType<FC>> {
           </Link>
           <ul className="ml-auto flex text-right sm:text-left items-center gap-2 text-lg">
             {navLinks.map(({ text, href }) => (
-              <li key={href}>
-                <a
-                  className={clsx(
-                    'font-bold py-3 sm:py-8 px-6 block duration-200',
-                    currentPathname === href
-                      ? 'bg-deep-green-400 text-white '
-                      : 'hover:bg-deep-green-400 hover:text-white '
-                  )}
-                  href={href}
-                >
-                  {text}
-                </a>
-              </li>
+              <DesktopMenuItem key={href} href={href} text={text} />
             ))}
           </ul>
         </nav>
       </header>
     </>
   );
-}
+};

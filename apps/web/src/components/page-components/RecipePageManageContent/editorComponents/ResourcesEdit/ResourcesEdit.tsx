@@ -18,7 +18,13 @@ const MetricSelect: FC<{
   const { data: metrics, refetch } = trpc.recipes.metrics.getMany.useQuery(
     undefined,
     {
-      initialData: { items: initialMetrics },
+      initialData: {
+        items: initialMetrics,
+        page: 1,
+        perPage: initialMetrics.length,
+        totalItems: initialMetrics.length,
+        totalPages: 1,
+      },
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -47,7 +53,7 @@ const MetricSelect: FC<{
             selected={metricsSet.get(value)}
             items={metrics.items}
             formatter={({ name }) => name}
-            onChange={({ id }) => onChange(id)}
+            onChange={(item) => onChange(item?.id)}
             disabled={formState.isSubmitting}
             error={fieldState.error}
             className="min-w-[140px]"

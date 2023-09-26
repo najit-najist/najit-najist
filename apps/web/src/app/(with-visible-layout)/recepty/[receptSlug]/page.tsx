@@ -1,11 +1,8 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { UserRoles } from '@najit-najist/api';
-import {
-  getLoggedInUser,
-  isUserLoggedIn,
-  RecipesService,
-} from '@najit-najist/api/server';
-import { notFound, redirect } from 'next/navigation';
+import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
+import { RecipesService } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
+import { notFound } from 'next/navigation';
 
 export const revalidate = 120;
 
@@ -30,21 +27,21 @@ export async function generateMetadata({ params, searchParams }: Params) {
 export default async function Page({ params, searchParams }: Params) {
   const { receptSlug } = params;
   const isEditorEnabled = !!searchParams.editor;
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
-  const isAdmin = loggedInUser?.role === UserRoles.ADMIN;
-
-  if ((!loggedInUser || !isAdmin) && isEditorEnabled) {
-    redirect('/');
-  }
+  const loggedInUser = await getCachedLoggedInUser();
 
   const recipe = await RecipesService.getBy('slug', receptSlug).catch(() =>
     notFound()
   );
 
   return (
-    // @ts-ignore
     <RecipePageManageContent
-      isEditorHeaderShown={isAdmin}
+      isEditorHeaderShown={
+        loggedInUser &&
+        canUser(loggedInUser, {
+          action: UserActions.UPDATE,
+          onModel: AvailableModels.RECIPES,
+        })
+      }
       viewType={isEditorEnabled ? 'edit' : 'view'}
       recipe={recipe}
     />

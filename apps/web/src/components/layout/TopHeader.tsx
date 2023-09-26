@@ -10,7 +10,7 @@ import {
   UserActions,
   UserRoles,
 } from '@najit-najist/api';
-import { Menu, Skeleton, Transition } from '@najit-najist/ui';
+import { Menu, Transition } from '@najit-najist/ui';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
@@ -35,8 +35,12 @@ const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
 const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
   function StyledLink({ className, children, ...props }, ref) {
     return (
-      // @ts-ignore
-      <Link ref={ref} className="hover:underline text-right" {...props}>
+      <Link
+        // @ts-ignore
+        ref={ref}
+        className="hover:underline tracking-wider text-3xl text-right font-title hover:text-deep-green-400 text-gray-800"
+        {...props}
+      >
         {children}
       </Link>
     );
@@ -96,7 +100,7 @@ const RegisterPill: FC<{ hideOnMobile?: boolean }> = ({ hideOnMobile }) => {
         ' items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400'
+        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400 font-small'
       )}
     >
       Registrovat
@@ -114,7 +118,7 @@ const AdministrationPill: FC<{ hideOnMobile?: boolean }> = ({
         'items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400'
+        'hover:bg-yellow-300 bg-yellow-200 text-yellow-600 shadow-sm shadow-yellow-400'
       )}
     >
       Administrace
@@ -214,7 +218,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
             leave="transition duration-200 ease-out"
             leaveFrom="transform max-h-[600px] sm:max-h-[300px] opacity-100"
             leaveTo="transform max-h-0 opacity-0"
-            className=" bg-white w-full py-4 rounded-md h-full transition-all overflow-hidden"
+            className="bg-white w-full py-4 rounded-md h-full transition-all overflow-hidden"
           >
             <Menu.Items className="container" static>
               <div className="flex gap-3 justify-end mb-3 flex-wrap">
@@ -240,6 +244,9 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                   </Menu.Item>
                   <Menu.Item>
                     <StyledLink href="/recepty">Recepty</StyledLink>
+                  </Menu.Item>
+                  <Menu.Item>
+                    <StyledLink href="/clanky">Produkty</StyledLink>
                   </Menu.Item>
                 </Column>
                 {loggedInUser?.role === UserRoles.ADMIN ? (

@@ -21,7 +21,13 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
   const { data: types, refetch } = trpc.recipes.types.getMany.useQuery(
     undefined,
     {
-      initialData: { items: initialTypes },
+      initialData: {
+        items: initialTypes,
+        page: 1,
+        perPage: initialTypes.length,
+        totalItems: initialTypes.length,
+        totalPages: 1,
+      },
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
@@ -76,7 +82,7 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
             formatter={({ title }) => title}
             items={types.items}
             disabled={formState.isSubmitting}
-            onChange={({ id }) => field.onChange(id)}
+            onChange={(item) => field.onChange(item?.id)}
             error={fieldState.error}
             className="min-w-[150px]"
             onAddNewItem={openModal}

@@ -1,6 +1,6 @@
 import { t } from '../instance';
 import { TRPCError } from '@trpc/server';
-import { isTokenExpired } from '@najit-najist/pb';
+import { isTokenExpired, pocketbase } from '@najit-najist/pb';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import {
   deserializePocketToken,
@@ -29,14 +29,14 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
   }
 
   const result = deserializePocketToken(session.authContent.token);
-  await AuthService.authPocketBase();
+  await AuthService.authPocketBase({ authContent: session.authContent });
 
   return next({
     ctx: {
       sessionData: {
         userId: result.id,
         authModel: result.collectionId,
-        user: await getLoggedInUser(),
+        user: await getLoggedInUser({ authenticateApi: false }),
       },
     },
   });

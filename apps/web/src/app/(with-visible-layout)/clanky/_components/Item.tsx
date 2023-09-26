@@ -28,8 +28,16 @@ export const Item: FC<Post> = (post) => {
       </div>
       <div>
         <div className="flex items-center gap-x-4 text-xs mt-2">
-          <time dateTime={post.publishedAt as string} className="text-gray-500">
-            {dayjs(post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
+          <time
+            dateTime={String(post.publishedAt) ?? post.created}
+            className="text-gray-500"
+          >
+            {dayjs(post.publishedAt ? post.publishedAt : post.created).format(
+              'DD. MM. YYYY @ HH:mm'
+            )}
+            {!post.publishedAt ? (
+              <span className="text-red-400"> - Nepublikováno</span>
+            ) : null}
           </time>
           <div className="flex space-x-3">
             {post.categories.map(({ id, title }) => (
@@ -43,7 +51,7 @@ export const Item: FC<Post> = (post) => {
           </div>
         </div>
         <div className="group relative max-w-xl">
-          <h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+          <h3 className="font-title mt-3 text-2xl font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
             <Link href={`/clanky/${post.slug}`}>
               <span className="absolute inset-0" />
               {post.title}

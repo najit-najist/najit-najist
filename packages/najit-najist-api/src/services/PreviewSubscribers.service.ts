@@ -12,11 +12,12 @@ import { UserService } from './User.service';
 import { loginWithAccount } from '@utils/pocketbase';
 
 export class PreviewSubscribersService {
-  static async getUserByToken(token: string, auth = true) {
+  static async getUserByToken(token: string, authenticateApi = true) {
     try {
-      if (auth) {
+      if (authenticateApi) {
         await loginWithAccount('contactForm');
       }
+
       const result = await pocketbase
         .collection(PocketbaseCollections.PREVIEW_SUBSCRIBERS_TOKENS)
         .getFirstListItem(`token="${token}"`, {
@@ -24,7 +25,7 @@ export class PreviewSubscribersService {
         })
         .then(expandPocketFields<PreviewSubscribersTokens>);
 
-      if (auth) {
+      if (authenticateApi) {
         AuthService.clearAuthPocketBase();
       }
 

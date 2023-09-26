@@ -1,11 +1,12 @@
 import { IMAGE_FILE_REGEX } from '@constants';
 import { isFileBase64 } from '@utils/isFileBase64';
-import { entrySchema } from 'schemas/entry.schema';
+import { entrySchema } from '../entry.schema';
+import { zodPublishedAt } from '../zodPublishedAt';
 import { z } from 'zod';
 
 export const updateOnePostInputSchema = z.object({
   title: z.string().optional(),
-  publishedAt: z.date().nullable().optional(),
+  publishedAt: zodPublishedAt,
   content: z.record(z.any()).optional(),
   description: z.string().optional(),
   image: z
@@ -25,6 +26,6 @@ export const dislikePostInputSchema = z.object({
   itemId: z.string(),
 });
 
-export type UpdateOnePostInput = z.infer<typeof updateOnePostInputSchema>;
+export type UpdateOnePostInput = z.input<typeof updateOnePostInputSchema>;
 export type LikedPostInput = z.infer<typeof likePostInputSchema>;
 export type DislikedPostInput = z.infer<typeof dislikePostInputSchema>;

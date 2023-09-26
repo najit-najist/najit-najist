@@ -7,10 +7,10 @@ import { ApplicationError } from '@errors';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import {
   CreateRecipeDifficultyInput,
-  GetManyUsersOptions,
+  GetManyRecipeDifficulties,
   RecipeDifficulty,
 } from '@schemas';
-import { slugify } from '@utils';
+import { slugifyString } from '@utils';
 
 type GetByType = keyof Pick<RecipeDifficulty, 'id'>;
 
@@ -34,7 +34,7 @@ export class RecipeDifficultyService {
   }
 
   static async getMany(
-    options?: GetManyUsersOptions
+    options?: GetManyRecipeDifficulties
   ): Promise<ListResult<RecipeDifficulty>> {
     const { page = 1, perPage = 40 } = options ?? {};
 
@@ -54,7 +54,7 @@ export class RecipeDifficultyService {
     try {
       return await pocketbase
         .collection(PocketbaseCollections.RECIPE_DIFFICULTY)
-        .create({ name, color, slug: slugify(name) });
+        .create({ name, color, slug: slugifyString(name) });
     } catch (error) {
       if (error instanceof ClientResponseError) {
         const data = error.data.data;

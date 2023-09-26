@@ -1,8 +1,6 @@
 export * from './posts';
+export * from './products';
 export * from './profile';
-export * from './recipe-difficulty';
-export * from './recipe-resource-metrics';
-export * from './recipe-type';
 export * from './recipes';
 export * from './user-liked-posts';
 export * from './user-liked-recipes';
@@ -19,3 +17,5 @@ export * from './previewSubscribers.schema.js';
 export * from './user.schema';
 export * from './zodImage';
 export * from './zodPassword';
+export * from './zodPublishedAt';
+export * from './zodSlug';

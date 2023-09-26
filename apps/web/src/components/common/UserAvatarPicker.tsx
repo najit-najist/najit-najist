@@ -1,5 +1,5 @@
 import { ACCEPT_FILES_IMAGE } from '@constants';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, UserIcon } from '@heroicons/react/24/outline';
 import { CameraIcon, PhotoIcon } from '@heroicons/react/24/solid';
 import {
   getFileUrl,
@@ -33,8 +33,6 @@ const AvatarSelect = () => {
     if (!file) {
       return;
     }
-
-    console.log({ file });
 
     setIsUploadingToMemory(true);
     try {
@@ -97,7 +95,7 @@ const Avatar: FC<{ userId?: string }> = ({ userId }) => {
   }, [avatar, userId]);
 
   const content = !avatar ? (
-    <PhotoIcon className="absolute top-1/2 left-1/2 text-gray-600 -translate-y-1/2 w-20 h-20 -translate-x-1/2" />
+    <UserIcon className="absolute top-1/2 left-1/2 text-gray-400 -translate-y-1/2 w-28 h-28 -translate-x-1/2" />
   ) : (
     <Image
       alt="image"

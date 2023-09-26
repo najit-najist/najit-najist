@@ -49,6 +49,8 @@ export const footerNavigationItems: NavigationItems = {
     actual: [
       { name: 'Události', href: '/udalosti' },
       { name: 'Recepty', href: '/recepty' },
+      { name: 'Články', href: '/clanky' },
+      { name: 'Produkty', href: '/produkty' },
     ],
   },
 };
@@ -90,7 +92,7 @@ export const Footer: FC<PropsWithChildren> = () => {
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-base font-medium text-deep-green-300">
+                <h3 className="text-base font-medium text-deep-green-300 font-title">
                   Užitečné
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
@@ -108,7 +110,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium text-deep-green-300">
+                <h3 className="text-base font-medium text-deep-green-300 font-title">
                   Aktuální
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">

@@ -1,4 +1,4 @@
-import { config } from '@config';
+import { config } from 'config';
 import jwt, { Algorithm } from 'jsonwebtoken';
 import jwtDecode from 'jwt-decode';
 

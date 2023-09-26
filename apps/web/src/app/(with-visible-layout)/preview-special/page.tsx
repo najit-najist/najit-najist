@@ -3,7 +3,7 @@ import {
   X_REQUEST_PATH_HEADER_NAME,
 } from '@constants';
 import { canUser, SpecialSections, User, UserActions } from '@najit-najist/api';
-import { AuthService, getLoggedInUser } from '@najit-najist/api/server';
+import { getCachedLoggedInUser } from '@server-utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
@@ -15,14 +15,13 @@ export const metadata = {
 };
 
 export default async function Page() {
-  let user: User;
+  let user: User | undefined;
 
   try {
-    await AuthService.authPocketBase();
-
-    user = await getLoggedInUser();
+    user = await getCachedLoggedInUser();
 
     if (
+      !user ||
       !canUser(user, {
         action: UserActions.VIEW,
         onModel: SpecialSections.OG_PREVIEW,
@@ -30,8 +29,6 @@ export default async function Page() {
     ) {
       throw new Error('User with this role cannot view this');
     }
-
-    AuthService.clearAuthPocketBase();
   } catch (error) {
     console.log({ error });
 
@@ -42,10 +39,10 @@ export default async function Page() {
   return (
     <>
       <div className="container text-center">
-        <h1 className="text-4xl text-deep-green-400 mt-20 font-semibold">
+        <h1 className="text-5xl text-deep-green-400 mt-20 font-semibold font-title">
           Děkujeme za Vaší přízeň!
         </h1>
-        <p className="text-lg mt-3 max-w-4xl mx-auto">
+        <p className="text-lg mt-5 max-w-4xl mx-auto">
           Připravili jsme pro Vás speciální video v podobě rozhovoru s našim
           poradcem pro oblast výživy a zdraví s paní{' '}
           <Link

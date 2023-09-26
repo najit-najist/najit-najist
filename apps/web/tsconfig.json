@@ -12,6 +12,7 @@
     "paths": {
       "@custom-types": ["./types"],
       "@utils": ["./utils"],
+      "@server-utils": ["./server-utils"],
       "@logger": ["./logger"],
       "@hooks": ["./hooks"],
       "@utils/*": ["./utils/*"],

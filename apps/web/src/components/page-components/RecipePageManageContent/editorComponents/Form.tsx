@@ -39,7 +39,7 @@ export const Form: FC<
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
       if (viewType === 'edit') {
-        await updateRecipe({
+        const result = await updateRecipe({
           id: recipe!.id,
           data: {
             title: values.title,
@@ -52,7 +52,7 @@ export const Form: FC<
           },
         });
 
-        router.refresh();
+        router.push(`/recepty/${result.slug}?editor=true`);
       } else if (viewType === 'create') {
         const data = await createRecipe({
           title: values.title,

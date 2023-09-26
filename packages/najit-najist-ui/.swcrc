@@ -5,7 +5,6 @@
   },
   "jsc": {
     "target": "esnext",
-    "baseUrl": "./src",
     "parser": {
       "syntax": "typescript",
       "tsx": true

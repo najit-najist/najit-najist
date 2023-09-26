@@ -24,7 +24,6 @@ const init = async () => {
   expand('config', GA_KEY, {
     debug_mode: process.env.NODE_ENV === 'development',
   });
-  console.log(window.dataLayer);
   console.log('[gtag] initialized');
   wasInitialized = true;
 };

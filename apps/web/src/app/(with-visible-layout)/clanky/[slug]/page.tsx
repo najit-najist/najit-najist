@@ -1,8 +1,9 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
-import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
+import { getTrpcCaller } from '@najit-najist/api/server';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import { notFound } from 'next/navigation';
 
 type PageParams = {
   params: { slug: string };
@@ -13,7 +14,7 @@ export async function generateMetadata({
   params: { slug: postSlug },
   searchParams,
 }: PageParams): Promise<Metadata> {
-  const post = await getTrpcCaller()
+  const post = await getCachedTrpcCaller()
     .posts.getOne({
       slug: postSlug,
     })
@@ -32,7 +33,7 @@ export default async function PostUnderPage({
 }: PageParams) {
   let post: Post;
   const isEditorEnabled = !!searchParams.editor;
-  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+  const loggedInUser = await getCachedLoggedInUser();
   const canEdit =
     loggedInUser &&
     canUser(loggedInUser, {
@@ -46,12 +47,8 @@ export default async function PostUnderPage({
       onModel: AvailableModels.POST,
     });
 
-  if (isEditorEnabled && !canEdit) {
-    redirect('/');
-  }
-
   try {
-    post = await getTrpcCaller().posts.getOne({
+    post = await getCachedTrpcCaller().posts.getOne({
       slug: postSlug,
     });
 

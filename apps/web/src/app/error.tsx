@@ -36,7 +36,6 @@ export default function Error({
 
         <div className="flex gap-3 items-center justify-center mt-8">
           {footerNavigationItems.social.map((item) => {
-            console.log(item);
             return (
               <Link
                 key={item.name}

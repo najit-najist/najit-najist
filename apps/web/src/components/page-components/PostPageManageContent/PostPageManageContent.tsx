@@ -31,7 +31,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           {props.viewType == 'view' ? (
             props.post.publishedAt ? (
               <time
-                dateTime={props.post.publishedAt as string}
+                dateTime={String(props.post.publishedAt)}
                 className="text-gray-500 text-xs md:text-inherit font-semibold"
               >
                 {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
@@ -76,7 +76,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
               </div>
             ) : null}
 
-            <div className="font-suez sm:text-xl leading-9 max-w-4xl w-full">
+            <div className="font-title sm:text-xl leading-9 spacing max-w-4xl tracking-wide w-full">
               {props.viewType === 'view' ? (
                 <div className="text-white">
                   {HTMLReactParser(props.post.description)}
@@ -88,7 +88,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           </div>
         </div>
 
-        <div className="container sm:text-xl pb-10">
+        <div className="container sm:text-lg pb-10">
           {props.viewType === 'view' ? (
             props.post.content ? (
               <BlockEditorRenderer data={props.post.content} />
@@ -99,7 +99,14 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
         </div>
       </div>
       {props.isEditorHeaderShown ? (
-        <EditorHeader viewType={props.viewType} />
+        <EditorHeader
+          post={
+            props.viewType === 'edit'
+              ? { id: props.post.id, slug: props.post.slug }
+              : undefined
+          }
+          viewType={props.viewType}
+        />
       ) : null}
     </>
   );

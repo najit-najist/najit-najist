@@ -3,8 +3,10 @@
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
+  CreatePostInput,
   createPostInputSchema,
   Post,
+  UpdateOnePostInput,
   updateOnePostInputSchema,
 } from '@najit-najist/api';
 import { trpc } from '@trpc';
@@ -19,14 +21,8 @@ export const Form: FC<
 > = ({ post, children, viewType }) => {
   const router = useRouter();
   const editorReferences = useEditorJSInstances();
-  const formMethods = useForm<Post>({
-    defaultValues: {
-      ...post,
-      // @ts-ignore -- TODO
-      publishedAt: post?.publishedAt
-        ? dayjs(post.publishedAt).toDate()
-        : undefined,
-    },
+  const formMethods = useForm<CreatePostInput>({
+    defaultValues: post,
     resolver: zodResolver(
       viewType === 'create' ? createPostInputSchema : updateOnePostInputSchema
     ),
@@ -41,9 +37,7 @@ export const Form: FC<
         title: values.title,
         description: values.description,
         content: await editorReferences.get('content')?.save(),
-        publishedAt: values.publishedAt
-          ? dayjs(values.publishedAt).toDate()
-          : undefined,
+        publishedAt: values.publishedAt,
         image: values.image,
       };
 
@@ -57,11 +51,7 @@ export const Form: FC<
           data: payload,
         });
 
-        if (newData.slug !== newData.slug) {
-          router.push(`/clanky/${newData.slug}?editor=true`);
-        } else {
-          router.refresh();
-        }
+        router.push(`/clanky/${newData.slug}?editor=true`);
       }
     },
     [viewType, createPost, editorReferences, post, router, updatePost]

@@ -103,7 +103,7 @@ export const ContactForm: FC = () => {
         ) : null}
         {formState.isSubmitSuccessful && (
           <div className="absolute left-0 top-0 w-full h-full flex flex-col items-center justify-center bg-white px-10">
-            <h3 className="text-center text-4xl font-semibold font-fancy leading-relaxed">
+            <h3 className="text-center text-4xl font-semibold leading-relaxed">
               Děkujeme za Váš zájem. <br /> Zanedlouho Vás budeme kontaktovat.
             </h3>
           </div>

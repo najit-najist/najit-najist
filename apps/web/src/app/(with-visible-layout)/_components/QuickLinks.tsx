@@ -29,7 +29,7 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
       />
       <div className="absolute inset-0 from-transparent to-black bg-gradient-to-b opacity-70" />
       <div className="absolute inset-0 bg-[#ffcccc] opacity-20" />
-      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-12 xl:mb-12 text-4xl text-white font-suez">
+      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-12 xl:mb-12 text-4xl text-white font-title">
         {title}
       </p>
     </div>

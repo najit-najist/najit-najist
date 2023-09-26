@@ -1,11 +1,19 @@
-import {
-  RecipesService,
-  RecipeDifficultyService,
-  RecipeTypeService,
-} from '@najit-najist/api/server';
+import { AuthService } from '@najit-najist/api/server';
 import { SearchForm } from './_components/SearchForm';
 import { Item } from './_components/Item';
-import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
+import {
+  AvailableModels,
+  RecipeDifficulty,
+  RecipeType,
+  UserActions,
+  canUser,
+} from '@najit-najist/api';
+import { PageTitle } from '@components/common/PageTitle';
+import Link from 'next/link';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import { PageHeader } from '@components/common/PageHeader';
+import { PageDescription } from '@components/common/PageDescription';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -13,9 +21,11 @@ type Params = {
 
 export const metadata = {
   title: 'Recepty',
+  description:
+    'Vyberte si z naší kolekce receptů zaměřenou pro lidi s intolerancí',
 };
 
-export const revalidate = 30;
+export const revalidate = 0;
 
 const fallbackDifficulty: RecipeDifficulty = {
   id: 'default',
@@ -40,26 +50,52 @@ export default async function RecipesPage({ searchParams }: Params) {
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
   } = searchParams;
-  const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
-  const { items: recipeDifficulties } = await RecipeDifficultyService.getMany({
-    perPage: 999,
-  });
-  const { items: recipeTypes } = await RecipesService.types.getMany({
-    perPage: 999,
-  });
+  await AuthService.authPocketBase();
+  const currentUser = await getCachedLoggedInUser();
 
-  const { items: recipes } = await RecipesService.getMany({
-    difficultySlug: difficultySlugFromUrl,
-    typeSlug: typeSlugFromUrl,
-    search: query,
-  });
+  const trpc = getCachedTrpcCaller();
+
+  const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
+  const [
+    { items: recipeDifficulties },
+    { items: recipeTypes },
+    { items: recipes },
+  ] = await Promise.all([
+    trpc.recipes.difficulties.getMany({ perPage: 999 }),
+    trpc.recipes.types.getMany({ perPage: 999 }),
+    trpc.recipes.getMany({
+      difficultySlug: difficultySlugFromUrl,
+      typeSlug: typeSlugFromUrl,
+      search: query,
+      perPage: 999,
+    }),
+  ]);
 
   return (
     <>
+      <PageHeader className="container">
+        <div className="flex justify-between items-center">
+          <PageTitle>{metadata.title}</PageTitle>
+          {currentUser &&
+          canUser(currentUser, {
+            action: UserActions.CREATE,
+            onModel: AvailableModels.RECIPES,
+          }) ? (
+            <Link href="/recepty/novy" className="">
+              <PlusIcon className="inline w-12" />
+            </Link>
+          ) : null}
+        </div>
+        <PageDescription>{metadata.description}</PageDescription>
+      </PageHeader>
       <SearchForm
         types={[fallbackType, ...recipeTypes]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
-        initialValues={{ query, difficultySlug: difficultySlugFromUrl ?? '' }}
+        initialValues={{
+          query,
+          difficultySlug: difficultySlugFromUrl ?? '',
+          typeSlug: typeSlugFromUrl ?? '',
+        }}
       />
       <div className="container grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
         {recipes.length ? (

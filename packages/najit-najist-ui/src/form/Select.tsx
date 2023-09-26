@@ -1,4 +1,4 @@
-import { Fragment, ReactElement } from 'react';
+import { Fragment, ReactElement, ReactNode } from 'react';
 import { Listbox, Transition } from '@headlessui/react';
 import {
   CheckIcon,
@@ -34,7 +34,7 @@ export type SelectProps<T extends ItemBase> = {
   label?: string;
   selected?: T;
   items: T[];
-  onChange?: (nextValue: T) => void;
+  onChange?: (nextValue: T | null) => void;
   formatter: (item: T) => string;
   name?: string;
   disabled?: boolean;
@@ -43,6 +43,7 @@ export type SelectProps<T extends ItemBase> = {
   className?: string;
   onAddNewItem?: () => void;
   addNewItemLabel?: string;
+  fallbackButtonContents?: ReactNode;
 };
 
 export function Select<T extends ItemBase>({
@@ -58,6 +59,7 @@ export function Select<T extends ItemBase>({
   className,
   onAddNewItem,
   addNewItemLabel = 'Přidat nový',
+  fallbackButtonContents = 'Vyberte',
 }: SelectProps<T>): ReactElement {
   return (
     <Listbox
@@ -77,7 +79,7 @@ export function Select<T extends ItemBase>({
           <div className="relative mt-1">
             <Listbox.Button className={selectButtonStyles()}>
               <span className="block truncate">
-                {selected ? formatter(selected) ?? '' : 'Vyberte'}
+                {selected ? formatter(selected) ?? '' : fallbackButtonContents}
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon

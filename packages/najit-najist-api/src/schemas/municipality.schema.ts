@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { baseCollectionSchema } from './base.collection.schema';
+import { zodSlug } from './zodSlug';
 
 export const municipalitySchema = baseCollectionSchema.extend({
   name: z.string().min(1),
-  slug: z.string().min(1),
+  slug: zodSlug,
 });
 
 export const getManyMunicipalitySchema = z.object({

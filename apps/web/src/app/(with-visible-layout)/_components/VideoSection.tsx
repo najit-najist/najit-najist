@@ -6,7 +6,7 @@ export const VideoSection: FC = () => {
   return (
     <div className="container px-4 mx-auto mt-20" id="o-nas">
       <div className="mx-auto text-center">
-        <h2 className="text-3xl sm:text-5xl font-bold mt-10 mb-7">
+        <h2 className="text-3xl sm:text-5xl font-bold mt-10 mb-7 font-title">
           Náš příběh
         </h2>
       </div>

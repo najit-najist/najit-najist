@@ -5,13 +5,16 @@ import { AvailableModels } from '../canUser';
 import { deserializePocketToken } from '../deserializePocketToken';
 import { getSessionFromCookies } from '../getSessionFromCookies';
 import { isUserLoggedIn } from '../isUserLoggedIn';
+import { AuthService } from '../../services/Auth.service.js';
 
 export type GetLoggedInUserOptions = {
   cookies?: RequestCookies;
+  authenticateApi?: boolean;
 };
 
 export const getLoggedInUser = async ({
   cookies,
+  authenticateApi = true,
 }: GetLoggedInUserOptions = {}): Promise<User> => {
   if (!(await isUserLoggedIn({ cookies }))) {
     throw new Error('User needs to be logged in first');
@@ -20,9 +23,18 @@ export const getLoggedInUser = async ({
   const { authContent } = await getSessionFromCookies({ cookies });
   const sessionData = deserializePocketToken(authContent!.token);
 
+  if (authenticateApi) {
+    await AuthService.authPocketBase({ authContent });
+  }
+
   const result = await pocketbase
     .collection(AvailableModels.USER)
     .getOne<User>(sessionData.id, {});
+
+  // TODO: refactor so this utility does not auth the pocketbase
+  // if (authenticateApi) {
+  //   AuthService.clearAuthPocketBase();
+  // }
 
   return result;
 };

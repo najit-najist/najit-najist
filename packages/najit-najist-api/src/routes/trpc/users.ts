@@ -5,7 +5,7 @@ import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
 
 export const usersRoute = t.router({
   getMany: onlyAdminProcedure
-    .input(getManyInputSchema)
+    .input(getManyInputSchema.optional())
     .query(async ({ ctx, input }) => UserService.getMany(input)),
 
   getOne: onlyAdminProcedure

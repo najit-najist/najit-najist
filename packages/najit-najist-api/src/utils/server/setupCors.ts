@@ -1,4 +1,4 @@
-import { config } from '@config';
+import { config } from 'config';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import NextCors from 'nextjs-cors';
 

@@ -1,8 +1,12 @@
-import { UserService } from '@najit-najist/api/server';
+import { UserIcon } from '@heroicons/react/24/outline';
+import { AvailableModels, User, getFileUrl } from '@najit-najist/api';
+import { getCachedLoggedInUser } from '@server-utils';
+import Image from 'next/image';
 import Link from 'next/link';
+import { FC } from 'react';
 
-export const Users: () => Promise<JSX.Element> = async () => {
-  const { items: users } = await UserService.getMany();
+export const Users: FC<{ users: User[] }> = async ({ users }) => {
+  const { id, avatar } = (await getCachedLoggedInUser()) ?? {};
 
   return (
     <>
@@ -12,15 +16,33 @@ export const Users: () => Promise<JSX.Element> = async () => {
             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
               <div className="flex items-center">
                 <div className="h-10 w-10 flex-shrink-0">
-                  {/* <img
-                  className="h-10 w-10 rounded-full"
-                  src={person.}
-                  alt=""
-                /> */}
+                  {person.avatar ? (
+                    <Image
+                      className="h-10 w-10 rounded-full bg-gray-100"
+                      width={40}
+                      height={40}
+                      src={getFileUrl(
+                        AvailableModels.USER,
+                        person.id,
+                        person.avatar
+                      )}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-200 flex rounded-full">
+                      <UserIcon className="w-5 text-gray-400 m-auto" />
+                    </div>
+                  )}
                 </div>
                 <div className="ml-4">
                   <div className="font-medium text-gray-900">
-                    {person.firstName} {person.lastName}
+                    {id === person.id ? (
+                      'Já'
+                    ) : (
+                      <>
+                        {person.firstName} {person.lastName}
+                      </>
+                    )}
                   </div>
                   <div className="text-gray-500">{person.email}</div>
                 </div>
@@ -39,7 +61,11 @@ export const Users: () => Promise<JSX.Element> = async () => {
             </td>
             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
-                href={`/administrace/uzivatele/${person.id}`}
+                href={
+                  id === person.id
+                    ? `/muj-ucet/profil`
+                    : `/administrace/uzivatele/${person.id}`
+                }
                 className="text-indigo-600 hover:text-indigo-900"
               >
                 Upravit

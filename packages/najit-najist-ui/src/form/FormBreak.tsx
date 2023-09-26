@@ -12,7 +12,9 @@ export const FormBreak: FC<FormBreakProps> = ({
   ...rest
 }) => (
   <div>
-    {label ? <p className="text-sm text-deep-green-300">{label}</p> : null}
+    {label ? (
+      <p className="text-md text-deep-green-300 font-title">{label}</p>
+    ) : null}
     <hr className={clsx('h-0.5 bg-gray-100 w-full', className)} {...rest} />
   </div>
 );

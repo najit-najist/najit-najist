@@ -6,8 +6,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 import { ViewType } from './_types';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { trpc } from '@trpc';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { Recipe } from '@najit-najist/api';
 
-const EditorContent: FC = () => {
+const SubmitButton: FC = () => {
   const { formState } = useFormContext();
 
   return (
@@ -23,14 +27,35 @@ const EditorContent: FC = () => {
   );
 };
 
-export const EditorHeader: FC<{ viewType: ViewType }> = ({ viewType }) => {
+export const EditorHeader: FC<{
+  viewType: ViewType;
+  recipe?: Pick<Recipe, 'id' | 'slug'>;
+}> = ({ viewType, recipe }) => {
   const pathname = usePathname();
   const router = useRouter();
   const isEditorEnabled = viewType === 'edit';
   const href = `${pathname}${isEditorEnabled ? '' : '?editor=true'}`;
 
+  const {
+    mutateAsync: deleteItem,
+    isLoading: isRemoving,
+    isSuccess: isRemoved,
+  } = trpc.recipes.delete.useMutation();
+
   const onLinkClick = () => {
     router.refresh();
+  };
+
+  const onDeleteClick = async () => {
+    if (!recipe) {
+      throw new Error('No recipe provided');
+    }
+
+    if (confirm('Opravdu smazat recept?')) {
+      await deleteItem(recipe);
+
+      router.push('/recepty');
+    }
   };
 
   return (
@@ -41,13 +66,33 @@ export const EditorHeader: FC<{ viewType: ViewType }> = ({ viewType }) => {
             href={href as any}
             onClick={onLinkClick}
             className={buttonStyles({
-              color: isEditorEnabled ? 'red' : 'normal',
+              color: isEditorEnabled ? 'subtleRed' : 'normal',
+              asLink: true,
+              appearance: 'small',
             })}
           >
+            {isEditorEnabled ? (
+              <ArrowLeftIcon className="inline w-5 -mt-1 mr-2" />
+            ) : null}
             {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}
           </Link>
         ) : null}
-        {isEditorEnabled || viewType === 'create' ? <EditorContent /> : null}
+        <div className="ml-auto flex gap-4">
+          {isEditorEnabled || viewType === 'create' ? <SubmitButton /> : null}
+          {viewType === 'edit' ? (
+            <Button
+              appearance="spaceless"
+              color="red"
+              className="ml-3 text-white h-full aspect-square"
+              isLoading={isRemoving || isRemoved}
+              onClick={onDeleteClick}
+            >
+              {!(isRemoving || isRemoved) ? (
+                <TrashIcon className="w-5" />
+              ) : null}
+            </Button>
+          ) : null}
+        </div>
       </div>
     </div>
   );
