@@ -5,22 +5,34 @@ import bakeryImage from '/public/images/pages/main-page/bakery.jpg';
 import eventsImage from '/public/images/pages/main-page/events.jpg';
 import shoppingImage from '/public/images/pages/main-page/shopping.jpg';
 import waitressImage from '/public/images/pages/main-page/waitress.jpg';
+import { Badge } from '@najit-najist/ui';
 
 type Item = {
   title: string;
   href: string;
   imageSrc: StaticImageData;
+  enabled?: boolean;
+  isNew?: boolean;
 };
 
 const items: Item[] = [
   { title: 'Obchody', href: '/', imageSrc: shoppingImage },
   { title: 'Restaurace', href: '/', imageSrc: waitressImage },
   { title: 'Akce', href: '/', imageSrc: eventsImage },
-  { title: 'Naše pekárny', href: '/', imageSrc: bakeryImage },
+  {
+    title: 'Naše prodejny',
+    href: '/kontakt#prodejny',
+    imageSrc: bakeryImage,
+    enabled: true,
+    isNew: true,
+  },
 ];
 
-const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
-  <a className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] --hover:scale-[1.02] duration-100 --hover:shadow-2xl lg:w-full">
+const LinkItem: FC<Item> = ({ href, imageSrc, title, enabled, isNew }) => (
+  <a
+    href={href}
+    className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] --hover:scale-[1.02] duration-100 --hover:shadow-2xl lg:w-full relative"
+  >
     <div className="rounded-xl overflow-hidden relative w-full h-full --hover:ring-2 ring-deep-green-300">
       <Image
         className="absolute top-0 left-0 w-full h-full object-cover content-center"
@@ -29,10 +41,20 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title }) => (
       />
       <div className="absolute inset-0 from-transparent to-black bg-gradient-to-b opacity-70" />
       <div className="absolute inset-0 bg-[#ffcccc] opacity-20" />
-      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-12 xl:mb-12 text-4xl text-white font-title">
+      <p className="absolute left-0 bottom-0 ml-5 mb-5 xl:ml-8 xl:mb-10 text-4xl text-white font-title">
         {title}
       </p>
     </div>
+    {isNew ? (
+      <Badge className="m-3 absolute top-0 right-0" size="lg" color="green">
+        Nový
+      </Badge>
+    ) : null}
+    {!enabled ? (
+      <div className="absolute top-0 inset-0 backdrop-blur-sm flex items-center justify-center font-bold text-4xl uppercase text-red-500 rounded-xl overflow-hidden">
+        Brzy
+      </div>
+    ) : null}
   </a>
 );
 
@@ -43,9 +65,6 @@ export const QuickLinks: FC = () => {
         {items.map((data) => (
           <LinkItem key={data.title} {...data} />
         ))}
-        <div className="absolute top-0 inset-0 backdrop-blur-sm flex items-center justify-center font-bold text-4xl uppercase text-red-500 rounded-xl overflow-hidden">
-          Připravujeme
-        </div>
       </div>
     </section>
   );
