@@ -9,7 +9,7 @@ import {
 import { UserRoles } from '@najit-najist/api/dist/schemas/user.schema';
 
 const loggedInPathsRegex = new RegExp(
-  `\/(produkty\/[^\n]+|(administrace|muj-ucet|recepty|preview-special)[^\n]*|clanky\/novy)$`,
+  `\/((administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*|clanky\/novy)$`,
   'g'
 );
 
