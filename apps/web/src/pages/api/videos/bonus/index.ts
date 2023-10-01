@@ -1,6 +1,6 @@
 import { UserRoles } from '@najit-najist/api';
 import { createVideoRequestHandler } from '@najit-najist/api/dist/utils/server/createVideoRequestHandler';
-import { AuthService, getLoggedInUser } from '@najit-najist/api/server';
+import { getLoggedInUser } from '@najit-najist/api/server';
 import { NextApiHandler } from 'next';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import path from 'path';
