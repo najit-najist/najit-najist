@@ -67,6 +67,23 @@ export class UserService {
         faker.internet.userName(params.firstName, params.lastName).toLowerCase()
       );
 
+      logger.info(
+        {
+          username,
+          lastLoggedIn: null,
+          notes: null,
+          emailVisibility: true,
+          role: UserRoles.BASIC,
+          // User first have to finish registration
+          status: UserStates.ACTIVE,
+          ...params,
+          // Override some stuff
+          password: undefined,
+          passwordConfirm: undefined,
+        },
+        'Registering user - before register'
+      );
+
       const user = await pocketbase
         .collection(PocketbaseCollections.USERS)
         .create<User>({

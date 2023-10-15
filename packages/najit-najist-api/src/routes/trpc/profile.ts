@@ -185,7 +185,7 @@ export const profileRouter = t.router({
 
         if (error instanceof ClientResponseError) {
           logger.error(
-            { error, email: input.email },
+            { error, email: { ...input, password: undefined } },
             'Registering user - bad request from pocketbase'
           );
 
