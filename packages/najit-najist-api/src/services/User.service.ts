@@ -6,11 +6,7 @@ import {
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { faker } from '@faker-js/faker';
-import {
-  expandPocketFields,
-  formatErrorMessage,
-  removeDiacritics,
-} from '@utils';
+import { expandPocketFields, formatErrorMessage } from '@utils';
 import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
 import { randomUUID } from 'crypto';
 import {
@@ -63,9 +59,11 @@ export class UserService {
   ): Promise<User> {
     try {
       const password = params.password || faker.internet.password(15);
-      let username = removeDiacritics(
-        faker.internet.userName(params.firstName, params.lastName).toLowerCase()
-      );
+      const { totalItems: usersCount } = await pocketbase
+        .collection(PocketbaseCollections.USERS)
+        .getList(1, 1);
+
+      const username = `uzivatel_${usersCount + 1}`;
 
       logger.info(
         {
