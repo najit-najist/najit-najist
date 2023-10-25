@@ -88,7 +88,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           </div>
         </div>
 
-        <div className="container sm:text-lg pb-10">
+        <div className="container sm:text-lg pb-10 post-page-content">
           {props.viewType === 'view' ? (
             props.post.content ? (
               <BlockEditorRenderer data={props.post.content} />
