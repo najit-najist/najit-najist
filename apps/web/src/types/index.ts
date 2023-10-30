@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 
-export type GA_EVENTS =
-  | 'page_view'
+export type PLAUSIBLE_EVENTS =
   | 'user_registration'
   | 'contact_send'
   | 'footer_newsletter_subscribe'

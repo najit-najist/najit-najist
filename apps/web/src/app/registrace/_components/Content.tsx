@@ -17,7 +17,7 @@ import { PasswordInputs } from './PasswordInputs';
 import { FormValues } from '../_types/FormValues';
 import { registerUserSchema } from '@najit-najist/api';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
-import { useGtag } from '@hooks';
+import { usePlausible } from '@hooks';
 
 const schema = registerUserSchema
   .extend({
@@ -44,7 +44,7 @@ const schema = registerUserSchema
   });
 
 export const Content: FC = () => {
-  const { trackEvent } = useGtag();
+  const { trackEvent } = usePlausible();
   const { mutateAsync: doRegister } = trpc.profile.register.useMutation();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(schema),
