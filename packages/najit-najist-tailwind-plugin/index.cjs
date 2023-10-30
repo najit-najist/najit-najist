@@ -43,6 +43,15 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
     'h4.ce-header': {
       fontSize: theme('fontSize.xl'),
     },
+    '.post-page-content': {
+      a: {
+        color: '#119447',
+        fontWeight: 'bold',
+        '&:hover': {
+          textDecoration: 'underline',
+        },
+      },
+    },
     '.quill': {
       borderRadius: theme('borderRadius.md'),
       background: theme('colors.white'),
@@ -115,6 +124,7 @@ const getTheme = () => ({
     'ql-toolbar',
     'ce-block__content',
     'ce-toolbar__content',
+    'post-page-content',
   ],
   theme: {
     extend: {

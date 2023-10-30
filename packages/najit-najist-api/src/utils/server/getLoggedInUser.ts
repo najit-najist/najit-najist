@@ -1,5 +1,5 @@
 import { pocketbase } from '@najit-najist/pb';
-import { User } from '@schemas';
+import { User } from '../../schemas/user.schema.js';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels } from '../canUser';
 import { deserializePocketToken } from '../deserializePocketToken';

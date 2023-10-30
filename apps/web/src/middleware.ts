@@ -9,7 +9,7 @@ import {
 import { UserRoles } from '@najit-najist/api/dist/schemas/user.schema';
 
 const loggedInPathsRegex = new RegExp(
-  `\/(produkty\/[^\n]+|(administrace|muj-ucet|recepty|preview-special)[^\n]*|clanky\/novy)$`,
+  `^\/((administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*|clanky\/novy)$`,
   'g'
 );
 
@@ -112,7 +112,9 @@ export async function middleware(request: NextRequest) {
       // Lock create new
       if (requestPathname.includes(createNewPathnameChunk)) {
         if (!currentModel) {
-          throw new Error('Not implemented model rule for create new item');
+          throw new Error(
+            `Not implemented model rule for create new item ${createNewPathnameChunk} ${requestPathname}`
+          );
         }
 
         if (
@@ -128,6 +130,7 @@ export async function middleware(request: NextRequest) {
         }
       }
 
+      // log editor
       if (requestSearchParams.has(editorParamName)) {
         if (!currentModel) {
           throw new Error('Not implemented model rule for update new item');

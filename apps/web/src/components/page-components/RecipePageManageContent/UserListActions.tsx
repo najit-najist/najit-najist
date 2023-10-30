@@ -7,7 +7,7 @@ import { FC } from 'react';
 import clsx from 'clsx';
 import { trpc } from '@trpc';
 import { Recipe } from '@najit-najist/api';
-import { useGtag } from '@hooks';
+import { usePlausible } from '@hooks';
 
 const CustomButton: FC<
   Omit<ButtonProps, 'color' | 'appearance' | 'ref'> & {
@@ -64,7 +64,7 @@ const CustomButton: FC<
 export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
   recipeId,
 }) => {
-  const { trackEvent } = useGtag();
+  const { trackEvent } = usePlausible();
   const {
     data: likedRecipeInfo,
     refetch,
@@ -79,14 +79,18 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
     trpc.profile.liked.recipes.add.useMutation({
       async onSuccess() {
         await refetch();
-        trackEvent('interact_recipe', { value: 'liked', id: recipeId });
+        trackEvent('Like recipe', {
+          props: { entityId: recipeId },
+        });
       },
     });
   const { mutateAsync: dislikeRecipe } =
     trpc.profile.liked.recipes.remove.useMutation({
       async onSuccess() {
         await refetch();
-        trackEvent('interact_recipe', { value: 'disliked', id: recipeId });
+        trackEvent('Dislike recipe', {
+          props: { entityId: recipeId },
+        });
       },
     });
 

@@ -108,7 +108,7 @@ const ContactPage: FC = () => {
         </div>
       </div>
 
-      <div className="container">
+      <div className="container" id="prodejny">
         <div className="mx-auto">
           <h2 className="text-5xl font-bold mt-10 mb-7 font-title tracking-wide">
             Prodejny

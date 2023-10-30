@@ -55,8 +55,10 @@ const RootLayout: LayoutComponent = ({ children }) => {
     <html lang="cs">
       <head>
         <Script
-          key="googletagmanager"
-          src={`https://www.googletagmanager.com/gtag/js?id=${GA_KEY}`}
+          defer
+          key="plausible"
+          data-domain="najitnajist.cz"
+          src="https://plausible.io/js/script.js"
         />
       </head>
       <body

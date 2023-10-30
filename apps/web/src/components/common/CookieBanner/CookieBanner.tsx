@@ -5,14 +5,12 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { ConsentForm, ConsentFormProps } from './ConsentForm';
 import { ShieldCheckIcon } from '@heroicons/react/24/outline/index.js';
-import { useGtag } from '@hooks';
 
 const ANALYTICS_CONSENT_COOKIE_NAME = 'enable-najit-najist-analytics';
 const MARKETING_CONSENT_COOKIE_NAME = 'enable-najit-najist-marketing';
 const COOKIE_CONSENT_SHOWN = 'najit-najist-cookie-consent-shown';
 
 export const CookieBanner: FC = () => {
-  const { init: initGA } = useGtag();
   const [
     {
       'enable-najit-najist-analytics': analyticsCookie,
@@ -38,11 +36,11 @@ export const CookieBanner: FC = () => {
     setIsOpen(false);
   }, [consentShown]);
 
-  useEffect(() => {
-    if (analyticsCookie === 'true') {
-      initGA();
-    }
-  }, [analyticsCookie, initGA]);
+  // useEffect(() => {
+  //   if (analyticsCookie === 'true') {
+  //     initGA();
+  //   }
+  // }, [analyticsCookie, initGA]);
 
   const onFormSubmit = useCallback<ConsentFormProps['onSubmit']>(
     ({ analytics, marketing }) => {
