@@ -79,8 +79,8 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
     trpc.profile.liked.recipes.add.useMutation({
       async onSuccess() {
         await refetch();
-        trackEvent('interact_recipe', {
-          props: { value: 'liked', id: recipeId },
+        trackEvent('Like recipe', {
+          props: { entityId: recipeId },
         });
       },
     });
@@ -88,8 +88,8 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
     trpc.profile.liked.recipes.remove.useMutation({
       async onSuccess() {
         await refetch();
-        trackEvent('interact_recipe', {
-          props: { value: 'disliked', id: recipeId },
+        trackEvent('Dislike recipe', {
+          props: { entityId: recipeId },
         });
       },
     });

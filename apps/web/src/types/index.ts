@@ -1,10 +1,11 @@
 import { ReactNode } from 'react';
 
 export type PLAUSIBLE_EVENTS =
-  | 'user_registration'
-  | 'contact_send'
-  | 'footer_newsletter_subscribe'
-  | 'interact_recipe';
+  | 'New user registration'
+  | 'Contact form send'
+  | 'Newsletter subscription from footer'
+  | 'Like recipe'
+  | 'Dislike recipe';
 
 export interface LayoutProps {
   children: ReactNode;

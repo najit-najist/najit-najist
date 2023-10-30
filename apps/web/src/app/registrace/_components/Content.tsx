@@ -55,7 +55,7 @@ export const Content: FC = () => {
   const onSubmit = handleSubmit(async (values) => {
     try {
       await doRegister(values);
-      trackEvent('user_registration');
+      trackEvent('New user registration');
     } catch (error) {
       if (error instanceof TRPCClientError && error.data.code === 'CONFLICT') {
         setError('email', {

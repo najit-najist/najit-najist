@@ -25,7 +25,7 @@ export const ContactForm: FC = () => {
 
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async (values) => {
     await sendContents(values);
-    trackEvent('contact_send');
+    trackEvent('Contact form send');
   };
 
   return (

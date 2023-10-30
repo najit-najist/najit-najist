@@ -31,7 +31,7 @@ export const NewsletterSubscribe: FC = () => {
   const { mutateAsync: subscribe } = trpc.newsletter.subscribe.useMutation();
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async ({ email }) => {
     await subscribe({ email });
-    trackEvent('footer_newsletter_subscribe');
+    trackEvent('Newsletter subscription from footer');
   };
 
   return (
