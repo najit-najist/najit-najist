@@ -7,6 +7,7 @@ import { UserRoles } from '@najit-najist/api';
 export async function POST(request: NextRequest) {
   const data = await request.formData();
   const file: File | null = data.get('contents') as unknown as File;
+  const root = data.get('root')?.toString() || '/';
 
   if (!file) {
     return NextResponse.json({ success: false });
@@ -22,7 +23,13 @@ export async function POST(request: NextRequest) {
   const buffer = Buffer.from(bytes);
 
   await fs.outputFile(
-    path.join(process.cwd(), 'shared-static-assets', 'videos', file.name),
+    path.join(
+      process.cwd(),
+      'shared-static-assets',
+      'videos',
+      ...root.split('/').filter(Boolean),
+      file.name
+    ),
     buffer
   );
 

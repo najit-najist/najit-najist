@@ -28,8 +28,10 @@ export const Form: FC = () => {
       }
     },
   });
-  const formMethods = useForm<{ contents: File }>();
-  const { handleSubmit, formState, setError } = formMethods;
+  const formMethods = useForm<{ contents: File; root: string }>({
+    defaultValues: { root: '/' },
+  });
+  const { handleSubmit, formState, setError, register, reset } = formMethods;
   const { field: contentsField, fieldState: contentsFieldState } =
     useController({
       name: 'contents',
@@ -39,16 +41,21 @@ export const Form: FC = () => {
 
   const handleOnSubmit: Parameters<typeof handleSubmit>[0] = async ({
     contents,
+    root,
   }) => {
     try {
       const formData = new FormData();
 
       formData.append('contents', contents);
+      formData.append('root', root);
 
       await mutateAsync(formData);
+      reset({ root: '/' });
     } catch (error) {
       if (error instanceof Error) {
         setError('contents', { message: error.message });
+
+        return;
       }
 
       throw error;
@@ -71,6 +78,7 @@ export const Form: FC = () => {
             contentsField.onChange(event.target.files?.[0]);
           }}
         />
+        <Input {...register('root')} />
 
         <Button type="submit" isLoading={formState.isSubmitting}>
           Odeslat
