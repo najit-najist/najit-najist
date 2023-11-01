@@ -15,7 +15,7 @@ export const VideoSection: FC = () => {
         <video
           poster="/images/video-thumbnail.jpg"
           width="100%"
-          className="sm:aspect-video bg-black relative shadow-lg shadow-deep-green-300"
+          className="sm:aspect-video bg-black relative shadow-lg shadow-project-accent"
           controls
         >
           <source src="/api/videos/intro" type="video/webm" />

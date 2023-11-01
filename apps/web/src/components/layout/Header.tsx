@@ -1,9 +1,7 @@
 import { FC } from 'react';
 import { Logo } from '@components/common/Logo';
-import { X_REQUEST_PATH_HEADER_NAME } from '@constants';
 import Link from 'next/link';
 import { TopHeader } from './TopHeader';
-import { headers } from 'next/headers';
 import { getCachedLoggedInUser } from '@server-utils';
 import { DesktopMenuItem } from './DesktopMenuItem';
 
@@ -17,8 +15,6 @@ const navLinks = [
 ];
 
 export const Header: FC = async () => {
-  const headersList = headers();
-  const currentPathname = headersList.get(X_REQUEST_PATH_HEADER_NAME);
   const loggedUser = await getCachedLoggedInUser();
 
   return (

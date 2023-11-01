@@ -10,8 +10,12 @@ import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';
 
-export const SearchForm: FC = () => {
-  const { register, formState, handleSubmit, watch } = useForm();
+export const SearchForm: FC<{ initialData?: { query?: string } }> = ({
+  initialData,
+}) => {
+  const { register, formState, handleSubmit, watch } = useForm({
+    defaultValues: initialData,
+  });
   const [isLoading, activateIsLoading] = useTransition();
   const pathName = usePathname();
   const router = useRouter();
@@ -44,7 +48,7 @@ export const SearchForm: FC = () => {
   }, [handleSubmit, onSubmit, watch]);
 
   return (
-    <form className="mb-10" onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <Input
         placeholder="Vyhledávání..."
         rootClassName="w-full"

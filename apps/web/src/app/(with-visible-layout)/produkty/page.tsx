@@ -14,6 +14,9 @@ import Link from 'next/link';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageDescription } from '@components/common/PageDescription';
+import { Notice } from './_components/Notice';
+import { cookies } from 'next/headers';
+import { PRODUCTS_NOTICE_STATE_COOKIE_NAME } from './_components/_constants';
 
 type Params = {
   searchParams: { query?: string; 'category-slug'?: string };
@@ -40,6 +43,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   const userDidSearch = !!query || !!categorySlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
   const trpc = getCachedTrpcCaller();
+  const cookiesList = cookies();
 
   const [{ items: products }, { items: categories }] = await Promise.all([
     ProductService.getMany({
@@ -73,6 +77,10 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
+      {cookiesList?.get(PRODUCTS_NOTICE_STATE_COOKIE_NAME)?.value ===
+      'true' ? null : (
+        <Notice />
+      )}
       <PageHeader className="container">
         <div className="flex justify-between items-center">
           <PageTitle>{metadata.title}</PageTitle>
@@ -86,37 +94,6 @@ export default async function RecipesPage({ searchParams }: Params) {
             </Link>
           ) : null}
         </div>
-        <PageDescription>
-          <p>
-            Vytvořili jsme pro Vás jednoduchý seznam produktů, které si můžete
-            objednat a nechat připravit na prodejně. Jednoduše si vyberte ze
-            seznamu, objednávku odešlete mailem z Vašeho registrovaného e-mailu
-            na adresu{' '}
-            <Link
-              href="maito:prodejnahk@najitnajist.cz"
-              className="text-blue-500 hover:underline"
-            >
-              prodejnahk@najitnajist.cz
-            </Link>{' '}
-            nebo si vše objednejte a zaplaťte přímo v prodejně na ulici Tomkova
-            1230/4a v Hradci Králové. <br /> Do mailu zapište kód produktu,
-            počet kusů a datum a přibližný čas vyzvednutí objednávky - např. B1,
-            2 ks, 26.9.2023 14:00 <br /> Seznam Produktů je zatím dostupný pouze
-            pro registrované a tedy přihlášené uživatele, chceme vědět, komu
-            budeme jídlo připravovat a v případě lehkého opomenutí koho
-            kontaktovat. Objednávku do 200,- Kč můžete zaplatit v prodejně při
-            vyzvednutí, objednávku nad 200,- Kč (např. na celý týden dopředu)
-            uhraďte předem celkovou částku jedním převodním příkazem na účet
-            131-823110227 / 0100 a do zprávy pro příjemce uveďte registrovaný
-            email.
-          </p>
-          <p>
-            Pracujeme na kompletním objednávkovém systému, kde si podobně
-            vyberete z aktuálně dostupných produktů, zaškrtnete si vyhovující
-            kombinaci, den a přibližný čas vyzvednutí objednávky a vše zaplatíte
-            přes platební bránu.
-          </p>
-        </PageDescription>
       </PageHeader>
       <SearchForm
         categories={[fallbackCategories, ...categories]}
@@ -129,7 +106,7 @@ export default async function RecipesPage({ searchParams }: Params) {
               <section key={name}>
                 {categoriesWithProductsAsArray.length !== 1 ? (
                   <>
-                    <h1 className="font-title mb-2 text-3xl text-deep-green-400">
+                    <h1 className="font-title mb-2 text-3xl text-project-primary">
                       {name}
                     </h1>
                     <hr className="w-full border-0 bg-gray-200 h-0.5 mb-5" />
@@ -146,7 +123,7 @@ export default async function RecipesPage({ searchParams }: Params) {
         ) : (
           <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">
             {userDidSearch ? (
-              <>Pro vaše vyhledávání nemáme žádné produkty ☹️</>
+              <>Pro Vaše vyhledávání nemáme žádné produkty ☹️</>
             ) : (
               <>Zatím pro Vás nemáme žádné produkty...</>
             )}

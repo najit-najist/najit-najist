@@ -1,7 +1,7 @@
 {
   "extends": "@najit-najist/tsconfig/react-library.json",
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"],
+  "exclude": ["dist", "build", "node_modules", "pb_data"],
   "compilerOptions": {
     "outDir": "dist",
     "rootDir": "src"

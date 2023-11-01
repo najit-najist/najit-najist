@@ -125,7 +125,7 @@ const ContactPage: FC = () => {
               ></iframe>
 
               <div className="p-2">
-                <p className="text-deep-green-300 text-2xl font-semibold mt-4 font-title">
+                <p className="text-project-primary text-2xl font-semibold mt-4 font-title">
                   {item.name}
                 </p>
 

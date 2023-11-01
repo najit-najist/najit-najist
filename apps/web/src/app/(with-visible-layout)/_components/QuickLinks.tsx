@@ -33,7 +33,7 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title, enabled, isNew }) => (
     href={href}
     className="w-full aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] --hover:scale-[1.02] duration-100 --hover:shadow-2xl lg:w-full relative"
   >
-    <div className="rounded-xl overflow-hidden relative w-full h-full --hover:ring-2 ring-deep-green-300">
+    <div className="rounded-xl overflow-hidden relative w-full h-full --hover:ring-2 ring-project-primary">
       <Image
         className="absolute top-0 left-0 w-full h-full object-cover content-center"
         src={imageSrc}

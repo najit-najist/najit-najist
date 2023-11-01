@@ -57,7 +57,7 @@ export default async function Page({ searchParams }: Params) {
               {query ? (
                 <>
                   Pro vaše vyhledávání{' '}
-                  <span className="font-bold text-deep-green-300">
+                  <span className="font-bold text-project-accent">
                     &apos;{query}&apos;
                   </span>{' '}
                   nemáme žádné články ☹️

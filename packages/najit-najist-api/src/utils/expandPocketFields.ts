@@ -3,7 +3,7 @@ const mapper: Record<string, string> = {
 };
 
 export const expandPocketFields = <R extends Record<string, any>>(
-  input: Record<string, any> & { expand: Record<string, any> }
+  input: Record<string, any> & { expand?: Record<string, any> }
 ): R => {
   const { expand } = input;
   const result = { ...input, expand: undefined };

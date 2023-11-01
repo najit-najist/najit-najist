@@ -79,7 +79,7 @@ export function Combobox<I extends Item>({
                       cx(
                         'relative cursor-default select-none py-2 pl-3 pr-9',
                         active
-                          ? 'bg-deep-green-300 text-white'
+                          ? 'bg-project-primary text-white'
                           : 'text-gray-900'
                       )
                     }

@@ -20,8 +20,8 @@ export const DesktopMenuItem: FC<{ text: string; href: string }> = ({
               ? currentPathname === href
               : currentPathname?.startsWith(href)
           )
-            ? 'bg-deep-green-400 text-white '
-            : 'hover:bg-deep-green-400 hover:text-white '
+            ? 'bg-project-primary text-white'
+            : 'hover:bg-project-primary hover:text-white text-project-text'
         )}
         href={href}
       >

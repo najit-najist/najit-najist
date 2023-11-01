@@ -1,14 +1,6 @@
-import {
-  PocketBase,
-  Record,
-  isTokenExpired,
-  pocketbase,
-} from '@najit-najist/pb';
+import { isTokenExpired, pocketbase } from '@najit-najist/pb';
 import { User } from '@schemas';
-import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { AvailableModels } from '../canUser';
-import { getSessionFromCookies } from '../getSessionFromCookies';
-import { isUserLoggedIn } from '../isUserLoggedIn';
 import jwtDecode from 'jwt-decode';
 import { UserTokenData } from '@custom-types';
 import { IronSessionData } from 'iron-session/edge';
@@ -32,7 +24,7 @@ export const getEdgeLoggedInUser = async ({
 
   pocketbase.authStore.save(
     session.authContent!.token,
-    new Record(session.authContent!.model)
+    session.authContent!.model
   );
 
   const result = await pocketbase

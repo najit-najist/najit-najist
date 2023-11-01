@@ -3,6 +3,7 @@ import {
   getMediaTypeFromBase64Url,
   setFileNameToBase64,
 } from '@najit-najist/api';
+import { FormState } from 'react-hook-form';
 
 export enum ReadFileError {
   UNKNOWN = 'unknown',
@@ -46,3 +47,17 @@ export const readFile = async (
     reader.readAsDataURL(compressedFile);
   });
 };
+
+export function getChangedValues<G extends Record<any, any>>(
+  allValues: G,
+  dirtyFields: FormState<G>['dirtyFields'] | true
+): Partial<G> {
+  if (dirtyFields === true || Array.isArray(dirtyFields)) return allValues;
+
+  return Object.fromEntries(
+    Object.keys(dirtyFields).map((key) => [
+      key,
+      getChangedValues(allValues[key], dirtyFields[key] as any),
+    ])
+  ) as Partial<G>;
+}

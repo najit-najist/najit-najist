@@ -4,14 +4,19 @@ import { getLoggedInUser } from '@najit-najist/api/dist/utils/server/getLoggedIn
 import { NextApiHandler } from 'next';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import path from 'path';
-import { PRIVATE_VIDEOS_DIRECTORY_PATH } from '../../../../app/videos/_constants';
+import { SHARED_STATIC_FILES_DIRECTORY_PATH } from '../../../../app/videos/_constants';
 
 const handler: NextApiHandler = async (request, response) => {
   const url = new URL(request.url ?? '', `http://${request.headers.host}`);
   const file =
     url.searchParams.get('type') === 'mp4' ? 'video.min.mp4' : 'video.min.webm';
 
-  const videoPath = path.join(PRIVATE_VIDEOS_DIRECTORY_PATH, 'bonus', file);
+  const videoPath = path.join(
+    SHARED_STATIC_FILES_DIRECTORY_PATH,
+    'videos',
+    'bonus',
+    file
+  );
 
   const cookies = new RequestCookies(
     new Headers({ ...request.headers } as any)

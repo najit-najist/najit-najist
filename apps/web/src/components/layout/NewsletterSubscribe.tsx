@@ -36,7 +36,7 @@ export const NewsletterSubscribe: FC = () => {
 
   return (
     <div className="relative container">
-      <div className="rounded-3xl bg-gradient-to-br from-deep-green-300 to-deep-green-700 py-10 px-6 sm:py-16 sm:px-12 lg:flex lg:items-center lg:py-20 lg:px-20">
+      <div className="rounded-3xl bg-gradient-to-br from-project-primary to-deep-green-700 py-10 px-6 sm:py-16 sm:px-12 lg:flex lg:items-center lg:py-20 lg:px-20">
         {formState.isSubmitSuccessful ? (
           <>
             <h2 className="text-3xl font-bold tracking-tight text-white">

@@ -167,7 +167,7 @@ export const ImageSelect: FC<ImageSelectProps> = ({
             >
               <label
                 htmlFor={inputId}
-                className="relative cursor-pointer rounded-md bg-white font-semibold text-deep-green-400 focus-within:outline-none focus-within:ring-2 focus-within:ring-deep-green-500 focus-within:ring-offset-2 hover:text-deep-green-500"
+                className="relative cursor-pointer rounded-md bg-white font-semibold text-project-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-project-primary focus-within:ring-offset-2 hover:text-project-primary"
               >
                 <span>Nahrát obrázek</span>
                 <input

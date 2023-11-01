@@ -45,7 +45,7 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
         </div>
       </div>
       <div className="p-5 flex flex-col justify-between w-full h-full">
-        <span className="mb-2 text-sm uppercase font-semibold text-ocean-400 block font-title">
+        <span className="mb-2 text-sm uppercase font-semibold text-project-accent block font-title">
           Produkt - <Badge color="blue">{category?.name ?? 'Ostatní'}</Badge>
         </span>
         <div className="flex-none flex items-center justify-between">
@@ -59,7 +59,7 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
           </Suspense>
         </div>
 
-        <div className="text-5xl text-deep-green-500 font-bold my-3">
+        <div className="text-5xl text-project-primary font-bold my-3">
           <span className="tracking-wider">{price.value}</span>
           <span className="tracking-[-0.1rem] underline text-gray-700 text-3xl ml-1">
             Kč

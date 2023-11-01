@@ -41,7 +41,7 @@ export const ContactForm: FC = () => {
       ) : null}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-lg p-5 relative overflow-hidden"
+        className="bg-white rounded-lg p-5 relative overflow-hidden shadow-md"
       >
         <div className="grid sm:grid-cols-2 gap-7">
           <Input
@@ -88,7 +88,7 @@ export const ContactForm: FC = () => {
           />
         </div>
         <Button
-          className="mt-12 w-full"
+          className="mt-12"
           type="submit"
           disabled={formState.isSubmitSuccessful}
           isLoading={formState.isSubmitting}

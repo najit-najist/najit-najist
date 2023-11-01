@@ -14,8 +14,16 @@ export const buttonStyles = cva(
     variants: {
       color: {
         noColor: '',
+        primary:
+          'bg-project-primary focus:ring-project-primary text-white disabled:bg-opacity-50',
+        secondary:
+          'bg-project-secondary focus:ring-project-secondary text-white disabled:bg-opacity-50',
+
+        /**
+         * @deprecated
+         */
         normal:
-          'bg-deep-green-500 focus:ring-deep-green-400 text-white disabled:bg-opacity-50',
+          'bg-project-primary focus:ring-project-primary text-white disabled:bg-opacity-50',
         white:
           'bg-white text-deep-green-400 shadow font-semibold disabled:bg-gray-50',
         sweet:
