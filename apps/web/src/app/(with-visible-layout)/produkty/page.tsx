@@ -77,7 +77,7 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
-      {cookiesList.get(PRODUCTS_NOTICE_STATE_COOKIE_NAME).value ===
+      {cookiesList?.get(PRODUCTS_NOTICE_STATE_COOKIE_NAME)?.value ===
       'true' ? null : (
         <Notice />
       )}
