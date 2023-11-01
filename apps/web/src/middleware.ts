@@ -91,6 +91,8 @@ export async function middleware(request: NextRequest) {
       const { pathname: requestPathname, searchParams: requestSearchParams } =
         requestUrl;
       const isUnderAdministration = requestPathname.includes('/administrace');
+      // This page is defined under /administrace
+      const isUnderUsers = requestPathname.includes('/uzivatele');
       const isUnderRecipes = requestPathname.includes('/recepty');
       const isUnderProducts = requestPathname.includes('/produkty');
       const isUnderPosts = requestPathname.includes('/clanky');
@@ -102,6 +104,8 @@ export async function middleware(request: NextRequest) {
         ? AvailableModels.PRODUCTS
         : isUnderPosts
         ? AvailableModels.POST
+        : isUnderUsers
+        ? AvailableModels.USER
         : null;
 
       if (isUnderAdministration && currentUser.role !== UserRoles.ADMIN) {
