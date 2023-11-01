@@ -27,7 +27,7 @@ const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
   className,
 }) => (
   <div className={className}>
-    <p className="font-bold text-lg text-deep-green-300">{title}</p>
+    <p className="font-bold text-lg text-project-primary">{title}</p>
     <div className="grid gap-1 mt-2">{children}</div>
   </div>
 );
@@ -38,7 +38,7 @@ const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
       <Link
         // @ts-ignore
         ref={ref}
-        className="hover:underline tracking-wider text-3xl text-right font-title hover:text-deep-green-400 text-gray-800"
+        className="hover:underline tracking-wider text-3xl text-right font-title hover:text-project-primary text-gray-800"
         {...props}
       >
         {children}
@@ -100,7 +100,7 @@ const RegisterPill: FC<{ hideOnMobile?: boolean }> = ({ hideOnMobile }) => {
         ' items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-deep-green-400 hover:text-white bg-white shadow-sm shadow-deep-green-400 font-small'
+        'hover:bg-project-primary hover:text-white bg-white shadow-sm shadow-project-primary font-small'
       )}
     >
       Registrovat
@@ -144,6 +144,10 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                   <>
                     <BonusPill hideOnMobile loggedInUser={loggedInUser} />
 
+                    {loggedInUser.role === UserRoles.ADMIN ? (
+                      <AdministrationPill hideOnMobile />
+                    ) : null}
+
                     <Link
                       className={clsx(
                         pillStyles,
@@ -165,17 +169,13 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                         pillStyles,
                         'flex justify-center !px-2',
                         pathname === '/muj-ucet/profil'
-                          ? 'bg-deep-green-400 text-white'
-                          : 'hover:bg-deep-green-400 hover:text-white bg-white',
+                          ? 'bg-project-primary text-white'
+                          : 'hover:bg-project-primary hover:text-white bg-white',
                       ])}
                       href="/muj-ucet/profil"
                     >
                       <UserIcon className="w-5 h-5" />
                     </Link>
-
-                    {loggedInUser.role === UserRoles.ADMIN ? (
-                      <AdministrationPill hideOnMobile />
-                    ) : null}
                   </>
                 ) : (
                   <>
@@ -185,7 +185,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                       className={clsx(
                         'inline-flex items-center',
                         pillStyles,
-                        'bg-deep-green-400 text-white'
+                        'bg-project-primary text-white'
                       )}
                     >
                       Přihlásit se
@@ -199,7 +199,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                   'flex md:hidden',
                   menuIsOpen
                     ? 'bg-red-100 text-red-400 hover:bg-red-200 hover:text-red-600'
-                    : 'bg-white hover:bg-deep-green-400 hover:text-white'
+                    : 'bg-white hover:bg-project-primary hover:text-white'
                 )}
               >
                 {menuIsOpen ? (

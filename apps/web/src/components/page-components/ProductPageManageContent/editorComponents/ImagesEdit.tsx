@@ -101,7 +101,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
   return (
     <div
       className={clsx([
-        'w-full aspect-square bg-gray-100 text-deep-green-400 rounded-md col-span-2 relative ring-2 ring-offset-2',
+        'w-full aspect-square bg-gray-100 text-project-primary rounded-md col-span-2 relative ring-2 ring-offset-2',
         error ? 'ring-red-500' : 'ring-transparent',
       ])}
     >

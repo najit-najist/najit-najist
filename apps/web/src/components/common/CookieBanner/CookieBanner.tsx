@@ -1,6 +1,5 @@
 'use client';
 
-import clsx from 'clsx';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { useCookies } from 'react-cookie';
 import { ConsentForm, ConsentFormProps } from './ConsentForm';
@@ -73,11 +72,7 @@ export const CookieBanner: FC = () => {
     <>
       {isOpen ? (
         <section className="fixed left-1/2 -translate-x-1/2 max-w-[calc(100vw-2rem)] bottom-0 md:max-w-3xl lg:max-w-5xl w-full z-10">
-          <div
-            className={clsx(
-              'bg-white p-6 rounded-lg shadow-2xl mb-3 sm:mb-5 border-deep-green-400 border-2'
-            )}
-          >
+          <div className="bg-white p-6 rounded-lg shadow-2xl mb-3 sm:mb-5 border-project-accent border-2">
             <h1 className="text-2xl font-semibold">Cookies?</h1>
 
             <p className="text-gray-400 font-medium text-lg max-w-md">
@@ -110,7 +105,7 @@ export const CookieBanner: FC = () => {
       {isOpen ? null : (
         <button
           onClick={toggleCookieNotice}
-          className="bg-white mb-2 sm:mr-5 sm:mb-5 rounded-full px-2 py-1 border-deep-green-400 border-2 fixed right-5 bottom-0 z-[114 text-xl"
+          className="bg-white mb-2 sm:mr-5 sm:mb-5 rounded-full px-2 py-1 border-project-accent text-project-primary border-2 fixed right-5 bottom-0 z-[114 text-xl"
         >
           <ShieldCheckIcon
             width={25}

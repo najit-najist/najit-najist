@@ -70,7 +70,7 @@ export const Layout: FC<
                 className="font-bold my-3"
               >
                 <Link
-                  className="text-deep-green-400"
+                  className="text-project-accent"
                   href="https://www.najitnajist.cz"
                 >
                   Najít&Najíst Team

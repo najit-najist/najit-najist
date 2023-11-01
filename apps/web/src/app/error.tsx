@@ -26,7 +26,7 @@ export default function Error({
     <div className="min-h-screen w-full flex justify-center items-center">
       <div className="text-center">
         <Logo className="h-28 w-auto mx-auto" />
-        <h2 className="text-4xl font-semibold mt-8 text-deep-green-300">
+        <h2 className="text-4xl font-semibold mt-8 text-project-primary">
           Moc se omlouváme!
         </h2>
         <p className="mt-2">

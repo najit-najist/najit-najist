@@ -63,7 +63,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
       </head>
       <body
         className={clsx(
-          'bg-gradient-to-b from-[#fbf9ebd3] to-white data-scroll-container min-h-screen flex',
+          'bg-project-background data-scroll-container min-h-screen flex text-project-text',
           // inter.className,
           // dmSerifDisplay.className,
           montserrat.className,

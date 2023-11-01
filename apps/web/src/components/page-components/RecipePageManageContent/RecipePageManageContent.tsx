@@ -116,12 +116,14 @@ export const RecipePageManageContent = async ({
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
           <Link
             href="/recepty"
-            className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title"
+            className="mt-5 mb-3 text-sm uppercase font-semibold text-project-secondary block font-title"
           >
             Recept
           </Link>
           {!isEditorEnabled ? (
-            <h1 className="text-4xl font-title">{title}</h1>
+            <h1 className="text-4xl font-title text-project-primary">
+              {title}
+            </h1>
           ) : (
             <TitleEdit />
           )}
@@ -153,7 +155,7 @@ export const RecipePageManageContent = async ({
               <Title>Suroviny</Title>
               <div>
                 {!isEditorEnabled ? (
-                  <span className="text-deep-green-300">
+                  <span className="text-project-primary">
                     Počet porcí:{' '}
                     <b>
                       {props.recipe.numberOfPortions
@@ -182,9 +184,12 @@ export const RecipePageManageContent = async ({
               <Title>Postup</Title>
               <div>
                 {!isEditorEnabled ? (
-                  <span className="text-deep-green-300">
-                    Celkem:{' '}
-                    <b>{extractTimeFromSteps(props.recipe.steps)} minut</b>
+                  <span className="text-project-text">
+                    Celkem{' '}
+                    <b className="text-project-accent">
+                      {extractTimeFromSteps(props.recipe.steps)}
+                    </b>{' '}
+                    minut
                   </span>
                 ) : null}
               </div>

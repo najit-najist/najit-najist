@@ -27,7 +27,7 @@ export default function FinishRegistrationFromPreview({
         novinek a výhod!
         <Button
           href={`https://najitnajist.cz/registrace/dokonceni-vernostniku/${token}`}
-          className="px-3 py-3 bg-deep-green-300 text-white font-semibold rounded-lg mt-5"
+          className="px-3 py-3 bg-project-primary text-white font-semibold rounded-lg mt-5"
         >
           Pokračovat v registraci zde!
         </Button>

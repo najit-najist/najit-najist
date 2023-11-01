@@ -129,6 +129,21 @@ const getTheme = () => ({
   theme: {
     extend: {
       colors: {
+        project: {
+          // TODO: finish color changes
+          // primary: '#119247',
+          // secondary: '#C4F7DA',
+          // accent: '#D4681C',
+          // background: '#E8FCF1',
+          // text: '#052412',
+
+          primary: '#119247',
+          secondary: '#119247',
+          accent: '#119247',
+          background: '#F8FCFA',
+          text: '#052412',
+        },
+
         deep: {
           green: {
             300: '#0D8F3C',

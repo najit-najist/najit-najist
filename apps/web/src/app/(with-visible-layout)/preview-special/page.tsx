@@ -39,19 +39,21 @@ export default async function Page() {
   return (
     <>
       <div className="container text-center">
-        <h1 className="text-5xl text-deep-green-400 mt-20 font-semibold font-title">
+        <h1 className="text-5xl text-project-primary mt-20 font-semibold font-title">
           Děkujeme za Vaší přízeň!
         </h1>
         <p className="text-lg mt-5 max-w-4xl mx-auto">
           Připravili jsme pro Vás speciální video v podobě rozhovoru s našim
           poradcem pro oblast výživy a zdraví s paní{' '}
-          <Link
-            href="https://www.mahuba.cz/"
-            target="_blank"
-            className="text-deep-green-300 hover:underline"
-          >
-            Mgr. Martou Hubačovou
-          </Link>
+          <b>
+            <Link
+              href="https://www.mahuba.cz/"
+              target="_blank"
+              className="text-project-accent hover:underline"
+            >
+              Mgr. Martou Hubačovou
+            </Link>
+          </b>
           . Chceme Vám nastínit, jak a s kým budou naše odborné semináře
           probíhat, jaké informace můžete očekávat a určitě Vám dáme i možnost
           pokládat otázky při Online přenosech. Hodně věcí je i pro nás nových a

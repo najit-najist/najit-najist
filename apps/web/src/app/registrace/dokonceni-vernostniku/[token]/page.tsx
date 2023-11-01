@@ -46,7 +46,7 @@ const RegistrationFinalizationPage = async ({
         ) : (
           <p className="mt-4 text-center text-xl text-gray-600 max-w-lg">
             Vítejte na stránce{' '}
-            <span className="text-deep-green-400">Najít&Najíst</span>! <br />
+            <span className="text-project-accent">Najít&Najíst</span>! <br />
             <br /> Pro dokončení registrace Vás poprosíme o doplnění informací k
             Vašemu účtu, aby jste mohli používat web naplno!
           </p>

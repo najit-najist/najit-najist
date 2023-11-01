@@ -57,7 +57,7 @@ export const footerNavigationItems: NavigationItems = {
 
 export const Footer: FC<PropsWithChildren> = () => {
   return (
-    <footer className="bg-white" aria-labelledby="footer-heading">
+    <footer aria-labelledby="footer-heading">
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
@@ -77,7 +77,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                 <Link
                   key={item.name}
                   href={item.href as any}
-                  className="text-gray-400 hover:text-gray-500"
+                  className="text-project-accent/60 hover:text-project-accent"
                 >
                   <span className="sr-only">{item.name}</span>
                   <item.icon
@@ -92,7 +92,7 @@ export const Footer: FC<PropsWithChildren> = () => {
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
-                <h3 className="text-base font-medium text-deep-green-300 font-title">
+                <h3 className="text-base font-medium text-project-secondary font-title">
                   Užitečné
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
@@ -110,7 +110,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium text-deep-green-300 font-title">
+                <h3 className="text-base font-medium text-project-secondary font-title">
                   Aktuální
                 </h3>
                 <ul role="list" className="mt-4 space-y-4">
@@ -163,7 +163,7 @@ export const Footer: FC<PropsWithChildren> = () => {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8">
-          <p className="text-base text-gray-400 xl:text-center">
+          <p className="text-base text-project-accent xl:text-center">
             &copy; 2022 <a href="https://najitnajist.cz">NajitNajist.cz</a>
           </p>
         </div>

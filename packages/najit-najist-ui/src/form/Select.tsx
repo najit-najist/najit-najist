@@ -18,7 +18,7 @@ const selectButtonStyles = cva(
         normal: 'py-[0.55rem] pl-3 pr-10 sm:text-sm sm:leading-6',
       },
       color: {
-        default: 'focus:ring-deep-green-400 text-gray-900 ring-gray-300',
+        default: 'focus:ring-project-primary text-gray-900 ring-gray-300',
       },
     },
     defaultVariants: {
@@ -102,7 +102,9 @@ export function Select<T extends ItemBase>({
                     key={item.id}
                     className={({ active }) =>
                       cx(
-                        active ? 'bg-ocean-600 text-white' : 'text-gray-900',
+                        active
+                          ? 'bg-project-primary text-white'
+                          : 'text-gray-900',
                         'relative cursor-default select-none py-2 pl-3 pr-9'
                       )
                     }

@@ -7,7 +7,7 @@ export const ResourcesRenderer: FC<
   const metricsMap = new Map(metrics.map((item) => [item.id, item]));
 
   return (
-    <ul className="list-decimal pl-5 text-lg">
+    <ul className="list-decimal pl-5 text-lg marker:text-project-accent">
       {resources.map(({ title, description, count, isOptional, metric }) => (
         <li key={title}>
           <>

@@ -8,18 +8,21 @@ export const StepsRenderer: FC<Pick<Recipe, 'steps'>> = ({ steps }) => {
     <ul className="list-inside grid gap-4">
       {steps.length
         ? steps.map(({ parts, title }) => (
-            <li key={title}>
+            <li key={title} className="sm:flex gap-5">
               {steps.length > 1 ? (
-                <h4 className="text-xl font-semibold mb-2">
+                <h4 className="text-xl font-semibold flex-none max-w-[150px] w-full">
                   <span className="text-green-400">{title}</span>
                 </h4>
               ) : null}
-              <ul className="space-y-5 list-decimal pl-5">
+              <ul className="space-y-5 sm:pl-5 w-full">
                 {parts.map(({ content, duration }, key) => (
                   <li key={key}>
-                    <div className="flex gap-5">
+                    <div className="flex w-full gap-5">
+                      <div className="text-project-accent flex-none">
+                        {key + 1}.
+                      </div>
                       <div className="w-full">{HTMLReactParser(content)}</div>
-                      <span className="flex-none text-deep-green-300">
+                      <span className="flex-none text-project-primary">
                         <ClockIcon className="w-5 h-5 inline-block -mt-1 mr-1" />{' '}
                         <b>{duration}</b> minut
                       </span>
