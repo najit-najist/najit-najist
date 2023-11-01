@@ -20,7 +20,7 @@ export class PreviewSubscribersService {
 
       const result = await pocketbase
         .collection(PocketbaseCollections.PREVIEW_SUBSCRIBERS_TOKENS)
-        .getFirstListItem(`token="${token}"`, {
+        .getFirstListItem<PreviewSubscribersTokens>(`token="${token}"`, {
           expand: 'for',
         })
         .then(expandPocketFields<PreviewSubscribersTokens>);

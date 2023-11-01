@@ -152,7 +152,7 @@ export class UserService {
     }
   }
 
-  static async getBy(type: GetByType, value: any): Promise<User> {
+  static getBy(type: GetByType, value: any): Promise<User> {
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)

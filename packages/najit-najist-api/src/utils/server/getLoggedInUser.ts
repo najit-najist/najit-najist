@@ -1,11 +1,10 @@
-import { pocketbase } from '@najit-najist/pb';
 import { User } from '../../schemas/user.schema.js';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { AvailableModels } from '../canUser';
 import { deserializePocketToken } from '../deserializePocketToken';
 import { getSessionFromCookies } from '../getSessionFromCookies';
 import { isUserLoggedIn } from '../isUserLoggedIn';
 import { AuthService } from '../../services/Auth.service.js';
+import { UserService } from '../../services/User.service.js';
 
 export type GetLoggedInUserOptions = {
   cookies?: RequestCookies;
@@ -27,14 +26,10 @@ export const getLoggedInUser = async ({
     await AuthService.authPocketBase({ authContent });
   }
 
-  const result = await pocketbase
-    .collection(AvailableModels.USER)
-    .getOne<User>(sessionData.id, {});
-
   // TODO: refactor so this utility does not auth the pocketbase
   // if (authenticateApi) {
   //   AuthService.clearAuthPocketBase();
   // }
 
-  return result;
+  return await UserService.getBy('id', sessionData.id);
 };

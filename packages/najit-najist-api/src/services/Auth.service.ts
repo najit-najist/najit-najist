@@ -1,4 +1,4 @@
-import { pocketbase, Record } from '@najit-najist/pb';
+import { pocketbase } from '@najit-najist/pb';
 import { getSessionFromCookies } from '@utils';
 import { IronSessionData } from 'iron-session';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
@@ -30,7 +30,7 @@ export class AuthService {
     // Clear previous calls
     pocketbase.authStore.clear();
 
-    pocketbase.authStore.save(authContent.token, new Record(authContent.model));
+    pocketbase.authStore.save(authContent.token, authContent.model);
 
     return {
       token: authContent.token,
