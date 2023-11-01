@@ -26,11 +26,11 @@ export const footerNavigationItems: NavigationItems = {
       href: `mailto:${ADMIN_EMAIL}`,
       icon: EnvelopeIcon,
     },
-    {
-      name: 'Telefon',
-      href: `+420123456789`,
-      icon: PhoneIcon,
-    },
+    // {
+    //   name: 'Telefon',
+    //   href: `tel:+420123456789`,
+    //   icon: PhoneIcon,
+    // },
     {
       name: 'Instagram',
       href: `https://www.instagram.com/najitnajist/`,
