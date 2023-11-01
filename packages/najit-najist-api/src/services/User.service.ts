@@ -174,12 +174,20 @@ export class UserService {
   static async getMany(
     options?: GetManyUsersOptions
   ): Promise<ListResult<User>> {
-    const { page = 1, perPage = 40 } = options ?? {};
+    const { page = 1, perPage = 40, search } = options ?? {};
+
+    const filter = [
+      search
+        ? `(username ~ '${search}' || firstName ~ '${search}' || lastName ~ '${search}' || email ~ '${search}')`
+        : undefined,
+    ]
+      .filter(Boolean)
+      .join(' && ');
 
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getList<UserWithExpand>(page, perPage, { expand })
+        .getList<UserWithExpand>(page, perPage, { expand, filter })
         .then((values) => {
           (values.items as any) = values.items.map(expandPocketFields<User>);
 
@@ -212,9 +220,12 @@ export class UserService {
 
       if ('id' in address) {
         console.log(`User has address already`);
+        // @ts-expect-error -- FIXME: fix this somehow
+        const { id, ...morphedAddressWithoutId } = morphedAddress;
+
         await pocketbase
           .collection(PocketbaseCollections.USER_ADDRESSES)
-          .update(address.id, morphedAddress);
+          .update(address.id, morphedAddressWithoutId);
       } else {
         // TODO - ensuring that address for one user is created once is kind of handled
         // in schemas, but it would be better to check it here too. Due to nature of pocketbase we kind of
