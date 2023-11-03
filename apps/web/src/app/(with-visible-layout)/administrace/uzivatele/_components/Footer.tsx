@@ -30,14 +30,14 @@ export const Footer: FC<{
 
     activateIsLoading(() => {
       // @ts-ignore
-      router.replace(route);
+      router.replace(`${route}?${searchParams}`);
     });
   };
 
   const goFirst = () => changePage(1);
-  const goLast = () => changePage(currentPage - 1);
+  const goLast = () => changePage(totalPages);
 
-  const goPrevious = () => {};
+  const goPrevious = () => changePage(currentPage - 1);
   const goNext = () => changePage(currentPage + 1);
 
   return (

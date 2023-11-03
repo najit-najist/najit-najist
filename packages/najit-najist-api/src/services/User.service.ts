@@ -174,20 +174,46 @@ export class UserService {
   static async getMany(
     options?: GetManyUsersOptions
   ): Promise<ListResult<User>> {
-    const { page = 1, perPage = 40, search } = options ?? {};
+    const {
+      page = 1,
+      perPage = 40,
+      search,
+      filter: filterFromOptions,
+    } = options ?? {};
 
     const filter = [
       search
         ? `(username ~ '${search}' || firstName ~ '${search}' || lastName ~ '${search}' || email ~ '${search}')`
         : undefined,
-    ]
-      .filter(Boolean)
-      .join(' && ');
+    ];
+
+    // This is complicated relation. Ideally we would use joins, but this is pocketbase...
+    if (filterFromOptions?.address) {
+      const userAddressesUnderMunicipality = await pocketbase
+        .collection(PocketbaseCollections.USER_ADDRESSES)
+        .getFullList<Address & { expand: { owner: User } }>({
+          filter: filterFromOptions.address
+            .map((item) => `municipality = "${item.id}"`)
+            .join(' || '),
+          expand: 'owner',
+        });
+
+      const userIds = userAddressesUnderMunicipality.map(
+        (item) => `id = '${item.expand.owner.id}'`
+      );
+
+      if (userIds.length) {
+        filter.push(`(${userIds.join(' || ')})`);
+      }
+    }
 
     try {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getList<UserWithExpand>(page, perPage, { expand, filter })
+        .getList<UserWithExpand>(page, perPage, {
+          expand,
+          filter: filter.filter(Boolean).join(' && '),
+        })
         .then((values) => {
           (values.items as any) = values.items.map(expandPocketFields<User>);
 

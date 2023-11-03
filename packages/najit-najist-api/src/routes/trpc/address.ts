@@ -8,15 +8,21 @@ export const municipalityGetRoutes = t.router({
   many: t.procedure
     .input(getManyMunicipalitySchema.optional())
     .query(async ({ input }): Promise<ListResult<Municipality>> => {
-      const { page, perPage, query } = input ?? {};
+      const { page, perPage, query, filter: filterFromInput } = input ?? {};
+      const filter = [
+        query ? `name ~ '${query}' || slug ~ '${query}'` : undefined,
+        filterFromInput?.id
+          ? `(${filterFromInput.id
+              .map((itemId) => `id = '${itemId}'`)
+              .join(' || ')})`
+          : undefined,
+      ].filter(Boolean);
 
       return pocketbase
         .collection(PocketbaseCollections.MUNICIPALITY)
         .getList<Municipality>(page, perPage, {
           sort: '-name',
-          ...(query
-            ? { filter: `name ~ '${query}' || slug ~ '${query}'` }
-            : {}),
+          filter: filter.join(' && '),
         });
     }),
 

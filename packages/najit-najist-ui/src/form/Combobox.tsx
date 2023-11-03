@@ -3,13 +3,16 @@ import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { Combobox as ComboboxDefault } from '@headlessui/react';
 import { cx } from 'class-variance-authority';
 import { Label } from './Label';
-import { inputStyles } from './Input';
+import { InputVariantProps, inputStyles } from './Input';
 import type { FieldError } from 'react-hook-form';
 import { ErrorMessage } from './ErrorMessage';
 
 type Item = { id: string; [x: string]: any };
 
-export type ComboboxProps<I extends Item = Item> = {
+export type ComboboxProps<I extends Item = Item> = Pick<
+  InputVariantProps,
+  'size'
+> & {
   isLoading?: boolean;
   label?: string;
   error?: FieldError;
@@ -17,6 +20,7 @@ export type ComboboxProps<I extends Item = Item> = {
   required?: boolean;
   placeholder?: string;
   className?: string;
+  nullable?: false;
 
   itemLabelFormatter: (item: I) => string;
 
@@ -39,6 +43,7 @@ export function Combobox<I extends Item>({
   required,
   placeholder,
   className,
+  size,
 }: ComboboxProps<I>): ReturnType<FC<ComboboxProps<I>>> {
   return (
     <ComboboxDefault
@@ -48,15 +53,15 @@ export function Combobox<I extends Item>({
       className={className}
     >
       {label ? (
-        <ComboboxDefault.Label as={Label}>
+        <ComboboxDefault.Label className="mb-1" as={Label}>
           {label}{' '}
           {required ? <span className="text-bold text-red-600">*</span> : ''}
         </ComboboxDefault.Label>
       ) : null}
-      <div className="relative mt-1">
+      <div className="relative">
         <ComboboxDefault.Input
           placeholder={placeholder}
-          className={inputStyles()}
+          className={inputStyles({ size })}
           onChange={onInputValueChange}
           displayValue={displayValue}
         />

@@ -50,7 +50,12 @@ export const Form: FC<{ token: string }> = ({ token }) => {
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <PasswordInputs />
           <FormBreak label="Adresa" />
-          <MunicipalitySelect name="address.municipality" required />
+          <MunicipalitySelect
+            className="mt-3"
+            label="Obec"
+            name="address.municipality"
+            required
+          />
 
           {formState.errors.root ? (
             <ErrorMessage>{formState.errors.root.message}</ErrorMessage>
