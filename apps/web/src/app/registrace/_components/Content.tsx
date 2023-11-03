@@ -105,7 +105,12 @@ export const Content: FC = () => {
 
               <FormBreak label="Adresa" />
 
-              <MunicipalitySelect name="address.municipality" required />
+              <MunicipalitySelect
+                className="mt-3"
+                label="Obec"
+                name="address.municipality"
+                required
+              />
 
               <FormBreak label="Přihlašovací údaje" />
               <Input

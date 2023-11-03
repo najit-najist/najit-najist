@@ -1,14 +1,15 @@
 import { Municipality } from '@najit-najist/api';
-import { Combobox } from '@najit-najist/ui';
+import { Combobox, ComboboxProps } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebounce } from 'react-use';
 
-export const MunicipalitySelect: FC<{ name: string; required?: boolean }> = ({
-  name,
-  required,
-}) => {
+export const MunicipalitySelect: FC<
+  Pick<ComboboxProps, 'className' | 'required' | 'label' | 'size'> & {
+    name: string;
+  }
+> = ({ name, ...rest }) => {
   const { field, fieldState } = useController({
     name,
   });
@@ -26,8 +27,6 @@ export const MunicipalitySelect: FC<{ name: string; required?: boolean }> = ({
 
   return (
     <Combobox<Municipality>
-      className="mt-3"
-      required={required}
       placeholder="Začněte psát pro vyhledání"
       displayValue={({ name }) => name}
       itemLabelFormatter={({ name }) => name}
@@ -39,8 +38,8 @@ export const MunicipalitySelect: FC<{ name: string; required?: boolean }> = ({
       }}
       selectedValue={field.value}
       isLoading={isLoading}
-      label="Obec"
       error={fieldState.error}
+      {...rest}
     />
   );
 };

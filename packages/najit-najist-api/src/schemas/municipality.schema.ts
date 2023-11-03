@@ -11,6 +11,11 @@ export const getManyMunicipalitySchema = z.object({
   query: z.string().optional(),
   page: z.number().min(1).default(1),
   perPage: z.number().min(10).max(100).default(10),
+  filter: z
+    .object({
+      id: z.array(z.string()).optional(),
+    })
+    .optional(),
 });
 
 export type Municipality = z.infer<typeof municipalitySchema>;

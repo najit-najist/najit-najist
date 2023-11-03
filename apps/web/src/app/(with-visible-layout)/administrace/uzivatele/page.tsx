@@ -7,10 +7,16 @@ import { PageHeader } from '@components/common/PageHeader';
 import Link from 'next/link';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { Footer } from './_components/Footer';
+import { z } from 'zod';
+import { getTrpcCaller } from '@najit-najist/api/server';
+import { AppRouterOutput } from '@najit-najist/api';
+import { TRPCClientError } from '@trpc/client';
 
 type Params = {
   searchParams: {
+    search?: string;
     query?: string;
+    page?: string;
   };
 };
 
@@ -29,8 +35,23 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
   </th>
 );
 
+const searchSchema = z.object({
+  page: z.string().transform(Number).default('1'),
+  query: z.string().optional(),
+  'address.municipality': z
+    .string()
+    .transform((item) => item.split(','))
+    .optional(),
+});
+
 export default async function Page({ searchParams }: Params) {
-  const { query } = searchParams;
+  const {
+    query,
+    page: pageFromParams,
+    ...filter
+  } = await searchSchema
+    .parseAsync(searchParams)
+    .catch(() => ({} as Partial<z.infer<typeof searchSchema>>));
   const {
     items: users,
     totalItems,
@@ -38,7 +59,29 @@ export default async function Page({ searchParams }: Params) {
     totalPages,
   } = await getCachedUsers({
     search: query,
+    page: pageFromParams || 1,
+    filter: filter['address.municipality']
+      ? {
+          address: filter['address.municipality'].map((itemId) => ({
+            id: itemId,
+          })),
+        }
+      : undefined,
   });
+
+  let selectedMunicipality:
+    | AppRouterOutput['address']['municipality']['get']['many']['items'][number]
+    | undefined = undefined;
+  // TODO: implement selecting more
+  const selectedMunicipalityId = filter['address.municipality']?.at(0);
+
+  if (selectedMunicipalityId) {
+    const municipalities = await getTrpcCaller().address.municipality.get.many({
+      filter: { id: [selectedMunicipalityId] },
+    });
+
+    selectedMunicipality = municipalities.items.at(0);
+  }
 
   return (
     <>
@@ -49,7 +92,14 @@ export default async function Page({ searchParams }: Params) {
             <PlusIcon className="inline w-12" />
           </Link>
         </div>
-        <SearchForm initialData={{ query }} />
+        <SearchForm
+          initialData={{
+            query,
+            address: selectedMunicipality
+              ? { municipality: selectedMunicipality }
+              : undefined,
+          }}
+        />
       </PageHeader>
       <div className="mt-8 flow-root !border-t-0 container">
         <div className="overflow-x-auto mb-10">
@@ -61,6 +111,7 @@ export default async function Page({ searchParams }: Params) {
                   <Th>Telefon</Th>
                   <Th>Email</Th>
                   <Th>Role</Th>
+                  <Th>Obec</Th>
                   <th
                     scope="col"
                     className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8"
@@ -74,7 +125,7 @@ export default async function Page({ searchParams }: Params) {
               </tbody>
               <tfoot className=" w-full">
                 <tr>
-                  <th colSpan={5} className="">
+                  <th colSpan={6} className="">
                     <Footer
                       currentPage={page}
                       totalItems={totalItems}

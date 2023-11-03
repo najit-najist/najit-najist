@@ -93,7 +93,11 @@ export const EditUserUnderPage: FC<{
             <div className="mt-5" />
             <FormBreak label="Adresa" />
 
-            <MunicipalitySelect name="address.municipality" />
+            <MunicipalitySelect
+              className="mt-3"
+              label="Obec"
+              name="address.municipality"
+            />
 
             <div className="mt-5" />
             <FormBreak className="mb-3" />
