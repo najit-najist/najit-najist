@@ -7,9 +7,13 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 export const Item: FC<Post> = (post) => {
+  const link: any = `/clanky/${post.slug}`;
   return (
     <article className="relative isolate flex flex-col gap-8 lg:flex-row">
-      <div className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0">
+      <Link
+        href={link}
+        className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0 block"
+      >
         {post.image ? (
           <Image
             width={300}
@@ -25,7 +29,7 @@ export const Item: FC<Post> = (post) => {
           </div>
         )}
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-      </div>
+      </Link>
       <div>
         <div className="flex items-center gap-x-4 text-xs mt-2">
           <time
@@ -52,7 +56,7 @@ export const Item: FC<Post> = (post) => {
         </div>
         <div className="group relative max-w-xl">
           <h3 className="font-title mt-3 text-2xl font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-            <Link href={`/clanky/${post.slug}`}>
+            <Link href={link}>
               <span className="absolute inset-0" />
               {post.title}
             </Link>
