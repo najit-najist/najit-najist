@@ -71,6 +71,19 @@ jobs:
       - name: 🐞 Install Dependencies
         run: npm ci
 
+      - name: Install swc core Dependencies
+        run: npm install --save-optional \
+              "@swc/core-darwin-arm64" \
+              "@swc/core-darwin-x64" \
+              "@swc/core-linux-arm-gnueabihf" \
+              "@swc/core-linux-arm64-gnu" \
+              "@swc/core-linux-arm64-musl" \
+              "@swc/core-linux-x64-gnu" \
+              "@swc/core-linux-x64-musl" \
+              "@swc/core-win32-arm64-msvc" \
+              "@swc/core-win32-ia32-msvc" \
+              "@swc/core-win32-x64-msvc"
+
       - name: 🏗️ Build
         run: npm run build
         env:
