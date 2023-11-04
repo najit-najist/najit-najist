@@ -43,9 +43,12 @@ export const metadata = {
     template: '%s | Najít Najíst',
     default: 'Hlavní stránka | Najít Najíst',
   },
-  viewport: 'width=device-width',
   creator: 'Ondřej Langr <hi@ondrejlangr.cz>',
   publisher: 'najitnajist',
+};
+
+export const viewport = {
+  width: 'device-width',
 };
 
 const RootLayout: LayoutComponent = ({ children }) => {

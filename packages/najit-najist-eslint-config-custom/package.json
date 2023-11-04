@@ -6,7 +6,7 @@
   "main": "index.cjs",
   "dependencies": {
     "eslint": "7.24.0",
-    "eslint-config-next": "13",
+    "eslint-config-next": "^14",
     "eslint-config-prettier": "^7",
     "eslint-config-turbo": "latest",
     "eslint-plugin-react": "^7.33.2"
