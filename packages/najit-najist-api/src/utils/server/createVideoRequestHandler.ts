@@ -16,9 +16,13 @@ export const createVideoRequestHandler = ({
   videoPath,
 }: CreateVideoRequestHandlerOptions): NextApiHandler => {
   if (fs.pathExistsSync(videoPath) === false) {
-    throw new Error(
-      `File under absolute path "${videoPath}" to handle does not exist`
-    );
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error(
+        `File under absolute path "${videoPath}" to handle does not exist`
+      );
+    }
+
+    return (request, response) => response;
   }
 
   const stats = fs.statSync(videoPath);
