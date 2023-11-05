@@ -83,6 +83,7 @@
   "devDependencies": {
     "@najit-najist/pb": "*",
     "@najit-najist/tsconfig": "*",
+    "@swc/core": "^1.3.96",
     "@types/bcrypt": "^5.0.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jsonwebtoken": "^9.0.1",

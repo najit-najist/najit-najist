@@ -57,6 +57,7 @@
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tsconfig": "*",
     "@types/react": "^18.2.21",
+    "@swc/core": "^1.3.96",
     "@types/react-dom": "^18.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
