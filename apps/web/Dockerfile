@@ -73,7 +73,6 @@ COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     ./apps/web/
 
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next
-COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/private ./apps/web/private
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./apps/web/public
 
 # Include api package as it its a monorepo dependency 
