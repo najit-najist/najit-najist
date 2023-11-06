@@ -25,13 +25,13 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
     "prebuild": "rimraf dist",
     "build": "npm run build:package && npm run build:types",
     "build:package": "swc ./src -d dist",
     "build:types": "tsc",
-    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
-    "dev:package": "npm run build:package -- --watch",
-    "dev:package:types": "npm run build:types -- --watch",
     "lint": "eslint *.ts*"
   },
   "dependencies": {

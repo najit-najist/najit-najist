@@ -20,10 +20,10 @@
     "dev:package": "npm run build:package -- --watch",
     "dev:package:types": "npm run build:types -- --watch",
     "prebuild": "rimraf dist",
-    "dev:preview": "npx email dev --dir=src",
     "build": "npm run build:package && npm run build:types",
     "build:package": "swc ./src -d dist",
-    "build:types": "tsc"
+    "build:types": "tsc",
+    "dev:preview": "npx email dev --dir=src"
   },
   "dependencies": {
     "react": "^18.2.0",
