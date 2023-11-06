@@ -97,6 +97,7 @@ COPY --from=builder /workspace-builder/package.json             ./package.json
 USER nextjs
 
 EXPOSE 4000
+ENV HOSTNAME "0.0.0.0"
 
 WORKDIR /app/apps/web
 
