@@ -69,7 +69,7 @@ const Item: FC<Post> = ({
               {title}
             </Link>
           </h3>
-          <div className="mt-5 text-sm leading-6 text-gray-600">
+          <div className="mt-5 text-sm leading-6 text-gray-600 line-clamp-5">
             {HTMLReactParser(description)}
           </div>
         </div>
@@ -109,7 +109,7 @@ export const LatestPosts: FC = async () => {
           <ArrowRightIcon className="w-5 ml-3 inline-block -top-0.5 relative group-hover:translate-x-2 duration-150" />
         </Link>
       </div>
-      <div className="relative grid sm:grid-cols-2 lg:grid-cols-4">
+      <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
         {items.map((post) => (
           <Item key={post.id} {...post} />
         ))}
