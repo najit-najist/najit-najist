@@ -97,7 +97,7 @@ export default async function RecipesPage({ searchParams }: Params) {
           typeSlug: typeSlugFromUrl ?? '',
         }}
       />
-      <div className="container grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
+      <div className="container grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
         {recipes.length ? (
           recipes.map((props) => <Item key={props.id} {...props} />)
         ) : (
