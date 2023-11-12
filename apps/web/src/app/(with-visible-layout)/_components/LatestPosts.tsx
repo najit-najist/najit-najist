@@ -97,13 +97,13 @@ export const LatestPosts: FC = async () => {
 
   return (
     <div className="container mx-auto mt-20" id="o-nas">
-      <div className="mx-auto flex items-center justify-between mt-10 mb-7 ">
+      <div className="mx-auto flex flex-col sm:flex-row sm:items-center justify-between mt-10 mb-7 ">
         <h2 className="text-3xl sm:text-4xl font-bold font-title">
           Nejnovější články
         </h2>
         <Link
           href="/clanky"
-          className="text-project-primary group hover:underline"
+          className="text-project-primary group hover:underline mt-3 sm:mt-0"
         >
           Další články
           <ArrowRightIcon className="w-5 ml-3 inline-block -top-0.5 relative group-hover:translate-x-2 duration-150" />

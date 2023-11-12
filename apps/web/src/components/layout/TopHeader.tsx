@@ -234,7 +234,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     <StyledLink href="/">Úvod</StyledLink>
                   </Menu.Item>
                   <Menu.Item>
-                    <StyledLink href="/#nas-pribeh">Náš příběh</StyledLink>
+                    <StyledLink href="/#o-nas">Náš příběh</StyledLink>
                   </Menu.Item>
                   <Menu.Item>
                     <StyledLink href="/kontakt">Kontakt</StyledLink>
