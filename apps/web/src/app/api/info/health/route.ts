@@ -2,6 +2,7 @@ import { config } from '@najit-najist/api/dist/config';
 import { NextResponse } from 'next/server';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const TIMEOUT = 3 * 1000;
 const fetchWithTimeout = async (

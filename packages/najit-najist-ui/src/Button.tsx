@@ -1,15 +1,15 @@
-import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { cva, cx, VariantProps } from 'class-variance-authority';
+import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
 
 export type ButtonProps = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > &
-  VariantProps<typeof buttonStyles>;
+  VariantProps<typeof buttonStyles> & { contentWrapperClassName?: string };
 
 export const buttonStyles = cva(
-  'rounded-md duration-100 focus:ring-2 focus:ring-offset-2 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
+  'duration-100 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
   {
     variants: {
       color: {
@@ -18,7 +18,6 @@ export const buttonStyles = cva(
           'bg-project-primary focus:ring-project-primary text-white disabled:bg-opacity-50',
         secondary:
           'bg-project-secondary focus:ring-project-secondary text-white disabled:bg-opacity-50',
-
         /**
          * @deprecated
          */
@@ -47,28 +46,69 @@ export const buttonStyles = cva(
         true: 'cursor-wait opacity-70',
         false: '',
       },
+      notRounded: {
+        true: '',
+        false: 'rounded-md',
+      },
+      notAnimated: {
+        true: '',
+        false: 'hover:scale-105 active:scale-95',
+      },
+      withoutRing: {
+        true: '',
+        false: 'focus:ring-2 focus:ring-offset-2 ',
+      },
     },
     defaultVariants: {
       appearance: 'normal',
       color: 'normal',
       isLoading: false,
+      notRounded: false,
+      notAnimated: false,
+      withoutRing: false,
     },
+    compoundVariants: [
+      {
+        color: 'noColor',
+      },
+    ],
   }
 );
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button({ children, className, isLoading, ...rest }, ref) {
+  function Button(
+    {
+      children,
+      className,
+      isLoading,
+      notRounded,
+      withoutRing,
+      color,
+      contentWrapperClassName,
+      ...rest
+    },
+    ref
+  ) {
     return (
       <button
         ref={ref}
-        className={buttonStyles({ className, isLoading, ...rest })}
+        className={buttonStyles({
+          className,
+          isLoading,
+          notRounded,
+          color,
+          withoutRing,
+          ...rest,
+        })}
         type="button"
         {...rest}
       >
         {isLoading ? (
           <ArrowPathIcon className="animate-spin w-4 h-4 inline-block mr-2" />
         ) : null}
-        <div className="inline-block">{children}</div>
+        <div className={cx('inline-block', contentWrapperClassName)}>
+          {children}
+        </div>
       </button>
     );
   }

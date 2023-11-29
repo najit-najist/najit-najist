@@ -7,8 +7,8 @@ import {
   useId,
 } from 'react';
 import { FieldError } from 'react-hook-form';
-import { ErrorMessage } from './ErrorMessage';
 
+import { ErrorMessage } from './ErrorMessage';
 import { Label } from './Label';
 
 export type InputVariantProps = VariantProps<typeof inputStyles>;
@@ -23,7 +23,11 @@ export interface InputProps
     >,
     Omit<
       InputVariantProps,
-      'withPrefix' | 'withSuffix' | 'withRightIcon' | 'withLeftIcon'
+      | 'withPrefix'
+      | 'withSuffix'
+      | 'withRightIcon'
+      | 'withLeftIcon'
+      | 'readOnly'
     > {
   label?: string;
   hideLabel?: boolean;
@@ -56,7 +60,7 @@ const inputTypeToAppearance = (
 };
 
 export const inputStyles = cva(
-  'block w-full border-gray-300 shadow-sm focus:outline-none',
+  'block w-full border-gray-300 focus:outline-none',
   {
     variants: {
       appearance: {
@@ -70,7 +74,7 @@ export const inputStyles = cva(
         lg: 'py-3 px-5 sm:text-xl',
       },
       color: {
-        default: 'placeholder-gray-300 focus:border-green-400',
+        default: 'placeholder-gray-300',
       },
       disabled: {
         true: 'opacity-60 bg-gray-100',
@@ -83,6 +87,10 @@ export const inputStyles = cva(
       withSuffix: {
         true: '',
         false: 'rounded-r-md',
+      },
+      readOnly: {
+        true: '!border-gray-300 !focus:border-gray-300 !ring-0 !shadow-none cursor-default',
+        false: 'shadow-sm',
       },
       // withLeftIcon: {
       //   true: 'pl-10',
@@ -99,6 +107,7 @@ export const inputStyles = cva(
       color: 'default',
       withPrefix: false,
       withSuffix: false,
+      readOnly: false,
       // withLeftIcon: false,
       // withRightIcon: false,
     },
@@ -106,10 +115,28 @@ export const inputStyles = cva(
       {
         color: 'default',
         appearance: 'normal',
+        readOnly: false,
         className:
           'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400',
       },
+      {
+        color: 'default',
+        readOnly: false,
+        className: 'focus:border-green-400',
+      },
     ],
+  }
+);
+
+export const inputPrefixSuffixStyles = cva(
+  'inline-block border border-gray-300 text-gray-500 sm:text-sm bg-white',
+  {
+    variants: {
+      type: {
+        prefix: 'rounded-l-md border-r-0',
+        suffix: 'rounded-r-md border-l-0',
+      },
+    },
   }
 );
 
@@ -130,6 +157,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     suffix,
     wrapperClassName,
     required,
+    readOnly,
     // leftIcon,
     // rightIcon,
     ...rest
@@ -154,11 +182,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           wrapperClassName,
         ])}
       >
-        {prefix ? (
-          <span className="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 px-3 text-gray-500 sm:text-sm bg-white">
-            {prefix}
-          </span>
-        ) : null}
+        {prefix}
         <input
           ref={ref}
           className={inputStyles({
@@ -169,6 +193,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             disabled,
             withPrefix: !!prefix,
             withSuffix: !!suffix,
+            readOnly,
             // withLeftIcon: !!leftIcon,
             // withRightIcon: !!rightIcon,
             ...rest,
@@ -177,13 +202,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           id={id}
           disabled={disabled ?? false}
           required={required}
+          readOnly={readOnly}
           {...rest}
         />
-        {suffix ? (
-          <span className="inline-block rounded-r-md border border-l-0 border-gray-300 text-gray-500 sm:text-sm bg-white">
-            {suffix}
-          </span>
-        ) : null}
+        {suffix ? suffix : null}
       </div>
 
       {error && <ErrorMessage>{error.message}</ErrorMessage>}

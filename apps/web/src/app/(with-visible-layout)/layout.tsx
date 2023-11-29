@@ -2,6 +2,7 @@ import { Footer, Header } from '@components/layout';
 import { LayoutComponent } from '@custom-types';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const Layout: LayoutComponent = ({ children }) => {
   return (

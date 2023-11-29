@@ -1,6 +1,6 @@
 import { Section } from '@components/portal';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
-import { FC, FormEventHandler } from 'react';
+import { FC, FormEventHandler, ReactNode } from 'react';
 import {
   Button,
   Checkbox,
@@ -27,7 +27,8 @@ export const EditUserUnderPage: FC<{
   onSubmit: FormEventHandler<HTMLFormElement>;
   userId?: User['id'];
   viewType: ViewType;
-}> = ({ onSubmit, userId, viewType }) => {
+  afterProfileImageSlot?: ReactNode;
+}> = ({ onSubmit, userId, viewType, afterProfileImageSlot }) => {
   const { register, formState } = useFormContext<UpdateProfile>();
   const email = useWatch({ name: 'email' });
 
@@ -41,6 +42,7 @@ export const EditUserUnderPage: FC<{
     >
       <div className="col-span-2 px-5 sm:px-10 mb-5 md:mb-0 pt-5">
         <UserAvatarPicker userId={userId} />
+        {afterProfileImageSlot}
       </div>
       <div className="col-span-4">
         <Section>

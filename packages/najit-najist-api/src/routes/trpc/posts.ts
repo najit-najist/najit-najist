@@ -1,8 +1,5 @@
-import { t } from '@trpc';
-import {
-  onlyAdminProcedure,
-  protectedProcedure,
-} from '@trpc-procedures/protectedProcedure';
+import { PocketbaseCollections, Post } from '@custom-types';
+import { pocketbase } from '@najit-najist/pb';
 import {
   createPostInputSchema,
   dislikePostInputSchema,
@@ -12,13 +9,17 @@ import {
   outputPostSchema,
   updateOnePostInputSchema,
 } from '@schemas';
-import { PocketbaseCollections, Post } from '@custom-types';
+import { t } from '@trpc';
+import {
+  onlyAdminProcedure,
+  protectedProcedure,
+} from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
-import { pocketbase } from '@najit-najist/pb';
-import { z } from 'zod';
 import { objectToFormData } from '@utils/internal';
 import { revalidatePath } from 'next/cache';
-import { UserLikedPostsService } from 'server';
+import { z } from 'zod';
+
+import { UserLikedPostsService } from '../../server';
 
 export const postsRoute = t.router({
   create: onlyAdminProcedure

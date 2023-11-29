@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { ProductFormData } from '../_types';
+import { toast } from '@najit-najist/ui';
 
 export const Form: FC<
   PropsWithChildren<{ viewType: 'create' | 'edit'; product?: Product }>
@@ -46,9 +47,30 @@ export const Form: FC<
       if (viewType === 'edit') {
         const { id } = product!;
 
-        const result = await updateProduct({
-          id,
-          payload: {
+        const result = await toast.promise(
+          updateProduct({
+            id,
+            payload: {
+              name: values.name,
+              description: values.description,
+              images: values.images,
+              price: values.price,
+              stock: values.stock,
+              publishedAt,
+              category: values.category,
+            },
+          }),
+          {
+            loading: 'Ukládám úpravy',
+            success: <b>Produkt upraven!</b>,
+            error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
+          }
+        );
+
+        router.push(`/produkty/${result.slug}?editor=true`);
+      } else if (viewType === 'create') {
+        const data = await toast.promise(
+          createProduct({
             name: values.name,
             description: values.description,
             images: values.images,
@@ -56,20 +78,13 @@ export const Form: FC<
             stock: values.stock,
             publishedAt,
             category: values.category,
-          },
-        });
-
-        router.push(`/produkty/${result.slug}?editor=true`);
-      } else if (viewType === 'create') {
-        const data = await createProduct({
-          name: values.name,
-          description: values.description,
-          images: values.images,
-          price: values.price,
-          stock: values.stock,
-          publishedAt,
-          category: values.category,
-        });
+          }),
+          {
+            loading: 'Vytvářím produkt',
+            success: <b>Produkt vytvořen!</b>,
+            error: (error) => <b>Nemohli produkt vytvořit. {error.message}</b>,
+          }
+        );
 
         router.push(`/produkty/${data.slug}`);
       }

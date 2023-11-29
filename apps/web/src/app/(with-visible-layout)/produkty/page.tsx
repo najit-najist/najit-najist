@@ -1,6 +1,7 @@
-import { ProductService } from '@najit-najist/api/server';
-import { SearchForm } from './_components/SearchForm';
-import { Item } from './_components/Item';
+import { PageDescription } from '@components/common/PageDescription';
+import { PageHeader } from '@components/common/PageHeader';
+import { PageTitle } from '@components/common/PageTitle';
+import { PlusIcon } from '@heroicons/react/24/outline';
 import {
   AppRouterOutput,
   AvailableModels,
@@ -8,14 +9,14 @@ import {
   UserActions,
   canUser,
 } from '@najit-najist/api';
-import { PageTitle } from '@components/common/PageTitle';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import Link from 'next/link';
+import { ProductService } from '@najit-najist/api/server';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
-import { PageHeader } from '@components/common/PageHeader';
-import { PageDescription } from '@components/common/PageDescription';
-import { Notice } from './_components/Notice';
 import { cookies } from 'next/headers';
+import Link from 'next/link';
+
+import { Item } from './_components/Item';
+import { Notice } from './_components/Notice';
+import { SearchForm } from './_components/SearchForm';
 import { PRODUCTS_NOTICE_STATE_COOKIE_NAME } from './_components/_constants';
 
 type Params = {
@@ -29,6 +30,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 const DEFAULT_CATEGORY_TITLE = 'Ostatní';
 
 const fallbackCategories: ProductCategory = {

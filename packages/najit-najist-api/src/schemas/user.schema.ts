@@ -1,8 +1,10 @@
 import { z } from 'zod';
+
 import { addressSchema } from './address.schema';
 import { authCollectionSchema } from './auth.collection.schema';
 import { municipalitySchema } from './municipality.schema';
 import { zodPassword } from './zodPassword';
+import { zodTelephoneNumber } from './zodTelephoneNumber';
 
 export enum UserRoles {
   ADMIN = 'ADMIN',
@@ -26,28 +28,24 @@ export enum UserStates {
 
 export type User = z.infer<typeof userSchema>;
 
+const MESSAGES = {
+  REQUIRED_FIRST_NAME: 'Zadejte jméno',
+  REQUIRED_LAST_NAME: 'Zadejte příjmení',
+};
+
 export const userSchema = authCollectionSchema.extend({
-  firstName: z.string(),
-  lastName: z.string(),
+  firstName: z
+    .string({
+      required_error: MESSAGES.REQUIRED_FIRST_NAME,
+    })
+    .min(1, MESSAGES.REQUIRED_FIRST_NAME),
+  lastName: z
+    .string({
+      required_error: MESSAGES.REQUIRED_LAST_NAME,
+    })
+    .min(1, MESSAGES.REQUIRED_LAST_NAME),
   avatar: z.string().optional(),
-  telephoneNumber: z
-    .string()
-    .or(z.number())
-    .transform(String)
-    .refine(
-      (value) => {
-        return (
-          value === undefined ||
-          value === null ||
-          value === '' ||
-          String(value).length === 9
-        );
-      },
-      {
-        message: 'Musí být devět čísel bez mezer',
-      }
-    )
-    .nullish(),
+  telephoneNumber: zodTelephoneNumber.nullish(),
   newsletterUuid: z.string().optional(),
   role: z.nativeEnum(UserRoles),
   status: z.nativeEnum(UserStates),
