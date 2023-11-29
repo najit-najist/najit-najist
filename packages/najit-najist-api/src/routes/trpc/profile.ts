@@ -1,5 +1,8 @@
-import { ErrorCodes, PocketbaseCollections } from '@custom-types';
-import { t } from '@trpc';
+import { ErrorCodes } from '@custom-types';
+import { ApplicationError } from '@errors';
+import { logger } from '@logger';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+import { pocketbaseByCollections } from '@najit-najist/pb';
 import {
   finalizeResetPasswordSchema,
   loginInputSchema,
@@ -12,18 +15,18 @@ import {
   UserStates,
   verifyRegistrationFromPreviewInputSchema,
 } from '@schemas';
-import { TRPCError } from '@trpc/server';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { ApplicationError } from '@errors';
-import { z } from 'zod';
-import { logger } from '@logger';
-import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { AvailableModels, setSessionToCookies } from '@utils';
 import { AuthService, PreviewSubscribersService, UserService } from '@services';
-import { userLikedRoutes } from './profile/liked';
-import omit from 'lodash/omit';
+import { t } from '@trpc';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import { TRPCError } from '@trpc/server';
+import { AvailableModels, setSessionToCookies } from '@utils';
 import { loginWithAccount } from '@utils/pocketbase';
+import omit from 'lodash/omit';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { z } from 'zod';
+
+import { userCartRoutes } from './profile/cart/cart';
+import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -52,9 +55,11 @@ const passwordResetRoutes = t.router({
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbase
-          .collection(AvailableModels.USER)
-          .confirmPasswordReset(input.token, input.password, input.password);
+        await pocketbaseByCollections.users.confirmPasswordReset(
+          input.token,
+          input.password,
+          input.password
+        );
       } catch (error) {
         logger.info({ error }, 'User password reset finalize failed');
 
@@ -69,6 +74,7 @@ const passwordResetRoutes = t.router({
 
 export const profileRouter = t.router({
   liked: userLikedRoutes,
+  cart: userCartRoutes,
 
   update: protectedProcedure
     .input(updateProfileSchema)
@@ -89,9 +95,11 @@ export const profileRouter = t.router({
 
       try {
         // Try to log in
-        const { record } = await pocketbase
-          .collection(AvailableModels.USER)
-          .authWithPassword<User>(input.email, input.password);
+        const { record } =
+          await pocketbaseByCollections.users.authWithPassword<User>(
+            input.email,
+            input.password
+          );
 
         user = record;
       } catch (error) {
@@ -221,9 +229,7 @@ export const profileRouter = t.router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbase
-          .collection(PocketbaseCollections.USERS)
-          .confirmVerification(input.token);
+        await pocketbaseByCollections.users.confirmVerification(input.token);
 
         logger.info({}, 'Registering user - verify - finished');
 

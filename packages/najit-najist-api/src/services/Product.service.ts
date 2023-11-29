@@ -1,7 +1,12 @@
 import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { logger } from '@logger';
-import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
+import {
+  ClientResponseError,
+  ListResult,
+  RecordListOptions,
+  pocketbase,
+} from '@najit-najist/pb';
 import {
   CreateProduct,
   GetManyProducts,
@@ -189,9 +194,16 @@ export class ProductService {
   }
 
   static async getMany(
-    options?: GetManyProducts
+    options?: GetManyProducts & { otherFilters?: string[] },
+    requestOpts?: Omit<RecordListOptions, 'expand' | 'filter'>
   ): Promise<ListResult<Product>> {
-    const { page = 1, perPage = 40, search, categorySlug } = options ?? {};
+    const {
+      page = 1,
+      perPage = 40,
+      search,
+      categorySlug,
+      otherFilters,
+    } = options ?? {};
 
     try {
       const filter = [
@@ -200,6 +212,7 @@ export class ProductService {
         search
           ? `(name ~ '${search}' || description ~ '${search}')`
           : undefined,
+        ...(otherFilters ?? []),
       ]
         .filter(Boolean)
         .join(' && ');
@@ -209,6 +222,7 @@ export class ProductService {
         .getList<ProductWithExpand>(page, perPage, {
           expand: BASE_EXPAND,
           filter,
+          ...requestOpts,
         });
 
       return { ...result, items: result.items.map(this.mapExpandToResponse) };

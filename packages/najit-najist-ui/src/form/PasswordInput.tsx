@@ -1,6 +1,7 @@
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { forwardRef, HTMLInputTypeAttribute, useState } from 'react';
-import { Input, InputProps } from './Input';
+
+import { Input, InputProps, inputPrefixSuffixStyles } from './Input';
 
 export type PasswordInputProps = Omit<InputProps, 'ref'>;
 
@@ -12,13 +13,15 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     const inputType: HTMLInputTypeAttribute = isShown ? 'text' : 'password';
 
     const suffixContent = (
-      <button
-        className="flex h-full px-2 items-center"
-        type="button"
-        onClick={() => setIsShown((item) => !item)}
-      >
-        <Icon className="w-5 h-5" />
-      </button>
+      <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+        <button
+          className="flex h-full px-2 items-center"
+          type="button"
+          onClick={() => setIsShown((item) => !item)}
+        >
+          <Icon className="w-5 h-5" />
+        </button>
+      </div>
     );
 
     return (

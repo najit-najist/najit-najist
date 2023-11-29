@@ -3,6 +3,7 @@ import { PreviewSubscribersTokens } from '@najit-najist/api';
 import { PreviewSubscribersService } from '@najit-najist/api/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+
 import { Form } from './_components/Form';
 
 export const metadata = {
@@ -10,6 +11,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const RegistrationFinalizationPage = async ({
   params: { token },

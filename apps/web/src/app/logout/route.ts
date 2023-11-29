@@ -2,6 +2,7 @@ import { logoutUser } from '@najit-najist/api/server';
 import { NextRequest } from 'next/server';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export function GET(request: NextRequest) {
   const headersList = new Headers();

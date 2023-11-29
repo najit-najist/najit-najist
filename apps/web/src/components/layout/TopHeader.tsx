@@ -1,7 +1,11 @@
 'use client';
 
 import { Logo } from '@components/common/Logo';
-import { UserIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import {
+  ShoppingBagIcon,
+  UserIcon,
+  XMarkIcon,
+} from '@heroicons/react/24/outline';
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
 import {
   canUser,
@@ -11,11 +15,19 @@ import {
   UserRoles,
 } from '@najit-najist/api';
 import { Menu, Transition } from '@najit-najist/ui';
+import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
-import { FC, forwardRef, PropsWithChildren } from 'react';
+import {
+  FC,
+  forwardRef,
+  PropsWithChildren,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 
 const pillStyles = clsx(
   'inline-flex items-center min-w-[32px] text-center sm:text-left duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3'
@@ -126,6 +138,78 @@ const AdministrationPill: FC<{ hideOnMobile?: boolean }> = ({
   );
 };
 
+const ShoppingBagButton: FC = () => {
+  const [indicatorState, setIndicatorState] = useState<
+    'hide' | 'bounce' | 'stationary'
+  >('hide');
+  const { data: productsInCart, isLoading } =
+    trpc.profile.cart.products.get.many.useQuery(undefined);
+  const pathname = usePathname();
+
+  const cartQuantity = useMemo(() => {
+    if (!productsInCart) {
+      return null;
+    }
+
+    let total = 0;
+
+    for (const productInCart of productsInCart) {
+      total += productInCart.count;
+    }
+
+    return Math.min(99, total);
+  }, [productsInCart]);
+
+  useEffect(() => {
+    let activeTimeoutId: number | null = null;
+
+    if (
+      (isLoading && indicatorState !== 'hide') ||
+      (!isLoading && !productsInCart?.length)
+    ) {
+      setIndicatorState('hide');
+    } else if (
+      !isLoading &&
+      !!productsInCart?.length &&
+      (indicatorState === 'hide' || indicatorState === 'bounce')
+    ) {
+      setIndicatorState('bounce');
+      activeTimeoutId = setTimeout(() => {
+        setIndicatorState('stationary');
+      }, 650) as unknown as number;
+    }
+
+    return () => {
+      clearTimeout(activeTimeoutId ?? undefined);
+    };
+  }, [isLoading, indicatorState, productsInCart]);
+
+  return (
+    <Link
+      className={clsx([
+        pillStyles,
+        'flex justify-center !px-1.5 relative',
+        pathname === '/muj-ucet/kosik/pokladna'
+          ? 'bg-project-primary text-white'
+          : 'hover:bg-project-primary hover:text-white bg-white',
+      ])}
+      href="/muj-ucet/kosik/pokladna"
+    >
+      <ShoppingBagIcon className="w-4 h-4" />
+      {indicatorState !== 'hide' ? (
+        <div
+          className={clsx(
+            'absolute -bottom-1 -left-1 bg-red-500 w-5 h-5 rounded-full text-sm flex items-center justify-center text-white',
+            indicatorState === 'bounce' ? 'animate-bounce duration-300' : ''
+          )}
+        >
+          {cartQuantity}
+        </div>
+      ) : null}
+    </Link>
+  );
+};
+
 export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
   const pathname = usePathname();
 
@@ -167,15 +251,17 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     <Link
                       className={clsx([
                         pillStyles,
-                        'flex justify-center !px-2',
+                        'flex justify-center !px-1.5',
                         pathname === '/muj-ucet/profil'
                           ? 'bg-project-primary text-white'
                           : 'hover:bg-project-primary hover:text-white bg-white',
                       ])}
                       href="/muj-ucet/profil"
                     >
-                      <UserIcon className="w-5 h-5" />
+                      <UserIcon className="w-4 h-4" />
                     </Link>
+
+                    <ShoppingBagButton />
                   </>
                 ) : (
                   <>

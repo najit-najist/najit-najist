@@ -1,5 +1,6 @@
-import { config } from 'config';
+import { config } from '@config';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+
 export const logoutUser = async (headers: Headers) => {
   const cookies = new ResponseCookies(headers);
 

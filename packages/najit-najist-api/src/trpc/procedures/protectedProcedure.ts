@@ -1,15 +1,16 @@
-import { t } from '../instance';
+import { isTokenExpired } from '@najit-najist/pb';
+import { UserRoles } from '@schemas';
+import { AuthService } from '@services';
 import { TRPCError } from '@trpc/server';
-import { isTokenExpired, pocketbase } from '@najit-najist/pb';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import {
   deserializePocketToken,
   getLoggedInUser,
   getSessionFromCookies,
   setSessionToCookies,
 } from '@utils';
-import { AuthService } from '@services';
-import { UserRoles } from '@schemas';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+
+import { t } from '../instance';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',
@@ -37,6 +38,7 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
         userId: result.id,
         authModel: result.collectionId,
         user: await getLoggedInUser({ authenticateApi: false }),
+        token: session.authContent.token,
       },
     },
   });

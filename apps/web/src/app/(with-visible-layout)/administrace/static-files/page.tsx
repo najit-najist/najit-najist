@@ -1,4 +1,5 @@
 import { PageTitle } from '@components/common/PageTitle';
+
 import { Form } from './_components/Form';
 
 export const metadata = {
@@ -6,6 +7,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   return (

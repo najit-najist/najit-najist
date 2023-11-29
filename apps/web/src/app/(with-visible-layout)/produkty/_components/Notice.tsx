@@ -4,13 +4,16 @@ import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { Alert, Button } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
-import { useCookie } from 'react-use';
+import { useCookies } from 'react-cookie';
+
 import { PRODUCTS_NOTICE_STATE_COOKIE_NAME } from './_constants';
 
 export const Notice: FC = () => {
-  const [state, setCookieValue] = useCookie(PRODUCTS_NOTICE_STATE_COOKIE_NAME);
+  const [state, setCookieValue] = useCookies([
+    PRODUCTS_NOTICE_STATE_COOKIE_NAME,
+  ]);
 
-  if (state === 'true') {
+  if (state[PRODUCTS_NOTICE_STATE_COOKIE_NAME] === 'true') {
     return;
   }
 
@@ -50,7 +53,12 @@ export const Notice: FC = () => {
         aktuálně dostupných produktů, zaškrtnete si vyhovující kombinaci, den a
         přibližný čas vyzvednutí objednávky a vše zaplatíte přes platební bránu.
       </p>
-      <Button onClick={() => setCookieValue('true')} className="mt-4">
+      <Button
+        onClick={() =>
+          setCookieValue(PRODUCTS_NOTICE_STATE_COOKIE_NAME, 'true')
+        }
+        className="mt-4"
+      >
         Rozumím
       </Button>
     </Alert>

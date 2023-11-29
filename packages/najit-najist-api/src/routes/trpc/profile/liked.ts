@@ -1,7 +1,7 @@
 import { dislikeRecipeInputSchema, likeRecipeInputSchema } from '@schemas';
+import { UserLikedRecipesService } from '@services';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
-import { UserLikedRecipesService } from 'server';
 import { z } from 'zod';
 
 export const userLikedRecipesRoutes = t.router({

@@ -2,7 +2,7 @@
 
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { Input } from '@najit-najist/ui';
+import { Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
@@ -55,11 +55,13 @@ export const SearchForm: FC<{ initialData?: Partial<FormData> }> = ({
         rootClassName="max-w-sm"
         size="normal"
         suffix={
-          formMethods.formState.isSubmitting || isLoading ? (
-            <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
-          ) : (
-            <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
-          )
+          <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+            {formMethods.formState.isSubmitting || isLoading ? (
+              <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
+            ) : (
+              <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
+            )}
+          </div>
         }
         {...register('query')}
       />

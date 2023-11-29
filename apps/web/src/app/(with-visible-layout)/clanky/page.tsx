@@ -1,15 +1,16 @@
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
+import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import Link from 'next/link';
 
 import { Item } from './_components/Item';
 import { SearchForm } from './_components/SearchForm';
-import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
-import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
-import Link from 'next/link';
-import { PlusIcon } from '@heroicons/react/24/solid';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Články',

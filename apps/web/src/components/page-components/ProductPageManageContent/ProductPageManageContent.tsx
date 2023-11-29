@@ -1,20 +1,23 @@
+import { StarIcon } from '@heroicons/react/24/solid';
 import { AvailableModels, getFileUrl, Product } from '@najit-najist/api';
-import { FC, PropsWithChildren } from 'react';
-import { Aside } from './Aside';
+import { Badge } from '@najit-najist/ui';
+import { getCachedTrpcCaller } from '@server-utils';
+import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
+import Link from 'next/link';
+import { FC, PropsWithChildren } from 'react';
+
+import { Aside } from './Aside';
+import { CustomImage } from './CustomImage';
+import { EditorHeader } from './EditorHeader';
+import { UserActions } from './UserActions';
+import { CategoryEdit } from './editorComponents/CategoryEdit';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { Form } from './editorComponents/Form';
-import { TitleEdit } from './editorComponents/TitleEdit';
-import { EditorHeader } from './EditorHeader';
-import { CustomImage } from './CustomImage';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
-import clsx from 'clsx';
 import { PriceEditor, PriceRenderer } from './editorComponents/Price';
-import { StarIcon } from '@heroicons/react/24/solid';
-import Link from 'next/link';
-import { CategoryEdit } from './editorComponents/CategoryEdit';
-import { getCachedTrpcCaller } from '@server-utils';
-import { Badge } from '@najit-najist/ui';
+import { StockEdit } from './editorComponents/StockEdit';
+import { TitleEdit } from './editorComponents/TitleEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
@@ -85,22 +88,7 @@ export const ProductPageManageContent: FC<
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <Link
-            href="/produkty"
-            className="mt-5 mb-3 text-sm uppercase font-semibold text-ocean-400 block font-title"
-          >
-            Produkt{' '}
-            {!product?.publishedAt ? (
-              <span className="text-red-500">- Nepublikováno</span>
-            ) : null}
-          </Link>
-          {!isEditorEnabled ? (
-            <h1 className="text-4xl font-title">{name}</h1>
-          ) : (
-            <TitleEdit />
-          )}
-
-          <div className="flex flex-wrap items-center grid-cols-2 gap-2 mt-1">
+          <div className="flex gap-5 items-center mt-5 mb-3 ">
             {isEditorEnabled ? (
               <>
                 <CategoryEdit categories={categories.items} />
@@ -110,7 +98,24 @@ export const ProductPageManageContent: FC<
                 {props.product.category?.name ?? 'Ostatní'}
               </Badge>
             )}
+            <Link
+              href="/produkty"
+              className="text-sm uppercase font-semibold text-ocean-400 block font-title"
+            >
+              Produkt{' '}
+              {!product?.publishedAt ? (
+                <span className="text-red-500">- Nepublikováno</span>
+              ) : null}
+            </Link>
+          </div>
 
+          {!isEditorEnabled ? (
+            <h1 className="text-5xl font-title">{name}</h1>
+          ) : (
+            <TitleEdit />
+          )}
+
+          <div className="flex flex-wrap items-center grid-cols-2 gap-2 mt-1">
             <div
               className={clsx(
                 'flex',
@@ -125,7 +130,6 @@ export const ProductPageManageContent: FC<
             </div>
           </div>
 
-          {/* TODO: add reviews here */}
           <div className="mt-5">
             {isEditorEnabled ? (
               <PriceEditor />
@@ -133,6 +137,14 @@ export const ProductPageManageContent: FC<
               <PriceRenderer price={product!.price} />
             )}
           </div>
+
+          {viewType !== 'view' ? <StockEdit /> : null}
+
+          {product && viewType === 'view' ? (
+            <div className="flex mt-10">
+              <UserActions stock={product.stock} productId={product.id} />
+            </div>
+          ) : null}
 
           <div className="my-10">
             <Title>Popisek</Title>

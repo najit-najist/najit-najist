@@ -1,16 +1,17 @@
+import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { FC, PropsWithChildren } from 'react';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { AppRouterOutput } from '@najit-najist/api';
+import { getTrpcCaller } from '@najit-najist/api/server';
 import { getCachedUsers } from '@server-utils';
+import { TRPCClientError } from '@trpc/client';
+import Link from 'next/link';
+import { FC, PropsWithChildren } from 'react';
+import { z } from 'zod';
+
+import { Footer } from './_components/Footer';
 import { SearchForm } from './_components/SearchForm';
 import { Users } from './_components/Users';
-import { PageHeader } from '@components/common/PageHeader';
-import Link from 'next/link';
-import { PlusIcon } from '@heroicons/react/24/solid';
-import { Footer } from './_components/Footer';
-import { z } from 'zod';
-import { getTrpcCaller } from '@najit-najist/api/server';
-import { AppRouterOutput } from '@najit-najist/api';
-import { TRPCClientError } from '@trpc/client';
 
 type Params = {
   searchParams: {
@@ -25,6 +26,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const Th: FC<PropsWithChildren> = ({ children }) => (
   <th

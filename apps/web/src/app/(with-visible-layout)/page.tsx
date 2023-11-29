@@ -1,12 +1,13 @@
+import { NewsletterSubscribe } from '@components/layout';
 import { FC } from 'react';
 
-import { NewsletterSubscribe } from '@components/layout';
 import { HeroBanner } from './_components/HeroBanner';
+import { LatestPosts } from './_components/LatestPosts';
 import { QuickLinks } from './_components/QuickLinks';
 import { VideoSection } from './_components/VideoSection';
-import { LatestPosts } from './_components/LatestPosts';
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const MainPage: FC = () => {
   return (

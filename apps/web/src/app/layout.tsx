@@ -12,6 +12,7 @@ import dayjs from 'dayjs';
 import { CookieBanner } from '@components/common/CookieBanner';
 import Script from 'next/script';
 import { GA_KEY } from '@constants';
+import { Toaster } from '@najit-najist/ui';
 
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -78,6 +79,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
         <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>
           {children}
           <CookieBanner />
+          <Toaster />
         </ContextProviders>
       </body>
     </html>

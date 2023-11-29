@@ -1,7 +1,9 @@
-import { Content } from './_components/Content';
 import { getCachedLoggedInUser } from '@server-utils';
 
+import { Content } from './_components/Content';
+
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export const metadata = {
   title: 'Můj profil',

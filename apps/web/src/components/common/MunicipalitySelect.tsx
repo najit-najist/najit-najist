@@ -3,7 +3,7 @@ import { Combobox, ComboboxProps } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useState } from 'react';
 import { useController } from 'react-hook-form';
-import { useDebounce } from 'react-use';
+import { useDebounce } from 'usehooks-ts';
 
 export const MunicipalitySelect: FC<
   Pick<ComboboxProps, 'className' | 'required' | 'label' | 'size'> & {
@@ -15,15 +15,13 @@ export const MunicipalitySelect: FC<
   });
 
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
+  const debouncedQuery = useDebounce(query, 300);
   const { data, isLoading } = trpc.address.municipality.get.many.useQuery(
     {
       query: debouncedQuery,
     },
     { suspense: false }
   );
-
-  useDebounce(() => setDebouncedQuery(query), 300, [query]);
 
   return (
     <Combobox<Municipality>

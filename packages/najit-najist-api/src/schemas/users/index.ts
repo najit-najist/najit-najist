@@ -1,8 +1,9 @@
 import { z } from 'zod';
+
+import { addressSchema } from '../address.schema';
+import { municipalitySchema } from '../municipality.schema';
 import { userSchema } from '../user.schema';
-import { municipalitySchema } from 'schemas/municipality.schema';
 import { zodPassword } from '../zodPassword';
-import { addressSchema } from 'schemas/address.schema';
 
 export * from './getManyInput.schema';
 export * from './getOneInput.schema';

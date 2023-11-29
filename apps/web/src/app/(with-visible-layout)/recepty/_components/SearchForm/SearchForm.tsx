@@ -5,7 +5,7 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
-import { Input, Select } from '@najit-najist/ui';
+import { Input, Select, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
@@ -79,11 +79,13 @@ export const SearchForm: FC<{
           placeholder="Vyhledávání..."
           rootClassName="w-full"
           suffix={
-            formMethods.formState.isSubmitting || isRefreshing ? (
-              <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
-            ) : (
-              <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
-            )
+            <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+              {formMethods.formState.isSubmitting || isRefreshing ? (
+                <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
+              ) : (
+                <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
+              )}
+            </div>
           }
           {...register('query')}
         />
