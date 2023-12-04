@@ -19,6 +19,7 @@ const badgeStyles = cva(
         normal: 'px-2 py-1 text-xs',
         small: 'px-1.5 py-0.5 text-xs',
         lg: 'px-3 py-1 text-base',
+        xl: 'px-3 py-1 text-lg',
       },
       withNotification: {
         true: '',

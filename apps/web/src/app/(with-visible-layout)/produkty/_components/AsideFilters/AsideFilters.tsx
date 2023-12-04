@@ -1,11 +1,18 @@
 'use client';
 
 import {
+  AdjustmentsVerticalIcon,
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
+import { useIsDesktop } from '@hooks';
 import { ProductCategory } from '@najit-najist/api';
-import { Input, Select, inputPrefixSuffixStyles } from '@najit-najist/ui';
+import {
+  Button,
+  CheckboxGroup,
+  Input,
+  inputPrefixSuffixStyles,
+} from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
@@ -13,16 +20,17 @@ import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 type FormValues = {
   query?: string;
-  categorySlug?: string;
+  categories?: ProductCategory[];
 };
 
 const categoryLabelFormatter = (value: ProductCategory) => value.name;
 
-export const SearchForm: FC<{
+export const AsideFilters: FC<{
   initialValues?: FormValues;
   categories: ProductCategory[];
 }> = ({ initialValues, categories }) => {
   const router = useRouter();
+  const isDesktop = useIsDesktop();
   const [isRefreshing, startRefreshing] = useTransition();
   const formMethods = useForm<FormValues>({
     defaultValues: initialValues,
@@ -34,11 +42,11 @@ export const SearchForm: FC<{
   );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ query, categorySlug }) => {
+    ({ query, categories }) => {
       let route = '/produkty';
       const params = [
         ['query', query],
-        ['category-slug', categorySlug],
+        ['category-slug', categories?.map((item) => item.id)],
       ].filter(([_, value]) => !!value) as string[][];
 
       if (params.length) {
@@ -62,12 +70,9 @@ export const SearchForm: FC<{
     return () => subscription.unsubscribe();
   }, [handleSubmit, onSubmit, watch]);
 
-  return (
+  const content = (
     <FormProvider {...formMethods}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="container mb-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end"
-      >
+      <form onSubmit={handleSubmit(onSubmit)}>
         <Input
           placeholder="Vyhledávání..."
           rootClassName="w-full"
@@ -82,21 +87,37 @@ export const SearchForm: FC<{
           }
           {...register('query')}
         />
+
         <Controller<FormValues>
-          name="categorySlug"
+          name="categories"
           render={({ field: { name, value, onChange } }) => (
-            <Select<ProductCategory>
+            <CheckboxGroup
               name={name}
               label="Kategorie"
-              selected={categoriesAsMap.get(value ?? '')}
-              onChange={(item) => onChange(item?.slug)}
-              formatter={categoryLabelFormatter}
-              items={categories}
-              className="md:max-w-[240px] w-full"
+              options={categories}
+              onChange={(callback) => onChange(callback(value as any))}
             />
           )}
         />
       </form>
     </FormProvider>
+  );
+
+  return (
+    <>
+      <aside className="flex-none w-full max-w-[18rem]">
+        <Button
+          color="secondary"
+          notRounded
+          appearance="spaceless"
+          padding="sm"
+          className="rounded-full text-xl block sm:hidden"
+        >
+          <AdjustmentsVerticalIcon className="w-6 h-6 inline mr-2" />
+          Filtrovat
+        </Button>
+        {isDesktop ? content : null}
+      </aside>
+    </>
   );
 };

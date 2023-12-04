@@ -2,6 +2,7 @@
 
 export {
   Checkbox,
+  CheckboxGroup,
   CheckboxWrapper,
   ErrorMessage,
   FileSelect,
@@ -22,6 +23,7 @@ export {
   Combobox,
   NumberInput,
   inputPrefixSuffixStyles,
+  type CheckboxGroupProps,
   type ColorPickerProps,
   type ComboboxProps,
   type ErrorMessageProps,
@@ -44,6 +46,8 @@ export { Button, buttonStyles } from './Button';
 export { Paper, paperStyles } from './Paper';
 export { Modal, type ModalProps } from './Modal';
 export { Skeleton } from './Skeleton';
+export { CurrencyCodes, Price } from './Price';
+export { Tooltip } from './Tooltip';
 
 export type { AlertProps } from './Alert';
 export type { ButtonProps } from './Button';

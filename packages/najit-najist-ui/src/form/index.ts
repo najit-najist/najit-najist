@@ -1,4 +1,5 @@
 export * from './Input';
+export * from './CheckboxGroup';
 export * from './Checkbox';
 export * from './ColorPicker';
 export * from './Combobox';

@@ -1,12 +1,22 @@
+import { ShoppingBagIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { cva, cx, VariantProps } from 'class-variance-authority';
-import { ButtonHTMLAttributes, DetailedHTMLProps, forwardRef } from 'react';
+import {
+  ButtonHTMLAttributes,
+  cloneElement,
+  DetailedHTMLProps,
+  forwardRef,
+  ReactElement,
+} from 'react';
 
 export type ButtonProps = DetailedHTMLProps<
   ButtonHTMLAttributes<HTMLButtonElement>,
   HTMLButtonElement
 > &
-  VariantProps<typeof buttonStyles> & { contentWrapperClassName?: string };
+  VariantProps<typeof buttonStyles> & {
+    contentWrapperClassName?: string;
+    icon?: ReactElement;
+  };
 
 export const buttonStyles = cva(
   'duration-100 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
@@ -38,6 +48,12 @@ export const buttonStyles = cva(
         spaceless: '',
         normal: 'py-2 px-8',
       },
+      padding: {
+        off: '',
+        sm: 'py-2 px-4',
+        md: 'py-2 px-8',
+        xl: 'py-2 px-4',
+      },
       asLink: {
         true: 'hover:underline',
         false: '',
@@ -62,6 +78,7 @@ export const buttonStyles = cva(
     defaultVariants: {
       appearance: 'normal',
       color: 'normal',
+      padding: 'off',
       isLoading: false,
       notRounded: false,
       notAnimated: false,
@@ -85,6 +102,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       withoutRing,
       color,
       contentWrapperClassName,
+      padding,
+      icon: IconComponent,
+      notAnimated,
       ...rest
     },
     ref
@@ -98,17 +118,28 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           notRounded,
           color,
           withoutRing,
+          padding,
+          notAnimated,
           ...rest,
         })}
         type="button"
         {...rest}
       >
         {isLoading ? (
-          <ArrowPathIcon className="animate-spin w-4 h-4 inline-block mr-2" />
+          <ArrowPathIcon
+            className={cx(
+              'animate-spin w-4 h-4 inline-block',
+              children ? 'mr-2' : ''
+            )}
+          />
+        ) : (
+          IconComponent ?? null
+        )}
+        {children ? (
+          <div className={cx('inline-block', contentWrapperClassName)}>
+            {children}
+          </div>
         ) : null}
-        <div className={cx('inline-block', contentWrapperClassName)}>
-          {children}
-        </div>
       </button>
     );
   }
