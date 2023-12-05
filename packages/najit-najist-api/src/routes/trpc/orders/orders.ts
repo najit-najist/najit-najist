@@ -109,7 +109,7 @@ export const orderRoutes = t.router({
             input.page,
             input.perPage,
             {
-              expand: `${Collections.ORDER_PRODUCTS}(order), payment_method`,
+              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method`,
               headers: {
                 [AUTHORIZATION_HEADER]: ctx.sessionData.token,
               },
