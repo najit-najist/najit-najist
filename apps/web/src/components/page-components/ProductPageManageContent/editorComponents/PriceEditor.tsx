@@ -4,7 +4,7 @@ import { Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
-import { ProductFormData } from '../../_types';
+import { ProductFormData } from '../_types';
 
 export const PriceEditor: FC = () => {
   const { register, formState } = useFormContext<ProductFormData>();

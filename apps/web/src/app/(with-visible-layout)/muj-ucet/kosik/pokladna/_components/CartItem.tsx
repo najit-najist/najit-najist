@@ -7,7 +7,7 @@ import {
   AvailableModels,
   getFileUrl,
 } from '@najit-najist/api';
-import { Badge, NumberInput } from '@najit-najist/ui';
+import { Badge, NumberInput, Price } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
 import NextImage from 'next/image';
@@ -134,19 +134,10 @@ export const CartItem: FC<
         </div>
 
         <div className="flex flex-1 items-end justify-between pt-2">
-          <p
-            className={clsx(
-              'text-2xl font-semibold flex-none',
-              isDoingTransition ? 'blur-sm' : ''
-            )}
-          >
-            <span className="tracking-wider text-project-primary">
-              {product.price.value * count}
-            </span>
-            <span className="text-sm tracking-[-0.1rem] text-gray-700 underline">
-              Kč
-            </span>
-          </p>
+          <Price
+            value={product.price.value * count}
+            className={isDoingTransition ? 'blur-sm' : ''}
+          />
 
           <div className="ml-4">
             <NumberInput

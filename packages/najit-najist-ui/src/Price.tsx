@@ -12,7 +12,7 @@ export const currencyCodeToLabel: Record<CurrencyCodes, string> = {
   [CurrencyCodes.EUR]: 'eur',
 };
 
-export type PriceSizes = 'xs' | 'sm' | 'default' | 'md';
+export type PriceSizes = 'xs' | 'sm' | 'default' | 'md' | 'lg';
 type SharedValues = {
   size: Record<PriceSizes, ClassValue>;
 };
@@ -21,7 +21,13 @@ export const priceRootStyles = cva<SharedValues>(
   'text-project-primary font-bold',
   {
     variants: {
-      size: { sm: '', xs: '', default: 'text-3xl', md: 'text-5xl' },
+      size: {
+        sm: '',
+        xs: '',
+        default: 'text-3xl',
+        md: 'text-5xl',
+        lg: 'text-6xl',
+      },
     },
     defaultVariants: {
       size: 'default',
@@ -36,8 +42,9 @@ export const priceCurrencyStyles = cva<SharedValues>(
       size: {
         sm: '',
         xs: '',
-        default: 'tracking-[-0.1rem] text-lg ml-1 -translate-y-1/4',
-        md: 'tracking-[-0.1rem] text-2xl ml-1 -translate-y-1/3',
+        default: 'tracking-[-0.1rem] text-lg ml-1 -translate-y-[0.5rem]',
+        md: 'tracking-[-0.1rem] text-2xl ml-1 -translate-y-[1rem]',
+        lg: 'tracking-[-0.1rem] text-3xl ml-1 -translate-y-[1.3rem]',
       },
     },
     defaultVariants: {

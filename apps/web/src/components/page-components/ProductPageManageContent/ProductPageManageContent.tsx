@@ -1,6 +1,6 @@
 import { StarIcon } from '@heroicons/react/24/solid';
 import { AvailableModels, getFileUrl, Product } from '@najit-najist/api';
-import { Badge } from '@najit-najist/ui';
+import { Badge, Price } from '@najit-najist/ui';
 import { getCachedTrpcCaller } from '@server-utils';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
@@ -15,7 +15,7 @@ import { CategoryEdit } from './editorComponents/CategoryEdit';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { Form } from './editorComponents/Form';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
-import { PriceEditor, PriceRenderer } from './editorComponents/Price';
+import { PriceEditor } from './editorComponents/PriceEditor';
 import { StockEdit } from './editorComponents/StockEdit';
 import { TitleEdit } from './editorComponents/TitleEdit';
 
@@ -134,7 +134,7 @@ export const ProductPageManageContent: FC<
             {isEditorEnabled ? (
               <PriceEditor />
             ) : (
-              <PriceRenderer price={product!.price} />
+              <Price value={product!.price.value} size="lg" />
             )}
           </div>
 
