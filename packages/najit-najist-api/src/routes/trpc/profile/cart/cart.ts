@@ -175,7 +175,7 @@ export const userCartRoutes = t.router({
         Omit<Order, 'products'>
       >(
         {
-          totalPrice: cart.price.total,
+          subtotal: cart.price.subtotal,
           user: ctx.sessionData.user.id,
 
           address_houseNumber: input.address.houseNumber,

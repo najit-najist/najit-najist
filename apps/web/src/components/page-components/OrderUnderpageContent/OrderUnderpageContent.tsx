@@ -1,73 +1,87 @@
+import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   AppRouterOutput,
   AvailableModels,
-  Order,
   getFileUrl,
   orderStates,
 } from '@najit-najist/api';
+import { Alert, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { FC, Fragment, ReactNode } from 'react';
 import { z } from 'zod';
 
+import { EditOrderControllbar } from './EditOrderControlbar';
+import { OrderSubtitle } from './OrderSubtitle';
+
+export type OrderUnderpageViewType = 'update' | 'view';
+
 export type OrderUnderpageProps = {
   order: AppRouterOutput['orders']['get']['one'];
+  viewType: OrderUnderpageViewType;
 };
 
 const orderStateToTitle: Record<z.infer<typeof orderStates>, string> = {
   confirmed: 'Brzy to bude!',
   dropped: 'Zrušeno',
-  finished: 'Je to u Vás!',
+  finished: 'A je to doma!',
   unconfirmed: 'Pracujeme na tom!',
-  unpaid: 'Čekáme na Vaši platbu',
+  unpaid: 'Čekáme na platbu',
   new: 'Pracujeme na tom!',
+  shipped: 'Odesláno!',
 };
 
-export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
-  order,
-}) => {
-  const deliveryMethod = order.payment_method.delivery_method;
-
-  const orderStateToSubtitle: Record<z.infer<typeof orderStates>, ReactNode> = {
-    confirmed: (
-      <>
-        Vaše objednávka <b>#{order.id}</b> je potvrzená!{' '}
-        {typeof deliveryMethod !== 'string' ? (
-          deliveryMethod.slug === 'local-pickup' ? (
-            <>Již brzy dostanete info pro vyzvednutí!</>
-          ) : (
-            <>Nyní Vaši objednávku zabalíme a odešleme.</>
-          )
-        ) : null}
-      </>
-    ),
-    dropped: 'Tato objednávka byla zrušena. Jak smutné 😢',
-    finished:
-      'Tato objednávka byla úspěšně dokončena a měli by jste ji mít už v rukou. Nezapomeňte na hodnocení!',
-    new: 'Tato objednávka je pouze vytvořena a čeká na další akci',
-    unconfirmed: `Blahopřejeme k vytvořené objednávky! Nyní počkejte na potvrzení z naší strany.`,
-    unpaid:
-      'Tato objednávka je vytvořena, ale nezaplacena. Zaplaťte prosím objednávku, aby jsme s ní mohli pokračovat.',
-  };
+export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
+  const { order, viewType } = props;
+  const deliveryMethod =
+    typeof order.payment_method.delivery_method === 'string'
+      ? null
+      : order.payment_method.delivery_method;
 
   return (
     <div className="pb-24 pt-16">
       <div className="mx-auto container">
-        <div className="max-w-xl">
-          <h1 className="text-base font-medium text-project-primary">
-            Děkujeme!
-          </h1>
-          <p className="mt-2 text-5xl font-bold tracking-tight font-title">
-            {orderStateToTitle[order.state]}
-          </p>
-          <p className="mt-2 text-base text-gray-500">
-            {orderStateToSubtitle[order.state]}
-          </p>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-x-5 gap-y-10">
+          <div className="md:max-w-xl">
+            <h1 className="text-base font-medium text-project-primary">
+              {viewType === 'view' ? (
+                'Děkujeme!'
+              ) : (
+                <>
+                  Objednávka uživatele{' '}
+                  <Tooltip
+                    trigger={
+                      <Link
+                        className="text-project-secondary underline"
+                        href={`/administrace/uzivatele/${order.user?.id}`}
+                      >
+                        {order.user?.firstName} {order.user?.lastName}
+                      </Link>
+                    }
+                  >
+                    Přejít na uživatele
+                  </Tooltip>
+                </>
+              )}
+            </h1>
+            <p
+              className="mt-2 text-5xl font-bold tracking-tight font-title"
+              data-state={order.state}
+            >
+              {orderStateToTitle[order.state]}
+            </p>
+            <OrderSubtitle {...props} />
 
-          <dl className="mt-12 text-sm font-medium">
-            <dt className="text-gray-900">Referenční číslo objednávky</dt>
-            <dd className="mt-2 text-project-primary">{order.id}</dd>
-          </dl>
+            <dl className="mt-12 text-sm font-medium">
+              <dt className="text-gray-900">Referenční číslo objednávky</dt>
+              <dd className="mt-2 text-project-primary">{order.id}</dd>
+            </dl>
+          </div>
+          {viewType !== 'view' ? (
+            <aside className="md:max-w-sm w-full flex-none">
+              <EditOrderControllbar {...props} />
+            </aside>
+          ) : null}
         </div>
 
         <section
@@ -75,7 +89,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
           className="mt-10 border-t border-gray-200"
         >
           <h2 id="order-heading" className="sr-only">
-            Your order
+            Vaše objednávka
           </h2>
 
           <h3 className="sr-only">Items</h3>
@@ -129,7 +143,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
                       </div>
                       <div className="flex pl-4 sm:pl-6">
                         <dt className="font-medium text-gray-900">
-                          Cena celkem:
+                          Cena za produkt celkem:
                         </dt>
                         <dd className="ml-2 text-gray-700">
                           {cartItem.totalPrice} Kč
@@ -184,12 +198,30 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
                   Platební metoda
                 </dt>
                 <dd className="mt-2 text-gray-700">
-                  <p>Apple Pay</p>
-                  <p>Mastercard</p>
+                  <p>{order.payment_method.name}</p>
+                  {order.state === 'unpaid' && order.payment_method.notes ? (
+                    <Alert
+                      color="warning"
+                      heading={
+                        <>
+                          <ExclamationTriangleIcon className="w-4 h-4 inline" />{' '}
+                          Důležitá informace
+                        </>
+                      }
+                      className="mt-3"
+                    >
+                      <div
+                        dangerouslySetInnerHTML={{
+                          __html: order.payment_method.notes,
+                        }}
+                      ></div>
+                    </Alert>
+                  ) : null}
+                  {/* <p>Mastercard</p>
                   <p>
                     <span aria-hidden="true">••••</span>
                     <span className="sr-only">Ending in </span>1545
-                  </p>
+                  </p> */}
                 </dd>
               </div>
               <div>
@@ -197,8 +229,14 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
                   Doručovací metoda
                 </dt>
                 <dd className="mt-2 text-gray-700">
-                  <p>DHL</p>
-                  <p>Takes up to 3 working days</p>
+                  {deliveryMethod ? (
+                    <>
+                      <p>{deliveryMethod.name}</p>
+                      <p className="mt-1">{deliveryMethod.description}</p>
+                    </>
+                  ) : (
+                    <p>Neznámá doručovací metoda</p>
+                  )}
                 </dd>
               </div>
             </dl>
@@ -208,7 +246,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
             <dl className="space-y-6 border-t border-gray-200 pt-10 text-sm">
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Mezisoučet</dt>
-                <dd className="text-gray-700">{order.totalPrice} Kč</dd>
+                <dd className="text-gray-700">{order.subtotal} Kč</dd>
               </div>
               {/* <div className="flex justify-between">
                 <dt className="flex font-medium text-gray-900">
@@ -222,11 +260,17 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async ({
               {/* TODO: Save shipping price into order  */}
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Doprava</dt>
-                <dd className="text-gray-700">$5.00</dd>
+                <dd className="text-gray-700">
+                  {deliveryMethod?.price
+                    ? `${deliveryMethod?.price} Kč`
+                    : 'Zdarma'}
+                </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
-                <dd className="text-gray-900">{order.totalPrice} Kč</dd>
+                <dd className="text-project-secondary">
+                  {order.subtotal + (deliveryMethod?.price ?? 0)} Kč
+                </dd>
               </div>
             </dl>
           </div>

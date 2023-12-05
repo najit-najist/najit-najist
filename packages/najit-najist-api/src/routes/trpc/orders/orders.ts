@@ -6,7 +6,12 @@ import {
   pocketbaseByCollections,
 } from '@najit-najist/pb';
 import { t } from '@trpc';
-import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import {
+  onlyAdminProcedure,
+  protectedProcedure,
+} from '@trpc-procedures/protectedProcedure';
+import { createPocketbaseFilters } from '@utils/createPocketbaseFilters';
+import { insertBetween } from '@utils/insertBetween';
 import { getItemId } from '@utils/internal';
 import { z } from 'zod';
 
@@ -45,7 +50,7 @@ export const orderRoutes = t.router({
           await pocketbaseByCollections.orders.getOne<OrderWithExpand>(
             input.id,
             {
-              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method`,
+              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method,user`,
               headers: {
                 [AUTHORIZATION_HEADER]: ctx.sessionData.token,
               },
@@ -109,7 +114,17 @@ export const orderRoutes = t.router({
             input.page,
             input.perPage,
             {
-              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method`,
+              filter: createPocketbaseFilters([
+                !!input.user?.id.length &&
+                  insertBetween(
+                    input.user?.id.map((itemId) => ({
+                      leftSide: 'user.id',
+                      rightSide: itemId,
+                    })),
+                    '||'
+                  ),
+              ]),
+              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method,user`,
               headers: {
                 [AUTHORIZATION_HEADER]: ctx.sessionData.token,
               },
@@ -157,6 +172,32 @@ export const orderRoutes = t.router({
         return mappedResult;
       }),
   }),
+
+  update: onlyAdminProcedure
+    .input(
+      orderSchema
+        .pick({ id: true })
+        .extend({ payload: orderSchema.pick({ state: true }) })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const requestConfig = {
+        headers: {
+          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+        },
+      };
+
+      const result =
+        await pocketbaseByCollections.orders.getOne<OrderWithExpand>(
+          input.id,
+          requestConfig
+        );
+
+      await pocketbaseByCollections.orders.update(
+        result.id,
+        input.payload,
+        requestConfig
+      );
+    }),
 
   paymentMethods: paymentMethodRoutes,
   deliveryMethods: deliveryMethodRoutes,

@@ -1,29 +1,31 @@
 'use client';
 
-import { loginInputSchema } from '@najit-najist/api';
-import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
-import { FC, useCallback } from 'react';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-
-import { BottomLinks } from './_components/BottomLInks';
-import { Title } from './_components/Title';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { trpc } from 'trpc';
-import type { TRPCError } from '@trpc/server';
-import { useRouter, useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import { Alert } from '@najit-najist/ui';
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import {
   loginPageCallbacks,
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
 } from '@constants';
+import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { usePlausible } from '@hooks';
+import { loginInputSchema } from '@najit-najist/api';
+import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
+import { Alert } from '@najit-najist/ui';
+import type { TRPCError } from '@trpc/server';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FC, useCallback } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { trpc } from 'trpc';
+import { z } from 'zod';
+
+import { BottomLinks } from './_components/BottomLInks';
+import { Title } from './_components/Title';
 
 type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
 
 export const Content: FC = () => {
   const { mutateAsync: doLogin } = trpc.profile.login.useMutation();
+  const { trackEvent } = usePlausible();
   const searchParams = useSearchParams();
   const utils = trpc.useContext();
   const formMethods = useForm<FormValues>({
@@ -35,7 +37,6 @@ export const Content: FC = () => {
     setError,
     formState: { isSubmitting, errors, isSubmitSuccessful },
   } = formMethods;
-  const router = useRouter();
 
   const isPasswordResetSuccessfulCallback = searchParams?.has(
     'passwordResetSuccessful'
@@ -54,6 +55,9 @@ export const Content: FC = () => {
       try {
         await doLogin(values);
         await utils.profile.me.refetch();
+
+        trackEvent('User logged in');
+
         const redirectTo =
           searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
           '/muj-ucet/profil';
@@ -68,6 +72,7 @@ export const Content: FC = () => {
 
         // TODO: Unify error code
         if (message == 'Invalid credentials') {
+          trackEvent('User login invalid credentials');
           setError('email', { message: 'Nesprávné přihlašovací údaje' });
           setError('password', { message: 'Nesprávné přihlašovací údaje' });
         } else if ((error as TRPCError).code === 'FORBIDDEN') {
@@ -81,7 +86,7 @@ export const Content: FC = () => {
         }
       }
     },
-    [doLogin, setError, utils.profile.me, searchParams]
+    [doLogin, utils.profile.me, trackEvent, searchParams, setError]
   );
 
   return (

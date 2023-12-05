@@ -47,6 +47,9 @@ const ruleSet: RuleSet = {
     [SpecialSections.OG_PREVIEW]: {
       [UserActions.VIEW]: true,
     },
+    [AvailableModels.PRODUCTS]: {
+      [UserActions.VIEW]: true,
+    },
   },
   [UserRoles.BASIC]: {
     [AvailableModels.POST]: {
@@ -54,6 +57,9 @@ const ruleSet: RuleSet = {
     },
     [AvailableModels.USER]: false,
     [AvailableModels.RECIPES]: {
+      [UserActions.VIEW]: true,
+    },
+    [AvailableModels.PRODUCTS]: {
       [UserActions.VIEW]: true,
     },
   },

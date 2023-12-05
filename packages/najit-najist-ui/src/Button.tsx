@@ -34,11 +34,11 @@ export const buttonStyles = cva(
         normal:
           'bg-project-primary focus:ring-project-primary text-white disabled:bg-opacity-50',
         white:
-          'bg-white text-deep-green-400 shadow font-semibold disabled:bg-gray-50',
+          'bg-white text-project-secondary font-semibold disabled:bg-gray-50 border-project-secondary focus:ring-project-secondary border-2',
         sweet:
-          'bg-green-300 hover:bg-green-400 focus:ring-bg-green-400 text-white',
+          'bg-green-300 hover:bg-green-400 focus:ring-green-400 text-white',
         blue: 'bg-blue-400 hover:bg-blue-500 text-white border border-blue-600',
-        red: 'bg-red-700 hover:bg-red-600 text-white border border-red-700',
+        red: 'bg-red-700 hover:bg-red-600 text-white border border-red-700 focus:ring-red-600',
         softRed:
           'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
         subtleRed: 'hover:bg-red-50 text-red-600 border-0',
@@ -68,7 +68,7 @@ export const buttonStyles = cva(
       },
       notAnimated: {
         true: '',
-        false: 'hover:scale-105 active:scale-95',
+        false: 'hover:scale-[1.02] active:scale-95',
       },
       withoutRing: {
         true: '',
@@ -105,6 +105,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       padding,
       icon: IconComponent,
       notAnimated,
+      disabled,
       ...rest
     },
     ref
@@ -119,10 +120,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           color,
           withoutRing,
           padding,
-          notAnimated,
+          notAnimated: notAnimated ?? disabled,
           ...rest,
         })}
         type="button"
+        disabled={disabled}
         {...rest}
       >
         {isLoading ? (

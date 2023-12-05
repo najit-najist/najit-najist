@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 import { baseCollectionSchema } from '../base.collection.schema';
 import { municipalitySchema } from '../municipality.schema';
+import { userSchema } from '../user.schema';
 import { zodTelephoneNumber } from '../zodTelephoneNumber';
 import { orderPaymentMethodSchema } from './order-payment-methods';
 import { orderProductSchema } from './order-products';
@@ -13,10 +14,11 @@ export const orderStates = z.enum([
   'confirmed',
   'finished',
   'dropped',
+  'shipped',
 ]);
 
 export const orderSchema = baseCollectionSchema.extend({
-  totalPrice: z.number(),
+  subtotal: z.number(),
 
   address_houseNumber: z.string(),
   address_streetName: z.string(),
@@ -32,6 +34,7 @@ export const orderSchema = baseCollectionSchema.extend({
 
   payment_method: orderPaymentMethodSchema,
   products: z.array(orderProductSchema),
+  user: userSchema.omit({ address: true }).optional(),
 
   state: orderStates,
 });

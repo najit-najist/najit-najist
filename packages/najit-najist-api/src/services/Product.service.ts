@@ -5,6 +5,7 @@ import {
   ClientResponseError,
   ListResult,
   RecordListOptions,
+  RecordOptions,
   pocketbase,
 } from '@najit-najist/pb';
 import {
@@ -18,6 +19,11 @@ import {
   User,
 } from '@schemas';
 import { slugifyString } from '@utils';
+import {
+  PocketbaseFilterItemAsObject,
+  createPocketbaseFilters,
+} from '@utils/createPocketbaseFilters';
+import { insertBetween } from '@utils/insertBetween';
 import { objectToFormData } from '@utils/internal';
 
 type GetByType = keyof Pick<Product, 'id' | 'slug'>;
@@ -55,21 +61,22 @@ export class ProductService {
 
   static async update(
     id: string,
-    { price, stock, name, category, ...input }: UpdateProduct
+    { price, stock, name, category, ...input }: UpdateProduct,
+    requestOptions?: RecordOptions
   ): Promise<Product> {
     try {
       if (price) {
         const { id: priceId, ...priceUpdatePayload } = price;
         await pocketbase
           .collection(PocketbaseCollections.PRODUCT_PRICES)
-          .update(priceId, priceUpdatePayload);
+          .update(priceId, priceUpdatePayload, requestOptions);
       }
 
       if (stock) {
         const { id: stockId, ...stockUpdatePayload } = stock;
         await pocketbase
           .collection(PocketbaseCollections.PRODUCT_STOCK)
-          .update(stockId, stockUpdatePayload);
+          .update(stockId, stockUpdatePayload, requestOptions);
       }
 
       return this.mapExpandToResponse(
@@ -80,7 +87,7 @@ export class ProductService {
             ...(name ? { slug: slugifyString(name), name } : null),
             ...(category ? { category: category.id } : null),
           }),
-          { expand: BASE_EXPAND }
+          { ...requestOptions, expand: BASE_EXPAND }
         )
       );
     } catch (error) {
@@ -169,13 +176,18 @@ export class ProductService {
     }
   }
 
-  static async getBy(type: GetByType, value: any): Promise<Product> {
+  static async getBy(
+    type: GetByType,
+    value: any,
+    requestOptions?: Omit<RecordListOptions, 'expand'>
+  ): Promise<Product> {
     try {
       return this.mapExpandToResponse(
         await pocketbase
           .collection(PocketbaseCollections.PRODUCTS)
           .getFirstListItem<ProductWithExpand>(`${type}="${value}"`, {
             expand: BASE_EXPAND,
+            ...requestOptions,
           })
       );
     } catch (error) {
@@ -206,20 +218,26 @@ export class ProductService {
     } = options ?? {};
 
     try {
-      const filter = [
-        // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
-        categorySlug
-          ? `(${categorySlug
-              .map((slug) => `category.slug = '${slug}'`)
-              .join(' || ')})`
-          : undefined,
-        search
-          ? `(name ~ '${search}' || description ~ '${search}')`
-          : undefined,
-        ...(otherFilters ?? []),
-      ]
-        .filter(Boolean)
-        .join(' && ');
+      const filter = createPocketbaseFilters(
+        insertBetween(
+          [
+            // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
+            categorySlug &&
+              insertBetween(
+                categorySlug.map(
+                  (slug): PocketbaseFilterItemAsObject => ({
+                    leftSide: 'category.slug',
+                    rightSide: slug,
+                  })
+                ),
+                '||'
+              ),
+            ...(otherFilters ?? []),
+            search && `(name ~ '${search}' || description ~ '${search}')`,
+          ],
+          '&&'
+        )
+      );
 
       const result = await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)

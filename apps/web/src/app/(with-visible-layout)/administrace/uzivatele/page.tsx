@@ -1,15 +1,15 @@
+import { Pagination } from '@app-components/Pagination';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { AppRouterOutput } from '@najit-najist/api';
 import { getTrpcCaller } from '@najit-najist/api/server';
 import { getCachedUsers } from '@server-utils';
-import { TRPCClientError } from '@trpc/client';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 import { z } from 'zod';
 
-import { Footer } from './_components/Footer';
 import { SearchForm } from './_components/SearchForm';
 import { Users } from './_components/Users';
 
@@ -87,6 +87,18 @@ export default async function Page({ searchParams }: Params) {
 
   return (
     <>
+      <div className="container mt-5 -mb-5">
+        <Link
+          href="/administrace"
+          className="text-red-400 hover:underline group"
+        >
+          <ArrowLeftIcon
+            strokeWidth={3}
+            className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
+          />
+          Zpět na rozcestník
+        </Link>
+      </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center">
           <PageTitle>{metadata.title}</PageTitle>
@@ -128,7 +140,7 @@ export default async function Page({ searchParams }: Params) {
               <tfoot className=" w-full">
                 <tr>
                   <th colSpan={6} className="">
-                    <Footer
+                    <Pagination
                       currentPage={page}
                       totalItems={totalItems}
                       totalPages={totalPages}

@@ -5,7 +5,9 @@ export type PLAUSIBLE_EVENTS =
   | 'Contact form send'
   | 'Newsletter subscription from footer'
   | 'Like recipe'
-  | 'Dislike recipe';
+  | 'Dislike recipe'
+  | 'User logged in'
+  | 'User login invalid credentials';
 
 export interface LayoutProps {
   children: ReactNode;

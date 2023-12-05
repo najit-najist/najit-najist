@@ -21,10 +21,12 @@ import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { loginWithAccount } from '@utils/pocketbase';
+import dayjs from 'dayjs';
 import omit from 'lodash/omit';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { z } from 'zod';
 
+import { AUTHORIZATION_HEADER } from '../..';
 import { userCartRoutes } from './profile/cart/cart';
 import { userLikedRoutes } from './profile/liked';
 
@@ -147,6 +149,26 @@ export const profileRouter = t.router({
       }
 
       logger.info({ email: input.email }, 'User successfully logged in');
+
+      try {
+        await pocketbaseByCollections.users.update(
+          user.id,
+          {
+            lastLoggedIn: dayjs().utc().format(),
+          },
+          {
+            headers: {
+              [AUTHORIZATION_HEADER]: token,
+            },
+          }
+        );
+      } catch (error) {
+        logger.error(
+          { email: input.email, error },
+          'Cannot update user lastLoggedIn'
+        );
+      }
+
       // add user token to session
       await setSessionToCookies(
         {

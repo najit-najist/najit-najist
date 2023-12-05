@@ -7,7 +7,7 @@ import {
   AvailableModels,
   getFileUrl,
 } from '@najit-najist/api';
-import { Badge, NumberInput, Price } from '@najit-najist/ui';
+import { Badge, NumberInput, Price, Tooltip } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
 import NextImage from 'next/image';
@@ -121,15 +121,21 @@ export const CartItem: FC<
           </div>
 
           <div className="ml-4 flow-root flex-shrink-0">
-            <button
-              type="button"
-              className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-red-300 hover:text-red-500"
-              disabled={isRemoving}
-              onClick={handleItemDelete}
+            <Tooltip
+              trigger={
+                <button
+                  type="button"
+                  className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-red-300 hover:text-red-500"
+                  disabled={isRemoving}
+                  onClick={handleItemDelete}
+                >
+                  <span className="sr-only">Odstranit</span>
+                  <TrashIcon className="h-5 w-5" aria-hidden="true" />
+                </button>
+              }
             >
-              <span className="sr-only">Odstranit</span>
-              <TrashIcon className="h-5 w-5" aria-hidden="true" />
-            </button>
+              Odebrat z košíku
+            </Tooltip>
           </div>
         </div>
 

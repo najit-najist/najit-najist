@@ -2,14 +2,14 @@ import { Pagination } from '@app-components/Pagination';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { getCachedLoggedInUser, getCachedOrders } from '@server-utils';
+import { getCachedOrders } from '@server-utils';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 
 import { Orders } from './_components/Orders';
 
 export const metadata = {
-  title: 'Moje objednávky',
+  title: 'Objednávky',
 };
 
 export const revalidate = 0;
@@ -25,26 +25,20 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
 );
 
 export default async function Page() {
-  const loggedInUser = await getCachedLoggedInUser();
-
-  if (!loggedInUser) {
-    throw new Error('User should be logged in but its not');
-  }
-
-  const orders = await getCachedOrders({ user: { id: [loggedInUser.id] } });
+  const orders = await getCachedOrders();
 
   return (
     <>
       <div className="container mt-5 -mb-5">
         <Link
-          href="/muj-ucet/profil"
+          href="/administrace"
           className="text-red-400 hover:underline group"
         >
           <ArrowLeftIcon
             strokeWidth={3}
             className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
           />
-          Zpět na můj profil
+          Zpět na rozcestník
         </Link>
       </div>
       <PageHeader className="container">
@@ -67,6 +61,7 @@ export default async function Page() {
               <thead>
                 <tr>
                   <Th>Datum</Th>
+                  <Th>Uživatel</Th>
                   <Th>Stav</Th>
                   <Th>Referenční číslo</Th>
                   <Th>Cena</Th>

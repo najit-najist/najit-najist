@@ -1,21 +1,11 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
-import { DEFAULT_DATE_FORMAT } from '@constants';
+import { DATETIME_LOCAL_INPUT_FORMAT, DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput, orderStates } from '@najit-najist/api';
 import { Badge } from '@najit-najist/ui';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { FC } from 'react';
 import { z } from 'zod';
-
-const orderStateToLabel: Record<z.infer<typeof orderStates>, string> = {
-  confirmed: 'Potvrzeno',
-  dropped: 'Zrušeno',
-  finished: 'Dokončeno',
-  new: 'Vytvořeno',
-  unconfirmed: 'Nepotvrzeno',
-  unpaid: 'Nezaplaceno',
-  shipped: 'Odesláno',
-};
 
 export const Orders: FC<{
   orders: AppRouterOutput['orders']['get']['many']['items'];
@@ -29,6 +19,18 @@ export const Orders: FC<{
               <div className="text-gray-500">
                 {dayjs(order.created).format(DEFAULT_DATE_FORMAT)}
               </div>
+            </td>
+            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              {order.user ? (
+                <Link
+                  className="hover:underline hover:text-project-secondary"
+                  href={`/administrace/uzivatele/${order.user.id}`}
+                >
+                  {order.user.firstName} {order.user.lastName}
+                </Link>
+              ) : (
+                'Neznámý uživatel'
+              )}
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <OrderStateBadge state={order.state} />
@@ -52,7 +54,7 @@ export const Orders: FC<{
 
             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
-                href={`/muj-ucet/objednavky/${order.id}`}
+                href={`/administrace/objednavky/${order.id}`}
                 className="text-indigo-600 hover:text-indigo-900"
               >
                 Ukázat

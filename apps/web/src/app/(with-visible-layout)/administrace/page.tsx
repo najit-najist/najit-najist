@@ -44,6 +44,10 @@ export default async function Page() {
           <Item title="Produkty" href="/produkty" />
           <Item title="Nový produkt" href="/produkty/novy" />
         </div>
+
+        <div className="flex gap-5 flex-wrap pl-4">
+          <Item title="Objednávky" href="/administrace/objednavky" />
+        </div>
       </div>
     </div>
   );

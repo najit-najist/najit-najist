@@ -1,8 +1,9 @@
-import Compressor from 'compressorjs';
 import {
+  DeliveryMethod,
   getMediaTypeFromBase64Url,
   setFileNameToBase64,
 } from '@najit-najist/api';
+import Compressor from 'compressorjs';
 import { FormState } from 'react-hook-form';
 
 export enum ReadFileError {
@@ -61,3 +62,7 @@ export function getChangedValues<G extends Record<any, any>>(
     ])
   ) as Partial<G>;
 }
+
+export const isLocalPickup = (
+  delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+) => delivery.slug === 'local-pickup';

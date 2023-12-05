@@ -23,20 +23,30 @@ import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { AUTHORIZATION_HEADER } from '../..';
+
 const getRoutes = t.router({
-  one: t.procedure.input(getOneProductSchema).query(async ({ input }) => {
+  one: t.procedure.input(getOneProductSchema).query(async ({ input, ctx }) => {
     const by = 'id' in input ? 'id' : 'slug';
-    return ProductService.getBy(by, (input as any)[by]);
+    return ProductService.getBy(by, (input as any)[by], {
+      headers: {
+        [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
+      },
+    });
   }),
-  many: t.procedure
-    .input(getManyProductsSchema)
-    .query(async ({ input }) => ProductService.getMany(input)),
+  many: t.procedure.input(getManyProductsSchema).query(async ({ input, ctx }) =>
+    ProductService.getMany(input, {
+      headers: {
+        [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
+      },
+    })
+  ),
 });
 
 const getCategoriesRoutes = t.router({
   many: t.procedure
     .input(getManyProductCategoriesSchema.default({}))
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
       const { page, perPage } = input ?? {};
 
       try {
@@ -54,12 +64,19 @@ const categoriesRoutes = t.router({
 
   create: onlyAdminProcedure
     .input(createProductCategorySchema.omit({ slug: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { name } = input;
       try {
         return await pocketbase
           .collection(PocketbaseCollections.PRODUCT_CATEGORIES)
-          .create({ name, slug: slugifyString(name) });
+          .create(
+            { name, slug: slugifyString(name) },
+            {
+              headers: {
+                [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+              },
+            }
+          );
       } catch (error) {
         if (error instanceof ClientResponseError) {
           const data = error.data.data;
@@ -102,7 +119,11 @@ export const productsRoutes = t.router({
     .mutation(async ({ input, ctx }) => {
       await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
-        .delete(input.id);
+        .delete(input.id, {
+          headers: {
+            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+          },
+        });
 
       revalidatePath(`/produkty/${input.slug}`);
       revalidatePath(`/produkty`);
@@ -112,8 +133,12 @@ export const productsRoutes = t.router({
 
   update: onlyAdminProcedure
     .input(z.object({ id: z.string(), payload: updateProductSchema }))
-    .mutation(async ({ input }) => {
-      const result = await ProductService.update(input.id, input.payload);
+    .mutation(async ({ input, ctx }) => {
+      const result = await ProductService.update(input.id, input.payload, {
+        headers: {
+          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+        },
+      });
       revalidatePath(`/produkty/${result.slug}`);
       revalidatePath(`/produkty`);
 

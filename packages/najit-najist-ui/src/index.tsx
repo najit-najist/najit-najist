@@ -41,7 +41,7 @@ export {
   type RadioGroupProps,
 } from './form';
 export { Alert } from './Alert';
-export { Badge, badgeStyles } from './Badge';
+export { Badge, badgeStyles, type BadgeProps } from './Badge';
 export { Button, buttonStyles } from './Button';
 export { Paper, paperStyles } from './Paper';
 export { Modal, type ModalProps } from './Modal';

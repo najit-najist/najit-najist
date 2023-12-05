@@ -14,6 +14,8 @@ export const orderPaymentMethodSchema = baseCollectionSchema.extend({
       name: z.string(),
       slug: z.string(),
       description: z.string(),
+      notes: z.string().optional(),
+      price: z.number().default(0),
     })
   ),
 });

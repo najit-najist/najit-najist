@@ -27,7 +27,7 @@ export default async function Page({ params }: PageProps) {
     <>
       <div className="container mt-5 -mb-5">
         <Link
-          href="/muj-ucet/objednavky"
+          href="/administrace/objednavky"
           className="text-red-400 hover:underline group"
         >
           <ArrowLeftIcon
@@ -37,7 +37,7 @@ export default async function Page({ params }: PageProps) {
           Zpět na výpis objednávek
         </Link>
       </div>
-      <OrderUnderpageContent order={order} viewType="view" />
+      <OrderUnderpageContent order={order} viewType="update" />
     </>
   );
 }

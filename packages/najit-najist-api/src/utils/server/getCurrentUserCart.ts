@@ -29,7 +29,7 @@ type ReturnType = Omit<UserCart, 'products'> & {
 };
 
 export const getCurrentCart = async (): Promise<
-  ReturnType & { price: { total: number } }
+  ReturnType & { price: { subtotal: number } }
 > => {
   const session = await getSessionFromCookies();
   const sessionToken = session.authContent?.token;
@@ -118,7 +118,7 @@ export const getCurrentCart = async (): Promise<
   return {
     ...cartResult,
     price: {
-      total: cartResult.products.reduce(
+      subtotal: cartResult.products.reduce(
         (totalPrice, cartItem) =>
           totalPrice + cartItem.product.price.value * cartItem.count,
         0

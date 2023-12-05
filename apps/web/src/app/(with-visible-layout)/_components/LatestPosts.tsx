@@ -1,8 +1,8 @@
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
 import { AvailableModels, Post, getFileUrl } from '@najit-najist/api';
 import { getCachedTrpcCaller } from '@server-utils';
-import HTMLReactParser from 'html-react-parser';
 import dayjs from 'dayjs';
+import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -41,11 +41,11 @@ const Item: FC<Post> = ({
         )}
         <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
       </Link>
-      <div className="px-4">
+      <div className="px-2">
         <div className="flex items-center gap-x-4 text-xs mt-2">
           <time
             dateTime={String(publishedAt) ?? created}
-            className="text-gray-500"
+            className="text-gray-500 mt-1"
           >
             {dayjs(publishedAt ? publishedAt : created).format(
               'DD. MM. YYYY @ HH:mm'

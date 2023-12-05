@@ -2,6 +2,7 @@ import { Order } from '../../../schemas/orders';
 import { DeliveryMethod } from '../../../schemas/orders/order-delivery-methods';
 import { OrderPaymentMethod } from '../../../schemas/orders/order-payment-methods';
 import { OrderProduct } from '../../../schemas/orders/order-products';
+import { User } from '../../../schemas/user.schema';
 
 export type DeliveryMethodWithExpand = Omit<
   DeliveryMethod,
@@ -18,6 +19,7 @@ export type OrderWithExpand = Omit<Order, 'products'> & {
     payment_method: OrderPaymentMethod & {
       expand: { delivery_method: Omit<DeliveryMethod, 'paymentMethods'> };
     };
+    user: Omit<User, 'address'>;
   };
 };
 
@@ -37,7 +39,7 @@ export const mapPocketbaseDeliveryMethods = (
 
 export const mapPocketbaseOrder = (base: OrderWithExpand): Order => {
   const {
-    expand: { 'order_products(order)': orderProducts, payment_method },
+    expand: { 'order_products(order)': orderProducts, payment_method, user },
     ...rest
   } = base;
 
@@ -48,5 +50,6 @@ export const mapPocketbaseOrder = (base: OrderWithExpand): Order => {
       ...payment_method,
       delivery_method: payment_method.expand.delivery_method,
     },
+    user,
   };
 };

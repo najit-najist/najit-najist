@@ -1,6 +1,5 @@
 'use client';
 
-import { FC, useTransition } from 'react';
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
@@ -9,9 +8,10 @@ import {
 } from '@heroicons/react/24/solid';
 import { Button } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
+import { FC, useTransition } from 'react';
 
-export const Footer: FC<{
-  totalItems: number;
+export const Pagination: FC<{
+  totalItems?: number;
   totalPages: number;
   currentPage: number;
 }> = ({ currentPage, totalPages, totalItems }) => {
@@ -42,7 +42,7 @@ export const Footer: FC<{
 
   return (
     <div className="flex flex-wrap items-center justify-between w-full py-3">
-      <div>Celkový počet: {totalItems}</div>
+      {totalItems ? <div>Celkový počet: {totalItems}</div> : null}
       <div className="flex w-[100px] items-center justify-center text-sm font-medium ml-auto mr-4">
         Stránka {currentPage} z {totalPages}
       </div>
