@@ -60,7 +60,7 @@ export const AddToCartButton: FC<{
           isLoading={isLoading}
           disabled={disabled}
           appearance="spaceless"
-          className={clsx('p-3 relative w-11 h-11', withoutText ? '' : 'px-6')}
+          className={clsx('p-3 relative', withoutText ? 'w-11 h-11' : 'px-6')}
           onClick={handleAddToCartClick}
           icon={contentBeforeText ?? undefined}
         >
