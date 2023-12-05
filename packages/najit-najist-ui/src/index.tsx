@@ -41,13 +41,18 @@ export {
   type RadioGroupProps,
 } from './form';
 export { Alert } from './Alert';
-export { Badge } from './Badge';
+export { Badge, badgeStyles } from './Badge';
 export { Button, buttonStyles } from './Button';
 export { Paper, paperStyles } from './Paper';
 export { Modal, type ModalProps } from './Modal';
 export { Skeleton } from './Skeleton';
 export { CurrencyCodes, Price } from './Price';
 export { Tooltip } from './Tooltip';
+export {
+  Breadcrumbs,
+  type BreadcrumbItem,
+  type BreadcrumbsProps,
+} from './Breadcrumbs';
 
 export type { AlertProps } from './Alert';
 export type { ButtonProps } from './Button';

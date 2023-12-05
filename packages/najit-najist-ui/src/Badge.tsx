@@ -1,7 +1,7 @@
 import { cva, VariantProps } from 'class-variance-authority';
 import { FC, PropsWithChildren } from 'react';
 
-const badgeStyles = cva(
+export const badgeStyles = cva(
   'inline-flex gap-x-1.5 items-center rounded-md font-medium',
   {
     variants: {

@@ -53,7 +53,7 @@ export const AddToCartButton: FC<{
 
   return (
     <Tooltip
-      disabled={disabled}
+      disabled={disabled || !withoutText}
       trigger={
         <Button
           notAnimated={disabled}

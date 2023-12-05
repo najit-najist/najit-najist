@@ -1,6 +1,12 @@
 import { StarIcon } from '@heroicons/react/24/solid';
 import { AvailableModels, getFileUrl, Product } from '@najit-najist/api';
-import { Badge, Price } from '@najit-najist/ui';
+import {
+  Badge,
+  badgeStyles,
+  BreadcrumbItem,
+  Breadcrumbs,
+  Price,
+} from '@najit-najist/ui';
 import { getCachedTrpcCaller } from '@server-utils';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
@@ -50,6 +56,34 @@ export const ProductPageManageContent: FC<
 
   const content = (
     <>
+      <div className="container mt-6 mb-3">
+        <Breadcrumbs
+          items={[
+            { link: '/produkty', text: 'Produkty' },
+            ...(product
+              ? ([
+                  product.category
+                    ? {
+                        link: `/produkty?category=${product.category?.slug}`,
+                        text: product.category?.name,
+                      }
+                    : null,
+                  {
+                    link: `/produkty/${product.slug}`,
+                    text: product?.name,
+                    active: true,
+                  },
+                ].filter(Boolean) as BreadcrumbItem[])
+              : [
+                  {
+                    link: '/produkty/novy',
+                    text: 'Nový',
+                    active: true,
+                  },
+                ]),
+          ]}
+        />
+      </div>
       <div className="flex flex-wrap lg:grid grid-cols-12 w-full gap-y-5 lg:gap-x-5 my-5 px-5 max-w-[1920px] mx-auto">
         <div className="w-full md:w-4/12 lg:w-auto lg:col-span-4">
           {props.viewType === 'view' ? (
@@ -63,7 +97,11 @@ export const ProductPageManageContent: FC<
                     props.product.images[0]
                   )}
                 />
-                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2"></div>
+                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
+                  <Badge size="lg" color="red">
+                    Nepublikováno
+                  </Badge>
+                </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
                 {props.product.images.slice(1).map((imageUrl) => (
@@ -88,29 +126,14 @@ export const ProductPageManageContent: FC<
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <div className="flex gap-5 items-center mt-5 mb-3 ">
-            {isEditorEnabled ? (
-              <>
-                <CategoryEdit categories={categories.items} />
-              </>
-            ) : (
-              <Badge color="blue">
-                {props.product.category?.name ?? 'Ostatní'}
-              </Badge>
-            )}
-            <Link
-              href="/produkty"
-              className="text-sm uppercase font-semibold text-ocean-400 block font-title"
-            >
-              Produkt{' '}
-              {!product?.publishedAt ? (
-                <span className="text-red-500">- Nepublikováno</span>
-              ) : null}
-            </Link>
-          </div>
+          {isEditorEnabled ? (
+            <div className="flex gap-5 items-center mt-5 mb-3 ">
+              <CategoryEdit categories={categories.items} />
+            </div>
+          ) : null}
 
           {!isEditorEnabled ? (
-            <h1 className="text-5xl font-title">{name}</h1>
+            <h1 className="text-5xl font-title mt-4">{name}</h1>
           ) : (
             <TitleEdit />
           )}
@@ -146,7 +169,7 @@ export const ProductPageManageContent: FC<
             </div>
           ) : null}
 
-          <div className="my-10">
+          <div className="mb-10 mt-12">
             <Title>Popisek</Title>
             {hrComponent}
             {!isEditorEnabled ? (
