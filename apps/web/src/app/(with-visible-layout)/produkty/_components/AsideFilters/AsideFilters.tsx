@@ -17,13 +17,12 @@ import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { useIsClient } from 'usehooks-ts';
 
 type FormValues = {
   query?: string;
   categories?: ProductCategory[];
 };
-
-const categoryLabelFormatter = (value: ProductCategory) => value.name;
 
 export const AsideFilters: FC<{
   initialValues?: FormValues;
@@ -31,22 +30,25 @@ export const AsideFilters: FC<{
 }> = ({ initialValues, categories }) => {
   const router = useRouter();
   const isDesktop = useIsDesktop();
+  const isClient = useIsClient();
   const [isRefreshing, startRefreshing] = useTransition();
   const formMethods = useForm<FormValues>({
     defaultValues: initialValues,
   });
   const { handleSubmit, register, watch } = formMethods;
-  const categoriesAsMap = useMemo(
-    () => new Map(categories.map((item) => [item.slug, item])),
-    [categories]
-  );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
     ({ query, categories }) => {
       let route = '/produkty';
       const params = [
         ['query', query],
-        ['category-slug', categories?.map((item) => item.id)],
+        [
+          'category-slug',
+          categories
+            ?.filter((item) => Boolean(item.slug))
+            .map((item) => item.slug)
+            .join(','),
+        ],
       ].filter(([_, value]) => !!value) as string[][];
 
       if (params.length) {
@@ -72,7 +74,10 @@ export const AsideFilters: FC<{
 
   const content = (
     <FormProvider {...formMethods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form
+        className="divide-y-2 [&>*:not(:first-child)]:pt-4"
+        onSubmit={handleSubmit(onSubmit)}
+      >
         <Input
           placeholder="Vyhledávání..."
           rootClassName="w-full"
@@ -92,9 +97,12 @@ export const AsideFilters: FC<{
           name="categories"
           render={({ field: { name, value, onChange } }) => (
             <CheckboxGroup
+              rootClassName="mt-5"
               name={name}
               label="Kategorie"
+              titleField="name"
               options={categories}
+              value={value as any}
               onChange={(callback) => onChange(callback(value as any))}
             />
           )}
@@ -116,7 +124,7 @@ export const AsideFilters: FC<{
           <AdjustmentsVerticalIcon className="w-6 h-6 inline mr-2" />
           Filtrovat
         </Button>
-        {isDesktop ? content : null}
+        {isDesktop || !isClient ? content : null}
       </aside>
     </>
   );

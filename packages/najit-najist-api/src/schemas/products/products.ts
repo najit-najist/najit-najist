@@ -1,7 +1,10 @@
+import { z } from 'zod';
+
 import { baseCollectionSchema } from '../base.collection.schema';
 import { defaultGetManySchema } from '../base.get-many.schema';
 import { zodImage } from '../zodImage';
-import { z } from 'zod';
+import { zodPublishedAt } from '../zodPublishedAt';
+import { zodSlug } from '../zodSlug';
 import { productCategorySchema } from './product-categories';
 import {
   createProductPriceSchema,
@@ -13,8 +16,6 @@ import {
   productStockSchema,
   updateProductStockSchema,
 } from './product-stocks';
-import { zodPublishedAt } from '../zodPublishedAt';
-import { zodSlug } from '../zodSlug';
 
 export const productSchema = baseCollectionSchema.extend({
   name: z.string().min(1, 'Toto pole je povinné').trim(),
@@ -56,7 +57,7 @@ export const updateProductSchema = createProductSchema
   .partial();
 
 export const getManyProductsSchema = defaultGetManySchema.extend({
-  categorySlug: zodSlug.optional(),
+  categorySlug: z.array(zodSlug).optional(),
 });
 export const getOneProductSchema = productSchema
   .pick({ id: true })

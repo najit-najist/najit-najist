@@ -42,12 +42,13 @@ export default async function RecipesPage({ searchParams }: Params) {
   const userDidSearch = !!query || !!categoriesSlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
   const trpc = getCachedTrpcCaller();
+  const categoriesAsArray = categoriesSlugFromUrl?.split(',');
 
   const [{ items: products }, { items: categories }] = await Promise.all([
     ProductService.getMany({
       search: query,
       perPage: 999,
-      categorySlug: categoriesSlugFromUrl,
+      categorySlug: categoriesAsArray,
     }),
     trpc.products.categories.get.many(),
   ]);

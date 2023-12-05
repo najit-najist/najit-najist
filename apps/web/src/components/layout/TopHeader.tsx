@@ -188,7 +188,7 @@ const ShoppingBagButton: FC = () => {
     <Link
       className={clsx([
         pillStyles,
-        'flex justify-center !px-1.5 relative',
+        'flex justify-center !px-1.5 relative shadow shadow-gray-300',
         pathname === '/muj-ucet/kosik/pokladna'
           ? 'bg-project-primary text-white'
           : 'hover:bg-project-primary hover:text-white bg-white',
@@ -251,7 +251,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     <Link
                       className={clsx([
                         pillStyles,
-                        'flex justify-center !px-1.5',
+                        'flex justify-center !px-1.5 shadow shadow-gray-300',
                         pathname === '/muj-ucet/profil'
                           ? 'bg-project-primary text-white'
                           : 'hover:bg-project-primary hover:text-white bg-white',

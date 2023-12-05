@@ -208,7 +208,11 @@ export class ProductService {
     try {
       const filter = [
         // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
-        categorySlug ? `category.slug = '${categorySlug}'` : undefined,
+        categorySlug
+          ? `(${categorySlug
+              .map((slug) => `category.slug = '${slug}'`)
+              .join(' || ')})`
+          : undefined,
         search
           ? `(name ~ '${search}' || description ~ '${search}')`
           : undefined,

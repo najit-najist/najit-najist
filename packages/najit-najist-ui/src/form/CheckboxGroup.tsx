@@ -13,7 +13,7 @@ import { CheckboxWrapper } from './CheckboxWrapper';
 import { ErrorMessage } from './ErrorMessage';
 import { Label } from './Label';
 
-export type ItemType = { id: string; [x: string]: any };
+export type ItemType = { id: string | 'default'; [x: string]: any };
 
 export type CheckboxGroupProps<T extends ItemType> = {
   name: string;
@@ -25,6 +25,7 @@ export type CheckboxGroupProps<T extends ItemType> = {
   error?: FieldError;
   description?: ReactNode;
   onChange: (callback: (prev: T[]) => T[]) => void;
+  rootClassName?: string;
 };
 
 export function CheckboxGroup<T extends ItemType>({
@@ -36,6 +37,7 @@ export function CheckboxGroup<T extends ItemType>({
   error,
   description,
   required,
+  rootClassName,
 }: CheckboxGroupProps<T>) {
   const itemIds = useMemo(() => value?.map((item) => item.id), [value]);
   const onItemCheckedChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
@@ -52,6 +54,14 @@ export function CheckboxGroup<T extends ItemType>({
       }
 
       onChange((prev) => {
+        if (morphedItem.id === 'default') {
+          if (isChecked) {
+            return [...options];
+          }
+
+          return [];
+        }
+
         if (isChecked) {
           return [...prev, morphedItem];
         }
@@ -63,9 +73,9 @@ export function CheckboxGroup<T extends ItemType>({
   );
 
   return (
-    <div>
+    <div className={rootClassName}>
       {label ? (
-        <Label>
+        <Label className="mb-1">
           {label}{' '}
           {required ? <span className="text-bold text-red-600">*</span> : ''}
         </Label>
@@ -75,7 +85,11 @@ export function CheckboxGroup<T extends ItemType>({
         const itemId = itemValue.id;
 
         return (
-          <CheckboxWrapper childId={itemId} title={itemValue[titleField]}>
+          <CheckboxWrapper
+            key={itemValue.id}
+            childId={itemId}
+            title={itemValue[titleField]}
+          >
             <Checkbox
               id={itemId}
               checked={itemIds?.includes(itemValue.id)}
