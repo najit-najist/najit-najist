@@ -1,10 +1,11 @@
-import { FC, PropsWithChildren } from 'react';
+import { Logo } from '@components/common/Logo';
 import { ADMIN_EMAIL } from '@constants';
 import { TvIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import Link from 'next/link';
+import { FC, PropsWithChildren } from 'react';
 
 import InstagramIcon from '../../../public/icons/instagram.svg';
-import { Logo } from '@components/common/Logo';
-import Link from 'next/link';
+import { UpdateCookiePreferences } from './UpdateCookiePreferences';
 
 const iconSize = 21;
 
@@ -16,7 +17,11 @@ type NavigationItem = {
 
 type NavigationItems = {
   social: (NavigationItem & { icon: typeof TvIcon; iconSize?: number })[];
-  main: { useful: NavigationItem[]; actual: NavigationItem[] };
+  main: {
+    useful: NavigationItem[];
+    actual: NavigationItem[];
+    other: NavigationItem[];
+  };
 };
 
 export const footerNavigationItems: NavigationItems = {
@@ -52,6 +57,7 @@ export const footerNavigationItems: NavigationItems = {
       { name: 'Články', href: '/clanky' },
       { name: 'Produkty', href: '/produkty' },
     ],
+    other: [],
   },
 };
 
@@ -128,8 +134,8 @@ export const Footer: FC<PropsWithChildren> = () => {
                 </ul>
               </div>
             </div>
-            {/* <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
+            <div className="md:grid md:grid-cols-2 md:gap-8">
+              {/* <div>
                 <h3 className="text-base font-medium text-gray-900">Company</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   {navigation.company.map((item) => (
@@ -143,8 +149,8 @@ export const Footer: FC<PropsWithChildren> = () => {
                     </li>
                   ))}
                 </ul>
-              </div>
-              <div className="mt-12 md:mt-0">
+              </div> */}
+              {/* <div className="mt-12 md:mt-0">
                 <h3 className="text-base font-medium text-gray-900">Legal</h3>
                 <ul role="list" className="mt-4 space-y-4">
                   {navigation.legal.map((item) => (
@@ -159,10 +165,33 @@ export const Footer: FC<PropsWithChildren> = () => {
                   ))}
                 </ul>
               </div>
+              
             </div> */}
+              <div>
+                <h3 className="text-base font-medium text-project-secondary font-title">
+                  Ostatní
+                </h3>
+                <ul role="list" className="mt-4 space-y-4">
+                  {footerNavigationItems.main.other.map((item) => (
+                    <li key={item.name}>
+                      <Link
+                        href={item.href as any}
+                        className="text-base text-gray-500 hover:text-gray-900"
+                        target={item.newTab ? '_blank' : undefined}
+                      >
+                        {item.name}
+                      </Link>
+                    </li>
+                  ))}
+                  <li>
+                    <UpdateCookiePreferences />
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="mt-12 border-t border-gray-200 pt-8">
+        <div className="mt-12 border-t border-gray-200 pt-8 flex">
           <p className="text-base text-project-accent xl:text-center">
             &copy; 2022 <a href="https://najitnajist.cz">NajitNajist.cz</a>
           </p>

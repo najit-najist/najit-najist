@@ -1,9 +1,10 @@
 'use client';
 
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect } from 'react';
 import { useCookies } from 'react-cookie';
+
 import { ConsentForm, ConsentFormProps } from './ConsentForm';
-import { ShieldCheckIcon } from '@heroicons/react/24/outline/index.js';
+import { useCookieBannerVisibility } from './cookieBannerVisibilityStore';
 
 const ANALYTICS_CONSENT_COOKIE_NAME = 'enable-najit-najist-analytics';
 const MARKETING_CONSENT_COOKIE_NAME = 'enable-najit-najist-marketing';
@@ -22,18 +23,16 @@ export const CookieBanner: FC = () => {
     MARKETING_CONSENT_COOKIE_NAME,
     COOKIE_CONSENT_SHOWN,
   ]);
-  const [isOpen, setIsOpen] = useState(false);
-
-  const toggleCookieNotice = () => setIsOpen((prev) => !prev);
+  const { toggle, visible } = useCookieBannerVisibility();
 
   useEffect(() => {
     if (consentShown === undefined) {
-      setIsOpen(true);
+      toggle(true);
       return;
     }
 
-    setIsOpen(false);
-  }, [consentShown]);
+    toggle(false);
+  }, [toggle, consentShown]);
 
   // useEffect(() => {
   //   if (analyticsCookie === 'true') {
@@ -63,14 +62,14 @@ export const CookieBanner: FC = () => {
       );
       setCookie(COOKIE_CONSENT_SHOWN, 'true', cookieOptions);
 
-      setIsOpen(false);
+      toggle(false);
     },
-    [setCookie]
+    [setCookie, toggle]
   );
 
   return (
     <>
-      {isOpen ? (
+      {visible ? (
         <section className="fixed left-1/2 -translate-x-1/2 max-w-[calc(100vw-2rem)] bottom-0 md:max-w-3xl lg:max-w-5xl w-full z-10">
           <div className="bg-white p-6 rounded-lg shadow-2xl mb-3 sm:mb-5 border-project-accent border-2">
             <h1 className="text-2xl font-semibold">Cookies?</h1>
@@ -102,19 +101,6 @@ export const CookieBanner: FC = () => {
           </div>
         </section>
       ) : null}
-      {isOpen ? null : (
-        <button
-          onClick={toggleCookieNotice}
-          className="bg-white mb-2 sm:mr-5 sm:mb-5 rounded-full px-2 py-1 border-project-accent text-project-primary border-2 fixed right-5 bottom-0 z-[114 text-xl"
-        >
-          <ShieldCheckIcon
-            width={25}
-            height={25}
-            className="inline-block -mt-1 mr-2"
-          />
-          Cookies
-        </button>
-      )}
     </>
   );
 };
