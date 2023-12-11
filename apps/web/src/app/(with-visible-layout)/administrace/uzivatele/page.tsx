@@ -126,6 +126,7 @@ export default async function Page({ searchParams }: Params) {
                   <Th>Email</Th>
                   <Th>Role</Th>
                   <Th>Obec</Th>
+                  <Th>Datum registrace</Th>
                   <th
                     scope="col"
                     className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8"

@@ -196,6 +196,7 @@ export class UserService {
             .map((item) => `municipality = "${item.id}"`)
             .join(' || '),
           expand: 'owner',
+          sort: '-created',
         });
 
       const userIds = userAddressesUnderMunicipality.map(
@@ -213,6 +214,7 @@ export class UserService {
         .getList<UserWithExpand>(page, perPage, {
           expand,
           filter: filter.filter(Boolean).join(' && '),
+          sort: '-created',
         })
         .then((values) => {
           (values.items as any) = values.items.map(expandPocketFields<User>);

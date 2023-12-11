@@ -1,6 +1,8 @@
+import { DEFAULT_DATE_FORMAT } from '@constants';
 import { UserIcon } from '@heroicons/react/24/outline';
 import { AvailableModels, User, getFileUrl } from '@najit-najist/api';
 import { getCachedLoggedInUser } from '@server-utils';
+import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -61,6 +63,11 @@ export const Users: FC<{ users: User[] }> = async ({ users }) => {
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               {person.address?.municipality.name}
+            </td>
+            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              {person.created
+                ? dayjs(person.created).format(DEFAULT_DATE_FORMAT)
+                : 'Neznámo kdy'}
             </td>
             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
