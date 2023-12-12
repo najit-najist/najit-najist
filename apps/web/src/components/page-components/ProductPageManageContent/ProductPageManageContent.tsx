@@ -90,6 +90,7 @@ export const ProductPageManageContent: FC<
             <>
               <div className="relative w-full col-span-2 aspect-square">
                 <CustomImage
+                  className={!product?.publishedAt ? 'opacity-40' : ''}
                   onlyImage
                   src={getFileUrl(
                     AvailableModels.PRODUCTS,
@@ -108,6 +109,7 @@ export const ProductPageManageContent: FC<
               <div className="grid grid-cols-6 gap-3 mt-3">
                 {props.product.images.slice(1).map((imageUrl) => (
                   <CustomImage
+                    className={!product?.publishedAt ? 'opacity-40' : ''}
                     key={imageUrl}
                     src={getFileUrl(
                       AvailableModels.PRODUCTS,
