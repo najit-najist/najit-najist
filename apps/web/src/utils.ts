@@ -65,4 +65,4 @@ export function getChangedValues<G extends Record<any, any>>(
 
 export const isLocalPickup = (
   delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
-) => delivery.slug === 'local-pickup';
+) => delivery?.slug === 'local-pickup';

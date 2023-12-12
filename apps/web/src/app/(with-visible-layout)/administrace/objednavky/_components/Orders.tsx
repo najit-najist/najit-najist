@@ -44,7 +44,7 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {order.subtotal + order.delivery_method.price} Kč
+                {order.subtotal + order.delivery_method?.price} Kč
               </div>
             </td>
 
