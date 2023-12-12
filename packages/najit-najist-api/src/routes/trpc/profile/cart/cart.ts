@@ -129,24 +129,46 @@ export const userCartRoutes = t.router({
   checkout: protectedProcedure
     .input(
       checkoutCartSchema.superRefine(async (value, ctx) => {
-        const availablePaymentMethods =
-          await pocketbaseByCollections.orderPaymentMethods.getFullList<OrderPaymentMethod>(
+        const [paymentMethods, deliveryMethods] = await Promise.all([
+          pocketbaseByCollections.orderPaymentMethods.getFullList<OrderPaymentMethod>(
             {
               perPage: 99999,
             }
-          );
+          ),
+          pocketbaseByCollections.orderDeliveryMethods.getFullList<DeliveryMethod>(
+            {
+              perPage: 99999,
+            }
+          ),
+        ]);
 
-        const doesSelectedPaymentMethodExist = !!availablePaymentMethods.find(
+        const selectedPaymentMethod = paymentMethods.find(
           ({ id }) => id === value.paymentMethod.id
         );
 
+        const selectedDeliveryMethod = deliveryMethods.find(
+          ({ id }) => id === value.deliveryMethod.id
+        );
+
         // We dont need to check delivery method now, we attach payment method only to order
-        if (!doesSelectedPaymentMethodExist) {
+        if (!selectedPaymentMethod) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Vybraný způsob platby neznáme, vyberte jiný',
             fatal: true,
             path: ['paymentMethod.id'],
+          });
+        } else if (
+          !selectedDeliveryMethod ||
+          selectedPaymentMethod.except_delivery_methods.includes(
+            value.deliveryMethod.id
+          )
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Vybraný způsob dopravy neznáme, vyberte jinou',
+            fatal: true,
+            path: ['deliveryMethod.id'],
           });
         }
       })
@@ -171,36 +193,52 @@ export const userCartRoutes = t.router({
         });
       }
 
+      type OrderCreatePayload = Omit<
+        Order,
+        | 'user'
+        | 'payment_method'
+        | 'delivery_method'
+        | 'address_municipality'
+        | 'created'
+        | 'id'
+        | 'products'
+      > & {
+        user?: string;
+        delivery_method: string;
+        payment_method: string;
+        address_municipality: string;
+      };
+
+      const createPayload: OrderCreatePayload = {
+        subtotal: cart.price.subtotal,
+        user: ctx.sessionData.user.id,
+
+        address_houseNumber: input.address.houseNumber,
+        address_streetName: input.address.streetName,
+        address_city: input.address.city,
+        address_postalCode: input.address.postalCode,
+        address_municipality: input.address.municipality.id,
+
+        email: input.email,
+        telephoneNumber: input.telephoneNumber,
+
+        firstName: input.firstName,
+        lastName: input.lastName,
+
+        payment_method: input.paymentMethod.id,
+        delivery_method: input.deliveryMethod.id,
+        state: selectedPaymentMethod.payment_on_checkout
+          ? orderStates.Values.unpaid
+          : orderStates.Values.unconfirmed,
+      };
+
       const order = await pocketbaseByCollections.orders.create<
         Omit<Order, 'products'>
-      >(
-        {
-          subtotal: cart.price.subtotal,
-          user: ctx.sessionData.user.id,
-
-          address_houseNumber: input.address.houseNumber,
-          address_streetName: input.address.streetName,
-          address_city: input.address.city,
-          address_postalCode: input.address.postalCode,
-          address_municipality: input.address.municipality.id,
-
-          email: input.email,
-          telephoneNumber: input.telephoneNumber,
-
-          firstName: input.firstName,
-          lastName: input.lastName,
-
-          payment_method: input.paymentMethod.id,
-          state: selectedPaymentMethod.payment_on_checkout
-            ? orderStates.Values.unpaid
-            : orderStates.Values.unconfirmed,
+      >(createPayload, {
+        headers: {
+          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
         },
-        {
-          headers: {
-            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-          },
-        }
-      );
+      });
 
       await Promise.all(
         cart.products.map((cartItem) => {

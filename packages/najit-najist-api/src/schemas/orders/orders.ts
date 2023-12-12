@@ -4,6 +4,7 @@ import { baseCollectionSchema } from '../base.collection.schema';
 import { municipalitySchema } from '../municipality.schema';
 import { userSchema } from '../user.schema';
 import { zodTelephoneNumber } from '../zodTelephoneNumber';
+import { orderDeliveryMethodSchema } from './order-delivery-methods';
 import { orderPaymentMethodSchema } from './order-payment-methods';
 import { orderProductSchema } from './order-products';
 
@@ -33,6 +34,7 @@ export const orderSchema = baseCollectionSchema.extend({
   lastName: z.string(),
 
   payment_method: orderPaymentMethodSchema,
+  delivery_method: orderDeliveryMethodSchema,
   products: z.array(orderProductSchema),
   user: userSchema.omit({ address: true }).optional(),
 

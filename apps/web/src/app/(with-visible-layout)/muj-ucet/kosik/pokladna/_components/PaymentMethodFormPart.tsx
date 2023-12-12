@@ -1,13 +1,13 @@
 'use client';
 
-import { DeliveryMethod } from '@najit-najist/api';
+import { OrderPaymentMethod } from '@najit-najist/api';
 import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
 import { FC, useMemo } from 'react';
 import { useController, useFormState, useWatch } from 'react-hook-form';
 
 export const PaymentMethodFormPart: FC<{
-  deliveryMethods: DeliveryMethod[];
-}> = ({ deliveryMethods }) => {
+  paymentMethods: OrderPaymentMethod[];
+}> = ({ paymentMethods }) => {
   const formState = useFormState();
   const selectedDeliveryId = useWatch({
     name: 'deliveryMethod.id',
@@ -17,15 +17,13 @@ export const PaymentMethodFormPart: FC<{
     name: 'paymentMethod',
   });
 
-  const paymentMethodsForDeliveryMethodIds = useMemo(
+  const filteredPaymentMethods = useMemo(
     () =>
-      Object.fromEntries(
-        deliveryMethods?.map((item) => [item.id, item.paymentMethods])
+      paymentMethods.filter(
+        (item) => !item.except_delivery_methods.includes(selectedDeliveryId)
       ),
-    [deliveryMethods]
+    [paymentMethods, selectedDeliveryId]
   );
-  const paymentMethods =
-    paymentMethodsForDeliveryMethodIds[selectedDeliveryId] ?? [];
 
   if (!paymentMethods.length) {
     return null;
@@ -38,8 +36,8 @@ export const PaymentMethodFormPart: FC<{
         value={controller.field.value}
         onChange={controller.field.onChange}
         onBlur={controller.field.onBlur}
-        items={paymentMethods}
-        itemsWrapperClassName="flex gap-5"
+        items={filteredPaymentMethods}
+        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-5"
         disabled={formState.isSubmitting}
       />
       {controller.fieldState.error?.message ? (

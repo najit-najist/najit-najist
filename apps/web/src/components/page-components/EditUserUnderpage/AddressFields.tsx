@@ -14,10 +14,10 @@ export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
 
   return (
     <>
-      <div className="sm:flex gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Input
           required={required}
-          rootClassName="w-full"
+          rootClassName="md:col-span-3"
           label="Ulice"
           autoComplete="street-address"
           placeholder="Název ulice"
@@ -37,12 +37,12 @@ export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
         />
       </div>
 
-      <div className="sm:flex gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         <Input
           required={required}
           label="Město"
           placeholder="Název města"
-          rootClassName="w-full"
+          rootClassName="md:col-span-3"
           autoComplete="address-level2"
           error={formState.errors.address?.city}
           disabled={fieldsAreDisabled}

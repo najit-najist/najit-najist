@@ -19,6 +19,7 @@ export type RadioGroupProps<ItemType extends RadioGroupItem> =
     label?: string;
     items: RadioGroupItem[];
     itemsWrapperClassName?: string;
+    itemWrapperClassName?: string;
   };
 
 export function RadioGroup<ItemType extends RadioGroupItem>({
@@ -27,6 +28,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
   label,
   items,
   itemsWrapperClassName,
+  itemWrapperClassName,
   disabled,
   ...rest
 }: RadioGroupProps<RadioGroupItem>) {
@@ -43,7 +45,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
           {label}
         </HeadlessRadioGroup.Label>
       ) : null}
-      <div className={cx('space-y-2', itemsWrapperClassName)}>
+      <div className={cx('space-y-2 sm:space-y-0', itemsWrapperClassName)}>
         {items.map((item) => (
           <HeadlessRadioGroup.Option
             key={item.name}
@@ -56,6 +58,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
               }
               ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
               ${checked ? 'bg-project-primary/75 text-white' : 'bg-white'}
+              ${itemWrapperClassName}
                 relative flex rounded-lg px-5 py-4 shadow-md focus:outline-none w-full`
             }
           >

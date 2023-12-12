@@ -1,11 +1,10 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { Order } from '@najit-najist/api';
-import { Alert, Button, Label, Paper } from '@najit-najist/ui';
+import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import clsx from 'clsx';
 import { FC } from 'react';
 
-import { CancelOrderButton } from './CancelOrderButton';
 import {
   ActiveButtonConfig,
   EditOrderStateButtons,
@@ -15,11 +14,7 @@ import { OrderUnderpageProps } from './OrderUnderpageContent';
 type OrderState = Order['state'];
 
 export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
-  const deliveryMethod =
-    typeof order.payment_method.delivery_method === 'string'
-      ? null
-      : order.payment_method.delivery_method;
-  const isOrderLocalPickup = deliveryMethod && isLocalPickup(deliveryMethod);
+  const isOrderLocalPickup = isLocalPickup(order.delivery_method);
 
   const orderStateToButtons: Record<OrderState, ActiveButtonConfig[]> = {
     new: [],

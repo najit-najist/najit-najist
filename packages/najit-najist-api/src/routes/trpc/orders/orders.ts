@@ -15,26 +15,32 @@ import { insertBetween } from '@utils/insertBetween';
 import { getItemId } from '@utils/internal';
 import { z } from 'zod';
 
-import { DeliveryMethod, orderSchema } from '../../../schemas/orders';
-import { ProductService } from '../../../server';
 import {
-  DeliveryMethodWithExpand,
-  OrderWithExpand,
-  mapPocketbaseDeliveryMethods,
-  mapPocketbaseOrder,
-} from './_utils';
+  DeliveryMethod,
+  OrderPaymentMethod,
+  orderSchema,
+} from '../../../schemas/orders';
+import { ProductService } from '../../../server';
+import { OrderWithExpand, mapPocketbaseOrder } from './_utils';
 
-const paymentMethodRoutes = t.router({});
+const paymentMethodRoutes = t.router({
+  get: t.router({
+    many: t.procedure.query(async () => {
+      const deliveryMethods = await pocketbase
+        .collection(PocketbaseCollections.ORDER_PAYMENT_METHODS)
+        .getFullList<OrderPaymentMethod>();
+
+      return deliveryMethods;
+    }),
+  }),
+});
 
 const deliveryMethodRoutes = t.router({
   get: t.router({
     many: t.procedure.query(async () => {
       const deliveryMethods = await pocketbase
         .collection(PocketbaseCollections.ORDER_DELIVERY_METHODS)
-        .getFullList<DeliveryMethodWithExpand>({
-          expand: `${PocketbaseCollections.ORDER_PAYMENT_METHODS}(delivery_method)`,
-        })
-        .then((res) => res.map(mapPocketbaseDeliveryMethods));
+        .getFullList<DeliveryMethod>();
 
       return deliveryMethods;
     }),
@@ -50,7 +56,7 @@ export const orderRoutes = t.router({
           await pocketbaseByCollections.orders.getOne<OrderWithExpand>(
             input.id,
             {
-              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method.delivery_method,user`,
+              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method,delivery_method,user`,
               headers: {
                 [AUTHORIZATION_HEADER]: ctx.sessionData.token,
               },
@@ -66,14 +72,6 @@ export const orderRoutes = t.router({
           },
           [] as string[]
         );
-
-        const deliveryMethodIdToFetch = getItemId(
-          mappedResult.payment_method.delivery_method
-        );
-        mappedResult.payment_method.delivery_method =
-          await pocketbaseByCollections.orderDeliveryMethods.getOne<
-            Omit<DeliveryMethod, 'paymentMethods'>
-          >(deliveryMethodIdToFetch);
 
         if (productsToFetch.length) {
           const { items: productsForOrders } = await ProductService.getMany({

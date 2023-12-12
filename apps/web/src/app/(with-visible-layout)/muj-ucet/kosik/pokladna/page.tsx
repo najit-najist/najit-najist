@@ -1,10 +1,10 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
-import { Button } from '@najit-najist/ui';
 import {
   getCachedDeliveryMethods,
   getCachedLoggedInUser,
+  getCachedPaymentMethods,
   getCachedTrpcCaller,
 } from '@server-utils';
 import clsx from 'clsx';
@@ -47,9 +47,15 @@ export default async function Page() {
     return <EmptyCart />;
   }
 
-  const deliveryMethods = await getCachedDeliveryMethods();
+  const [deliveryMethods, paymentMethods] = await Promise.all([
+    getCachedDeliveryMethods(),
+    getCachedPaymentMethods(),
+  ]);
   const defaultDeliveryMethod = deliveryMethods.at(0);
-  const defaultPaymentMethod = defaultDeliveryMethod?.paymentMethods.at(0);
+  const defaultPaymentMethod = paymentMethods.find(
+    (item) =>
+      !item.except_delivery_methods.includes(defaultDeliveryMethod?.id ?? '')
+  );
 
   const priceTotal = productsInCart.reduce(
     (priceTotalPredicate, cartItem) =>
@@ -91,11 +97,14 @@ export default async function Page() {
             <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
               Výběr dopravy
             </SectionTitle>
-            <DeliveryMethodFormPart deliveryMethods={deliveryMethods} />
+            <DeliveryMethodFormPart
+              paymentMethods={paymentMethods}
+              deliveryMethods={deliveryMethods}
+            />
             <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
               Výběr platby
             </SectionTitle>
-            <PaymentMethodFormPart deliveryMethods={deliveryMethods} />
+            <PaymentMethodFormPart paymentMethods={paymentMethods} />
           </div>
           <div className="w-full sm:max-w-md">
             <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>

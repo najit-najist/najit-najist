@@ -8,7 +8,7 @@ import {
 import { Alert, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { FC, Fragment, ReactNode } from 'react';
+import { FC, Fragment } from 'react';
 import { z } from 'zod';
 
 import { EditOrderControllbar } from './EditOrderControlbar';
@@ -33,10 +33,6 @@ const orderStateToTitle: Record<z.infer<typeof orderStates>, string> = {
 
 export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
   const { order, viewType } = props;
-  const deliveryMethod =
-    typeof order.payment_method.delivery_method === 'string'
-      ? null
-      : order.payment_method.delivery_method;
 
   return (
     <div className="pb-24 pt-16">
@@ -229,10 +225,12 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                   Doručovací metoda
                 </dt>
                 <dd className="mt-2 text-gray-700">
-                  {deliveryMethod ? (
+                  {order.delivery_method ? (
                     <>
-                      <p>{deliveryMethod.name}</p>
-                      <p className="mt-1">{deliveryMethod.description}</p>
+                      <p>{order.delivery_method.name}</p>
+                      <p className="mt-1">
+                        {order.delivery_method.description}
+                      </p>
                     </>
                   ) : (
                     <p>Neznámá doručovací metoda</p>
@@ -261,15 +259,15 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Doprava</dt>
                 <dd className="text-gray-700">
-                  {deliveryMethod?.price
-                    ? `${deliveryMethod?.price} Kč`
+                  {order.delivery_method?.price
+                    ? `${order.delivery_method.price} Kč`
                     : 'Zdarma'}
                 </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
                 <dd className="text-project-secondary">
-                  {order.subtotal + (deliveryMethod?.price ?? 0)} Kč
+                  {order.subtotal + (order.delivery_method?.price ?? 0)} Kč
                 </dd>
               </div>
             </dl>

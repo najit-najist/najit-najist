@@ -16,6 +16,10 @@ export const getCachedDeliveryMethods = cache(() =>
   getCachedTrpcCaller().orders.deliveryMethods.get.many()
 );
 
+export const getCachedPaymentMethods = cache(() =>
+  getCachedTrpcCaller().orders.paymentMethods.get.many()
+);
+
 export const getCachedOrders = cache(
   (options?: AppRouterInput['orders']['get']['many']) =>
     getCachedTrpcCaller().orders.get.many(options)
