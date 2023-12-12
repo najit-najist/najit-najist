@@ -61,7 +61,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
           >
             {({ active, checked }) => (
               <>
-                <div className="flex w-full items-center justify-between">
+                <div className="flex w-full items-start justify-between">
                   <div className="flex items-center">
                     <div className="text-sm">
                       <HeadlessRadioGroup.Label
@@ -74,7 +74,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
                       </HeadlessRadioGroup.Label>
                       <HeadlessRadioGroup.Description
                         as="span"
-                        className={`inline ${
+                        className={`mt-1 block ${
                           checked ? 'text-sky-100' : 'text-gray-500'
                         }`}
                       >

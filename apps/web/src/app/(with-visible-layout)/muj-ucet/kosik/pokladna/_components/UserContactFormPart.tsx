@@ -1,6 +1,7 @@
 'use client';
 
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { AddressFields } from '@components/page-components/EditUserUnderpage/AddressFields';
 import { AppRouterInput } from '@najit-najist/api';
 import {
   Checkbox,
@@ -79,46 +80,7 @@ export const UserContactFormPart: FC = () => {
 
       <FormBreak className="mt-5 mb-2" />
 
-      <div className="sm:flex gap-4">
-        <Input
-          required
-          rootClassName="w-full"
-          label="Ulice"
-          autoComplete="street-address"
-          error={formState.errors.address?.streetName}
-          disabled={fieldsAreDisabled}
-          {...register('address.streetName')}
-        />
-        <Input
-          required
-          rootClassName="flex-none w-26"
-          label="Číslo popisné"
-          // autoComplete="email"
-          error={formState.errors.address?.houseNumber}
-          disabled={fieldsAreDisabled}
-          {...register('address.houseNumber')}
-        />
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Input
-          required
-          label="Město"
-          autoComplete="address-level2"
-          error={formState.errors.address?.city}
-          disabled={fieldsAreDisabled}
-          {...register('address.city')}
-        />
-        <Input
-          required
-          label="PSČ"
-          autoComplete="postal-code"
-          error={formState.errors.address?.postalCode}
-          disabled={fieldsAreDisabled}
-          {...register('address.postalCode')}
-        />
-      </div>
-      <MunicipalitySelect label="Kraj" name="address.municipality" required />
+      <AddressFields required />
 
       <CheckboxWrapper
         childId="save-current-address"

@@ -64,7 +64,7 @@ export const ProductPageManageContent: FC<
               ? ([
                   product.category
                     ? {
-                        link: `/produkty?category=${product.category?.slug}`,
+                        link: `/produkty?category-slug=${product.category?.slug}`,
                         text: product.category?.name,
                       }
                     : null,

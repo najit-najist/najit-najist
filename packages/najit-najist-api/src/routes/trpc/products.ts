@@ -19,6 +19,7 @@ import {
 import { ProductService } from '@services/Product.service';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
+import { publicProcedure } from '@trpc-procedures/publicProcedure';
 import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -26,21 +27,25 @@ import { z } from 'zod';
 import { AUTHORIZATION_HEADER } from '../..';
 
 const getRoutes = t.router({
-  one: t.procedure.input(getOneProductSchema).query(async ({ input, ctx }) => {
-    const by = 'id' in input ? 'id' : 'slug';
-    return ProductService.getBy(by, (input as any)[by], {
-      headers: {
-        [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
-      },
-    });
-  }),
-  many: t.procedure.input(getManyProductsSchema).query(async ({ input, ctx }) =>
-    ProductService.getMany(input, {
-      headers: {
-        [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
-      },
-    })
-  ),
+  one: publicProcedure
+    .input(getOneProductSchema)
+    .query(async ({ input, ctx }) => {
+      const by = 'id' in input ? 'id' : 'slug';
+      return ProductService.getBy(by, (input as any)[by], {
+        headers: {
+          [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
+        },
+      });
+    }),
+  many: publicProcedure
+    .input(getManyProductsSchema)
+    .query(async ({ input, ctx }) =>
+      ProductService.getMany(input, {
+        headers: {
+          [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
+        },
+      })
+    ),
 });
 
 const getCategoriesRoutes = t.router({

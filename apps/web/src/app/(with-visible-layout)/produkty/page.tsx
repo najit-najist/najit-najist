@@ -53,6 +53,13 @@ export default async function RecipesPage({ searchParams }: Params) {
     trpc.products.categories.get.many(),
   ]);
 
+  let selectedCategories = [];
+  if (categoriesAsArray?.length) {
+    selectedCategories = categories.filter((item) =>
+      categoriesAsArray?.includes(item.slug)
+    );
+  }
+
   return (
     <>
       {/* TODO: make this into editable notice? */}
@@ -88,7 +95,7 @@ export default async function RecipesPage({ searchParams }: Params) {
       <div className="flex flex-col sm:flex-row container gap-10">
         <AsideFilters
           categories={[fallbackCategories, ...categories]}
-          initialValues={{ query, categories: [] }}
+          initialValues={{ query, categories: selectedCategories }}
         />
         <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xs:gap-5 sm:gap-10 w-full divide-y-2 xs:divide-y-0">
           {products.length ? (

@@ -10,7 +10,10 @@ export const loginWithAccount = async (pocketbaseAccountName: string) => {
   }
 
   try {
-    await pocketbase.admins.authWithPassword(account.email, account.password);
+    return await pocketbase.admins.authWithPassword(
+      account.email,
+      account.password
+    );
   } catch (error) {
     logger.error(
       { error, pocketbaseAccountName },

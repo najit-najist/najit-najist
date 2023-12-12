@@ -14,6 +14,8 @@ import {
 import { FC, ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
+import { AddressFields } from './AddressFields';
+
 export type ViewType = 'edit' | 'create' | 'edit-myself';
 
 const viewTypeToButtonText: Record<
@@ -91,13 +93,12 @@ export const EditUserUnderPage: FC<{
               />
             </div>
             <div className="mt-5" />
+
             <FormBreak label="Adresa" />
 
-            <MunicipalitySelect
-              className="mt-3"
-              label="Obec"
-              name="address.municipality"
-            />
+            <div className="grid gap-4 grid-cols-1 mt-5">
+              <AddressFields />
+            </div>
 
             <div className="mt-5" />
             <FormBreak className="mb-3" />

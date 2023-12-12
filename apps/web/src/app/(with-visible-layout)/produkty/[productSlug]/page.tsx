@@ -1,6 +1,17 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
-import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
-import { ProductService } from '@najit-najist/api/server';
+import {
+  AUTHORIZATION_HEADER,
+  AvailableModels,
+  UserActions,
+  canUser,
+} from '@najit-najist/api';
+import {
+  ProductService,
+  RecipesService,
+  config,
+  loginWithAccount,
+} from '@najit-najist/api/server';
+import { pocketbase } from '@najit-najist/pb';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { notFound } from 'next/navigation';
 
@@ -58,13 +69,17 @@ type Params = {
 export async function generateMetadata({ params, searchParams }: Params) {
   const { productSlug } = params;
   try {
-    const recipe = await ProductService.getBy('slug', productSlug);
+    const recipe = await getCachedTrpcCaller().products.get.one.getBy({
+      slug: productSlug,
+    });
 
     return {
       title: !!searchParams.editor ? `Upravení ${recipe.name}` : recipe.name,
     };
   } catch {
-    return {};
+    return {
+      title: 'Nenalezeno',
+    };
   }
 }
 
