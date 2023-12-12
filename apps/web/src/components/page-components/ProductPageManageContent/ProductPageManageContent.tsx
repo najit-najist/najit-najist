@@ -98,9 +98,11 @@ export const ProductPageManageContent: FC<
                   )}
                 />
                 <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
-                  <Badge size="lg" color="red">
-                    Nepublikováno
-                  </Badge>
+                  {!product?.publishedAt ? (
+                    <Badge size="lg" color="red">
+                      Nepublikováno
+                    </Badge>
+                  ) : null}
                 </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
