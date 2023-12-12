@@ -69,7 +69,7 @@ type Params = {
 export async function generateMetadata({ params, searchParams }: Params) {
   const { productSlug } = params;
   try {
-    const recipe = await getCachedTrpcCaller().products.get.one.getBy({
+    const recipe = await getCachedTrpcCaller().products.get.one({
       slug: productSlug,
     });
 

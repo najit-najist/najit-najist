@@ -53,7 +53,7 @@ export default async function RecipesPage({ searchParams }: Params) {
     trpc.products.categories.get.many(),
   ]);
 
-  let selectedCategories = [];
+  let selectedCategories: typeof categories = [];
   if (categoriesAsArray?.length) {
     selectedCategories = categories.filter((item) =>
       categoriesAsArray?.includes(item.slug)

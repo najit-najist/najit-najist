@@ -139,13 +139,13 @@ export const CartItem: FC<
           </div>
         </div>
 
-        <div className="flex flex-1 items-end justify-between pt-2">
+        <div className="flex flex-col-reverse lg:flex-row flex-1 lg:items-end justify-between pt-2">
           <Price
             value={product.price.value * count}
             className={isDoingTransition ? 'blur-sm' : ''}
           />
 
-          <div className="ml-4">
+          <div className="lg:ml-4">
             <NumberInput
               label="Počet"
               className="max-w-[4rem]"
