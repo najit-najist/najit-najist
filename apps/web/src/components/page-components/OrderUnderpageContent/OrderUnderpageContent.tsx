@@ -125,9 +125,14 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                         {cartItem.product.name}
                       </Link>
                     </h4>
-                    <p className="mt-2 text-sm text-gray-600">
-                      {cartItem.product.description}
-                    </p>
+                    {cartItem.product.description ? (
+                      <div
+                        className="mt-2 text-sm text-gray-600"
+                        dangerouslySetInnerHTML={{
+                          __html: cartItem.product.description,
+                        }}
+                      ></div>
+                    ) : null}
                   </div>
                   <div className="mt-6 flex flex-1 items-end">
                     <dl className="flex space-x-4 divide-x divide-gray-200 text-sm sm:space-x-6">
