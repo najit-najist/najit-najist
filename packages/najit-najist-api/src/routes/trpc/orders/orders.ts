@@ -13,6 +13,7 @@ import {
 import { createPocketbaseFilters } from '@utils/createPocketbaseFilters';
 import { insertBetween } from '@utils/insertBetween';
 import { getItemId } from '@utils/internal';
+import { getOrderById } from '@utils/server/getOrderById';
 import { z } from 'zod';
 
 import {
@@ -52,49 +53,11 @@ export const orderRoutes = t.router({
     one: protectedProcedure
       .input(orderSchema.pick({ id: true }))
       .query(async ({ input, ctx }) => {
-        const result =
-          await pocketbaseByCollections.orders.getOne<OrderWithExpand>(
-            input.id,
-            {
-              expand: `${Collections.ORDER_PRODUCTS}(order),payment_method,delivery_method,user`,
-              headers: {
-                [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-              },
-            }
-          );
-        const mappedResult = mapPocketbaseOrder(result);
-
-        const productsToFetch = mappedResult.products.reduce(
-          (final, orderItem) => {
-            final.push(getItemId(orderItem.product));
-
-            return final;
+        return getOrderById(input.id, {
+          headers: {
+            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
           },
-          [] as string[]
-        );
-
-        if (productsToFetch.length) {
-          const { items: productsForOrders } = await ProductService.getMany({
-            perPage: 99999,
-            otherFilters: [
-              `( ${productsToFetch.map((id) => `id="${id}"`).join(' || ')} )`,
-            ],
-          });
-
-          for (const cartItem of mappedResult.products) {
-            const productId = getItemId(cartItem.product);
-
-            const productFromFetchedProducts = productsForOrders.find(
-              ({ id }) => id === productId
-            );
-
-            if (productFromFetchedProducts) {
-              cartItem.product = productFromFetchedProducts;
-            }
-          }
-        }
-
-        return mappedResult;
+        });
       }),
     many: protectedProcedure
       .input(

@@ -40,7 +40,7 @@
     "@floating-ui/react": "^0.26.3",
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.12",
-    "@najit-najist/api": "*",
+    "@najit-najist/pb": "*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
     "html-react-parser": "^3.0.16",

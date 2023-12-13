@@ -1,4 +1,10 @@
-import { Collections, pocketbaseByCollections } from '@najit-najist/pb';
+import { config } from '@config';
+import {
+  renderAsync,
+  ThankYouOrder,
+  ThankYouOrderAdmin,
+} from '@najit-najist/email-templates';
+import { pocketbaseByCollections } from '@najit-najist/pb';
 import {
   DeliveryMethod,
   Order,
@@ -11,6 +17,7 @@ import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
 import { getCurrentCart } from '@utils/server/getCurrentUserCart';
+import { getOrderById } from '@utils/server/getOrderById';
 import { z } from 'zod';
 
 import { AUTHORIZATION_HEADER } from '../../../..';
@@ -18,7 +25,7 @@ import {
   addToCartSchema,
   userCartProductSchema,
 } from '../../../../schemas/profile/cart/cart.schema';
-import { logger } from '../../../../server';
+import { MailService, logger } from '../../../../server';
 
 export const userCartRoutes = t.router({
   products: t.router({
@@ -129,29 +136,17 @@ export const userCartRoutes = t.router({
   checkout: protectedProcedure
     .input(
       checkoutCartSchema.superRefine(async (value, ctx) => {
-        const [paymentMethods, deliveryMethods] = await Promise.all([
-          pocketbaseByCollections.orderPaymentMethods.getFullList<OrderPaymentMethod>(
-            {
-              perPage: 99999,
-            }
-          ),
-          pocketbaseByCollections.orderDeliveryMethods.getFullList<DeliveryMethod>(
-            {
-              perPage: 99999,
-            }
-          ),
+        const [paymentMethod, deliveryMethod] = await Promise.all([
+          pocketbaseByCollections.orderPaymentMethods
+            .getOne<OrderPaymentMethod>(value.paymentMethod.id)
+            .catch(() => undefined),
+          pocketbaseByCollections.orderDeliveryMethods
+            .getOne<DeliveryMethod>(value.deliveryMethod.id)
+            .catch(() => undefined),
         ]);
 
-        const selectedPaymentMethod = paymentMethods.find(
-          ({ id }) => id === value.paymentMethod.id
-        );
-
-        const selectedDeliveryMethod = deliveryMethods.find(
-          ({ id }) => id === value.deliveryMethod.id
-        );
-
         // We dont need to check delivery method now, we attach payment method only to order
-        if (!selectedPaymentMethod) {
+        if (!paymentMethod) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             message: 'Vybraný způsob platby neznáme, vyberte jiný',
@@ -159,8 +154,8 @@ export const userCartRoutes = t.router({
             path: ['paymentMethod.id'],
           });
         } else if (
-          !selectedDeliveryMethod ||
-          selectedPaymentMethod.except_delivery_methods.includes(
+          !deliveryMethod ||
+          paymentMethod.except_delivery_methods.includes(
             value.deliveryMethod.id
           )
         ) {
@@ -209,6 +204,15 @@ export const userCartRoutes = t.router({
         address_municipality: string;
       };
 
+      const [paymentMethod, deliveryMethod] = await Promise.all([
+        pocketbaseByCollections.orderPaymentMethods.getOne<OrderPaymentMethod>(
+          input.paymentMethod.id
+        ),
+        pocketbaseByCollections.orderDeliveryMethods.getOne<DeliveryMethod>(
+          input.deliveryMethod.id
+        ),
+      ]);
+
       const createPayload: OrderCreatePayload = {
         subtotal: cart.price.subtotal,
         user: ctx.sessionData.user.id,
@@ -227,14 +231,24 @@ export const userCartRoutes = t.router({
 
         payment_method: input.paymentMethod.id,
         delivery_method: input.deliveryMethod.id,
+        payment_method_price: paymentMethod.price ?? 0,
+        delivery_method_price: deliveryMethod.price ?? 0,
+
         state: selectedPaymentMethod.payment_on_checkout
           ? orderStates.Values.unpaid
           : orderStates.Values.unconfirmed,
       };
 
-      const order = await pocketbaseByCollections.orders.create<
-        Omit<Order, 'products'>
-      >(createPayload, {
+      const { id: orderId } = await pocketbaseByCollections.orders.create(
+        createPayload,
+        {
+          headers: {
+            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+          },
+        }
+      );
+
+      const order = await getOrderById(orderId, {
         headers: {
           [AUTHORIZATION_HEADER]: ctx.sessionData.token,
         },
@@ -290,7 +304,44 @@ export const userCartRoutes = t.router({
         }
       }
 
-      // TODO: Send email to user and admin here
+      const [userEmailContent, adminEmailContent] = await Promise.all([
+        renderAsync(
+          ThankYouOrder({
+            needsPayment: false,
+            orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+            order,
+          })
+        ),
+        renderAsync(
+          ThankYouOrderAdmin({
+            orderLink: `https://najitnajist.cz/administrace/objednavky/${order.id}`,
+            order,
+          })
+        ),
+      ]);
+
+      await Promise.all([
+        MailService.send({
+          to: input.email,
+          subject: `Objednávka #${order.id} na najitnajist.cz`,
+          body: userEmailContent,
+        }).catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify user to its email with order information`
+          );
+        }),
+        MailService.send({
+          to: config.mail.baseEmail,
+          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+          body: adminEmailContent,
+        }).catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify admin to its email with order information`
+          );
+        }),
+      ]);
 
       return order;
     }),

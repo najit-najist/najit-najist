@@ -1,9 +1,10 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { AvailableModels, getFileUrl } from '@najit-najist/api';
+import { Collections, getFileUrl } from '@najit-najist/pb';
 import { cva, cx, VariantProps } from 'class-variance-authority';
-import Image, { ImageLoader, ImageProps } from 'next/image';
+import Image from 'next/image';
 import { FC, useCallback, useId, useMemo } from 'react';
 import { DropzoneOptions, useDropzone } from 'react-dropzone';
+
 import { Badge } from '../Badge';
 import { FormControlWrapper } from './FormControlWrapper';
 
@@ -21,7 +22,7 @@ export interface ImageSelectProps
   /**
    * Model Name
    */
-  modelName: AvailableModels;
+  modelName: Collections;
   onChange?: (nextValue: string[]) => void;
 }
 

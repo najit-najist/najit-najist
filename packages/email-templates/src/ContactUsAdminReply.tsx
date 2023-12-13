@@ -1,7 +1,10 @@
 import { Heading } from '@react-email/heading';
-import { Text } from './components/Text';
-import { Layout } from './components/Layout';
 import { Link } from '@react-email/link';
+import { Section } from '@react-email/section';
+
+import { CenteredRow } from './components/CenteredRow';
+import { Layout } from './components/Layout';
+import { Text } from './components/Text';
 
 export interface ContactUsAdminReplyProps {
   fullName: string;
@@ -20,14 +23,22 @@ export default function ContactUsAdminReply({
 
   return (
     <Layout title={title}>
-      <Heading as="h2">Zpráva od: {fullName}</Heading>
-      <Text>
-        <b>Text: </b> <span>{message}</span>
-      </Text>
-
-      {telephone ? <Text>Telefon: {telephone} </Text> : null}
-
-      <Link href={`mailto:${email}`}>Odpovědět na uvedený email: {email}</Link>
+      <Section>
+        <CenteredRow>
+          <Heading as="h2">Zpráva od: {fullName}</Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text>
+            <b>Text: </b> <span>{message}</span>
+          </Text>
+          {telephone ? <Text>Telefon: {telephone} </Text> : null}
+          <Text>
+            <Link href={`mailto:${email}`}>
+              Odpovědět na uvedený email: {email}
+            </Link>
+          </Text>
+        </CenteredRow>
+      </Section>
     </Layout>
   );
 }

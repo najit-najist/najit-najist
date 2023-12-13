@@ -1,7 +1,8 @@
-import { Heading } from './components/Heading';
-import { Text } from './components/Text';
-import { Layout } from './components/Layout';
 import { Button } from '@react-email/button';
+
+import { Heading } from './components/Heading';
+import { Layout } from './components/Layout';
+import { Text } from './components/Text';
 
 export interface FinishRegistrationFromPreviewProps {
   fullName: string;
@@ -12,7 +13,7 @@ export default function FinishRegistrationFromPreview({
   fullName,
   token,
 }: FinishRegistrationFromPreviewProps) {
-  const title = 'Vítejte u Najít&Najíst';
+  const title = 'Vítejte u najitnajist.cz';
 
   return (
     <Layout title={title}>

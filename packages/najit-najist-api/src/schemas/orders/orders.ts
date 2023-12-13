@@ -35,6 +35,10 @@ export const orderSchema = baseCollectionSchema.extend({
 
   payment_method: orderPaymentMethodSchema,
   delivery_method: orderDeliveryMethodSchema,
+
+  payment_method_price: z.number(),
+  delivery_method_price: z.number(),
+
   products: z.array(orderProductSchema),
   user: userSchema.omit({ address: true }).optional(),
 

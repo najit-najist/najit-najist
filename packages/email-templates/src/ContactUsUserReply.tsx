@@ -1,7 +1,10 @@
+import { Column, Row, Section } from '@react-email/components';
 import { Heading } from '@react-email/heading';
-import { Text } from './components/Text';
-import { Layout } from './components/Layout';
 import { Link } from '@react-email/link';
+
+import { CenteredRow } from './components/CenteredRow';
+import { Layout } from './components/Layout';
+import { Text } from './components/Text';
 
 export interface ContactUsUserReplyProps {
   fullName: string;
@@ -20,16 +23,18 @@ export default function ContactUsUserReply({
 
   return (
     <Layout title={title}>
-      <Heading as="h2">Dobrý den {fullName},</Heading>
-      <Text>
-        děkujeme za zanechání kontaktu na našem webu{' '}
-        <Link href="https://najitnajist.cz">najitnajist.cz</Link>. <br />{' '}
-        Zanedlouho Vás budeme kontaktovat zpět.
-      </Text>
-
-      <Text className="italic">
-        Váš team <Link href="https://najitnajist.cz">najitnajist.cz</Link>
-      </Text>
+      <Section>
+        <CenteredRow>
+          <Heading as="h2">Dobrý den {fullName},</Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text>
+            děkujeme za zanechání kontaktu na našem webu{' '}
+            <Link href="https://najitnajist.cz">najitnajist.cz</Link>. <br />{' '}
+            Zanedlouho Vás budeme kontaktovat zpět.
+          </Text>
+        </CenteredRow>
+      </Section>
     </Layout>
   );
 }

@@ -34,14 +34,14 @@ export const priceRootStyles = cva<SharedValues>(
     },
   }
 );
-export const priceValueStyles = cva('tracking-wider');
+export const priceValueStyles = cva('tracking-widest');
 export const priceCurrencyStyles = cva<SharedValues>(
-  'overline text-gray-600 inline-block',
+  'overline text-gray-500 inline-block',
   {
     variants: {
       size: {
-        sm: '',
-        xs: '',
+        sm: 'ml-0.5',
+        xs: 'ml-0.5',
         default: 'tracking-[-0.1rem] text-lg ml-1 -translate-y-[0.5rem]',
         md: 'tracking-[-0.1rem] text-2xl ml-1 -translate-y-[1rem]',
         lg: 'tracking-[-0.1rem] text-3xl ml-1 -translate-y-[1.3rem]',
@@ -62,10 +62,16 @@ export const Price: FC<
 > = ({ value, currencyCode = CurrencyCodes.CZK, className, size }) => {
   return (
     <div className={priceRootStyles({ size, className })}>
-      <span className={priceValueStyles()}>{value}</span>
-      <span className={priceCurrencyStyles({ size })}>
-        {currencyCodeToLabel[currencyCode]}
-      </span>
+      {value ? (
+        <>
+          <span className={priceValueStyles()}>{value}</span>
+          <span className={priceCurrencyStyles({ size })}>
+            {currencyCodeToLabel[currencyCode]}
+          </span>
+        </>
+      ) : (
+        <p className={priceValueStyles()}>Zdarma</p>
+      )}
     </div>
   );
 };

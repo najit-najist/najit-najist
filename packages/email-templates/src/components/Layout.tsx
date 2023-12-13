@@ -1,12 +1,18 @@
-import { FC, PropsWithChildren } from 'react';
-import { Html } from '@react-email/html';
-import { Tailwind } from '@react-email/tailwind';
-import { Attachment, BaseEmailProps } from '../types';
+// @ts-expect-error -- its okay
+import { getTheme } from '@najit-najist/tailwind-plugin/index.cjs';
+import { Font, FontProps } from '@react-email/font';
 import { Head } from '@react-email/head';
+import { Html } from '@react-email/html';
 import { Img } from '@react-email/img';
 import { Link } from '@react-email/link';
-import { Font } from '@react-email/font';
+import { Tailwind } from '@react-email/tailwind';
+import { FC, PropsWithChildren } from 'react';
+
+import { Attachment, BaseEmailProps } from '../types';
+import { Fonts } from './Fonts';
 import { Text } from './Text';
+
+const { plugins, ...theme } = getTheme();
 
 export const Layout: FC<
   PropsWithChildren<
@@ -17,89 +23,78 @@ export const Layout: FC<
   >
 > = ({ title, newsletterUuid, children, attachments }) => {
   return (
-    <Tailwind
-      config={{
-        theme: {
-          extend: {
-            colors: {
-              deep: {
-                green: {
-                  300: '#0D8F3C',
-                  400: '#119447',
-                  500: '#3f7652',
-                  700: '#0a4924',
-                },
-              },
-            },
-          },
-        },
-      }}
-    >
-      <Html lang="cs">
+    <Html lang="cs">
+      <Tailwind config={theme}>
         <Head>
           <title>{title}</title>
-          <Font
-            fontFamily="Roboto"
-            fallbackFontFamily="Verdana"
-            webFont={{
-              url: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap',
-              format: 'embedded-opentype',
+          <Fonts />
+
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+            * {
+              font-family: Montserrat, Helvetica;
+            }
+            h1, h2, h3 {
+              font-family: 'DM Serif Display', serif;
+              margin: 0;
+              margin-top: 0;
+              margin-bottom: 0;
+            }
+            `,
             }}
-            fontWeight={400}
-            fontStyle="normal"
-          />
+          ></style>
         </Head>
-        <main className="bg-[#edf0f3] px-6 py-20">
-          <div className="max-w-md mx-auto">
-            <div className="p-5">
-              <Img
-                src="https://dev.najitnajist.cz/logo.png"
-                className="w-full max-w-[150px] h-auto mx-auto rounded-md block"
-                alt="Najit&Najíst logo"
-                title="Najit&Najíst logo"
-                width="400"
-                height="90"
-              />
-            </div>
-            <div className="p-5 rounded-md bg-white">{children}</div>
-            <footer className="text-center text-[#898989]">
+        <main className="bg-white px-3 sm:px-6 py-8 sm:py-20">
+          <div className="px-5 py-2 sm:py-5">
+            <Img
+              src="https://dev.najitnajist.cz/logo.png"
+              className="w-full max-w-[150px] h-auto mx-auto rounded-md block"
+              alt="Najit&Najíst logo"
+              title="Najit&Najíst logo"
+              width="400"
+              height="90"
+            />
+          </div>
+          <div className="rounded-md bg-white">{children}</div>
+          <footer className="text-center text-[#898989]">
+            <Text
+              className="italic my-3"
+              spacing={false}
+              color="subtle"
+              size="small"
+            >
+              Váš team{' '}
+              <Link
+                className="text-project-accent"
+                href="https://najitnajist.cz"
+              >
+                najitnajist.cz
+              </Link>{' '}
+              {' @ '}
+              {new Date().getFullYear()}
+            </Text>
+
+            {newsletterUuid ? (
               <Text
                 spacing={false}
                 color="subtle"
                 size="small"
-                className="font-bold my-3"
+                className="mb-2 mt-10"
               >
-                <Link
-                  className="text-project-accent"
-                  href="https://www.najitnajist.cz"
+                Pokud již nemáte zájem o tento typ emailu tak je možné se
+                odhlásit{' '}
+                <a
+                  href={`https://najitnajist.cz/preference/newsletter/${newsletterUuid}?next_state=false`}
                 >
-                  Najít&Najíst Team
-                </Link>
-                {' @ '}
-                {new Date().getFullYear()}
+                  zde
+                </a>
+                !
               </Text>
-
-              {newsletterUuid ? (
-                <Text
-                  spacing={false}
-                  color="subtle"
-                  size="small"
-                  className="mb-2 mt-10"
-                >
-                  Pokud již nemáte zájem o tento typ emailu tak je možné se
-                  odhlásit{' '}
-                  <a
-                    href={`https://najitnajist.cz/preference/newsletter/${newsletterUuid}?next_state=false`}
-                  >
-                    zde
-                  </a>
-                  !
-                </Text>
-              ) : null}
-            </footer>
-          </div>
+            ) : null}
+          </footer>
         </main>
-      </Html>
-    </Tailwind>
+      </Tailwind>
+    </Html>
   );
 };

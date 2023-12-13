@@ -12,6 +12,25 @@ export {
   type FinishRegistrationFromPreviewProps,
 } from './FinishRegistrationFromPreview';
 
+export {
+  default as ThankYouOrder,
+  type ThankYouOrderProps,
+} from './ThankYouOrder';
+export {
+  default as ThankYouOrderAdmin,
+  type ThankYouOrderAdminProps,
+} from './ThankYouOrderAdmin';
+
+export {
+  default as OrderConfirmed,
+  type OrderConfirmedProps,
+} from './OrderConfirmed';
+
+export {
+  default as OrderShipped,
+  type OrderShippedProps,
+} from './OrderShipped';
+
 export type {
   Attachment,
   BaseEmailProps,

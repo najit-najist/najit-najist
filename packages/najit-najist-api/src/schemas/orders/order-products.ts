@@ -5,7 +5,7 @@ import { productSchema } from '../products';
 
 export const orderProductSchema = baseCollectionSchema.extend({
   count: z.number(),
-  product: z.string().or(productSchema),
+  product: productSchema,
   order: z.number(),
   totalPrice: z.number(),
 });
