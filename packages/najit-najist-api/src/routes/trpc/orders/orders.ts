@@ -1,5 +1,6 @@
 import { AUTHORIZATION_HEADER } from '@constants';
 import { PocketbaseCollections } from '@custom-types';
+import { OrderConfirmed, renderAsync } from '@najit-najist/email-templates';
 import {
   Collections,
   pocketbase,
@@ -21,8 +22,12 @@ import {
   OrderPaymentMethod,
   orderSchema,
 } from '../../../schemas/orders';
-import { ProductService } from '../../../server';
+import { MailService, ProductService, logger } from '../../../server';
 import { OrderWithExpand, mapPocketbaseOrder } from './_utils';
+
+const isLocalPickup = (
+  delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+) => delivery?.slug === 'local-pickup';
 
 const paymentMethodRoutes = t.router({
   get: t.router({
@@ -147,14 +152,51 @@ export const orderRoutes = t.router({
         },
       };
 
-      const result =
-        await pocketbaseByCollections.orders.getOne<OrderWithExpand>(
-          input.id,
-          requestConfig
-        );
+      const order = await getOrderById(input.id);
+
+      if (input.payload.state) {
+        switch (input.payload.state) {
+          case 'confirmed':
+            await MailService.send({
+              to: order.email,
+              subject: `Objednávka #${order.id} potvrzena`,
+              body: await renderAsync(
+                OrderConfirmed({
+                  orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+                  order,
+                })
+              ),
+            }).catch((error) => {
+              logger.error(
+                { error, order },
+                `Order flow confirmation - could not notify user to its email with order information`
+              );
+            });
+            break;
+          case 'shipped':
+            await MailService.send({
+              to: order.email,
+              subject: `Objednávka #${order.id} ${
+                isLocalPickup(order.delivery_method) ? 'připravena' : 'odeslána'
+              }`,
+              body: await renderAsync(
+                OrderConfirmed({
+                  orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+                  order,
+                })
+              ),
+            }).catch((error) => {
+              logger.error(
+                { error, order },
+                `Order flow confirmation - could not notify user to its email with order information`
+              );
+            });
+            break;
+        }
+      }
 
       await pocketbaseByCollections.orders.update(
-        result.id,
+        order.id,
         input.payload,
         requestConfig
       );
