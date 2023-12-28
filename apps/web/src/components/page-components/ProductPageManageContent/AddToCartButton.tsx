@@ -20,19 +20,20 @@ export const AddToCartButton: FC<{
   let contentBeforeText: ReactElement | null = null;
 
   const handleAddToCartClick = async () => {
-    await toast.promise(
-      // add to cart and refetch newest cart for client
-      addToCart({ product: { id: productId } }).then(() =>
-        utils.profile.cart.products.get.many.invalidate()
-      ),
-      {
-        loading: 'Přídávám do košíku',
-        success: <b>Produkt přidán!</b>,
-        error: (error) => (
-          <b>Nemohli jsme přidat produkt do košíku. {error.message}</b>
-        ),
-      }
+    // add to cart and refetch newest cart for client
+    const addToCartPromise = addToCart({ product: { id: productId } }).then(
+      () => utils.profile.cart.products.get.many.invalidate()
     );
+
+    toast.promise(addToCartPromise, {
+      loading: 'Přídávám do košíku',
+      success: <b>Produkt přidán do Vašeho košíku!</b>,
+      error: (error) => (
+        <b>Nemohli jsme přidat produkt do Vašeho košíku. {error.message}</b>
+      ),
+    });
+
+    await addToCartPromise;
   };
 
   if (!withoutText) {

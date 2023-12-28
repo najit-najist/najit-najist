@@ -47,19 +47,20 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
       }
 
       setIsDoingTransition(async () => {
-        await toast.promise(
-          updateOrder({
-            id: order.id,
-            payload: {
-              state: selectedNextState,
-            },
-          }),
-          {
-            error: (error) => `Nemůžeme upravit objednávku: ${error.message}`,
-            loading: 'Ukládám změny',
-            success: 'Objednávka uložena',
-          }
-        );
+        const updateOrderPromise = updateOrder({
+          id: order.id,
+          payload: {
+            state: selectedNextState,
+          },
+        });
+
+        toast.promise(updateOrderPromise, {
+          error: (error) => `Nemůžeme upravit objednávku: ${error.message}`,
+          loading: 'Ukládám změny',
+          success: 'Objednávka uložena',
+        });
+
+        await updateOrderPromise;
 
         router.refresh();
       });

@@ -1,6 +1,6 @@
 import { FC } from 'react';
-import { Toaster as HotToaster } from 'react-hot-toast';
+import { Toaster as SonnerToaster } from 'sonner';
 
 export const Toaster: FC = () => {
-  return <HotToaster position="top-right" reverseOrder={false} />;
+  return <SonnerToaster position="top-right" invert={false} />;
 };

@@ -45,21 +45,23 @@ export const FormProvider: FC<
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (formValues) => {
-      const newOrder = await toast
-        .promise(doCheckout(formValues), {
-          loading: 'Vytvářím objednávku...',
-          success: 'Objednávka vytvořena, děkujeme!',
-          error(error) {
-            return `Stala se chyba při vytváření objednávky: ${error.message}`;
-          },
-        })
-        .catch((error) => {
-          logger?.error(`Failed to create order because, ${error.message}`, {
-            error,
-          });
-
-          throw error;
+      const newOrderPromise = doCheckout(formValues).catch((error) => {
+        logger?.error(`Failed to create order because, ${error.message}`, {
+          error,
         });
+
+        throw error;
+      });
+
+      toast.promise(newOrderPromise, {
+        loading: 'Vytvářím objednávku...',
+        success: 'Objednávka vytvořena, děkujeme!',
+        error(error) {
+          return `Stala se chyba při vytváření objednávky: ${error.message}`;
+        },
+      });
+
+      const newOrder = await newOrderPromise;
 
       doTransition(() => {
         router.push(`/muj-ucet/objednavky/${newOrder.id}`);
