@@ -1,9 +1,10 @@
+import { PasswordStrength, getPasswordStrength } from '@najit-najist/security';
 import { PasswordInput } from '@najit-najist/ui';
+import clsx from 'clsx';
 import { FC, useMemo } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { getPasswordStrength, PasswordStrength } from '@najit-najist/api';
+
 import { FormValues } from '../_types/FormValues';
-import clsx from 'clsx';
 
 const passwordStrengths = [
   PasswordStrength.BAD,

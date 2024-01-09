@@ -5,7 +5,6 @@ export * from './extractTimeFromSteps';
 export * from './formatErrorMessage';
 export * from './getFileUrl';
 export * from './server/getLoggedInUser';
-export * from './getPasswordStrength';
 export * from './getSessionFromCookies';
 export * from './removeDiacritics';
 export * from './setSessionToCookies';

@@ -1,10 +1,8 @@
-import {
-  getPasswordStrength,
-  PasswordStrength,
-} from '@utils/getPasswordStrength';
 import { z } from 'zod';
 
-export const zodPassword = z
+import { PasswordStrength, getPasswordStrength } from './getPasswordStrength';
+
+export const passwordZodSchema = z
   .string()
   .min(8, { message: 'Heslo musí být alespoň osm znaků' })
   .max(22, { message: 'Heslo musí být maximálně 22 znaků' })

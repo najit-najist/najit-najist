@@ -16,6 +16,7 @@
     "@najit-najist/api": "*",
     "@najit-najist/pb": "*",
     "@najit-najist/ui": "*",
+    "@najit-najist/security": "*",
     "@svgr/webpack": "^6.5.1",
     "@tanstack/react-query": "^4.26.0",
     "@trpc/client": "^10.14.0",

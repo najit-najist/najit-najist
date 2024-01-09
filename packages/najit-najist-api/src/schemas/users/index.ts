@@ -1,9 +1,9 @@
+import { passwordZodSchema } from '@najit-najist/security';
 import { z } from 'zod';
 
 import { addressSchema } from '../address.schema';
 import { municipalitySchema } from '../municipality.schema';
 import { userSchema } from '../user.schema';
-import { zodPassword } from '../zodPassword';
 
 export * from './getManyInput.schema';
 export * from './getOneInput.schema';
@@ -19,7 +19,7 @@ export const createUserSchema = userSchema
     address: z.object({
       municipality: municipalitySchema.pick({ id: true }),
     }),
-    password: zodPassword,
+    password: passwordZodSchema,
   });
 export const updateUserSchema = createUserSchema
   .omit({ password: true, address: true })

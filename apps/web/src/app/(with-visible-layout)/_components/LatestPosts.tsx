@@ -1,5 +1,6 @@
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, Post, getFileUrl } from '@najit-najist/api';
+import { AvailableModels, Post } from '@najit-najist/api';
+import { Collections, getFileUrl } from '@najit-najist/pb';
 import { getCachedTrpcCaller } from '@server-utils';
 import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
@@ -30,7 +31,7 @@ const Item: FC<Post> = ({
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl(AvailableModels.POST, id, image)}
+            src={getFileUrl(Collections.POSTS, id, image)}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />

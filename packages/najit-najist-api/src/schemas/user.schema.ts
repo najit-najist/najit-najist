@@ -1,9 +1,9 @@
+import { passwordZodSchema } from '@najit-najist/security';
 import { z } from 'zod';
 
 import { addressSchema } from './address.schema';
 import { authCollectionSchema } from './auth.collection.schema';
 import { municipalitySchema } from './municipality.schema';
-import { zodPassword } from './zodPassword';
 import { zodTelephoneNumber } from './zodTelephoneNumber';
 
 export enum UserRoles {
@@ -80,7 +80,7 @@ export const registerUserSchema = userSchema
     address: z.object({
       municipality: municipalitySchema.pick({ id: true }),
     }),
-    password: zodPassword,
+    password: passwordZodSchema,
   });
 
 export type RegisterUser = z.input<typeof registerUserSchema>;
