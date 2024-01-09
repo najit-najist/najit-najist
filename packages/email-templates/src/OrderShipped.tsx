@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import type { DeliveryMethod, Order } from '@najit-najist/api';
+// import type { DeliveryMethod, Order } from '@najit-najist/api';
 import { buttonStyles } from '@najit-najist/ui';
 import { Button } from '@react-email/button';
 import { Column, Row } from '@react-email/components';
@@ -15,7 +15,8 @@ import { Text } from './components/Text';
 import { testOrder } from './constants';
 
 export interface OrderShippedProps {
-  order: Order;
+  // order: Order;
+  order: any;
   orderLink: string;
 }
 
@@ -34,7 +35,8 @@ const localPickupInformation = {
 };
 
 export const isLocalPickup = (
-  delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+  // delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+  delivery: any
 ) => delivery?.slug === 'local-pickup';
 
 export default function OrderShipped({

@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build --filter=./packages/najit-najist-api && turbo run build",
+    "build": "turbo run build",
     "build:packages": "turbo run build --filter=./packages/*",
     "build:web": "turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",

@@ -1,5 +1,5 @@
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import type { Order } from '@najit-najist/api';
+// import type { Order } from '@najit-najist/api';
 import { Collections, getFileUrl } from '@najit-najist/pb';
 import { Price, buttonStyles } from '@najit-najist/ui';
 import { Alert } from '@najit-najist/ui';
@@ -22,7 +22,8 @@ import { testOrder } from './constants';
 
 export interface ThankYouOrderProps {
   needsPayment: boolean;
-  order: Order;
+  // order: Order;
+  order: any;
   orderLink: string;
 }
 
@@ -41,7 +42,8 @@ const ItemListItem: FC<
   );
 };
 
-const OrderProduct: FC<{ data: Order['products'][number] }> = ({ data }) => {
+// const OrderProduct: FC<{ data: Order['products'][number] }> = ({ data }) => {
+const OrderProduct: FC<{ data: any }> = ({ data }) => {
   const productImage = data.product.images[0];
   const imageSize = 40;
   return (
@@ -190,7 +192,7 @@ export default function ThankYouOrder({
         <Heading as="h3">Položky</Heading>
       </CenteredRow>
       <PaperCenteredRow className="pt-5">
-        {order.products.map((product) => (
+        {order.products.map((product: any) => (
           <OrderProduct key={product.id} data={product} />
         ))}
         {/* footer */}

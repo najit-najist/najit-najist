@@ -1,5 +1,4 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import type { Order } from '@najit-najist/api';
 import { buttonStyles } from '@najit-najist/ui';
 import { Button } from '@react-email/button';
 import { Column, Row } from '@react-email/components';
@@ -13,7 +12,8 @@ import { Text } from './components/Text';
 import { testOrder } from './constants';
 
 export interface OrderConfirmedProps {
-  order: Order;
+  // order: Order;
+  order: any;
   orderLink: string;
 }
 

@@ -1,6 +1,6 @@
-import { Order } from '@najit-najist/api';
+// import { Order } from '@najit-najist/api';
 
-export const testOrder: Order = {
+export const testOrder: any = {
   id: 'test',
   address_city: 'City',
   address_houseNumber: '12',
