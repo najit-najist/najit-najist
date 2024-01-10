@@ -104,7 +104,9 @@ export const orderRoutes = t.router({
         const productsToFetch = mappedResult.items.reduce(
           (final, orderItem) => {
             final.push(
-              ...orderItem.products.map(({ product }) => getItemId(product))
+              ...(orderItem.products ?? []).map(({ product }) =>
+                getItemId(product)
+              )
             );
 
             return final;

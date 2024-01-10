@@ -26,7 +26,7 @@ export const mapPocketbaseOrder = (base: OrderWithExpand): Order => {
 
   return {
     ...rest,
-    products: orderProducts,
+    products: orderProducts ?? [],
     payment_method: payment_method,
     delivery_method,
     user,
