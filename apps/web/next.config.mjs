@@ -7,10 +7,10 @@ const nextConfig = {
     serverActions: true,
   },
   transpilePackages: [
-    '@najitnajist/ui',
-    '@najitnajist/api',
-    '@najitnajist/pb',
-    '@najitnajist/email-templates',
+    '@najit-najist/ui',
+    '@najit-najist/api',
+    '@najit-najist/pb',
+    '@najit-najist/email-templates',
     '@najit-najist/tailwind-plugin',
   ],
   webpack(config, { isServer }) {
