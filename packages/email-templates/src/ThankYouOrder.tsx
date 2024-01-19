@@ -1,8 +1,9 @@
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
 // import type { Order } from '@najit-najist/api';
 import { Collections, getFileUrl } from '@najit-najist/pb';
-import { Price, buttonStyles } from '@najit-najist/ui';
-import { Alert } from '@najit-najist/ui';
+import { Alert } from '@najit-najist/ui/dist/Alert';
+import { buttonStyles } from '@najit-najist/ui/dist/Button/buttonStyles';
+import { Price } from '@najit-najist/ui/dist/Price';
 import { Button } from '@react-email/button';
 import { Column, Img, Row } from '@react-email/components';
 import { Link } from '@react-email/link';
@@ -88,7 +89,7 @@ const OrderProduct: FC<{ data: any }> = ({ data }) => {
       </Column>
       <Column className="w-4" />
       <Column className="text-right whitespace-nowrap text-gray-400">
-        <Price size={'sm'} value={data.totalPrice} />
+        {/* <Price size={'sm'} value={data.totalPrice} /> */}
       </Column>
     </ItemListItem>
   );

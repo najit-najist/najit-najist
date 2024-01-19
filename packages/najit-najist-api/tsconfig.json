@@ -4,6 +4,7 @@
     "composite": false,
     "module": "ESNext",
     "target": "ESNext",
+    "jsx": "preserve",
     "outDir": "./dist",
     "paths": {
       "@custom-types": ["./src/types"],

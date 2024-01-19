@@ -1,6 +1,6 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 // import type { DeliveryMethod, Order } from '@najit-najist/api';
-import { buttonStyles } from '@najit-najist/ui';
+import { buttonStyles } from '@najit-najist/ui/dist/Button/buttonStyles';
 import { Button } from '@react-email/button';
 import { Column, Row } from '@react-email/components';
 import { Section } from '@react-email/section';

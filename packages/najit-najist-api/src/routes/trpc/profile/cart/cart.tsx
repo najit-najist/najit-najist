@@ -4,14 +4,12 @@ import {
   ThankYouOrder,
   ThankYouOrderAdmin,
 } from '@najit-najist/email-templates';
-import { pocketbaseByCollections } from '@najit-najist/pb';
+import { pocketbase, pocketbaseByCollections } from '@najit-najist/pb';
 import {
   DeliveryMethod,
-  Order,
   OrderPaymentMethod,
   ProductStock,
   checkoutCartSchema,
-  orderStates,
 } from '@schemas';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
@@ -169,17 +167,7 @@ export const userCartRoutes = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const [cart, selectedPaymentMethod] = await Promise.all([
-        getCurrentCart(),
-        pocketbaseByCollections.orderPaymentMethods.getOne<OrderPaymentMethod>(
-          input.paymentMethod.id,
-          {
-            headers: {
-              [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-            },
-          }
-        ),
-      ]);
+      const cart = await getCurrentCart();
 
       if (!cart.products.length) {
         throw new TRPCError({
@@ -188,121 +176,40 @@ export const userCartRoutes = t.router({
         });
       }
 
-      type OrderCreatePayload = Omit<
-        Order,
-        | 'user'
-        | 'payment_method'
-        | 'delivery_method'
-        | 'address_municipality'
-        | 'created'
-        | 'id'
-        | 'products'
-      > & {
-        user?: string;
-        delivery_method: string;
-        payment_method: string;
-        address_municipality: string;
-      };
-
-      const [paymentMethod, deliveryMethod] = await Promise.all([
-        pocketbaseByCollections.orderPaymentMethods.getOne<OrderPaymentMethod>(
-          input.paymentMethod.id
-        ),
-        pocketbaseByCollections.orderDeliveryMethods.getOne<DeliveryMethod>(
-          input.deliveryMethod.id
-        ),
-      ]);
-
-      const createPayload: OrderCreatePayload = {
-        subtotal: cart.price.subtotal,
-        user: ctx.sessionData.user.id,
-
-        address_houseNumber: input.address.houseNumber,
-        address_streetName: input.address.streetName,
-        address_city: input.address.city,
-        address_postalCode: input.address.postalCode,
-        address_municipality: input.address.municipality.id,
-
-        email: input.email,
-        telephoneNumber: input.telephoneNumber,
-
-        firstName: input.firstName,
-        lastName: input.lastName,
-
-        payment_method: input.paymentMethod.id,
-        delivery_method: input.deliveryMethod.id,
-        payment_method_price: paymentMethod.price ?? 0,
-        delivery_method_price: deliveryMethod.price ?? 0,
-
-        state: selectedPaymentMethod.payment_on_checkout
-          ? orderStates.Values.unpaid
-          : orderStates.Values.unconfirmed,
-      };
-
-      const { id: orderId } = await pocketbaseByCollections.orders.create(
-        createPayload,
-        {
+      const created = await pocketbase
+        .send<{ newOrder: { id: string } }>('/cart/checkout', {
+          method: 'POST',
           headers: {
-            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
+            ...(ctx.sessionData.token
+              ? { [AUTHORIZATION_HEADER]: ctx.sessionData.token }
+              : null),
           },
-        }
-      );
-
-      const order = await getOrderById(orderId, {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-        },
-      });
-
-      await Promise.all(
-        cart.products.map((cartItem) => {
-          return pocketbaseByCollections.orderProducts.create(
-            {
-              product: cartItem.product.id,
-              order: order.id,
-              count: cartItem.count,
-              totalPrice: cartItem.product.price.value * cartItem.count,
-            },
-            {
-              requestKey: null,
-              headers: {
-                [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-              },
-            }
-          );
+          body: {
+            address_houseNumber: input.address.houseNumber,
+            address_streetName: input.address.streetName,
+            address_city: input.address.city,
+            address_postalCode: input.address.postalCode,
+            address_municipality_id: input.address.municipality.id,
+            email: input.email,
+            telephoneNumber: input.telephoneNumber,
+            firstName: input.firstName,
+            lastName: input.lastName,
+            payment_method_id: input.paymentMethod.id,
+            delivery_method_id: input.deliveryMethod.id,
+            save_address: input.saveAddressToAccount,
+          },
         })
-      );
+        .catch((error) => {
+          logger.error(error, 'Failed to checkout cart inside pocketbase');
 
-      await pocketbaseByCollections.userCarts.delete(cart.id, {
+          throw error;
+        });
+
+      const order = await getOrderById(created.newOrder.id, {
         headers: {
           [AUTHORIZATION_HEADER]: ctx.sessionData.token,
         },
       });
-
-      if (input.saveAddressToAccount) {
-        try {
-          if (!ctx.sessionData.user.address?.id) {
-            throw new Error(
-              `User under ${ctx.sessionData.user.id} ordered but has no address stored`
-            );
-          }
-
-          await pocketbaseByCollections.userAddresses.update(
-            ctx.sessionData.user.address.id,
-            {
-              ...input.address,
-              municipality: input.address.municipality.id,
-            },
-            {
-              headers: {
-                [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-              },
-            }
-          );
-        } catch (error) {
-          logger.error({ error }, 'Failed to update user address on order');
-        }
-      }
 
       const [userEmailContent, adminEmailContent] = await Promise.all([
         renderAsync(

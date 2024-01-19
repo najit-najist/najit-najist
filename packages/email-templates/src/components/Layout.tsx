@@ -1,6 +1,5 @@
 // @ts-expect-error -- its okay
 import { getTheme } from '@najit-najist/tailwind-plugin/index.cjs';
-import { Font, FontProps } from '@react-email/font';
 import { Head } from '@react-email/head';
 import { Html } from '@react-email/html';
 import { Img } from '@react-email/img';
