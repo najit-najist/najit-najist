@@ -1,17 +1,12 @@
-import {
-  ChangeEventHandler,
-  FC,
-  ReactNode,
-  useCallback,
-  useId,
-  useMemo,
-} from 'react';
-import { FieldError, useFormContext } from 'react-hook-form';
+'use client';
 
-import { Checkbox } from './Checkbox';
-import { CheckboxWrapper } from './CheckboxWrapper';
-import { ErrorMessage } from './ErrorMessage';
-import { Label } from './Label';
+import { ChangeEventHandler, ReactNode, useCallback, useMemo } from 'react';
+import { FieldError } from 'react-hook-form';
+
+import { Checkbox } from './Checkbox.js';
+import { CheckboxWrapper } from './CheckboxWrapper.js';
+import { ErrorMessage } from './ErrorMessage.js';
+import { Label } from './Label.js';
 
 export type ItemType = { id: string | 'default'; [x: string]: any };
 

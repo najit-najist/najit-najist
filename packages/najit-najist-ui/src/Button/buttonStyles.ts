@@ -1,22 +1,4 @@
-import { ShoppingBagIcon } from '@heroicons/react/20/solid';
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
-import { cva, cx, VariantProps } from 'class-variance-authority';
-import {
-  ButtonHTMLAttributes,
-  cloneElement,
-  DetailedHTMLProps,
-  forwardRef,
-  ReactElement,
-} from 'react';
-
-export type ButtonProps = DetailedHTMLProps<
-  ButtonHTMLAttributes<HTMLButtonElement>,
-  HTMLButtonElement
-> &
-  VariantProps<typeof buttonStyles> & {
-    contentWrapperClassName?: string;
-    icon?: ReactElement;
-  };
+import { cva } from 'class-variance-authority';
 
 export const buttonStyles = cva(
   'duration-100 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
@@ -89,60 +71,5 @@ export const buttonStyles = cva(
         color: 'noColor',
       },
     ],
-  }
-);
-
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  function Button(
-    {
-      children,
-      className,
-      isLoading,
-      notRounded,
-      withoutRing,
-      color,
-      contentWrapperClassName,
-      padding,
-      icon: IconComponent,
-      notAnimated,
-      disabled,
-      ...rest
-    },
-    ref
-  ) {
-    return (
-      <button
-        ref={ref}
-        className={buttonStyles({
-          className,
-          isLoading,
-          notRounded,
-          color,
-          withoutRing,
-          padding,
-          notAnimated: notAnimated ?? disabled,
-          ...rest,
-        })}
-        type="button"
-        disabled={disabled}
-        {...rest}
-      >
-        {isLoading ? (
-          <ArrowPathIcon
-            className={cx(
-              'animate-spin w-4 h-4 inline-block',
-              children ? 'mr-2' : ''
-            )}
-          />
-        ) : (
-          IconComponent ?? null
-        )}
-        {children ? (
-          <div className={cx('inline-block', contentWrapperClassName)}>
-            {children}
-          </div>
-        ) : null}
-      </button>
-    );
   }
 );

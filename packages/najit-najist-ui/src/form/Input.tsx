@@ -8,8 +8,8 @@ import {
 } from 'react';
 import { FieldError } from 'react-hook-form';
 
-import { ErrorMessage } from './ErrorMessage';
-import { Label } from './Label';
+import { ErrorMessage } from './ErrorMessage.js';
+import { Label } from './Label.js';
 
 export type InputVariantProps = VariantProps<typeof inputStyles>;
 

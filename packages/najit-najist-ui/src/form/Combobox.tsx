@@ -1,11 +1,14 @@
-import { ChangeEvent, FC } from 'react';
-import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
+'use client';
+
 import { Combobox as ComboboxDefault } from '@headlessui/react';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { cx } from 'class-variance-authority';
-import { Label } from './Label';
-import { InputVariantProps, inputStyles } from './Input';
+import { ChangeEvent, FC } from 'react';
 import type { FieldError } from 'react-hook-form';
-import { ErrorMessage } from './ErrorMessage';
+
+import { ErrorMessage } from './ErrorMessage.js';
+import { InputVariantProps, inputStyles } from './Input.js';
+import { Label } from './Label.js';
 
 type Item = { id: string; [x: string]: any };
 

@@ -1,7 +1,9 @@
-import { Fragment } from 'react';
+'use client';
+
 import { Dialog, DialogProps, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
+import { Fragment } from 'react';
 
 export type ModalProps = DialogProps<'div'>;
 

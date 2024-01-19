@@ -1,4 +1,5 @@
-import { Fragment, ReactElement, ReactNode } from 'react';
+'use client';
+
 import { Listbox, Transition } from '@headlessui/react';
 import {
   CheckIcon,
@@ -6,9 +7,11 @@ import {
   PlusIcon,
 } from '@heroicons/react/20/solid';
 import { cva, cx } from 'class-variance-authority';
-import { labelStyles } from './Label';
-import { ErrorMessage } from './ErrorMessage';
+import { Fragment, ReactElement, ReactNode } from 'react';
 import { FieldError } from 'react-hook-form';
+
+import { ErrorMessage } from './ErrorMessage.js';
+import { labelStyles } from './Label.js';
 
 const selectButtonStyles = cva(
   'relative w-full cursor-default rounded-md bg-white text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',

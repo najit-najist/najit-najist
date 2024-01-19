@@ -10,7 +10,7 @@ export const ParagraphRenderer: FC<{ data: ParagraphBlockData }> = ({
 }) => {
   return (
     <p className="text-md text-gray-700 mb-5">
-      {data?.text && HTMLReactParser(data.text)}
+      {data?.text && HTMLReactParser.default(data.text)}
     </p>
   );
 };

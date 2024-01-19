@@ -1,9 +1,11 @@
+'use client';
+
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { cva, cx } from 'class-variance-authority';
 import { MouseEventHandler, forwardRef, useCallback, useRef } from 'react';
 
-import { Button } from '../Button';
-import { Input, InputProps } from './Input';
+import { Button } from '../Button/Button.js';
+import { Input, InputProps } from './Input.js';
 
 const stepperButtonStyles = cva(
   'border border-gray-300 px-2 focus:border-project-primary focus:bg-project-secondary/10',

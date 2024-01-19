@@ -1,12 +1,12 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import { Collections, getFileUrl } from '@najit-najist/pb';
 import { cva, cx, VariantProps } from 'class-variance-authority';
-import Image from 'next/image';
+import Image from 'next/image.js';
 import { FC, useCallback, useId, useMemo } from 'react';
 import { DropzoneOptions, useDropzone } from 'react-dropzone';
 
-import { Badge } from '../Badge';
-import { FormControlWrapper } from './FormControlWrapper';
+import { Badge } from '../Badge.js';
+import { FormControlWrapper } from './FormControlWrapper.js';
 
 export interface ImageSelectProps
   extends Omit<VariantProps<typeof rootStyles>, 'size'> {
@@ -65,7 +65,7 @@ const PreviewImage: FC<
 
   return (
     <div className="relative aspect-square rounded-md overflow-hidden">
-      <Image
+      <Image.default
         alt="image"
         src={url}
         width={100}

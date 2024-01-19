@@ -1,9 +1,11 @@
-import { FC } from 'react';
+'use client';
+
 import {
   Switch as HeadlessSwitch,
   SwitchProps as HeadlessSwitchProps,
 } from '@headlessui/react';
 import { cx } from 'class-variance-authority';
+import { FC } from 'react';
 
 export type SwitchProps = Omit<HeadlessSwitchProps<'input'>, 'value'> & {
   description?: string;

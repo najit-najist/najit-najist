@@ -29,10 +29,10 @@ const Group: FC<{
       .map((item, i) => (
         <Bullet key={i}>
           {typeof item === 'string' ? (
-            HTMLReactParser(item)
+            HTMLReactParser.default(item)
           ) : (
             <>
-              {HTMLReactParser(item?.content)}
+              {HTMLReactParser.default(item?.content)}
               {item?.items?.length > 0 && (
                 <Group Tag={Tag} items={item.items} {...props} />
               )}

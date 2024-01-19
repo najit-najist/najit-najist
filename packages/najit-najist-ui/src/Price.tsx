@@ -1,4 +1,4 @@
-import { VariantProps, cva, cx } from 'class-variance-authority';
+import { VariantProps, cva } from 'class-variance-authority';
 import { ClassValue } from 'clsx';
 import { FC } from 'react';
 

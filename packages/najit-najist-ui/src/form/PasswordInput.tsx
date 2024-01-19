@@ -1,7 +1,9 @@
+'use client';
+
 import { EyeIcon, EyeSlashIcon } from '@heroicons/react/24/outline';
 import { forwardRef, HTMLInputTypeAttribute, useState } from 'react';
 
-import { Input, InputProps, inputPrefixSuffixStyles } from './Input';
+import { Input, InputProps, inputPrefixSuffixStyles } from './Input.js';
 
 export type PasswordInputProps = Omit<InputProps, 'ref'>;
 
