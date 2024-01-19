@@ -8,4 +8,5 @@ services:
       - 8080:8090
     volumes:
       - ./pb_data:/pb_data
+      - ./pb_hooks:/pb_hooks
       - ./migrations:/migrations
