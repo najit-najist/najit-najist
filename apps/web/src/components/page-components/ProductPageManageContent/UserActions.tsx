@@ -7,11 +7,14 @@ import { AddToCartButton } from './AddToCartButton';
 
 export const UserActions: FC<{
   productId: Product['id'];
-  stock: ProductStock;
+  stock?: ProductStock | null;
 }> = ({ productId, stock }) => {
   return (
     <>
-      <AddToCartButton productId={productId} disabled={!stock.count} />
+      <AddToCartButton
+        productId={productId}
+        disabled={typeof stock?.count === 'number' && !stock.count}
+      />
       {/* TODO */}
       {/* <Button
         className="border-2 border-red-500"

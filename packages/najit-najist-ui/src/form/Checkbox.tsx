@@ -24,18 +24,22 @@ export const checkboxStyles = cva('h-4 w-4 rounded', {
   },
 });
 
-export const Checkbox = forwardRef<
-  HTMLInputElement,
-  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement> &
-    CheckboxVariantProps
->(({ className, color, size, disabled, ...rest }, ref) => {
-  return (
-    <input
-      ref={ref}
-      type="checkbox"
-      className={checkboxStyles({ className, color, size, disabled })}
-      disabled={disabled}
-      {...rest}
-    />
-  );
-});
+export type CheckboxProps = DetailedHTMLProps<
+  InputHTMLAttributes<HTMLInputElement>,
+  HTMLInputElement
+> &
+  CheckboxVariantProps;
+
+export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
+  ({ className, color, size, disabled, ...rest }, ref) => {
+    return (
+      <input
+        ref={ref}
+        type="checkbox"
+        className={checkboxStyles({ className, color, size, disabled })}
+        disabled={disabled}
+        {...rest}
+      />
+    );
+  }
+);

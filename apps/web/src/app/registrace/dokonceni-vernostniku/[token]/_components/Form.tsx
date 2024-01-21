@@ -1,18 +1,19 @@
 'use client';
 
-import { PasswordInputs } from '../../../_components/PasswordInputs';
-import { FC } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
-import { Button, ErrorMessage, FormBreak } from '@najit-najist/ui';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { loginPageCallbacks } from '@constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   VerifyRegistrationFromPreviewInput,
   verifyRegistrationFromPreviewInputSchema,
 } from '@najit-najist/api';
+import { Button, ErrorMessage, FormBreak } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
-import { loginPageCallbacks } from '@constants';
+import { FC } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+
+import { PasswordInputs } from '../../../_components/PasswordInputs';
 
 export const Form: FC<{ token: string }> = ({ token }) => {
   const router = useRouter();
@@ -55,6 +56,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             label="Obec"
             name="address.municipality"
             required
+            size={null}
           />
 
           {formState.errors.root ? (

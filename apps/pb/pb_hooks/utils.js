@@ -47,6 +47,13 @@ module.exports = {
 
       const product = productInCart.expandedOne('product');
 
+      // Delete unpublished from cart
+      if (!product.getString('publishedAt')) {
+        $app.dao().deleteRecord(productInCart);
+
+        continue;
+      }
+
       $app
         .dao()
         .expandRecord(

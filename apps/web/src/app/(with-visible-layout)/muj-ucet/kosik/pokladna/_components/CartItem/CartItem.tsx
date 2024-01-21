@@ -36,7 +36,7 @@ export const CartItem: FC<
             className="w-20 rounded-md"
           />
           <div className="absolute top-1 left-1">
-            {product.stock.count !== undefined &&
+            {product.stock?.count !== undefined &&
             product.stock.count < countInCart ? (
               <Tooltip
                 trigger={

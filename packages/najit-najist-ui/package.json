@@ -22,9 +22,9 @@
       "types": "./dist/BlockEditorRenderer/index.d.ts"
     }
   },
-  "main": "dist/index.js",
-  "module": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
     "dev:package": "npm run build:package -- --watch",

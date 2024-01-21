@@ -1,3 +1,4 @@
+import { cx } from 'class-variance-authority';
 import { FC, PropsWithChildren } from 'react';
 
 export const CheckboxWrapper: FC<
@@ -6,6 +7,7 @@ export const CheckboxWrapper: FC<
     description?: string;
     childId?: string;
     descriptionDescribesId?: string;
+    className?: string;
   }>
 > = ({
   children,
@@ -13,12 +15,16 @@ export const CheckboxWrapper: FC<
   description,
   childId,
   descriptionDescribesId,
+  className,
   ...rest
 }) => {
   return (
-    <div {...rest} className="relative flex items-start">
+    <div
+      {...rest}
+      className={cx('relative flex items-start text-sm', className)}
+    >
       <div className="flex h-6 items-center">{children}</div>
-      <div className="ml-3 text-sm leading-6">
+      <div className="ml-3 leading-6">
         <label htmlFor={childId} className="font-medium text-gray-900">
           {title}
         </label>

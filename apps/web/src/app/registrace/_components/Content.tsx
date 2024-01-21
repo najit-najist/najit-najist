@@ -111,6 +111,7 @@ export const Content: FC = () => {
               <FormBreak label="Adresa" />
 
               <MunicipalitySelect
+                size={null}
                 className="mt-3"
                 label="Obec"
                 name="address.municipality"

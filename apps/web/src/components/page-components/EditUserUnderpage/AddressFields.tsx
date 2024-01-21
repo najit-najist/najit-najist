@@ -61,6 +61,7 @@ export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
       </div>
 
       <MunicipalitySelect
+        size={null}
         label="Kraj"
         name="address.municipality"
         required={required}

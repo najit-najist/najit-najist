@@ -21,13 +21,11 @@ export const Form: FC<
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
       images: [],
-      // TODO: implement stock
-      stock: {
-        count: 0,
-      },
+      stock: null,
       price: {
         value: 0,
       },
+      onlyDeliveryMethods: [],
       ...product,
     },
     resolver: zodResolver(
@@ -57,6 +55,7 @@ export const Form: FC<
             stock: values.stock,
             publishedAt,
             category: values.category,
+            onlyDeliveryMethods: values.onlyDeliveryMethods,
           },
         });
 
@@ -78,6 +77,7 @@ export const Form: FC<
           stock: values.stock,
           publishedAt,
           category: values.category,
+          onlyDeliveryMethods: values.onlyDeliveryMethods,
         });
 
         toast.promise(createProductPromise, {

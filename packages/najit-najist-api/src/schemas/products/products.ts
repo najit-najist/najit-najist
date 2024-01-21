@@ -26,7 +26,7 @@ export const productSchema = baseCollectionSchema.extend({
   onlyDeliveryMethods: z.array(z.string()).default([]),
   publishedAt: zodPublishedAt,
   price: productPriceSchema,
-  stock: productStockSchema,
+  stock: productStockSchema.nullable().optional(),
 });
 
 export const createProductSchema = productSchema
@@ -43,7 +43,10 @@ export const createProductSchema = productSchema
   .extend({
     category: productCategorySchema.pick({ id: true }).optional(),
     price: createProductPriceSchema.omit({ product: true }),
-    stock: createProductStockSchema.omit({ product: true }),
+    stock: createProductStockSchema
+      .omit({ product: true })
+      .nullable()
+      .optional(),
   });
 
 export const updateProductSchema = createProductSchema
@@ -53,7 +56,7 @@ export const updateProductSchema = createProductSchema
   })
   .extend({
     price: updateProductPriceSchema,
-    stock: updateProductStockSchema,
+    stock: updateProductStockSchema.nullable().optional(),
   })
   .partial();
 

@@ -36,7 +36,7 @@ type ProductWithExpand = Omit<Product, 'category' | 'price' | 'stock'> & {
   expand: {
     category: ProductCategory;
     'product_prices(product)': ProductPrice;
-    'product_stock(product)': ProductStock;
+    'product_stock(product)'?: ProductStock;
   };
 };
 
@@ -130,9 +130,12 @@ export class ProductService {
         .collection(PocketbaseCollections.PRODUCT_PRICES)
         .create<ProductPrice>({ ...price, product: createdProduct.id });
 
-      const createdProductStock = await pocketbase
-        .collection(PocketbaseCollections.PRODUCT_STOCK)
-        .create<ProductStock>({ ...stock, product: createdProduct.id });
+      let createdProductStock = undefined;
+      if (stock) {
+        createdProductStock = await pocketbase
+          .collection(PocketbaseCollections.PRODUCT_STOCK)
+          .create<ProductStock>({ ...stock, product: createdProduct.id });
+      }
 
       return this.mapExpandToResponse({
         ...createdProduct,

@@ -1,6 +1,7 @@
 import { HomeIcon } from '@heroicons/react/24/outline';
 import { cx } from 'class-variance-authority';
-import Link from 'next/link.js';
+//@ts-ignore
+import Link from 'next/link';
 import { FC } from 'react';
 
 export type BreadcrumbItem = {
@@ -20,13 +21,10 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
       <ol role="list" className="flex items-center space-x-4">
         <li>
           <div>
-            <Link.default
-              href="/"
-              className="text-gray-400 hover:text-gray-500"
-            >
+            <Link href="/" className="text-gray-400 hover:text-gray-500">
               <HomeIcon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
               <span className="sr-only">Domů</span>
-            </Link.default>
+            </Link>
           </div>
         </li>
         {items.map((page) => (
@@ -40,7 +38,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
               >
                 <path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />
               </svg>
-              <Link.default
+              <Link
                 href={page.link}
                 className={cx(
                   'ml-4 text-sm font-medium',
@@ -52,7 +50,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
                 aria-current={page.active ? 'page' : undefined}
               >
                 {page.text ?? page.link}
-              </Link.default>
+              </Link>
             </div>
           </li>
         ))}

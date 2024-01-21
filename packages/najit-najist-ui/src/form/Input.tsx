@@ -1,11 +1,5 @@
 import { cva, cx, VariantProps } from 'class-variance-authority';
-import {
-  DetailedHTMLProps,
-  forwardRef,
-  InputHTMLAttributes,
-  ReactNode,
-  useId,
-} from 'react';
+import { forwardRef, ReactNode, useId } from 'react';
 import { FieldError } from 'react-hook-form';
 
 import { ErrorMessage } from './ErrorMessage.js';
@@ -15,8 +9,8 @@ export type InputVariantProps = VariantProps<typeof inputStyles>;
 
 export interface InputProps
   extends Omit<
-      DetailedHTMLProps<
-        InputHTMLAttributes<HTMLInputElement>,
+      React.DetailedHTMLProps<
+        React.InputHTMLAttributes<HTMLInputElement>,
         HTMLInputElement
       >,
       'size' | 'color' | 'disabled' | 'prefix'
