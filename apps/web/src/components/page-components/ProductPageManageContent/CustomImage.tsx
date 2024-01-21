@@ -1,9 +1,10 @@
-import { FC } from 'react';
+import clsx from 'clsx';
 import NextImage, { ImageProps } from 'next/image';
+import { FC } from 'react';
 
 export const CustomImage: FC<
   Omit<ImageProps, 'alt'> & { onlyImage?: boolean }
-> = ({ src, onlyImage, ...rest }) => {
+> = ({ src, onlyImage = false, className, ...rest }) => {
   // Simple check
   const isPreview = src.toString().includes('base64,');
 
@@ -14,7 +15,10 @@ export const CustomImage: FC<
       src={src}
       alt=""
       unoptimized={isPreview}
-      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-md"
+      className={clsx(
+        'absolute top-0 left-0 w-full h-full object-center object-cover rounded-md',
+        className
+      )}
       {...rest}
     />
   );

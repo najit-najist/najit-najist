@@ -1,16 +1,10 @@
 import { StarIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, getFileUrl, Product } from '@najit-najist/api';
-import {
-  Badge,
-  badgeStyles,
-  BreadcrumbItem,
-  Breadcrumbs,
-  Price,
-} from '@najit-najist/ui';
+import { Product } from '@najit-najist/api';
+import { Collections, getFileUrl } from '@najit-najist/pb';
+import { Badge, BreadcrumbItem, Breadcrumbs, Price } from '@najit-najist/ui';
 import { getCachedTrpcCaller } from '@server-utils';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
-import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 
 import { Aside } from './Aside';
@@ -90,10 +84,10 @@ export const ProductPageManageContent: FC<
             <>
               <div className="relative w-full col-span-2 aspect-square">
                 <CustomImage
-                  className={!product?.publishedAt ? 'opacity-40' : ''}
                   onlyImage
+                  className={!product?.publishedAt ? 'opacity-40' : ''}
                   src={getFileUrl(
-                    AvailableModels.PRODUCTS,
+                    Collections.PRODUCTS,
                     props.product.id,
                     props.product.images[0]
                   )}
@@ -112,7 +106,7 @@ export const ProductPageManageContent: FC<
                     className={!product?.publishedAt ? 'opacity-40' : ''}
                     key={imageUrl}
                     src={getFileUrl(
-                      AvailableModels.PRODUCTS,
+                      Collections.PRODUCTS,
                       props.product.id,
                       imageUrl
                     )}
