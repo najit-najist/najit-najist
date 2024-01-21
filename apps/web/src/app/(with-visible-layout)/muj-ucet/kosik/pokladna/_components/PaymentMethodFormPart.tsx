@@ -37,7 +37,7 @@ export const PaymentMethodFormPart: FC<{
         onChange={controller.field.onChange}
         onBlur={controller.field.onBlur}
         items={filteredPaymentMethods}
-        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-5"
+        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3"
         disabled={formState.isSubmitting}
       />
       {controller.fieldState.error?.message ? (

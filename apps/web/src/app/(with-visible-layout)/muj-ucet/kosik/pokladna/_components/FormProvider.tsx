@@ -2,10 +2,12 @@
 
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { usePlausible } from '@hooks';
 import { logger } from '@logger';
 import { AppRouterInput, checkoutCartSchema } from '@najit-najist/api';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
+import { getTotalPrice } from '@utils';
 import { useRouter } from 'next/navigation';
 import {
   FC,
@@ -36,6 +38,7 @@ export const FormProvider: FC<
 > = ({ children, defaultFormValues }) => {
   const [isDoingTransition, doTransition] = useTransition();
   const router = useRouter();
+  const plausible = usePlausible();
   const { mutateAsync: doCheckout } = trpc.profile.cart.checkout.useMutation();
   const formMethods = useForm({
     defaultValues: defaultFormValues,
@@ -63,11 +66,32 @@ export const FormProvider: FC<
 
       const newOrder = await newOrderPromise;
 
+      plausible.trackEvent('User order', {
+        props: {
+          municipality: newOrder.address_municipality.name,
+          'delivery method': newOrder.delivery_method.name,
+          'payment method': newOrder.payment_method.name,
+        },
+        revenue: {
+          amount: getTotalPrice(newOrder),
+          currency: 'CZK',
+        },
+      });
+
+      for (const productInCart of newOrder.products) {
+        plausible.trackEvent('Product ordered', {
+          props: {
+            name: productInCart.product.name,
+            count: String(productInCart.count),
+          },
+        });
+      }
+
       doTransition(() => {
         router.push(`/muj-ucet/objednavky/${newOrder.id}`);
       });
     },
-    [doCheckout, router]
+    [doCheckout, router, plausible]
   );
 
   return (

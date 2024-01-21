@@ -10,24 +10,25 @@ import {
   Alert,
   ErrorMessage,
   RadioGroup,
-  RadioGroupItem,
   RadioGroupProps,
 } from '@najit-najist/ui';
 import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
 
-export const DeliveryMethodFormPart: FC<{
-  deliveryMethods: DeliveryMethod[];
+export type DeliveryMethodFormPartProps = {
+  deliveryMethods: (DeliveryMethod & { disabled?: boolean })[];
   paymentMethods: OrderPaymentMethod[];
-  localPickupOnlyProducts?: UserCartProduct[];
-}> = ({ deliveryMethods, paymentMethods, localPickupOnlyProducts }) => {
+};
+
+export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
+  deliveryMethods,
+  paymentMethods,
+}) => {
   const formState = useFormState();
   const { setValue, getValues } = useFormContext();
   const controller = useController({
     name: 'deliveryMethod',
   });
-
-  const userHasLocalPickupProductsInCart = !!localPickupOnlyProducts?.length;
 
   // Setup for quick access
   const paymentMethodsForDeliveryId = useMemo(() => {
@@ -67,34 +68,41 @@ export const DeliveryMethodFormPart: FC<{
     },
     [controller.field, getValues, paymentMethodsForDeliveryId, setValue]
   );
+  const disabledOnlyDeliveryMethods = useMemo(
+    () => deliveryMethods.filter((d) => !d.disabled),
+    [deliveryMethods]
+  );
 
   return (
     <>
       <RadioGroup<DeliveryMethod>
-        disabled={userHasLocalPickupProductsInCart || formState.isSubmitting}
+        disabled={formState.isSubmitting}
         value={controller.field.value}
         onChange={handleChange}
         onBlur={controller.field.onBlur}
         by="id"
         items={deliveryMethods}
-        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-5"
+        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3"
       />
       {controller.fieldState.error?.message ? (
         <ErrorMessage>{controller.fieldState.error?.message}</ErrorMessage>
       ) : null}
-      {userHasLocalPickupProductsInCart ? (
+      {deliveryMethods.filter((d) => d.disabled).length ? (
         <Alert
           className="mt-5"
           heading={
             <>
-              <ExclamationTriangleIcon className="w-5 h-5 inline" /> Pouze
-              osobně!
+              <ExclamationTriangleIcon className="w-4 h-4 inline" /> Pouze{' '}
+              {disabledOnlyDeliveryMethods
+                .map((d) => d.name.toLowerCase())
+                .join(', ')}
+              !
             </>
           }
           color="warning"
         >
-          Váš košík obsahuje produkty, které jsou pouze dostupné na prodejně a
-          proto Vám tuto objednávku nemůžeme odeslat poštou.
+          Váš košík obsahuje produkty, které mají omezení na dopravu a proto
+          nemusíte mít dostupné všechny možnosti dopravy.
         </Alert>
       ) : null}
     </>

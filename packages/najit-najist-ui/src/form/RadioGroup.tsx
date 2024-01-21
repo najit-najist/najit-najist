@@ -12,6 +12,7 @@ export type RadioGroupItem = {
   id: string;
   name: string;
   description: ReactNode;
+  disabled?: boolean;
 };
 
 export type RadioGroupProps<ItemType extends RadioGroupItem> =
@@ -50,14 +51,25 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
           <HeadlessRadioGroup.Option
             key={item.name}
             value={item}
+            disabled={disabled || item.disabled}
             className={({ active, checked }) =>
               `${
                 active
                   ? 'ring-2 ring-white/60 ring-offset-2 ring-project-accent'
                   : ''
               }
-              ${disabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
-              ${checked ? 'bg-project-primary/75 text-white' : 'bg-white'}
+              ${
+                disabled || item.disabled
+                  ? 'opacity-50 cursor-not-allowed'
+                  : 'cursor-pointer'
+              }
+              ${
+                checked
+                  ? 'bg-project-primary/75 text-white'
+                  : disabled || item.disabled
+                  ? 'bg-gray-100'
+                  : 'bg-white'
+              }
               ${itemWrapperClassName}
                 relative flex rounded-lg px-5 py-4 shadow-md focus:outline-none w-full`
             }

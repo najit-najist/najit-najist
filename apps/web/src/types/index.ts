@@ -6,6 +6,8 @@ export type PLAUSIBLE_EVENTS =
   | 'Newsletter subscription from footer'
   | 'Like recipe'
   | 'Dislike recipe'
+  | 'User order'
+  | 'Product ordered'
   | 'User logged in'
   | 'User login invalid credentials';
 

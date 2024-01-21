@@ -23,6 +23,7 @@ export const productSchema = baseCollectionSchema.extend({
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
   category: productCategorySchema.optional(),
+  onlyDeliveryMethods: z.array(z.string()).default([]),
   publishedAt: zodPublishedAt,
   price: productPriceSchema,
   stock: productStockSchema,

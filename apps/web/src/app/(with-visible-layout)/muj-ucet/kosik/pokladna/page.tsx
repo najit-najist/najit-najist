@@ -1,6 +1,7 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
+import { logger } from '@najit-najist/api/server';
 import {
   getCachedDeliveryMethods,
   getCachedLoggedInUser,
@@ -10,9 +11,12 @@ import {
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
-import { CartItem } from './_components/CartItem';
+import { CartItem } from './_components/CartItem/CartItem';
 import { CheckoutButton } from './_components/CheckoutButton';
-import { DeliveryMethodFormPart } from './_components/DeliveryMethodFormPart';
+import {
+  DeliveryMethodFormPart,
+  DeliveryMethodFormPartProps,
+} from './_components/DeliveryMethodFormPart';
 import { EmptyCart } from './_components/EmptyCart';
 import { FormProvider } from './_components/FormProvider';
 import { PaymentMethodFormPart } from './_components/PaymentMethodFormPart';
@@ -48,13 +52,69 @@ export default async function Page() {
   }
 
   const [deliveryMethods, paymentMethods] = await Promise.all([
-    getCachedDeliveryMethods(),
+    (
+      getCachedDeliveryMethods() as Promise<
+        DeliveryMethodFormPartProps['deliveryMethods']
+      >
+    ).then((methods) => new Map(methods.map((d) => [d.id, d]))),
     getCachedPaymentMethods(),
   ]);
-  const defaultDeliveryMethod = deliveryMethods.at(0);
+
+  // Sometimes user can have product in cart which limits their choices of delivery methods
+  let productsInCartLimitDeliveryMethods = false;
+
+  // Create new set for delivery method
+  for (const productInCart of productsInCart) {
+    if (productInCart.product.onlyDeliveryMethods.length) {
+      for (const deliveryMethodId of productInCart.product
+        .onlyDeliveryMethods) {
+        const deliveryMethod = deliveryMethods.get(deliveryMethodId);
+
+        if (deliveryMethod) {
+          deliveryMethod.disabled = false;
+
+          if (!productsInCartLimitDeliveryMethods) {
+            productsInCartLimitDeliveryMethods = true;
+          }
+        }
+      }
+    }
+  }
+
+  if (productsInCartLimitDeliveryMethods) {
+    for (const [, deliveryMethod] of deliveryMethods) {
+      deliveryMethod.disabled ??= true;
+    }
+  }
+
+  const deliverMethodsAsArray = [...deliveryMethods.values()];
+  const defaultDeliveryMethod = deliverMethodsAsArray
+    .filter((d) => !d.disabled)
+    .at(0);
+
+  if (!defaultDeliveryMethod) {
+    logger.error(
+      {
+        user: {
+          id: user?.id,
+        },
+        products: productsInCart.map((p) => ({
+          id: p.product,
+          onlyDeliveryMethods: p.product.onlyDeliveryMethods,
+        })),
+        deliveryMethods: deliverMethodsAsArray.map((d) => ({ id: d.id })),
+      },
+      'User wrong cart product x delivery method combination'
+    );
+
+    throw new Error(
+      'Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat.'
+    );
+  }
+
   const defaultPaymentMethod = paymentMethods.find(
     (item) =>
-      !item.except_delivery_methods.includes(defaultDeliveryMethod?.id ?? '')
+      !item.except_delivery_methods.includes(defaultDeliveryMethod.id ?? '')
   );
 
   const priceTotal = productsInCart.reduce(
@@ -72,7 +132,7 @@ export default async function Page() {
       </PageHeader>
       <FormProvider
         defaultFormValues={{
-          deliveryMethod: { id: defaultDeliveryMethod?.id ?? null },
+          deliveryMethod: { id: defaultDeliveryMethod.id ?? null },
           paymentMethod: { id: defaultPaymentMethod?.id ?? null },
           address: {
             city: '',
@@ -90,7 +150,7 @@ export default async function Page() {
         }}
       >
         {/* TODO This form should take default values from user */}
-        <div className="container flex flex-col sm:flex-row gap-10">
+        <div className="container flex flex-col lg:flex-row gap-10">
           <div className="w-full">
             <SectionTitle>Kontaktní adresa</SectionTitle>
             <UserContactFormPart />
@@ -99,19 +159,23 @@ export default async function Page() {
             </SectionTitle>
             <DeliveryMethodFormPart
               paymentMethods={paymentMethods}
-              deliveryMethods={deliveryMethods}
+              deliveryMethods={deliverMethodsAsArray}
             />
             <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
               Výběr platby
             </SectionTitle>
             <PaymentMethodFormPart paymentMethods={paymentMethods} />
           </div>
-          <div className="w-full sm:max-w-md">
+          <div className="w-full lg:max-w-md">
             <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>
-            <Section>
+            <Section rootClassName="lg:sticky top-28">
               <ul role="list" className="divide-y divide-gray-200">
                 {productsInCart.map((cartItem) => (
-                  <CartItem key={cartItem.id} {...cartItem} />
+                  <CartItem
+                    key={cartItem.id}
+                    deliveryMethods={deliveryMethods}
+                    {...cartItem}
+                  />
                 ))}
               </ul>
               <PriceList price={{ total: priceTotal }} />
