@@ -1,7 +1,7 @@
 import { pocketbase } from '@najit-najist/pb';
 import { Product, ProductPrice, ProductStock } from '@schemas';
 
-import { AUTHORIZATION_HEADER } from '../..';
+import { AUTHORIZATION_HEADER } from '../../constants';
 import {
   UserCart,
   UserCartProduct,
