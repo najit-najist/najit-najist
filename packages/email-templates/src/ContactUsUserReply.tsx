@@ -11,6 +11,7 @@ export interface ContactUsUserReplyProps {
   message: string;
   telephone?: string;
   email: string;
+  siteOrigin: string;
 }
 
 export default function ContactUsUserReply({
@@ -18,11 +19,12 @@ export default function ContactUsUserReply({
   fullName,
   message,
   telephone,
+  siteOrigin,
 }: ContactUsUserReplyProps) {
   const title = 'Děkujeme za zprávu';
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <CenteredRow>
           <Heading as="h2">Dobrý den {fullName},</Heading>

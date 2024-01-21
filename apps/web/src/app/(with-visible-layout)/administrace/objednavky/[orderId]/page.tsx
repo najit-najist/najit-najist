@@ -1,6 +1,7 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { getCachedLoggedInUser, getCachedOrder } from '@server-utils';
+import { logger } from '@najit-najist/api/server';
+import { getCachedOrder } from '@server-utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -19,7 +20,7 @@ export const metadata = {
 
 export default async function Page({ params }: PageProps) {
   const order = await getCachedOrder({ id: params.orderId }).catch((error) => {
-    console.log({ error });
+    logger.error({ error }, 'Failed to get order');
     notFound();
   });
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { AddressFields } from '@components/page-components/EditUserUnderpage/AddressFields';
+import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { AppRouterInput } from '@najit-najist/api';
 import {
   Checkbox,
@@ -14,9 +14,10 @@ import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export const UserContactFormPart: FC = () => {
+  const { isActive } = useReactTransitionContext();
   const { formState, register } =
     useFormContext<AppRouterInput['profile']['cart']['checkout']>();
-  const fieldsAreDisabled = formState.isSubmitting;
+  const fieldsAreDisabled = formState.isSubmitting || isActive;
 
   return (
     <div className="flex flex-col gap-3">

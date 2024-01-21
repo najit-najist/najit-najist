@@ -18,6 +18,7 @@ export interface OrderShippedProps {
   // order: Order;
   order: any;
   orderLink: string;
+  siteOrigin: string;
 }
 
 // TODO: Deduplicate
@@ -42,13 +43,14 @@ export const isLocalPickup = (
 export default function OrderShipped({
   order = testOrder,
   orderLink,
+  siteOrigin,
 }: OrderShippedProps) {
   const title = isLocalPickup(order.delivery_method)
     ? `Objednávka #${order.id} připravena na prodejně`
     : `Objednávka #${order.id} byla odeslána`;
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <Row>
           <Column>

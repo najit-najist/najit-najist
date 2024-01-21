@@ -18,9 +18,10 @@ export const Layout: FC<
     {
       title?: string;
       attachments?: Array<Attachment>;
+      siteOrigin: string;
     } & BaseEmailProps
   >
-> = ({ title, newsletterUuid, children, attachments }) => {
+> = ({ title, newsletterUuid, children, siteOrigin, attachments }) => {
   return (
     <Html lang="cs">
       <Tailwind config={theme}>
@@ -47,7 +48,7 @@ export const Layout: FC<
         <main className="bg-white px-3 sm:px-6 py-8 sm:py-20">
           <div className="px-5 py-2 sm:py-5">
             <Img
-              src="https://dev.najitnajist.cz/logo.png"
+              src={`${siteOrigin}/logo.png`}
               className="w-full max-w-[150px] h-auto mx-auto rounded-md block"
               alt="Najit&Najíst logo"
               title="Najit&Najíst logo"
@@ -64,10 +65,7 @@ export const Layout: FC<
               size="small"
             >
               Váš team{' '}
-              <Link
-                className="text-project-accent"
-                href="https://najitnajist.cz"
-              >
+              <Link className="text-project-accent" href={siteOrigin}>
                 najitnajist.cz
               </Link>{' '}
               {' @ '}
@@ -84,7 +82,7 @@ export const Layout: FC<
                 Pokud již nemáte zájem o tento typ emailu tak je možné se
                 odhlásit{' '}
                 <a
-                  href={`https://najitnajist.cz/preference/newsletter/${newsletterUuid}?next_state=false`}
+                  href={`${siteOrigin}/preference/newsletter/${newsletterUuid}?next_state=false`}
                 >
                   zde
                 </a>

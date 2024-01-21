@@ -8,6 +8,7 @@ import { useDebounce } from 'usehooks-ts';
 export const MunicipalitySelect: FC<
   Pick<ComboboxProps, 'className' | 'required' | 'label' | 'size'> & {
     name: string;
+    disabled?: boolean;
   }
 > = ({ name, ...rest }) => {
   const { field, fieldState } = useController({

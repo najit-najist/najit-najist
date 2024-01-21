@@ -24,27 +24,23 @@ import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-import { AUTHORIZATION_HEADER } from '../..';
+import { createRequestPocketbaseRequestOptions } from '../../server';
 
 const getRoutes = t.router({
   one: publicProcedure
     .input(getOneProductSchema)
     .query(async ({ input, ctx }) => {
       const by = 'id' in input ? 'id' : 'slug';
-      return ProductService.getBy(by, (input as any)[by], {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
-        },
-      });
+      return ProductService.getBy(
+        by,
+        (input as any)[by],
+        createRequestPocketbaseRequestOptions(ctx)
+      );
     }),
   many: publicProcedure
     .input(getManyProductsSchema)
     .query(async ({ input, ctx }) =>
-      ProductService.getMany(input, {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData?.token,
-        },
-      })
+      ProductService.getMany(input, createRequestPocketbaseRequestOptions(ctx))
     ),
 });
 
@@ -76,11 +72,7 @@ const categoriesRoutes = t.router({
           .collection(PocketbaseCollections.PRODUCT_CATEGORIES)
           .create(
             { name, slug: slugifyString(name) },
-            {
-              headers: {
-                [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-              },
-            }
+            createRequestPocketbaseRequestOptions(ctx)
           );
       } catch (error) {
         if (error instanceof ClientResponseError) {
@@ -110,10 +102,13 @@ export const productsRoutes = t.router({
   create: onlyAdminProcedure
     .input(createProductSchema)
     .mutation(async ({ input, ctx }) => {
-      const result = await ProductService.create({
-        ...input,
-        createdBy: ctx.sessionData.userId,
-      });
+      const result = await ProductService.create(
+        {
+          ...input,
+          createdBy: ctx.sessionData.userId,
+        },
+        createRequestPocketbaseRequestOptions(ctx)
+      );
 
       revalidatePath(`/produkty`);
       return result;
@@ -124,11 +119,7 @@ export const productsRoutes = t.router({
     .mutation(async ({ input, ctx }) => {
       await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
-        .delete(input.id, {
-          headers: {
-            [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-          },
-        });
+        .delete(input.id, createRequestPocketbaseRequestOptions(ctx));
 
       revalidatePath(`/produkty/${input.slug}`);
       revalidatePath(`/produkty`);
@@ -139,11 +130,11 @@ export const productsRoutes = t.router({
   update: onlyAdminProcedure
     .input(z.object({ id: z.string(), payload: updateProductSchema }))
     .mutation(async ({ input, ctx }) => {
-      const result = await ProductService.update(input.id, input.payload, {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-        },
-      });
+      const result = await ProductService.update(
+        input.id,
+        input.payload,
+        createRequestPocketbaseRequestOptions(ctx)
+      );
       revalidatePath(`/produkty/${result.slug}`);
       revalidatePath(`/produkty`);
 

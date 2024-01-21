@@ -10,10 +10,15 @@ export const loginWithAccount = async (pocketbaseAccountName: string) => {
   }
 
   try {
-    return await pocketbase.admins.authWithPassword(
+    const res = await pocketbase.admins.authWithPassword(
       account.email,
       account.password
     );
+
+    // We just want token and other requests should not live from this authorized store
+    pocketbase.authStore.clear();
+
+    return res;
   } catch (error) {
     logger.error(
       { error, pocketbaseAccountName },

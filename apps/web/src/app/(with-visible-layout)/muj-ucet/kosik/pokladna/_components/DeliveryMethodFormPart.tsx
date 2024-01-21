@@ -1,5 +1,6 @@
 'use client';
 
+import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import {
   DeliveryMethod,
@@ -24,6 +25,7 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   deliveryMethods,
   paymentMethods,
 }) => {
+  const { isActive } = useReactTransitionContext();
   const formState = useFormState();
   const { setValue, getValues } = useFormContext();
   const controller = useController({
@@ -76,7 +78,7 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   return (
     <>
       <RadioGroup<DeliveryMethod>
-        disabled={formState.isSubmitting}
+        disabled={formState.isSubmitting || isActive}
         value={controller.field.value}
         onChange={handleChange}
         onBlur={controller.field.onBlur}

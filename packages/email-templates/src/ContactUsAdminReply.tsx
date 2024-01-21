@@ -11,6 +11,7 @@ export interface ContactUsAdminReplyProps {
   message: string;
   telephone?: string;
   email: string;
+  siteOrigin: string;
 }
 
 export default function ContactUsAdminReply({
@@ -18,11 +19,12 @@ export default function ContactUsAdminReply({
   fullName,
   message,
   telephone,
+  siteOrigin,
 }: ContactUsAdminReplyProps) {
   const title = 'Nový kontakt v kontaktním formuláři';
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <CenteredRow>
           <Heading as="h2">Zpráva od: {fullName}</Heading>

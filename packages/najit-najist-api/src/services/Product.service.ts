@@ -3,6 +3,7 @@ import { ApplicationError } from '@errors';
 import { logger } from '@logger';
 import {
   ClientResponseError,
+  CommonOptions,
   ListResult,
   RecordListOptions,
   RecordOptions,
@@ -105,13 +106,16 @@ export class ProductService {
     }
   }
 
-  static async create({
-    price,
-    stock,
-    name,
-    category,
-    ...input
-  }: CreateProduct & { createdBy: User['id'] }): Promise<Product> {
+  static async create(
+    {
+      price,
+      stock,
+      name,
+      category,
+      ...input
+    }: CreateProduct & { createdBy: User['id'] },
+    requestOptions?: CommonOptions
+  ): Promise<Product> {
     let createdProduct: ProductWithExpand | undefined = undefined;
 
     try {
@@ -123,18 +127,24 @@ export class ProductService {
             ...(name ? { slug: slugifyString(name), name } : null),
             ...(category ? { category: category.id } : null),
           }),
-          { expand: BASE_EXPAND }
+          { expand: BASE_EXPAND, ...requestOptions }
         );
 
       const createdProductPrice = await pocketbase
         .collection(PocketbaseCollections.PRODUCT_PRICES)
-        .create<ProductPrice>({ ...price, product: createdProduct.id });
+        .create<ProductPrice>(
+          { ...price, product: createdProduct.id },
+          requestOptions
+        );
 
       let createdProductStock = undefined;
       if (stock) {
         createdProductStock = await pocketbase
           .collection(PocketbaseCollections.PRODUCT_STOCK)
-          .create<ProductStock>({ ...stock, product: createdProduct.id });
+          .create<ProductStock>(
+            { ...stock, product: createdProduct.id },
+            requestOptions
+          );
       }
 
       return this.mapExpandToResponse({
@@ -162,9 +172,9 @@ export class ProductService {
       }
 
       if (createdProduct) {
-        pocketbase
+        await pocketbase
           .collection(PocketbaseCollections.PRODUCTS)
-          .delete(createdProduct.id)
+          .delete(createdProduct.id, requestOptions)
           .catch((removalError) => {
             logger.error(
               {

@@ -4,13 +4,9 @@ import {
   getFileUrl,
   Recipe,
 } from '@najit-najist/api';
-import {
-  RecipeDifficultyService,
-  RecipesService,
-} from '@najit-najist/api/server';
 import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
+import { getCachedTrpcCaller } from '@server-utils';
 import HTMLReactParser from 'html-react-parser';
-import Link from 'next/link';
 import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
 
 import { Aside } from './Aside';
@@ -48,14 +44,12 @@ export const RecipePageManageContent = async ({
   isEditorHeaderShown,
   ...props
 }: RecipePageManageContentProps): Promise<ReactElement> => {
+  const trpc = getCachedTrpcCaller();
   const [{ items: metrics }, { items: types }, { items: difficulties }] =
     await Promise.all([
-      RecipesService.resourceMetrics.getMany({
-        page: 1,
-        perPage: 999,
-      }),
-      RecipesService.types.getMany({ page: 1, perPage: 999 }),
-      RecipeDifficultyService.getMany({ page: 1, perPage: 999 }),
+      trpc.recipes.metrics.getMany({ page: 1, perPage: 9999 }),
+      trpc.recipes.types.getMany({ page: 1, perPage: 9999 }),
+      trpc.recipes.difficulties.getMany({ page: 1, perPage: 9999 }),
     ]);
 
   const { viewType } = props;

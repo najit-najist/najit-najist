@@ -1,3 +1,4 @@
+import { Badge } from '@najit-najist/ui';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 
@@ -5,7 +6,6 @@ import bakeryImage from '/public/images/pages/main-page/bakery.jpg';
 import eventsImage from '/public/images/pages/main-page/events.jpg';
 import shoppingImage from '/public/images/pages/main-page/shopping.jpg';
 import waitressImage from '/public/images/pages/main-page/waitress.jpg';
-import { Badge } from '@najit-najist/ui';
 
 type Item = {
   title: string;
@@ -16,9 +16,9 @@ type Item = {
 };
 
 const items: Item[] = [
-  { title: 'Obchody', href: '/', imageSrc: shoppingImage },
   { title: 'Restaurace', href: '/', imageSrc: waitressImage },
   { title: 'Akce', href: '/', imageSrc: eventsImage },
+  { title: 'Obchody', href: '/', imageSrc: shoppingImage },
   {
     title: 'Naše prodejny',
     href: '/kontakt#prodejny',

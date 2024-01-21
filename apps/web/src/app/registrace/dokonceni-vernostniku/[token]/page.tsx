@@ -1,6 +1,7 @@
 import { Logo } from '@components/common/Logo';
-import { PreviewSubscribersTokens } from '@najit-najist/api';
-import { PreviewSubscribersService } from '@najit-najist/api/server';
+import { User } from '@najit-najist/api';
+import { logger } from '@najit-najist/api/server';
+import { getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -18,13 +19,20 @@ const RegistrationFinalizationPage = async ({
 }: {
   params: { token: string };
 }) => {
-  let result: PreviewSubscribersTokens;
+  let result: User;
+  const trpc = getCachedTrpcCaller();
 
   try {
-    result = await PreviewSubscribersService.getUserByToken(token);
+    result = await trpc.users.getOne({
+      where: {
+        preregisteredUserToken: token,
+      },
+    });
   } catch (error) {
-    console.log('Could not finish preview user registration from token');
-    console.log(error);
+    logger.error(
+      { error },
+      'Could not finish preview user registration from token'
+    );
 
     notFound();
   }
@@ -38,7 +46,7 @@ const RegistrationFinalizationPage = async ({
         <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900 font-title">
           Děkujeme!
         </h2>
-        {result.for.verified ? (
+        {result.verified ? (
           <p className="mt-4 text-center text-xl">
             Váš účet je již aktivovaný! Nyní se stačí jen{' '}
             <Link href="/login" className="text-green-400 hover:underline">
@@ -55,7 +63,7 @@ const RegistrationFinalizationPage = async ({
         )}
       </div>
 
-      {!result.for.verified ? <Form token={token} /> : null}
+      {!result.verified ? <Form token={token} /> : null}
     </div>
   );
 };

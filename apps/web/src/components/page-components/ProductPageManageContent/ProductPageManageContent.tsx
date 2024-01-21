@@ -200,7 +200,7 @@ export const ProductPageManageContent: FC<
 
           {product && viewType === 'view' ? (
             <div className="flex mt-10">
-              <UserActions stock={product.stock} productId={product.id} />
+              <UserActions stock={product.stock} product={product} />
             </div>
           ) : null}
 

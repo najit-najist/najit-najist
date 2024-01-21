@@ -1,6 +1,12 @@
 import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { ApplicationError } from '@errors';
-import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
+import { logger } from '@logger';
+import {
+  ClientResponseError,
+  CommonOptions,
+  ListResult,
+  pocketbase,
+} from '@najit-najist/pb';
 import {
   CreateRecipeInput,
   GetManyRecipes,
@@ -11,10 +17,6 @@ import {
 } from '@schemas';
 import { slugifyString } from '@utils';
 import { objectToFormData } from '@utils/internal';
-import { RecipeDifficultyService } from './RecipeDifficulty.service';
-import { RecipeResourceMetricService } from './RecipeResourceMetric.service';
-import { RecipeTypeService } from './RecipeType.service';
-import { logger } from '@logger';
 
 type GetByType = keyof Pick<Recipe, 'id' | 'slug'>;
 
@@ -30,12 +32,6 @@ type RecipeWithExpand = Recipe & {
 };
 
 export class RecipesService {
-  static resourceMetrics: RecipeResourceMetricService =
-    new RecipeResourceMetricService();
-
-  static types: RecipeTypeService = new RecipeTypeService();
-  static difficulties = RecipeDifficultyService;
-
   private static mapExpandToResponse(
     recipeWithExpand: RecipeWithExpand
   ): Recipe {
@@ -63,7 +59,8 @@ export class RecipesService {
 
   static async update(
     id: string,
-    { resources, steps, title, ...input }: UpdateRecipeInput
+    { resources, steps, title, ...input }: UpdateRecipeInput,
+    requestOptions?: CommonOptions
   ): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
@@ -75,7 +72,7 @@ export class RecipesService {
             ...(resources ? { resources: JSON.stringify(resources) } : null),
             ...(steps ? { steps: JSON.stringify(steps) } : null),
           }),
-          { expand: BASE_EXPAND }
+          { expand: BASE_EXPAND, ...requestOptions }
         )
       );
     } catch (error) {
@@ -91,12 +88,10 @@ export class RecipesService {
     }
   }
 
-  static async create({
-    resources,
-    steps,
-    title,
-    ...input
-  }: CreateRecipeInput): Promise<Recipe> {
+  static async create(
+    { resources, steps, title, ...input }: CreateRecipeInput,
+    requestOptions?: CommonOptions
+  ): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase.collection(PocketbaseCollections.RECIPES).create(
@@ -108,7 +103,7 @@ export class RecipesService {
               : null),
             ...(steps ? { steps: JSON.stringify(steps ?? []) } : null),
           }),
-          { expand: BASE_EXPAND }
+          { expand: BASE_EXPAND, ...requestOptions }
         )
       );
     } catch (error) {
@@ -126,13 +121,18 @@ export class RecipesService {
     }
   }
 
-  static async getBy(type: GetByType, value: any): Promise<Recipe> {
+  static async getBy(
+    type: GetByType,
+    value: any,
+    requestOptions?: CommonOptions
+  ): Promise<Recipe> {
     try {
       return this.mapExpandToResponse(
         await pocketbase
           .collection(PocketbaseCollections.RECIPES)
           .getFirstListItem<RecipeWithExpand>(`${type}="${value}"`, {
             expand: BASE_EXPAND,
+            ...requestOptions,
           })
       );
     } catch (error) {
@@ -148,7 +148,10 @@ export class RecipesService {
     }
   }
 
-  static async getMany(options?: GetManyRecipes): Promise<ListResult<Recipe>> {
+  static async getMany(
+    options?: GetManyRecipes,
+    requestOptions?: CommonOptions
+  ): Promise<ListResult<Recipe>> {
     const {
       page = 1,
       perPage = 40,
@@ -173,6 +176,7 @@ export class RecipesService {
         .getList<RecipeWithExpand>(page, perPage, {
           expand: BASE_EXPAND,
           filter,
+          ...requestOptions,
         });
 
       return { ...result, items: result.items.map(this.mapExpandToResponse) };

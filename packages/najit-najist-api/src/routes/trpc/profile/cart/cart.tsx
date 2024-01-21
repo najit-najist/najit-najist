@@ -18,12 +18,16 @@ import { getCurrentCart } from '@utils/server/getCurrentUserCart';
 import { getOrderById } from '@utils/server/getOrderById';
 import { z } from 'zod';
 
-import { AUTHORIZATION_HEADER } from '../../../..';
+import { AUTHORIZATION_HEADER } from '../../../../constants';
 import {
   addToCartSchema,
   userCartProductSchema,
 } from '../../../../schemas/profile/cart/cart.schema';
-import { MailService, logger } from '../../../../server';
+import {
+  MailService,
+  createRequestPocketbaseRequestOptions,
+  logger,
+} from '../../../../server';
 
 export const userCartRoutes = t.router({
   products: t.router({
@@ -36,8 +40,12 @@ export const userCartRoutes = t.router({
     add: protectedProcedure
       .input(addToCartSchema)
       .mutation(async ({ input, ctx }) => {
+        const requestOptions = createRequestPocketbaseRequestOptions(ctx);
         const productStock = await pocketbaseByCollections.productStocks
-          .getFirstListItem<ProductStock>(`product="${input.product.id}"`)
+          .getFirstListItem<ProductStock>(
+            `product="${input.product.id}"`,
+            requestOptions
+          )
           .catch(() => undefined);
 
         if (!productStock) {
@@ -64,17 +72,21 @@ export const userCartRoutes = t.router({
             existingProductInCart.id,
             {
               count: input.count + existingProductInCart.count,
-            }
+            },
+            requestOptions
           );
 
           return;
         }
 
-        await pocketbaseByCollections.userCartProducts.create({
-          product: input.product.id,
-          cart: currentCart.id,
-          count: input.count,
-        });
+        await pocketbaseByCollections.userCartProducts.create(
+          {
+            product: input.product.id,
+            cart: currentCart.id,
+            count: input.count,
+          },
+          requestOptions
+        );
       }),
 
     update: protectedProcedure
@@ -85,7 +97,10 @@ export const userCartRoutes = t.router({
       )
       .mutation(async ({ input, ctx }) => {
         const productStock = await pocketbaseByCollections.productStocks
-          .getFirstListItem<ProductStock>(`product="${input.product.id}"`)
+          .getFirstListItem<ProductStock>(
+            `product="${input.product.id}"`,
+            createRequestPocketbaseRequestOptions(ctx)
+          )
           .catch(() => undefined);
 
         if (!productStock) {
@@ -105,17 +120,21 @@ export const userCartRoutes = t.router({
             existingProductInCart.id,
             {
               count: input.count,
-            }
+            },
+            createRequestPocketbaseRequestOptions(ctx)
           );
 
           return;
         }
 
-        await pocketbaseByCollections.userCartProducts.create({
-          product: input.product.id,
-          cart: cart.id,
-          count: input.count,
-        });
+        await pocketbaseByCollections.userCartProducts.create(
+          {
+            product: input.product.id,
+            cart: cart.id,
+            count: input.count,
+          },
+          createRequestPocketbaseRequestOptions(ctx)
+        );
       }),
 
     remove: protectedProcedure
@@ -124,10 +143,14 @@ export const userCartRoutes = t.router({
         // Check that it exists first
         const cartProduct =
           await pocketbaseByCollections.userCartProducts.getFirstListItem(
-            `product.id="${input.product.id}"`
+            `product.id="${input.product.id}"`,
+            createRequestPocketbaseRequestOptions(ctx)
           );
 
-        await pocketbaseByCollections.userCartProducts.delete(cartProduct.id);
+        await pocketbaseByCollections.userCartProducts.delete(
+          cartProduct.id,
+          createRequestPocketbaseRequestOptions(ctx)
+        );
       }),
   }),
 
@@ -196,7 +219,7 @@ export const userCartRoutes = t.router({
             lastName: input.lastName,
             payment_method_id: input.paymentMethod.id,
             delivery_method_id: input.deliveryMethod.id,
-            save_address: input.saveAddressToAccount,
+            save_address: String(input.saveAddressToAccount),
           },
         })
         .catch((error) => {
@@ -215,14 +238,16 @@ export const userCartRoutes = t.router({
         renderAsync(
           ThankYouOrder({
             needsPayment: false,
-            orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+            orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
             order,
+            siteOrigin: config.app.origin,
           })
         ),
         renderAsync(
           ThankYouOrderAdmin({
-            orderLink: `https://najitnajist.cz/administrace/objednavky/${order.id}`,
+            orderLink: `${config.app.origin}/administrace/objednavky/${order.id}`,
             order,
+            siteOrigin: config.app.origin,
           })
         ),
       ]);

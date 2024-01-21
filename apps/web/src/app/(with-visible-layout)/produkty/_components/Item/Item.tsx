@@ -68,6 +68,10 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
           <Price value={price.value} />
           <AddToCartButton
             productId={id}
+            productMetadata={{
+              images,
+              name,
+            }}
             disabled={
               (typeof stock?.count === 'number' && !stock?.count) ||
               !publishedAt

@@ -15,16 +15,18 @@ export interface OrderConfirmedProps {
   // order: Order;
   order: any;
   orderLink: string;
+  siteOrigin: string;
 }
 
 export default function OrderConfirmed({
   order = testOrder,
   orderLink,
+  siteOrigin,
 }: OrderConfirmedProps) {
   const title = `Potvrzení objednávky #${order.id}`;
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <Row>
           <Column>

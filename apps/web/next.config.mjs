@@ -37,6 +37,16 @@ const nextConfig = {
 
     return config;
   },
+  async rewrites() {
+    const pocketbaseOrigin = String(process.env.POCKETBASE_ORIGIN);
+
+    return [
+      {
+        source: '/files/:path*',
+        destination: `${pocketbaseOrigin}/api/files/:path*`,
+      },
+    ];
+  },
   async redirects() {
     return [
       {

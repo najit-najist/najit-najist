@@ -1,19 +1,21 @@
-'use client';
-
 import { Product, ProductStock } from '@najit-najist/api';
 import { FC } from 'react';
 
 import { AddToCartButton } from './AddToCartButton';
 
 export const UserActions: FC<{
-  productId: Product['id'];
+  product: Product;
   stock?: ProductStock | null;
-}> = ({ productId, stock }) => {
+}> = ({ product, stock }) => {
   return (
     <>
       <AddToCartButton
-        productId={productId}
+        productId={product.id}
         disabled={typeof stock?.count === 'number' && !stock.count}
+        productMetadata={{
+          images: product.images,
+          name: product.name,
+        }}
       />
       {/* TODO */}
       {/* <Button

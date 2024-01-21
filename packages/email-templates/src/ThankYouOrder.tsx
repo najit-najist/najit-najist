@@ -23,6 +23,7 @@ import { testOrder } from './constants';
 
 export interface ThankYouOrderProps {
   needsPayment: boolean;
+  siteOrigin: string;
   // order: Order;
   order: any;
   orderLink: string;
@@ -44,7 +45,10 @@ const ItemListItem: FC<
 };
 
 // const OrderProduct: FC<{ data: Order['products'][number] }> = ({ data }) => {
-const OrderProduct: FC<{ data: any }> = ({ data }) => {
+const OrderProduct: FC<{ data: any; siteOrigin: string }> = ({
+  data,
+  siteOrigin,
+}) => {
   const productImage = data.product.images[0];
   const imageSize = 40;
   return (
@@ -53,12 +57,15 @@ const OrderProduct: FC<{ data: any }> = ({ data }) => {
         <div>
           {productImage ? (
             <Img
-              src={getFileUrl(
-                Collections.PRODUCTS,
-                data.product.id,
-                productImage,
-                { height: imageSize, width: imageSize }
-              )}
+              src={new URL(
+                getFileUrl(
+                  Collections.PRODUCTS,
+                  data.product.id,
+                  productImage,
+                  { height: imageSize, width: imageSize }
+                ),
+                siteOrigin
+              ).toString()}
               width={imageSize}
               height={imageSize}
               alt="Obrázek produktu"
@@ -89,7 +96,7 @@ const OrderProduct: FC<{ data: any }> = ({ data }) => {
       </Column>
       <Column className="w-4" />
       <Column className="text-right whitespace-nowrap text-gray-400">
-        {/* <Price size={'sm'} value={data.totalPrice} /> */}
+        <Price size={'sm'} value={data.totalPrice} />
       </Column>
     </ItemListItem>
   );
@@ -98,6 +105,7 @@ const OrderProduct: FC<{ data: any }> = ({ data }) => {
 export default function ThankYouOrder({
   order = testOrder,
   needsPayment = false,
+  siteOrigin,
   orderLink = 'test',
 }: ThankYouOrderProps) {
   const title = `Objednávka #${order.id} na najitnajist.cz`;
@@ -194,7 +202,11 @@ export default function ThankYouOrder({
       </CenteredRow>
       <PaperCenteredRow className="pt-5">
         {order.products.map((product: any) => (
-          <OrderProduct key={product.id} data={product} />
+          <OrderProduct
+            key={product.id}
+            siteOrigin={siteOrigin}
+            data={product}
+          />
         ))}
         {/* footer */}
         <hr className="border-none bg-gray-200 w-full mt-5 h-0.5 mb-0" />
@@ -271,7 +283,7 @@ export default function ThankYouOrder({
   );
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <Row>
           <Column>
@@ -293,8 +305,7 @@ export default function ThankYouOrder({
             <Text className="text-center" spacing={false} style={{ margin: 0 }}>
               O dalších krocích vás budeme zanedlouho informovat. <br /> Mezitím
               si můžete Vaši objednávku sledovat na stránkách{' '}
-              <Link href="https://najitnajist.cz">najitnajist.cz</Link> ve vašem
-              účtě.
+              <Link href={siteOrigin}>najitnajist.cz</Link> ve vašem účtě.
             </Text>
           </Column>
         </Row>

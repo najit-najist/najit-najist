@@ -80,7 +80,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
             color="white"
             disabled={buttonsAreDisabled}
           >
-            {buttonConfig.text}
+            {buttonsAreDisabled ? 'Pracuji...' : buttonConfig.text}
           </Button>
         ))}
       </div>
@@ -91,6 +91,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
         icon={<TrashIcon className="w-4 h-4 inline -mt-1 mr-2" />}
         data-next-state={'dropped'}
         data-message="Opravdu zrušit objednávku?"
+        disabled={buttonsAreDisabled}
         onClick={onButtonClickHandler}
       >
         Zrušit objednávku

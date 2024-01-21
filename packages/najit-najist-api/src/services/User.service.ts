@@ -6,20 +6,26 @@ import {
 } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { faker } from '@faker-js/faker';
-import { expandPocketFields, formatErrorMessage } from '@utils';
-import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
-import { randomUUID } from 'crypto';
+import { logger } from '@logger';
+import {
+  ClientResponseError,
+  ListResult,
+  RecordListOptions,
+  pocketbase,
+} from '@najit-najist/pb';
 import {
   Address,
   GetManyUsersOptions,
+  PreviewSubscribersTokens,
   RegisterUser,
   UpdateProfile,
   User,
   UserRoles,
   UserStates,
 } from '@schemas';
-import { logger } from '@logger';
+import { expandPocketFields, formatErrorMessage } from '@utils';
 import { objectToFormData } from '@utils/internal';
+import { randomUUID } from 'crypto';
 
 type GetByType = keyof Pick<User, 'id' | 'email' | 'newsletterUuid'>;
 
@@ -55,13 +61,14 @@ export type UserServiceUpdateOptions = UpdateProfile & {
 export class UserService {
   static async create(
     params: CreateUserOptions,
-    requestVerification?: boolean
+    requestVerification?: boolean,
+    requestConfig?: Omit<RecordListOptions, 'expand'>
   ): Promise<User> {
     try {
       const password = params.password || faker.internet.password(15);
       const { totalItems: usersCount } = await pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getList(1, 1);
+        .getList(1, 1, requestConfig);
 
       const username = `uzivatel_${usersCount + 1}`;
 
@@ -84,20 +91,23 @@ export class UserService {
 
       const user = await pocketbase
         .collection(PocketbaseCollections.USERS)
-        .create<User>({
-          username,
-          lastLoggedIn: null,
-          notes: null,
-          emailVisibility: true,
-          role: UserRoles.BASIC,
-          // User first have to finish registration
-          status: UserStates.ACTIVE,
-          ...params,
-          // Override some stuff
-          password,
-          passwordConfirm: password,
-          newsletterUuid: randomUUID(),
-        });
+        .create<User>(
+          {
+            username,
+            lastLoggedIn: null,
+            notes: null,
+            emailVisibility: true,
+            role: UserRoles.BASIC,
+            // User first have to finish registration
+            status: UserStates.ACTIVE,
+            ...params,
+            // Override some stuff
+            password,
+            passwordConfirm: password,
+            newsletterUuid: randomUUID(),
+          },
+          requestConfig
+        );
 
       let address: Address | undefined;
       if (Object.keys(params.address ?? {}).length > 0) {
@@ -111,6 +121,7 @@ export class UserService {
           .collection(PocketbaseCollections.USER_ADDRESSES)
           .create<AddressWithExpand>(createAddressPayload, {
             expand: 'municipality',
+            ...requestConfig,
           })
           .then(expandPocketFields<Address>);
       }
@@ -123,7 +134,7 @@ export class UserService {
       if (requestVerification) {
         await pocketbase
           .collection(PocketbaseCollections.USERS)
-          .requestVerification(user.email);
+          .requestVerification(user.email, requestConfig);
       }
 
       return expandPocketFields<User>({
@@ -152,11 +163,34 @@ export class UserService {
     }
   }
 
-  static getBy(type: GetByType, value: any): Promise<User> {
+  static async getBy(
+    _type: GetByType | 'preregisteredUserToken',
+    _value: any,
+    requestConfig?: Omit<RecordListOptions, 'expand'>
+  ): Promise<User> {
+    let type = _type;
+    let value = _value;
+
+    if (type === 'preregisteredUserToken') {
+      const result = await pocketbase
+        .collection(PocketbaseCollections.PREVIEW_SUBSCRIBERS_TOKENS)
+        .getFirstListItem<
+          Omit<PreviewSubscribersTokens, 'for'> & { for: string }
+        >(`token="${value}"`, {
+          ...requestConfig,
+        });
+
+      type = 'id';
+      value = result.for;
+    }
+
     try {
-      return pocketbase
+      return await pocketbase
         .collection(PocketbaseCollections.USERS)
-        .getFirstListItem<UserWithExpand>(`${type}="${value}"`, { expand })
+        .getFirstListItem<UserWithExpand>(`${type}="${value}"`, {
+          expand,
+          ...requestConfig,
+        })
         .then(expandPocketFields<User>);
     } catch (error) {
       if (error instanceof ClientResponseError && error.status === 400) {
@@ -172,7 +206,8 @@ export class UserService {
   }
 
   static async getMany(
-    options?: GetManyUsersOptions
+    options?: GetManyUsersOptions,
+    requestConfig?: Omit<RecordListOptions, 'expand'>
   ): Promise<ListResult<User>> {
     const {
       page = 1,
@@ -192,6 +227,7 @@ export class UserService {
       const userAddressesUnderMunicipality = await pocketbase
         .collection(PocketbaseCollections.USER_ADDRESSES)
         .getFullList<Address & { expand: { owner: User } }>({
+          ...requestConfig,
           filter: filterFromOptions.address
             .map((item) => `municipality = "${item.id}"`)
             .join(' || '),
@@ -212,6 +248,7 @@ export class UserService {
       return pocketbase
         .collection(PocketbaseCollections.USERS)
         .getList<UserWithExpand>(page, perPage, {
+          ...requestConfig,
           expand,
           filter: filter.filter(Boolean).join(' && '),
           sort: '-created',
@@ -228,7 +265,8 @@ export class UserService {
 
   static async update(
     where: { id: string },
-    payload: UserServiceUpdateOptions
+    payload: UserServiceUpdateOptions,
+    requestConfig?: Omit<RecordListOptions, 'expand'>
   ) {
     const {
       address = {} as NonNullable<(typeof payload)['address']>,
@@ -253,7 +291,7 @@ export class UserService {
 
         await pocketbase
           .collection(PocketbaseCollections.USER_ADDRESSES)
-          .update(address.id, morphedAddressWithoutId);
+          .update(address.id, morphedAddressWithoutId, requestConfig);
       } else {
         // TODO - ensuring that address for one user is created once is kind of handled
         // in schemas, but it would be better to check it here too. Due to nature of pocketbase we kind of
@@ -273,6 +311,7 @@ export class UserService {
       .collection(PocketbaseCollections.USERS)
       .update<UserWithExpand>(where.id, await objectToFormData(rest), {
         expand,
+        ...requestConfig,
       })
       .then(expandPocketFields<User>);
   }

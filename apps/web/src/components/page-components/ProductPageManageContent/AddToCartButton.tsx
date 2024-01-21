@@ -2,17 +2,64 @@
 
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { Product } from '@najit-najist/api';
+import { Collections, getFileUrl } from '@najit-najist/pb';
 import { Button, Tooltip, toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { FC, ReactElement, ReactNode } from 'react';
 
-export const AddToCartButton: FC<{
+import { CustomImage } from './CustomImage';
+
+export type AddToCartButtonProps = {
   productId: Product['id'];
   disabled?: boolean;
   withoutText?: boolean;
   withIcon?: boolean;
-}> = ({ productId, disabled, withoutText, withIcon }) => {
+  productMetadata?: Pick<Product, 'name' | 'images'>;
+};
+
+const SuccessMessage: FC<
+  Pick<AddToCartButtonProps, 'productId' | 'productMetadata'>
+> = ({ productId, productMetadata }) => {
+  return (
+    <div className="flex items-center">
+      {productMetadata?.images.length ? (
+        <div className="relative w-12 h-12 rounded-full mr-3 flex-none">
+          <CustomImage
+            onlyImage
+            src={getFileUrl(
+              Collections.PRODUCTS,
+              productId,
+              productMetadata.images.at(0)!,
+              { height: 50, quality: 60 }
+            )}
+          />
+        </div>
+      ) : null}
+      <p>
+        <b>
+          Přidali jste si{' '}
+          {productMetadata?.name ? (
+            <span className="text-project-secondary">
+              {productMetadata.name}
+            </span>
+          ) : (
+            'produkt'
+          )}{' '}
+          do Vašeho košíku!
+        </b>
+      </p>
+    </div>
+  );
+};
+
+export const AddToCartButton: FC<AddToCartButtonProps> = ({
+  productId,
+  disabled,
+  withoutText,
+  withIcon,
+  productMetadata,
+}) => {
   const utils = trpc.useUtils();
   const { mutateAsync: addToCart, isLoading } =
     trpc.profile.cart.products.add.useMutation();
@@ -27,7 +74,12 @@ export const AddToCartButton: FC<{
 
     toast.promise(addToCartPromise, {
       loading: 'Přídávám do košíku',
-      success: <b>Produkt přidán do Vašeho košíku!</b>,
+      success: (
+        <SuccessMessage
+          productId={productId}
+          productMetadata={productMetadata}
+        />
+      ),
       error: (error) => (
         <b>Nemohli jsme přidat produkt do Vašeho košíku. {error.message}</b>
       ),

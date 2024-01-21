@@ -9,7 +9,6 @@ import {
   UserActions,
   canUser,
 } from '@najit-najist/api';
-import { AuthService } from '@najit-najist/api/server';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -52,9 +51,7 @@ export default async function RecipesPage({ searchParams }: Params) {
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
   } = searchParams;
-  await AuthService.authPocketBase();
   const currentUser = await getCachedLoggedInUser();
-
   const trpc = getCachedTrpcCaller();
 
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;

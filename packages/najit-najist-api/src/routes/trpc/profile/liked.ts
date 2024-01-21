@@ -1,39 +1,86 @@
+import {
+  ClientResponseError,
+  RecordListOptions,
+  pocketbase,
+} from '@najit-najist/pb';
 import { dislikeRecipeInputSchema, likeRecipeInputSchema } from '@schemas';
-import { UserLikedRecipesService } from '@services';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { z } from 'zod';
 
-export const userLikedRecipesRoutes = t.router({
-  getMany: protectedProcedure.query(({ ctx }) => {
-    UserLikedRecipesService.getManyByUser(ctx.sessionData.userId);
-  }),
+import { ApplicationError } from '../../../errors/ApplicationError';
+import { createRequestPocketbaseRequestOptions } from '../../../server';
+import {
+  ErrorCodes,
+  PocketbaseCollections,
+  UserLikedRecipe,
+} from '../../../types';
 
-  has: protectedProcedure.input(z.string()).query(({ input, ctx }) =>
-    UserLikedRecipesService.getOne({
-      likedBy: ctx.sessionData.userId,
-      likedItem: input,
-    }).catch(() => false)
+const getOne = async (
+  likedItem: string,
+  requestOptions?: RecordListOptions
+) => {
+  try {
+    return await pocketbase
+      .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+      .getFirstListItem<UserLikedRecipe>(
+        `likedItem="${likedItem}"`,
+        requestOptions
+      );
+  } catch (error) {
+    if (error instanceof ClientResponseError && error.status === 400) {
+      throw new ApplicationError({
+        code: ErrorCodes.ENTITY_MISSING,
+        message: `Tento repect není v oblíbených receptech`,
+        origin: 'UserService',
+      });
+    }
+
+    throw error;
+  }
+};
+
+export const userLikedRecipesRoutes = t.router({
+  getMany: protectedProcedure.query(({ ctx }) =>
+    pocketbase
+      .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+      .getFullList<UserLikedRecipe>({
+        ...createRequestPocketbaseRequestOptions(ctx),
+        filter: `likedBy="${ctx.sessionData.userId}"`,
+      })
   ),
+
+  has: protectedProcedure
+    .input(z.string())
+    .query(({ input, ctx }) =>
+      getOne(input, createRequestPocketbaseRequestOptions(ctx)).catch(
+        () => false
+      )
+    ),
 
   add: protectedProcedure
     .input(likeRecipeInputSchema)
     .mutation(async ({ input, ctx }) =>
-      UserLikedRecipesService.create({
-        likedBy: ctx.sessionData.userId,
-        likedItem: input.id,
-      })
+      pocketbase
+        .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+        .create<UserLikedRecipe>(
+          {
+            likedBy: ctx.sessionData.userId,
+            likedItem: input.id,
+          },
+          createRequestPocketbaseRequestOptions(ctx)
+        )
     ),
 
   remove: protectedProcedure
     .input(dislikeRecipeInputSchema)
     .mutation(async ({ input, ctx }) => {
-      const recipe = await UserLikedRecipesService.getOne({
-        likedItem: input.itemId,
-        likedBy: ctx.sessionData.userId,
-      });
+      const requestOptions = createRequestPocketbaseRequestOptions(ctx);
+      const recipe = await getOne(input.itemId, requestOptions);
 
-      await UserLikedRecipesService.delete(recipe.id);
+      await pocketbase
+        .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+        .delete(recipe.id, requestOptions);
     }),
 });
 

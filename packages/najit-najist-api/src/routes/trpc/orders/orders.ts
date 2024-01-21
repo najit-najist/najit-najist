@@ -1,6 +1,11 @@
+import { config } from '@config';
 import { AUTHORIZATION_HEADER } from '@constants';
 import { PocketbaseCollections } from '@custom-types';
-import { OrderConfirmed, renderAsync } from '@najit-najist/email-templates';
+import {
+  OrderConfirmed,
+  OrderShipped,
+  renderAsync,
+} from '@najit-najist/email-templates';
 import {
   Collections,
   pocketbase,
@@ -22,7 +27,12 @@ import {
   OrderPaymentMethod,
   orderSchema,
 } from '../../../schemas/orders';
-import { MailService, ProductService, logger } from '../../../server';
+import {
+  MailService,
+  ProductService,
+  createRequestPocketbaseRequestOptions,
+  logger,
+} from '../../../server';
 import { OrderWithExpand, mapPocketbaseOrder } from './_utils';
 
 const isLocalPickup = (
@@ -80,6 +90,7 @@ export const orderRoutes = t.router({
             input.page,
             input.perPage,
             {
+              sort: '-created',
               filter: createPocketbaseFilters([
                 !!input.user?.id.length &&
                   insertBetween(
@@ -148,13 +159,8 @@ export const orderRoutes = t.router({
         .extend({ payload: orderSchema.pick({ state: true }) })
     )
     .mutation(async ({ input, ctx }) => {
-      const requestConfig = {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-        },
-      };
-
-      const order = await getOrderById(input.id);
+      const requestConfig = createRequestPocketbaseRequestOptions(ctx);
+      const order = await getOrderById(input.id, requestConfig);
 
       if (input.payload.state) {
         switch (input.payload.state) {
@@ -164,8 +170,9 @@ export const orderRoutes = t.router({
               subject: `Objednávka #${order.id} potvrzena`,
               body: await renderAsync(
                 OrderConfirmed({
-                  orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+                  orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
                   order,
+                  siteOrigin: config.app.origin,
                 })
               ),
             }).catch((error) => {
@@ -182,9 +189,10 @@ export const orderRoutes = t.router({
                 isLocalPickup(order.delivery_method) ? 'připravena' : 'odeslána'
               }`,
               body: await renderAsync(
-                OrderConfirmed({
-                  orderLink: `https://najitnajist.cz/muj-ucet/objednavky/${order.id}`,
+                OrderShipped({
+                  orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
                   order,
+                  siteOrigin: config.app.origin,
                 })
               ),
             }).catch((error) => {

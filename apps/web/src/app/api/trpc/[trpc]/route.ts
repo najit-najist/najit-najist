@@ -1,9 +1,5 @@
-import {
-  appRouter,
-  AuthService,
-  createContext,
-  logger,
-} from '@najit-najist/api/server';
+import { appRouter, createContext, logger } from '@najit-najist/api/server';
+import { pocketbase } from '@najit-najist/pb';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { NextRequest } from 'next/server';
 
@@ -15,10 +11,15 @@ function handler(request: NextRequest) {
     createContext,
     onError({ type, error, path, ctx }) {
       const { userId } = ctx?.sessionData ?? {};
+
       logger.error(
         {
           type,
-          error,
+          error: {
+            ...error,
+            message: error.message,
+            stack: error.stack,
+          },
           path,
           userId,
         },
@@ -26,7 +27,7 @@ function handler(request: NextRequest) {
       );
     },
   }).then((resp) => {
-    AuthService.clearAuthPocketBase();
+    pocketbase.authStore.clear();
 
     return resp;
   });

@@ -16,16 +16,18 @@ export interface ThankYouOrderAdminProps {
   // order: Order;
   order: any;
   orderLink: string;
+  siteOrigin: string;
 }
 
 export default function ThankYouOrderAdmin({
   order = testOrder,
   orderLink,
+  siteOrigin,
 }: ThankYouOrderAdminProps) {
   const title = `Nová objednávka`;
 
   return (
-    <Layout title={title}>
+    <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
         <Row>
           <Column>

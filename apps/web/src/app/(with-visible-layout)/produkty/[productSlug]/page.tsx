@@ -1,17 +1,5 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
-import {
-  AUTHORIZATION_HEADER,
-  AvailableModels,
-  UserActions,
-  canUser,
-} from '@najit-najist/api';
-import {
-  ProductService,
-  RecipesService,
-  config,
-  loginWithAccount,
-} from '@najit-najist/api/server';
-import { pocketbase } from '@najit-najist/pb';
+import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { notFound } from 'next/navigation';
 

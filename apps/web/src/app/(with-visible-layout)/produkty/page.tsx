@@ -9,7 +9,6 @@ import {
   UserActions,
   canUser,
 } from '@najit-najist/api';
-import { ProductService } from '@najit-najist/api/server';
 import { Button, Tooltip } from '@najit-najist/ui';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
@@ -45,7 +44,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   const categoriesAsArray = categoriesSlugFromUrl?.split(',');
 
   const [{ items: products }, { items: categories }] = await Promise.all([
-    ProductService.getMany({
+    trpc.products.get.many({
       search: query,
       perPage: 999,
       categorySlug: categoriesAsArray,

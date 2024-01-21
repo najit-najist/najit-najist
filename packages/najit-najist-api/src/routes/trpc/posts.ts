@@ -1,5 +1,10 @@
-import { PocketbaseCollections, Post } from '@custom-types';
-import { pocketbase } from '@najit-najist/pb';
+import {
+  ErrorCodes,
+  PocketbaseCollections,
+  Post,
+  UserLikedPost,
+} from '@custom-types';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import {
   createPostInputSchema,
   dislikePostInputSchema,
@@ -19,7 +24,8 @@ import { objectToFormData } from '@utils/internal';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-import { UserLikedPostsService } from '../../server';
+import { AUTHORIZATION_HEADER } from '../..';
+import { ApplicationError } from '../../errors/ApplicationError';
 
 export const postsRoute = t.router({
   create: onlyAdminProcedure
@@ -32,7 +38,10 @@ export const postsRoute = t.router({
             ...input,
             slug: slugifyString(input.title),
             createdBy: ctx.sessionData.userId,
-          })
+          }),
+          {
+            headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
+          }
         );
 
       revalidatePath('/clanky');
@@ -53,7 +62,10 @@ export const postsRoute = t.router({
             ...(input.data.title
               ? { slug: slugifyString(input.data.title) }
               : null),
-          })
+          }),
+          {
+            headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
+          }
         );
 
       revalidatePath(`/clanky/${result.slug}`);
@@ -65,7 +77,11 @@ export const postsRoute = t.router({
   delete: onlyAdminProcedure
     .input(outputPostSchema.pick({ id: true, slug: true }))
     .mutation(async ({ ctx, input }) => {
-      await pocketbase.collection(PocketbaseCollections.POSTS).delete(input.id);
+      await pocketbase
+        .collection(PocketbaseCollections.POSTS)
+        .delete(input.id, {
+          headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
+        });
 
       revalidatePath(`/clanky/${input.slug}`);
       revalidatePath('/clanky');
@@ -90,6 +106,9 @@ export const postsRoute = t.router({
           filter,
           expand: `categories`,
           sort: '-publishedAt',
+          headers: ctx.sessionData?.token
+            ? { [AUTHORIZATION_HEADER]: ctx.sessionData?.token }
+            : undefined,
         });
     }),
 
@@ -100,25 +119,53 @@ export const postsRoute = t.router({
         .collection(PocketbaseCollections.POSTS)
         .getFirstListItem<Post>(`slug="${input.slug}"`, {
           expand: `categories`,
+          headers: ctx.sessionData?.token
+            ? { [AUTHORIZATION_HEADER]: ctx.sessionData?.token }
+            : undefined,
         })
     ),
 
   likeOne: protectedProcedure
     .input(likePostInputSchema)
     .mutation(async ({ input, ctx }) => {
-      UserLikedPostsService.create({
-        likedBy: ctx.sessionData.userId,
-        likedItem: input.id,
-      });
+      await pocketbase
+        .collection(PocketbaseCollections.USER_LIKED_POSTS)
+        .create<UserLikedPost>(
+          {
+            likedBy: ctx.sessionData.userId,
+            likedItem: input.id,
+          },
+          { headers: { [AUTHORIZATION_HEADER]: ctx.sessionData.token } }
+        );
     }),
 
   dislikeOne: protectedProcedure
     .input(dislikePostInputSchema)
     .mutation(async ({ input, ctx }) => {
-      const recipe = await UserLikedPostsService.getOne({
-        likedItem: input.itemId,
-      });
+      try {
+        const requestOptions = {
+          headers: { [AUTHORIZATION_HEADER]: ctx.sessionData.token },
+        };
+        const likedPost = await pocketbase
+          .collection(PocketbaseCollections.USER_LIKED_RECIPES)
+          .getFirstListItem<UserLikedPost>(
+            `likedItem="${input.itemId}"`,
+            requestOptions
+          );
 
-      await UserLikedPostsService.delete(recipe.id);
+        await pocketbase
+          .collection(PocketbaseCollections.USER_LIKED_POSTS)
+          .delete(likedPost.id, requestOptions);
+      } catch (error) {
+        if (error instanceof ClientResponseError && error.status === 400) {
+          throw new ApplicationError({
+            code: ErrorCodes.ENTITY_MISSING,
+            message: `Tento like neexistuje`,
+            origin: 'UserService',
+          });
+        }
+
+        throw error;
+      }
     }),
 });

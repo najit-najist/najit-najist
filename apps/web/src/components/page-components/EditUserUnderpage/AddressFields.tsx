@@ -1,4 +1,5 @@
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { AppRouterInput } from '@najit-najist/api';
 import { Input } from '@najit-najist/ui';
 import { FC } from 'react';
@@ -8,9 +9,10 @@ import { useFormContext } from 'react-hook-form';
  * Set of fields that are specific to user address
  */
 export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
+  const { isActive } = useReactTransitionContext();
   const { formState, register } =
     useFormContext<AppRouterInput['profile']['update']>();
-  const fieldsAreDisabled = formState.isSubmitting;
+  const fieldsAreDisabled = formState.isSubmitting || isActive;
 
   return (
     <>
@@ -65,6 +67,7 @@ export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
         label="Kraj"
         name="address.municipality"
         required={required}
+        disabled={fieldsAreDisabled}
       />
     </>
   );

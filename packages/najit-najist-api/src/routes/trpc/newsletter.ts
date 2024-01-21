@@ -1,24 +1,29 @@
+import { PocketbaseCollections, PocketbaseErrorCodes } from '@custom-types';
+import { logger } from '@logger';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { subscribeToNewsletterSchema } from '@schemas';
 import { t } from '@trpc';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { PocketbaseCollections, PocketbaseErrorCodes } from '@custom-types';
-import { randomUUID } from 'crypto';
-import { logger } from '@logger';
 import { loginWithAccount } from '@utils/pocketbase';
+import { randomUUID } from 'crypto';
+
+import { createRequestPocketbaseRequestOptions } from '../../server';
 
 export const newsletterRoutes = t.router({
   subscribe: t.procedure
     .input(subscribeToNewsletterSchema)
     .mutation(async ({ input }) => {
-      await loginWithAccount('contactForm');
+      const pbAccount = await loginWithAccount('contactForm');
 
       try {
         await pocketbase
           .collection(PocketbaseCollections.NEWSLETTER_SUBSCRIPTIONS)
-          .create({
-            email: input.email,
-            uuid: randomUUID(),
-          });
+          .create(
+            {
+              email: input.email,
+              uuid: randomUUID(),
+            },
+            createRequestPocketbaseRequestOptions({ sessionData: pbAccount })
+          );
       } catch (error) {
         if (error instanceof ClientResponseError) {
           const data = error.data.data;

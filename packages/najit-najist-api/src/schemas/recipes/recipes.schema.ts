@@ -1,12 +1,13 @@
-import { entrySchema } from '../entry.schema';
 import { z } from 'zod';
-import { zodImage } from '../zodImage';
+
 import { defaultGetManySchema } from '../base.get-many.schema';
-import { recipeTypeSchema } from './recipe-types.schema';
+import { entrySchema } from '../entry.schema';
+import { zodImage } from '../zodImage';
+import { zodSlug } from '../zodSlug';
 import { recipeDifficultySchema } from './recipe-difficulty.schema';
 import { recipeResourceSchema } from './recipe-resources.schema';
 import { recipeStepGroupSchema } from './recipe-step-groups.schema';
-import { zodSlug } from '../zodSlug';
+import { recipeTypeSchema } from './recipe-types.schema';
 
 export const recipeSchema = entrySchema.extend({
   title: z
@@ -64,9 +65,11 @@ export const getManyRecipesSchema = defaultGetManySchema.extend({
 });
 
 export const getOneRecipeInputSchema = z.object({
-  where: z.object({
-    id: z.string(),
-  }),
+  where: z
+    .object({
+      id: z.string(),
+    })
+    .or(z.object({ slug: z.string() })),
 });
 
 export const likeRecipeInputSchema = recipeSchema.pick({ id: true });

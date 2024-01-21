@@ -1,65 +1,37 @@
+import { PocketbaseCollections } from '@custom-types';
 import { ListResult, pocketbase } from '@najit-najist/pb';
 import {
-  createRecipeDifficultyInputSchema,
   createRecipeInputSchema,
-  createRecipeResourceMetricInputSchema,
-  createRecipeTypeInputSchema,
-  getManyRecipeDifficultiesSchema,
   getManyRecipesSchema,
-  getManyRecipeTypesSchema,
   getOneRecipeInputSchema,
   Recipe,
+  RecipeDifficulty,
   recipeSchema,
+  RecipeType,
   updateRecipeInputSchema,
 } from '@schemas';
-import { t } from '@trpc';
 import { RecipesService } from '@services';
+import { t } from '@trpc';
 import {
   onlyAdminProcedure,
   protectedProcedure,
 } from '@trpc-procedures/protectedProcedure';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
-import { PocketbaseCollections } from '@custom-types';
 
-const metricsRouter = t.router({
-  getMany: protectedProcedure.query(() =>
-    RecipesService.resourceMetrics.getMany({
-      page: 1,
-      perPage: 999,
-    })
-  ),
-
-  create: onlyAdminProcedure
-    .input(createRecipeResourceMetricInputSchema)
-    .mutation(({ input }) => RecipesService.resourceMetrics.create(input)),
-});
-
-const difficultiesRouter = t.router({
-  getMany: protectedProcedure
-    .input(getManyRecipeDifficultiesSchema.optional())
-    .query(({ input }) => RecipesService.difficulties.getMany(input)),
-
-  create: onlyAdminProcedure
-    .input(createRecipeDifficultyInputSchema)
-    .mutation(({ input }) => RecipesService.difficulties.create(input)),
-});
-
-const typesRouter = t.router({
-  getMany: protectedProcedure
-    .input(getManyRecipeTypesSchema.optional())
-    .query(({ input }) => RecipesService.types.getMany(input)),
-
-  create: onlyAdminProcedure
-    .input(createRecipeTypeInputSchema)
-    .mutation(({ input }) => RecipesService.types.create(input)),
-});
+import { createRequestPocketbaseRequestOptions } from '../../server';
+import { difficultiesRouter } from './recipes/difficulties';
+import { metricsRouter } from './recipes/metrics';
+import { typesRouter } from './recipes/types';
 
 export const recipesRouter = t.router({
   create: onlyAdminProcedure
     .input(createRecipeInputSchema)
     .mutation<Recipe>(async ({ ctx, input }) => {
-      const result = await RecipesService.create(input);
+      const result = await RecipesService.create(
+        input,
+        createRequestPocketbaseRequestOptions(ctx)
+      );
 
       revalidatePath(`/recepty/${result.slug}`);
       revalidatePath(`/recepty`);
@@ -70,7 +42,11 @@ export const recipesRouter = t.router({
   update: onlyAdminProcedure
     .input(z.object({ id: z.string(), data: updateRecipeInputSchema }))
     .mutation<Recipe>(async ({ ctx, input }) => {
-      const result = await RecipesService.update(input.id, input.data);
+      const result = await RecipesService.update(
+        input.id,
+        input.data,
+        createRequestPocketbaseRequestOptions(ctx)
+      );
 
       revalidatePath(`/recepty/${result.slug}`);
       revalidatePath(`/recepty`);
@@ -83,7 +59,7 @@ export const recipesRouter = t.router({
     .mutation(async ({ input, ctx }) => {
       await pocketbase
         .collection(PocketbaseCollections.RECIPES)
-        .delete(input.id);
+        .delete(input.id, createRequestPocketbaseRequestOptions(ctx));
 
       revalidatePath(`/recepty/${input.slug}`);
       revalidatePath(`/recepty`);
@@ -92,15 +68,19 @@ export const recipesRouter = t.router({
     }),
 
   getMany: protectedProcedure
-    .input(getManyRecipesSchema)
+    .input(getManyRecipesSchema.optional())
     .query<ListResult<Recipe>>(async ({ ctx, input }) =>
-      RecipesService.getMany(input)
+      RecipesService.getMany(input, createRequestPocketbaseRequestOptions(ctx))
     ),
 
   getOne: protectedProcedure
     .input(getOneRecipeInputSchema)
     .query<Recipe>(async ({ ctx, input }) =>
-      RecipesService.getBy('id', input.where.id)
+      RecipesService.getBy(
+        'slug' in input.where ? 'slug' : 'id',
+        'slug' in input.where ? input.where.slug : input.where.id,
+        createRequestPocketbaseRequestOptions(ctx)
+      )
     ),
 
   metrics: metricsRouter,
