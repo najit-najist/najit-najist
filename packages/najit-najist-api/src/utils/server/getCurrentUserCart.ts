@@ -1,4 +1,3 @@
-import { PocketbaseCollections } from '@custom-types';
 import { pocketbase } from '@najit-najist/pb';
 import { Product, ProductPrice, ProductStock } from '@schemas';
 
@@ -16,7 +15,7 @@ type UserCartWithExpand = Omit<UserCart, 'products'> & {
         product: Omit<Product, 'price' | 'stock'> & {
           expand: {
             'product_prices(product)': ProductPrice;
-            'product_stock(product)': ProductStock;
+            'product_stock(product)'?: ProductStock;
           };
         };
       };
