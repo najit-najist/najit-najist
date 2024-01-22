@@ -39,6 +39,7 @@ const nextConfig = {
   },
   async rewrites() {
     const pocketbaseOrigin = String(process.env.POCKETBASE_ORIGIN);
+    console.log({ pocketbaseOrigin });
 
     return [
       {
