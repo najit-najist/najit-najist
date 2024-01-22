@@ -171,13 +171,13 @@ export const ProductPageManageContent: FC<
             <TitleEdit />
           )}
 
-          <div className="flex flex-wrap items-center grid-cols-2 gap-2 mt-2">
-            <div
-              className={clsx(
-                'flex',
-                process.env.NODE_ENV === 'production' ? 'opacity-0' : ''
-              )}
-            >
+          <div
+            className={clsx(
+              'flex flex-wrap items-center grid-cols-2 gap-2 mt-2',
+              process.env.NODE_ENV === 'production' ? 'opacity-0' : ''
+            )}
+          >
+            <div className={clsx('flex')}>
               {star}
               {star}
               {star}
