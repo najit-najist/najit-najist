@@ -1,5 +1,4 @@
 import { Column, Row } from '@react-email/components';
-import clsx from 'clsx';
 import { FC, PropsWithChildren } from 'react';
 
 export const CenteredRow: FC<PropsWithChildren<{ className?: string }>> = ({
@@ -8,11 +7,11 @@ export const CenteredRow: FC<PropsWithChildren<{ className?: string }>> = ({
 }) => {
   return (
     <Row>
-      <Column className="w-1 sm:w-auto" />
-      <Column className={clsx('sm:w-[450px] w-full', className)}>
+      <Column className="w-auto px-0.5" />
+      <Column width={450} className={className}>
         {children}
       </Column>
-      <Column className="w-1 sm:w-auto" />
+      <Column className="w-auto px-0.5" />
     </Row>
   );
 };

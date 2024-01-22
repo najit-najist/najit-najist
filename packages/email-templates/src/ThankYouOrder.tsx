@@ -36,7 +36,7 @@ const ItemListItem: FC<
     <Section className={className}>
       {skipSpacing ? null : <Spacing size="md" />}
       <Row>
-        <Column className="w-2 sm:w-6" />
+        <Column className="w-4" />
         {children}
         <Column className="w-3" />
       </Row>

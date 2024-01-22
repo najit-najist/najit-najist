@@ -12,13 +12,14 @@ export const PaperColumn: FC<
       'ref'
     >
   >
-> = ({ children, className }) => {
+> = ({ children, className, ...rest }) => {
   return (
     <Column
       className={clsx(
         'border-solid border-2 border-gray-200 rounded-md bg-white',
         className
       )}
+      {...rest}
     >
       {children}
     </Column>

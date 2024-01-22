@@ -45,8 +45,8 @@ export const Layout: FC<
             }}
           ></style>
         </Head>
-        <main className="bg-white px-3 sm:px-6 py-8 sm:py-20">
-          <div className="px-5 py-2 sm:py-5">
+        <main className="bg-white px-4 py-10">
+          <div className="px-5 py-4">
             <Img
               src={`${siteOrigin}/logo.png`}
               className="w-full max-w-[150px] h-auto mx-auto rounded-md block"

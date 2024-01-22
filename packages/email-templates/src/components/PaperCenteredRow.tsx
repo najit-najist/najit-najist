@@ -1,6 +1,5 @@
 import { Column } from '@react-email/column';
 import { Row } from '@react-email/components';
-import clsx from 'clsx';
 import { FC, PropsWithChildren } from 'react';
 
 import { PaperColumn } from './PaperColumn';
@@ -10,11 +9,11 @@ export const PaperCenteredRow: FC<
 > = ({ children, className }) => {
   return (
     <Row>
-      <Column className="w-1 sm:w-auto" />
-      <PaperColumn className={clsx('sm:w-[450px] w-full', className)}>
+      <Column className="w-auto px-0.5" />
+      <PaperColumn width={450} className={className}>
         {children}
       </PaperColumn>
-      <Column className="w-1 sm:w-auto" />
+      <Column className="w-auto px-0.5" />
     </Row>
   );
 };
