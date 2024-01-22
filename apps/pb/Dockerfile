@@ -7,6 +7,7 @@ RUN wget https://github.com/pocketbase/pocketbase/releases/download/v${VERSION}/
     && chmod +x /pocketbase
 
 COPY /apps/pb/migrations /migrations
+COPY /apps/pb/pb_hooks /pb_hooks
 
 FROM alpine:3
 RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
@@ -17,5 +18,6 @@ WORKDIR /usr/local/bin/
 
 COPY --from=downloader /pocketbase /pocketbase
 COPY --from=downloader /migrations /migrations
+COPY --from=downloader /pb_hooks /pb_hooks
 
 ENTRYPOINT ["/pocketbase", "serve", "--http=0.0.0.0:8090", "--dir=/pb_data", "--publicDir=/pb_public", "--migrationsDir=/migrations", "--encryptionEnv=SESSION_SECRET"]
