@@ -1,6 +1,6 @@
 import { BottomLinks } from './components/BottomLinks';
-import { Title } from './components/Title';
 import { Form } from './components/Form';
+import { Title } from './components/Title';
 
 export const metadata = {
   title: 'Dokončení změny hesla',
@@ -12,7 +12,7 @@ export default function Page({ params }: { params: { token: string } }) {
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-6 px-4 shadow sm:rounded-lg sm:px-6">
           <Form token={params.token} />
         </div>
         <BottomLinks />

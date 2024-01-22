@@ -1,5 +1,6 @@
 'use client';
 
+import { PasswordStrengthMeter } from '@components/common/PasswordStrengthMeter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { finalizeResetPasswordSchema } from '@najit-najist/api';
 import { Button, PasswordInput } from '@najit-najist/ui';
@@ -29,7 +30,8 @@ export const Form: FC<{ token: string }> = ({ token }) => {
     },
   });
   const router = useRouter();
-  const { register, handleSubmit } = formMethods;
+  const { register, handleSubmit, formState, control } = formMethods;
+  const fieldsAreDisabled = formState.isSubmitting;
 
   const onSubmit = handleSubmit(async (values) => {
     await doFinalizePasswordReset(values);
@@ -51,9 +53,12 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             id="password"
             autoComplete="new-password"
             required
+            error={formState.errors.password}
+            disabled={fieldsAreDisabled}
             className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             {...register('password')}
           />
+          <PasswordStrengthMeter fieldName="password" control={control} />
         </div>
       </div>
 
@@ -69,6 +74,8 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             id="password-again"
             autoComplete="new-password"
             required
+            error={formState.errors.password}
+            disabled={fieldsAreDisabled}
             className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             {...register('passwordAgain')}
           />
@@ -76,8 +83,13 @@ export const Form: FC<{ token: string }> = ({ token }) => {
       </div>
 
       <div>
-        <Button type="submit" appearance="normal" className="shadow-sm w-full">
-          Změnit heslo
+        <Button
+          type="submit"
+          appearance="normal"
+          className="shadow-sm w-full"
+          disabled={fieldsAreDisabled}
+        >
+          {fieldsAreDisabled ? 'Odesílám' : 'Změnit heslo'}
         </Button>
       </div>
     </form>
