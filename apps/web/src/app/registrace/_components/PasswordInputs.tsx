@@ -1,53 +1,9 @@
-import { PasswordStrength, getPasswordStrength } from '@najit-najist/security';
+import { PasswordStrengthMeter } from '@components/common/PasswordStrengthMeter';
 import { PasswordInput } from '@najit-najist/ui';
-import clsx from 'clsx';
-import { FC, useMemo } from 'react';
+import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormValues } from '../_types/FormValues';
-
-const passwordStrengths = [
-  PasswordStrength.BAD,
-  PasswordStrength.NORMAL,
-  PasswordStrength.GOOD,
-  PasswordStrength.BEST,
-];
-
-const passwordStrengthToColor = {
-  [PasswordStrength.BAD]: 'bg-red-600',
-  [PasswordStrength.NORMAL]: 'bg-orange-400',
-  [PasswordStrength.GOOD]: 'bg-yellow-400',
-  [PasswordStrength.BEST]: 'bg-green-400',
-};
-
-const PasswordStrengthMeter: FC = () => {
-  const { watch } = useFormContext<FormValues>();
-  const passwordValue = watch('password');
-  const passwordStrength = useMemo(
-    () => (passwordValue ? getPasswordStrength(passwordValue) : undefined),
-    [passwordValue]
-  );
-  const maxItemsShown = passwordStrengths.findIndex(
-    (value) => value === passwordStrength?.score
-  );
-
-  return passwordValue && passwordStrength ? (
-    <div className="flex gap-2 mt-2.5">
-      {passwordStrengths.map((key, index) => (
-        <div
-          key={key}
-          className={clsx([
-            'h-1 w-full rounded-md duration-300 transition-all',
-            maxItemsShown < index
-              ? 'bg-gray-200'
-              : passwordStrengthToColor[passwordStrength.score],
-            ,
-          ])}
-        />
-      ))}
-    </div>
-  ) : null;
-};
 
 export const PasswordInputs: FC = () => {
   const { formState, register } = useFormContext<FormValues>();
@@ -67,7 +23,7 @@ export const PasswordInputs: FC = () => {
           disabled={fieldsAreDisabled}
           {...register('password')}
         />
-        <PasswordStrengthMeter />
+        <PasswordStrengthMeter fieldName="password" />
       </div>
 
       <PasswordInput
