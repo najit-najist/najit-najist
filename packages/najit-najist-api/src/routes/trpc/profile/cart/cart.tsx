@@ -48,7 +48,7 @@ export const userCartRoutes = t.router({
           )
           .catch(() => undefined);
 
-        if (!productStock?.count) {
+        if (productStock?.count === 0) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Produkt není na skladě',
