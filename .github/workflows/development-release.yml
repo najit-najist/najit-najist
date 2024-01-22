@@ -149,7 +149,7 @@ jobs:
           build-args: |
             TURBO_TEAM=${{ secrets.TURBO_TEAM }}
             TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
-            POCKETBASE_ORIGIN="http://dev-pocketbase.web:8090"
+            POCKETBASE_ORIGIN=http://dev-pocketbase.web:8090
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku
