@@ -146,7 +146,7 @@ jobs:
           context: .
           push: true
           tags: ondrejlangr/najit-najist-web:dev-${{ github.sha }}
-          build-args: TURBO_TEAM=${{ secrets.TURBO_TEAM }} TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+          build-args: TURBO_TEAM=${{ secrets.TURBO_TEAM }} TURBO_TOKEN=${{ secrets.TURBO_TOKEN }} POCKETBASE_ORIGIN=http://dev-pocketbase.web:8090
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku
