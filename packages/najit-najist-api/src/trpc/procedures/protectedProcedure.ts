@@ -1,24 +1,19 @@
-import { t } from '../instance';
-import { TRPCError } from '@trpc/server';
-import { isTokenExpired, pocketbase } from '@najit-najist/pb';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import {
-  deserializePocketToken,
-  getLoggedInUser,
-  getSessionFromCookies,
-  setSessionToCookies,
-} from '@utils';
-import { AuthService } from '@services';
 import { UserRoles } from '@schemas';
+import { TRPCError } from '@trpc/server';
+import { getSessionFromCookies, setSessionToCookies } from '@utils';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+
+import { t } from '../instance';
+import { userMiddleware } from './publicProcedure';
 
 const UNAUTHORIZED_ERROR = new TRPCError({
   code: 'UNAUTHORIZED',
 });
 
-export const isAuthed = t.middleware(async ({ next, ctx }) => {
+export const isAuthed = userMiddleware.unstable_pipe(async ({ next, ctx }) => {
   const session = await getSessionFromCookies();
 
-  if (!session.authContent || isTokenExpired(session.authContent.token)) {
+  if (!ctx.sessionData) {
     // If token is expired then its probably good idea to destroy auth session and return unauthorized
     setSessionToCookies(
       { ...session, authContent: undefined },
@@ -28,17 +23,8 @@ export const isAuthed = t.middleware(async ({ next, ctx }) => {
     throw UNAUTHORIZED_ERROR;
   }
 
-  const result = deserializePocketToken(session.authContent.token);
-  await AuthService.authPocketBase({ authContent: session.authContent });
-
   return next({
-    ctx: {
-      sessionData: {
-        userId: result.id,
-        authModel: result.collectionId,
-        user: await getLoggedInUser({ authenticateApi: false }),
-      },
-    },
+    ctx,
   });
 });
 

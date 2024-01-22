@@ -1,0 +1,17 @@
+{
+  "extends": "@najit-najist/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": false,
+    "module": "ESNext",
+    "target": "ESNext",
+    "outDir": "./dist",
+    "paths": {
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"]
+    }
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
+  "include": ["src"]
+}

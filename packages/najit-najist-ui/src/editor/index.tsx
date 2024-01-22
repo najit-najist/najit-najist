@@ -1,3 +1,3 @@
-export * from './BlockEditor';
-export * from './QuillEditor';
-export * from './types';
+export * from './BlockEditor/BlockEditor.js';
+export * from './QuillEditor.js';
+export * from './types.js';

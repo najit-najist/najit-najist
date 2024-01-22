@@ -1,23 +1,28 @@
 'use client';
 
-import { Button, Input, FormBreak } from '@najit-najist/ui';
-import { useRouter } from 'next/navigation';
-import { FC } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { trpc } from 'trpc';
-import { z } from 'zod';
-
-import { BottomLinks } from './Links';
-import { Title } from './Title';
+import { usePlausible } from '@hooks';
+import { registerUserSchema } from '@najit-najist/api';
+import {
+  Button,
+  Input,
+  FormBreak,
+  inputPrefixSuffixStyles,
+} from '@najit-najist/ui';
 import { CheckboxWrapper } from '@najit-najist/ui';
 import { Checkbox } from '@najit-najist/ui';
 import { TRPCClientError } from '@trpc/client';
-import { PasswordInputs } from './PasswordInputs';
+import { useRouter } from 'next/navigation';
+import { FC } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { trpc } from 'trpc';
+import { z } from 'zod';
+
 import { FormValues } from '../_types/FormValues';
-import { registerUserSchema } from '@najit-najist/api';
-import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
-import { usePlausible } from '@hooks';
+import { BottomLinks } from './Links';
+import { PasswordInputs } from './PasswordInputs';
+import { Title } from './Title';
 
 const schema = registerUserSchema
   .extend({
@@ -106,6 +111,7 @@ export const Content: FC = () => {
               <FormBreak label="Adresa" />
 
               <MunicipalitySelect
+                size={null}
                 className="mt-3"
                 label="Obec"
                 name="address.municipality"
@@ -132,7 +138,16 @@ export const Content: FC = () => {
                 id="telephoneNumber"
                 type="string"
                 autoComplete="tel-national"
-                prefix="+420"
+                prefix={
+                  <span
+                    className={inputPrefixSuffixStyles({
+                      type: 'prefix',
+                      className: 'px-2 flex items-center justify-center',
+                    })}
+                  >
+                    +420
+                  </span>
+                }
                 inputMode="numeric"
                 error={formState.errors.telephoneNumber}
                 disabled={fieldsAreDisabled}

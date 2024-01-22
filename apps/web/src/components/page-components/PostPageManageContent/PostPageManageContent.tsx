@@ -1,18 +1,20 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
-import HTMLReactParser from 'html-react-parser';
+import { Breadcrumbs } from '@najit-najist/ui';
 import { BlockEditorRenderer } from '@najit-najist/ui/editor-renderer';
 import dayjs from 'dayjs';
+import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import { FC } from 'react';
+
+import { EditorHeader } from './EditorHeader';
 import { ContentEdit } from './editorComponents/ContentEdit';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { Form } from './editorComponents/Form';
 import { ImageEdit } from './editorComponents/ImageEdit';
 import { PublishedAtEdit } from './editorComponents/PublishedAtEdit';
 import { TitleEdit } from './editorComponents/TitleEdit';
-import { EditorHeader } from './EditorHeader';
 
 export type PostPageManageContent = { isEditorHeaderShown?: boolean } & (
   | { viewType: 'edit'; post: Post }
@@ -26,19 +28,40 @@ export type PostPageManageContent = { isEditorHeaderShown?: boolean } & (
 export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
   const content = (
     <>
+      <div className="container mt-6 mb-3">
+        <Breadcrumbs
+          items={[
+            { link: '/clanky', text: 'Články' },
+            ...(props.viewType !== 'create'
+              ? [
+                  {
+                    link: `/clanky/${props.post.slug}`,
+                    text: props.post.title,
+                    active: true,
+                  },
+                ]
+              : [
+                  {
+                    link: '/clanky/novy',
+                    text: 'Nový',
+                    active: true,
+                  },
+                ]),
+          ]}
+        />
+      </div>
       <div>
         <PageHeader className="container">
           {props.viewType == 'view' ? (
-            props.post.publishedAt ? (
-              <time
-                dateTime={String(props.post.publishedAt)}
-                className="text-gray-500 text-xs md:text-inherit font-semibold"
-              >
-                {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
-              </time>
-            ) : (
-              <p className="text-gray-500 font-semibold">Nepublikováno</p>
-            )
+            <div className="text-gray-500 text-xs md:text-inherit -mt-2 block relative">
+              {props.post.publishedAt ? (
+                <time dateTime={String(props.post.publishedAt)} className="">
+                  {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
+                </time>
+              ) : (
+                <p className="text-red-500">Nepublikováno</p>
+              )}
+            </div>
           ) : (
             <PublishedAtEdit />
           )}

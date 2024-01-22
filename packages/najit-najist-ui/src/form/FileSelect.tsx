@@ -1,7 +1,10 @@
+'use client';
+
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import { cva, VariantProps } from 'class-variance-authority';
-import { FC, forwardRef, useCallback, useId, useRef } from 'react';
-import { FormControlWrapper } from './FormControlWrapper';
+import { forwardRef, useCallback, useId, useRef } from 'react';
+
+import { FormControlWrapper } from './FormControlWrapper.js';
 
 const rootStyles = cva('mt-2 text-sm text-red-600');
 

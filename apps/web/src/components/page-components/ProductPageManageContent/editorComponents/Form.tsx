@@ -6,10 +6,12 @@ import {
   createProductSchema,
   updateProductSchema,
 } from '@najit-najist/api';
+import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+
 import { ProductFormData } from '../_types';
 
 export const Form: FC<
@@ -19,13 +21,11 @@ export const Form: FC<
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
       images: [],
-      // TODO: implement stock
-      stock: {
-        count: 0,
-      },
+      stock: null,
       price: {
         value: 0,
       },
+      onlyDeliveryMethods: [],
       ...product,
     },
     resolver: zodResolver(
@@ -45,8 +45,7 @@ export const Form: FC<
 
       if (viewType === 'edit') {
         const { id } = product!;
-
-        const result = await updateProduct({
+        const updateProductPromise = updateProduct({
           id,
           payload: {
             name: values.name,
@@ -56,12 +55,21 @@ export const Form: FC<
             stock: values.stock,
             publishedAt,
             category: values.category,
+            onlyDeliveryMethods: values.onlyDeliveryMethods,
           },
         });
 
+        toast.promise(updateProductPromise, {
+          loading: 'Ukládám úpravy',
+          success: <b>Produkt upraven!</b>,
+          error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
+        });
+
+        const result = await updateProductPromise;
+
         router.push(`/produkty/${result.slug}?editor=true`);
       } else if (viewType === 'create') {
-        const data = await createProduct({
+        const createProductPromise = createProduct({
           name: values.name,
           description: values.description,
           images: values.images,
@@ -69,7 +77,16 @@ export const Form: FC<
           stock: values.stock,
           publishedAt,
           category: values.category,
+          onlyDeliveryMethods: values.onlyDeliveryMethods,
         });
+
+        toast.promise(createProductPromise, {
+          loading: 'Vytvářím produkt',
+          success: <b>Produkt vytvořen!</b>,
+          error: (error) => <b>Nemohli produkt vytvořit. {error.message}</b>,
+        });
+
+        const data = await createProductPromise;
 
         router.push(`/produkty/${data.slug}`);
       }

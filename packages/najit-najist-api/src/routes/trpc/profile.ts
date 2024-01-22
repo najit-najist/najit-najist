@@ -1,5 +1,8 @@
-import { ErrorCodes, PocketbaseCollections } from '@custom-types';
-import { t } from '@trpc';
+import { ErrorCodes } from '@custom-types';
+import { ApplicationError } from '@errors';
+import { logger } from '@logger';
+import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+import { pocketbaseByCollections } from '@najit-najist/pb';
 import {
   finalizeResetPasswordSchema,
   loginInputSchema,
@@ -12,18 +15,21 @@ import {
   UserStates,
   verifyRegistrationFromPreviewInputSchema,
 } from '@schemas';
-import { TRPCError } from '@trpc/server';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { ApplicationError } from '@errors';
-import { z } from 'zod';
-import { logger } from '@logger';
+import { UserService } from '@services';
+import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { TRPCError } from '@trpc/server';
 import { AvailableModels, setSessionToCookies } from '@utils';
-import { AuthService, PreviewSubscribersService, UserService } from '@services';
-import { userLikedRoutes } from './profile/liked';
-import omit from 'lodash/omit';
 import { loginWithAccount } from '@utils/pocketbase';
+import dayjs from 'dayjs';
+import omit from 'lodash/omit';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { z } from 'zod';
+
+import { AUTHORIZATION_HEADER } from '../../constants';
+import { createRequestPocketbaseRequestOptions } from '../../server';
+import { userCartRoutes } from './profile/cart/cart';
+import { userLikedRoutes } from './profile/liked';
 
 const INVALID_CREDENTIALS_ERROR = new TRPCError({
   code: 'BAD_REQUEST',
@@ -52,9 +58,11 @@ const passwordResetRoutes = t.router({
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbase
-          .collection(AvailableModels.USER)
-          .confirmPasswordReset(input.token, input.password, input.password);
+        await pocketbaseByCollections.users.confirmPasswordReset(
+          input.token,
+          input.password,
+          input.password
+        );
       } catch (error) {
         logger.info({ error }, 'User password reset finalize failed');
 
@@ -69,17 +77,28 @@ const passwordResetRoutes = t.router({
 
 export const profileRouter = t.router({
   liked: userLikedRoutes,
+  cart: userCartRoutes,
 
   update: protectedProcedure
     .input(updateProfileSchema)
     .output(userSchema)
     .mutation(async ({ ctx, input }) =>
-      UserService.update({ id: ctx.sessionData.userId }, input)
+      UserService.update(
+        { id: ctx.sessionData.userId },
+        input,
+        createRequestPocketbaseRequestOptions(ctx)
+      )
     ),
 
   me: protectedProcedure
     .output(userSchema)
-    .query(async ({ ctx }) => UserService.getBy('id', ctx.sessionData.userId)),
+    .query(async ({ ctx }) =>
+      UserService.getBy(
+        'id',
+        ctx.sessionData.userId,
+        createRequestPocketbaseRequestOptions(ctx)
+      )
+    ),
 
   login: t.procedure
     .input(loginInputSchema)
@@ -89,9 +108,11 @@ export const profileRouter = t.router({
 
       try {
         // Try to log in
-        const { record } = await pocketbase
-          .collection(AvailableModels.USER)
-          .authWithPassword<User>(input.email, input.password);
+        const { record } =
+          await pocketbaseByCollections.users.authWithPassword<User>(
+            input.email,
+            input.password
+          );
 
         user = record;
       } catch (error) {
@@ -139,6 +160,26 @@ export const profileRouter = t.router({
       }
 
       logger.info({ email: input.email }, 'User successfully logged in');
+
+      try {
+        await pocketbaseByCollections.users.update(
+          user.id,
+          {
+            lastLoggedIn: dayjs().utc().format(),
+          },
+          {
+            headers: {
+              [AUTHORIZATION_HEADER]: token,
+            },
+          }
+        );
+      } catch (error) {
+        logger.error(
+          { email: input.email, error },
+          'Cannot update user lastLoggedIn'
+        );
+      }
+
       // add user token to session
       await setSessionToCookies(
         {
@@ -164,10 +205,14 @@ export const profileRouter = t.router({
   register: t.procedure
     .input(registerUserSchema)
     .mutation(async ({ ctx, input }) => {
-      await loginWithAccount('contactForm');
+      const pbAccount = await loginWithAccount('contactForm');
 
       try {
-        const user = await UserService.create(input, true);
+        const user = await UserService.create(input, true, {
+          headers: {
+            [AUTHORIZATION_HEADER]: pbAccount.token,
+          },
+        });
         logger.info(
           {
             user: omit(user, ['password']),
@@ -175,14 +220,11 @@ export const profileRouter = t.router({
           },
           'Registering user - user created'
         );
-        AuthService.clearAuthPocketBase();
 
         return {
           email: user.email,
         };
       } catch (error) {
-        AuthService.clearAuthPocketBase();
-
         if (error instanceof ClientResponseError) {
           logger.error(
             { error, email: { ...input, password: undefined } },
@@ -221,9 +263,7 @@ export const profileRouter = t.router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbase
-          .collection(PocketbaseCollections.USERS)
-          .confirmVerification(input.token);
+        await pocketbaseByCollections.users.confirmVerification(input.token);
 
         logger.info({}, 'Registering user - verify - finished');
 
@@ -247,7 +287,34 @@ export const profileRouter = t.router({
   verifyRegistrationFromPreview: t.procedure
     .input(verifyRegistrationFromPreviewInputSchema)
     .mutation(async ({ ctx, input }) => {
-      await PreviewSubscribersService.finishRegistration(input);
+      const { address, password, token } = input;
+      const pbAccount = await loginWithAccount('contactForm');
+      const requestOptions = {
+        headers: {
+          [AUTHORIZATION_HEADER]: pbAccount.token,
+        },
+      };
+
+      const user = await UserService.getBy(
+        'preregisteredUserToken',
+        token,
+        requestOptions
+      );
+
+      if (user.verified) {
+        throw new Error('Uživatel je již aktivován');
+      }
+
+      await UserService.update(
+        { id: user.id },
+        {
+          address,
+          password,
+          status: UserStates.ACTIVE,
+          verified: true,
+        },
+        requestOptions
+      );
 
       return null;
     }),

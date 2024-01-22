@@ -1,11 +1,11 @@
 'use client';
 
+import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { User } from '@najit-najist/api';
+import { trpc } from '@trpc';
+import { getChangedValues } from '@utils';
 import { FC, useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
-import { getChangedValues } from '@utils';
-import { trpc } from '@trpc';
 
 export const Content: FC<{ user: User }> = ({ user }) => {
   const { mutateAsync: updateProfile } = trpc.users.update.useMutation();
@@ -31,11 +31,12 @@ export const Content: FC<{ user: User }> = ({ user }) => {
 
   return (
     <FormProvider {...formMethods}>
-      <EditUserUnderPage
-        viewType="edit"
-        userId={user.id}
+      <form
         onSubmit={handleSubmit(onSubmit)}
-      />
+        className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
+      >
+        <EditUserUnderPage viewType="edit" userId={user.id} />
+      </form>
     </FormProvider>
   );
 };

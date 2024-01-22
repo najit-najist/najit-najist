@@ -1,7 +1,7 @@
 # Global variables
 ARG NODE_VERSION=18
 ARG ALPINE_VERSION=3.18
-ARG POCKETBASE_ORIGIN=http://localhost:3001
+ARG POCKETBASE_ORIGIN
 ARG TURBO_TEAM
 ARG TURBO_TOKEN
 
@@ -81,9 +81,17 @@ COPY --from=builder /workspace-builder/packages/najit-najist-api/package.json \
                     /workspace-builder/packages/najit-najist-api/dist/ \
                     ./packages/najit-najist-api/
 
+COPY --from=builder /workspace-builder/packages/security/package.json \
+                    /workspace-builder/packages/security/dist/ \
+                    ./packages/security/
+
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
                     /workspace-builder/packages/email-templates/dist/ \
                     ./packages/email-templates/
+
+COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/package.json \
+                    /workspace-builder/packages/najit-najist-tailwind-plugin/index.cjs \
+                    ./packages/najit-najist-tailwind-plugin/
 
 # Include ui package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/packages/najit-najist-ui/package.json \

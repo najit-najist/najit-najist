@@ -1,4 +1,6 @@
-import clsx from 'clsx';
+'use client';
+
+import { cx } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
   FC,
@@ -8,8 +10,9 @@ import {
   useId,
 } from 'react';
 import { FieldError } from 'react-hook-form';
-import { ErrorMessage } from './ErrorMessage';
-import { Label } from './Label';
+
+import { ErrorMessage } from './ErrorMessage.js';
+import { Label } from './Label.js';
 
 export interface FormControlWrapperBaseProps {
   title?: string;
@@ -63,7 +66,7 @@ export const FormControlWrapper: FC<
       // @ts-ignore
       <label
         htmlFor={id}
-        className={clsx('cursor-pointer', rest.className)}
+        className={cx('cursor-pointer', rest.className)}
         {...rest}
       >
         {content}

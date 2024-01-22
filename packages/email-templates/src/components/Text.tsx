@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { FC } from 'react';
 
 export type Props = TextProps & {
-  size?: 'normal' | 'small';
+  size?: 'normal' | 'small' | 'medium';
   color?: 'normal' | 'subtle';
   spacing?: boolean;
 };
@@ -11,6 +11,7 @@ export type Props = TextProps & {
 const sizeToClassName: Record<NonNullable<Props['size']>, string> = {
   normal: 'text-md',
   small: 'text-xs',
+  medium: 'text-lg',
 };
 
 const colorToClassName: Record<NonNullable<Props['color']>, string> = {

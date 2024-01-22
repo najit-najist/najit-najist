@@ -18,4 +18,11 @@ export enum PocketbaseCollections {
   PRODUCT_STOCK = 'product_stock',
   PRODUCT_PRICES = 'product_prices',
   PRODUCT_CATEGORIES = 'product_categories',
+
+  USER_CARTS = 'user_carts',
+  USER_CART_PRODUCTS = 'user_cart_products',
+
+  ORDERS = 'orders',
+  ORDER_PAYMENT_METHODS = 'order_payment_methods',
+  ORDER_DELIVERY_METHODS = 'order_delivery_methods',
 }

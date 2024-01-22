@@ -3,10 +3,10 @@
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import { AvailableModels, getFileUrl } from '@najit-najist/api';
 import clsx from 'clsx';
+import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
-import { useKeenSlider } from 'keen-slider/react.es';
 
 const arrowButtonClassName = clsx(
   'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r'
@@ -27,7 +27,10 @@ export const ImageSlider: FC<{
   return (
     <>
       <Link href={itemLink as any}>
-        <div ref={sliderRef} className="keen-slider h-full">
+        <div
+          ref={sliderRef}
+          className="keen-slider h-full rounded-lg overflow-hidden"
+        >
           {imageUrls.map((imageName) => (
             <div key={imageName} className="keen-slider__slide min-w-full">
               <Image

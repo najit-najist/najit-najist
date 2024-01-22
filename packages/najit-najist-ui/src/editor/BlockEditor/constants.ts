@@ -1,5 +1,4 @@
 // @ts-ignore
-import ParagraphPlugin from '@editorjs/paragraph';
 // @ts-ignore
 import DelimiterPlugin from '@editorjs/delimiter';
 // @ts-ignore
@@ -9,12 +8,15 @@ import LinkPlugin from '@editorjs/link';
 // @ts-ignore
 import ListPlugin from '@editorjs/nested-list';
 // @ts-ignore
+import ParagraphPlugin from '@editorjs/paragraph';
+// @ts-ignore
 import UnderlinePlugin from '@editorjs/underline';
-import { Tool } from '../types';
+
 import {
   AVAILABLE_LEVELS,
   DEFAULT_LEVEL,
-} from '../../BlockEditorRenderer/renderers';
+} from '../DataRenderer/renderers/HeaderRenderer.js';
+import { Tool } from '../types.js';
 
 export const EDITORJS_TOOLS = {
   paragraph: {

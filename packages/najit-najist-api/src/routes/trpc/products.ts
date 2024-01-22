@@ -19,24 +19,35 @@ import {
 import { ProductService } from '@services/Product.service';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
+import { publicProcedure } from '@trpc-procedures/publicProcedure';
 import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { createRequestPocketbaseRequestOptions } from '../../server';
+
 const getRoutes = t.router({
-  one: t.procedure.input(getOneProductSchema).query(async ({ input }) => {
-    const by = 'id' in input ? 'id' : 'slug';
-    return ProductService.getBy(by, (input as any)[by]);
-  }),
-  many: t.procedure
+  one: publicProcedure
+    .input(getOneProductSchema)
+    .query(async ({ input, ctx }) => {
+      const by = 'id' in input ? 'id' : 'slug';
+      return ProductService.getBy(
+        by,
+        (input as any)[by],
+        createRequestPocketbaseRequestOptions(ctx)
+      );
+    }),
+  many: publicProcedure
     .input(getManyProductsSchema)
-    .query(async ({ input }) => ProductService.getMany(input)),
+    .query(async ({ input, ctx }) =>
+      ProductService.getMany(input, createRequestPocketbaseRequestOptions(ctx))
+    ),
 });
 
 const getCategoriesRoutes = t.router({
   many: t.procedure
     .input(getManyProductCategoriesSchema.default({}))
-    .query(({ input }) => {
+    .query(({ input, ctx }) => {
       const { page, perPage } = input ?? {};
 
       try {
@@ -54,12 +65,15 @@ const categoriesRoutes = t.router({
 
   create: onlyAdminProcedure
     .input(createProductCategorySchema.omit({ slug: true }))
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
       const { name } = input;
       try {
         return await pocketbase
           .collection(PocketbaseCollections.PRODUCT_CATEGORIES)
-          .create({ name, slug: slugifyString(name) });
+          .create(
+            { name, slug: slugifyString(name) },
+            createRequestPocketbaseRequestOptions(ctx)
+          );
       } catch (error) {
         if (error instanceof ClientResponseError) {
           const data = error.data.data;
@@ -88,10 +102,13 @@ export const productsRoutes = t.router({
   create: onlyAdminProcedure
     .input(createProductSchema)
     .mutation(async ({ input, ctx }) => {
-      const result = await ProductService.create({
-        ...input,
-        createdBy: ctx.sessionData.userId,
-      });
+      const result = await ProductService.create(
+        {
+          ...input,
+          createdBy: ctx.sessionData.userId,
+        },
+        createRequestPocketbaseRequestOptions(ctx)
+      );
 
       revalidatePath(`/produkty`);
       return result;
@@ -102,7 +119,7 @@ export const productsRoutes = t.router({
     .mutation(async ({ input, ctx }) => {
       await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
-        .delete(input.id);
+        .delete(input.id, createRequestPocketbaseRequestOptions(ctx));
 
       revalidatePath(`/produkty/${input.slug}`);
       revalidatePath(`/produkty`);
@@ -112,8 +129,12 @@ export const productsRoutes = t.router({
 
   update: onlyAdminProcedure
     .input(z.object({ id: z.string(), payload: updateProductSchema }))
-    .mutation(async ({ input }) => {
-      const result = await ProductService.update(input.id, input.payload);
+    .mutation(async ({ input, ctx }) => {
+      const result = await ProductService.update(
+        input.id,
+        input.payload,
+        createRequestPocketbaseRequestOptions(ctx)
+      );
       revalidatePath(`/produkty/${result.slug}`);
       revalidatePath(`/produkty`);
 

@@ -1,16 +1,16 @@
 'use client';
 
-import { HeartIcon } from '@heroicons/react/24/solid';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
-import { Button, ButtonProps } from '@najit-najist/ui';
-import { FC } from 'react';
-import clsx from 'clsx';
-import { trpc } from '@trpc';
-import { Recipe } from '@najit-najist/api';
+import { HeartIcon } from '@heroicons/react/24/solid';
 import { usePlausible } from '@hooks';
+import { Recipe } from '@najit-najist/api';
+import { Button, ButtonProps } from '@najit-najist/ui';
+import { trpc } from '@trpc';
+import clsx from 'clsx';
+import { FC } from 'react';
 
 const CustomButton: FC<
-  Omit<ButtonProps, 'color' | 'appearance' | 'ref'> & {
+  Omit<ButtonProps, 'color' | 'appearance' | 'ref' | 'icon'> & {
     icon: typeof HeartIcon;
     outlinedIcon: typeof HeartIconOutline;
     isSubmitting?: boolean;

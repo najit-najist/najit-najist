@@ -1,3 +1,4 @@
+export * from './orders';
 export * from './posts';
 export * from './products';
 export * from './profile';
@@ -16,6 +17,5 @@ export * from './newsletterSubscription.schema';
 export * from './previewSubscribers.schema.js';
 export * from './user.schema';
 export * from './zodImage';
-export * from './zodPassword';
 export * from './zodPublishedAt';
 export * from './zodSlug';

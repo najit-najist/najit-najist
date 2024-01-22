@@ -30,7 +30,7 @@ export const HeaderRenderer: FC<{ data: HeaderBlockData }> = ({ data }) => {
 
   return (
     <Tag className={styles({ level })}>
-      {data?.text && HTMLReactParser(data.text)}
+      {data?.text && HTMLReactParser.default(data.text)}
     </Tag>
   );
 };

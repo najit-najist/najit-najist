@@ -1,1 +1,1 @@
-export * from './BlockEditorRenderer';
+export * from './BlockEditorRenderer.js';

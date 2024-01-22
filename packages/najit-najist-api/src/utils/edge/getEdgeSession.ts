@@ -1,4 +1,4 @@
-import { config } from 'config';
+import { config } from '@config';
 import { getIronSession } from 'iron-session/edge';
 import { NextRequest, NextResponse } from 'next/server';
 

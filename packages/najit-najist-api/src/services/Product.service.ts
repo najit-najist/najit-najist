@@ -1,7 +1,15 @@
 import { ErrorCodes, PocketbaseCollections } from '@custom-types';
 import { ApplicationError } from '@errors';
 import { logger } from '@logger';
-import { ClientResponseError, ListResult, pocketbase } from '@najit-najist/pb';
+import {
+  ClientResponseError,
+  CommonOptions,
+  ListResult,
+  RecordListOptions,
+  RecordOptions,
+  pocketbase,
+  pocketbaseByCollections,
+} from '@najit-najist/pb';
 import {
   CreateProduct,
   GetManyProducts,
@@ -13,6 +21,11 @@ import {
   User,
 } from '@schemas';
 import { slugifyString } from '@utils';
+import {
+  PocketbaseFilterItemAsObject,
+  createPocketbaseFilters,
+} from '@utils/createPocketbaseFilters';
+import { insertBetween } from '@utils/insertBetween';
 import { objectToFormData } from '@utils/internal';
 
 type GetByType = keyof Pick<Product, 'id' | 'slug'>;
@@ -25,7 +38,7 @@ type ProductWithExpand = Omit<Product, 'category' | 'price' | 'stock'> & {
   expand: {
     category: ProductCategory;
     'product_prices(product)': ProductPrice;
-    'product_stock(product)': ProductStock;
+    'product_stock(product)'?: ProductStock;
   };
 };
 
@@ -50,21 +63,39 @@ export class ProductService {
 
   static async update(
     id: string,
-    { price, stock, name, category, ...input }: UpdateProduct
+    { price, stock, name, category, ...input }: UpdateProduct,
+    requestOptions?: RecordOptions
   ): Promise<Product> {
     try {
       if (price) {
         const { id: priceId, ...priceUpdatePayload } = price;
         await pocketbase
           .collection(PocketbaseCollections.PRODUCT_PRICES)
-          .update(priceId, priceUpdatePayload);
+          .update(priceId, priceUpdatePayload, requestOptions);
       }
 
       if (stock) {
         const { id: stockId, ...stockUpdatePayload } = stock;
         await pocketbase
           .collection(PocketbaseCollections.PRODUCT_STOCK)
-          .update(stockId, stockUpdatePayload);
+          .update(stockId, stockUpdatePayload, requestOptions);
+      } else if (stock === null) {
+        const existingStock = await pocketbaseByCollections.productStocks
+          .getFirstListItem(`product="${id}"`, requestOptions)
+          .catch((error) => {
+            logger.error(
+              error,
+              'Failed to remove product stock as its probably missign'
+            );
+            return undefined;
+          });
+
+        if (existingStock) {
+          await pocketbaseByCollections.productStocks.delete(
+            existingStock.id,
+            requestOptions
+          );
+        }
       }
 
       return this.mapExpandToResponse(
@@ -75,7 +106,7 @@ export class ProductService {
             ...(name ? { slug: slugifyString(name), name } : null),
             ...(category ? { category: category.id } : null),
           }),
-          { expand: BASE_EXPAND }
+          { ...requestOptions, expand: BASE_EXPAND }
         )
       );
     } catch (error) {
@@ -93,13 +124,16 @@ export class ProductService {
     }
   }
 
-  static async create({
-    price,
-    stock,
-    name,
-    category,
-    ...input
-  }: CreateProduct & { createdBy: User['id'] }): Promise<Product> {
+  static async create(
+    {
+      price,
+      stock,
+      name,
+      category,
+      ...input
+    }: CreateProduct & { createdBy: User['id'] },
+    requestOptions?: CommonOptions
+  ): Promise<Product> {
     let createdProduct: ProductWithExpand | undefined = undefined;
 
     try {
@@ -111,16 +145,25 @@ export class ProductService {
             ...(name ? { slug: slugifyString(name), name } : null),
             ...(category ? { category: category.id } : null),
           }),
-          { expand: BASE_EXPAND }
+          { expand: BASE_EXPAND, ...requestOptions }
         );
 
       const createdProductPrice = await pocketbase
         .collection(PocketbaseCollections.PRODUCT_PRICES)
-        .create<ProductPrice>({ ...price, product: createdProduct.id });
+        .create<ProductPrice>(
+          { ...price, product: createdProduct.id },
+          requestOptions
+        );
 
-      const createdProductStock = await pocketbase
-        .collection(PocketbaseCollections.PRODUCT_STOCK)
-        .create<ProductStock>({ ...stock, product: createdProduct.id });
+      let createdProductStock = undefined;
+      if (stock) {
+        createdProductStock = await pocketbase
+          .collection(PocketbaseCollections.PRODUCT_STOCK)
+          .create<ProductStock>(
+            { ...stock, product: createdProduct.id },
+            requestOptions
+          );
+      }
 
       return this.mapExpandToResponse({
         ...createdProduct,
@@ -147,9 +190,9 @@ export class ProductService {
       }
 
       if (createdProduct) {
-        pocketbase
+        await pocketbase
           .collection(PocketbaseCollections.PRODUCTS)
-          .delete(createdProduct.id)
+          .delete(createdProduct.id, requestOptions)
           .catch((removalError) => {
             logger.error(
               {
@@ -164,13 +207,18 @@ export class ProductService {
     }
   }
 
-  static async getBy(type: GetByType, value: any): Promise<Product> {
+  static async getBy(
+    type: GetByType,
+    value: any,
+    requestOptions?: Omit<RecordListOptions, 'expand'>
+  ): Promise<Product> {
     try {
       return this.mapExpandToResponse(
         await pocketbase
           .collection(PocketbaseCollections.PRODUCTS)
           .getFirstListItem<ProductWithExpand>(`${type}="${value}"`, {
             expand: BASE_EXPAND,
+            ...requestOptions,
           })
       );
     } catch (error) {
@@ -189,26 +237,45 @@ export class ProductService {
   }
 
   static async getMany(
-    options?: GetManyProducts
+    options?: GetManyProducts & { otherFilters?: string[] },
+    requestOpts?: Omit<RecordListOptions, 'expand' | 'filter'>
   ): Promise<ListResult<Product>> {
-    const { page = 1, perPage = 40, search, categorySlug } = options ?? {};
+    const {
+      page = 1,
+      perPage = 40,
+      search,
+      categorySlug,
+      otherFilters,
+    } = options ?? {};
 
     try {
-      const filter = [
-        // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
-        categorySlug ? `category.slug = '${categorySlug}'` : undefined,
-        search
-          ? `(name ~ '${search}' || description ~ '${search}')`
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join(' && ');
+      const filter = createPocketbaseFilters(
+        insertBetween(
+          [
+            // difficultySlug ? `difficulty.slug = '${difficultySlug}'` : undefined,
+            categorySlug &&
+              insertBetween(
+                categorySlug.map(
+                  (slug): PocketbaseFilterItemAsObject => ({
+                    leftSide: 'category.slug',
+                    rightSide: slug,
+                  })
+                ),
+                '||'
+              ),
+            ...(otherFilters ?? []),
+            search && `(name ~ '${search}' || description ~ '${search}')`,
+          ],
+          '&&'
+        )
+      );
 
       const result = await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
         .getList<ProductWithExpand>(page, perPage, {
           expand: BASE_EXPAND,
           filter,
+          ...requestOpts,
         });
 
       return { ...result, items: result.items.map(this.mapExpandToResponse) };

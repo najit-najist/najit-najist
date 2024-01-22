@@ -1,7 +1,7 @@
-import timezone from 'dayjs/plugin/timezone';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import utc from 'dayjs/plugin/utc';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -16,6 +16,7 @@ export * from './utils/isUserLoggedIn';
 export * from './utils/getSessionFromCookies';
 export * from './utils/deserializePocketToken';
 export * from './utils/server/getLoggedInUser';
+export * from './utils/pocketbase/loginWithAccount';
 export * from './utils/logoutUser';
 export type { PocketBase } from '@najit-najist/pb';
 

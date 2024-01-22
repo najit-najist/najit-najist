@@ -1,8 +1,12 @@
+import { WrapperProps } from '@react-editor-js/core';
 import { FC, useId } from 'react';
 import { createReactEditorJS } from 'react-editor-js';
-import { WrapperProps } from '@react-editor-js/core';
-import { EDITORJS_TOOLS } from './constants';
-import { FormControlWrapper, FormControlWrapperProps } from '../../form';
+
+import {
+  FormControlWrapper,
+  FormControlWrapperProps,
+} from '../../form/FormControlWrapper.js';
+import { EDITORJS_TOOLS } from './constants.js';
 
 export type BlockEditorProps = Omit<WrapperProps, 'tools'> &
   Pick<FormControlWrapperProps, 'title' | 'error'>;

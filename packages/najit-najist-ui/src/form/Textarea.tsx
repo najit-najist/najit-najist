@@ -6,8 +6,9 @@ import {
   useId,
 } from 'react';
 import { FieldError } from 'react-hook-form';
-import { FormControlWrapper } from './FormControlWrapper';
-import { inputStyles } from './Input';
+
+import { FormControlWrapper } from './FormControlWrapper.js';
+import { inputStyles } from './Input.js';
 
 type ParentProps = Omit<
   DetailedHTMLProps<

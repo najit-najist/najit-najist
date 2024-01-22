@@ -80,7 +80,7 @@ jobs:
     name: "📍 Deploy Pocketbase to dokku"
     needs: [prepare, check-build]
     runs-on: ubuntu-latest
-    if: needs.prepare.outputs.pocketbase == 'true'
+    # if: needs.prepare.outputs.pocketbase == 'true'
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
@@ -120,7 +120,7 @@ jobs:
     name: "📍 Deploy web to dokku"
     needs: [prepare, check-build]
     runs-on: ubuntu-latest
-    if: needs.prepare.outputs.web == 'true' || needs.prepare.outputs.repo == 'true'
+    # if: needs.prepare.outputs.web == 'true' || needs.prepare.outputs.repo == 'true'
     steps:
       - name: Cloning repo
         uses: actions/checkout@v2
@@ -141,12 +141,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ondrejlangr/najit-najist-web:dev-${{ github.sha }}
-          build-args: TURBO_TEAM=${{ secrets.TURBO_TEAM }} TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+          build-args: |
+            TURBO_TEAM=${{ secrets.TURBO_TEAM }}
+            TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+            POCKETBASE_ORIGIN=http://dev-pocketbase.web:8090
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku

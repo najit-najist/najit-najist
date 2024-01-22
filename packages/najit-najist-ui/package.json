@@ -22,8 +22,9 @@
       "types": "./dist/BlockEditorRenderer/index.d.ts"
     }
   },
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
     "dev:package": "npm run build:package -- --watch",
@@ -36,16 +37,19 @@
   },
   "dependencies": {
     "@editorjs/editorjs": "^2.26.5",
-    "@editorjs/paragraph": "^2.9.0",
+    "@editorjs/paragraph": "^2.11.3",
+    "@floating-ui/react": "^0.26.3",
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.12",
-    "@najit-najist/api": "*",
+    "@najit-najist/pb": "*",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
+    "react-color-palette": "^7.1.0",
     "html-react-parser": "^3.0.16",
     "next": "^14.0.1",
     "react-dropzone": "^14.2.3",
     "react-editor-js": "^2.1.0",
+    "sonner": "^1.3.1",
     "react-quill": "2.0.0"
   },
   "devDependencies": {
@@ -56,8 +60,8 @@
     "@editorjs/underline": "^1.1.0",
     "@najit-najist/eslint-config-custom": "*",
     "@najit-najist/tsconfig": "*",
-    "@types/react": "^18.2.21",
     "@swc/core": "^1.3.96",
+    "@types/react": "^18.2.21",
     "@types/react-dom": "^18.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

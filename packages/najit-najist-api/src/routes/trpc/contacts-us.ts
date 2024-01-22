@@ -1,35 +1,44 @@
-import { config } from 'config';
-import { t } from '@trpc';
+import { config } from '@config';
 import { PocketbaseCollections } from '@custom-types';
-import { contactUsSchema } from '@schemas';
-import { z } from 'zod';
 import { logger } from '@logger';
-import { pocketbase } from '@najit-najist/pb';
-import { AuthService, MailService } from '@services';
-import { loginWithAccount } from '@utils/pocketbase';
 import {
   renderAsync,
   ContactUsAdminReply,
   ContactUsUserReply,
 } from '@najit-najist/email-templates';
+import { pocketbase } from '@najit-najist/pb';
+import { contactUsSchema } from '@schemas';
+import { MailService } from '@services';
+import { t } from '@trpc';
+import { loginWithAccount } from '@utils/pocketbase';
+import { z } from 'zod';
+
+import { AUTHORIZATION_HEADER } from '../../constants';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
     .input(contactUsSchema)
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
-      await loginWithAccount('contactForm');
+      const pbAccount = await loginWithAccount('contactForm');
 
       const createdResponse = await pocketbase
         .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
-        .create({
-          email: input.email,
-          firstName: input.firstName,
-          lastName: input.lastName,
-          message: input.message,
-          telephone: input.telephone,
-          subscribeToNewsletter: false,
-        })
+        .create(
+          {
+            email: input.email,
+            firstName: input.firstName,
+            lastName: input.lastName,
+            message: input.message,
+            telephone: input.telephone,
+            subscribeToNewsletter: false,
+          },
+          {
+            headers: {
+              [AUTHORIZATION_HEADER]: pbAccount.token,
+            },
+          }
+        )
         .catch((error) => {
           logger.error(
             { error },
@@ -48,6 +57,7 @@ export const contactUsRoutes = t.router({
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
+            siteOrigin: config.app.origin,
           })
         ),
       }).catch((error) => {
@@ -66,6 +76,7 @@ export const contactUsRoutes = t.router({
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
+            siteOrigin: config.app.origin,
           })
         ),
       }).catch((error) => {
@@ -74,8 +85,6 @@ export const contactUsRoutes = t.router({
           `Contact Us Flow - email sending to user failed`
         );
       });
-
-      AuthService.clearAuthPocketBase();
 
       logger.info({ input }, 'Contact Us Flow - finished');
 

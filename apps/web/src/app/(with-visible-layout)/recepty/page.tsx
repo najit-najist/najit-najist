@@ -1,6 +1,7 @@
-import { AuthService } from '@najit-najist/api/server';
-import { SearchForm } from './_components/SearchForm';
-import { Item } from './_components/Item';
+import { PageDescription } from '@components/common/PageDescription';
+import { PageHeader } from '@components/common/PageHeader';
+import { PageTitle } from '@components/common/PageTitle';
+import { PlusIcon } from '@heroicons/react/24/solid';
 import {
   AvailableModels,
   RecipeDifficulty,
@@ -8,12 +9,11 @@ import {
   UserActions,
   canUser,
 } from '@najit-najist/api';
-import { PageTitle } from '@components/common/PageTitle';
-import Link from 'next/link';
-import { PlusIcon } from '@heroicons/react/24/solid';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
-import { PageHeader } from '@components/common/PageHeader';
-import { PageDescription } from '@components/common/PageDescription';
+import Link from 'next/link';
+
+import { Item } from './_components/Item';
+import { SearchForm } from './_components/SearchForm';
 
 type Params = {
   searchParams: { query?: string; difficulty?: string; type?: string };
@@ -26,6 +26,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const fallbackDifficulty: RecipeDifficulty = {
   id: 'default',
@@ -50,9 +51,7 @@ export default async function RecipesPage({ searchParams }: Params) {
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
   } = searchParams;
-  await AuthService.authPocketBase();
   const currentUser = await getCachedLoggedInUser();
-
   const trpc = getCachedTrpcCaller();
 
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;

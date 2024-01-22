@@ -141,12 +141,15 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           context: .
           push: true
           tags: ondrejlangr/najit-najist-web:${{ github.sha }}
-          build-args: TURBO_TEAM=${{ secrets.TURBO_TEAM }} TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+          build-args: 
+            TURBO_TEAM=${{ secrets.TURBO_TEAM }} 
+            TURBO_TOKEN=${{ secrets.TURBO_TOKEN }} 
+            POCKETBASE_ORIGIN=http://pocketbase.web:8090
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku

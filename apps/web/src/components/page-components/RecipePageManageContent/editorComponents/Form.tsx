@@ -10,6 +10,7 @@ import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+
 import { RecipeFormData } from '../_types';
 
 const getStringId = (input: string | { id: string; [x: string]: any }) =>
@@ -49,6 +50,7 @@ export const Form: FC<
             difficulty: getStringId(values.difficulty),
             type: getStringId(values.type),
             images: values.images,
+            numberOfPortions: values.numberOfPortions ?? 1,
           },
         });
 

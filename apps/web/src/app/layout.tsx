@@ -1,17 +1,18 @@
-import 'react-color-palette/lib/css/styles.css';
-import '../globals.css';
-import 'keen-slider/keen-slider.min.css';
-import { LayoutComponent } from '@custom-types';
+import { CookieBanner } from '@components/common/CookieBanner';
 import { ContextProviders } from '@contexts';
-import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
-import { headers } from 'next/headers';
-import timezone from 'dayjs/plugin/timezone';
-import relativeTime from 'dayjs/plugin/relativeTime';
+import { LayoutComponent } from '@custom-types';
+import { Toaster } from '@najit-najist/ui';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import { CookieBanner } from '@components/common/CookieBanner';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import timezone from 'dayjs/plugin/timezone';
+import 'keen-slider/keen-slider.min.css';
+import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
+import { headers } from 'next/headers';
 import Script from 'next/script';
-import { GA_KEY } from '@constants';
+import 'react-color-palette/lib/css/styles.css';
+
+import '../globals.css';
 
 dayjs.extend(timezone);
 dayjs.extend(relativeTime);
@@ -78,6 +79,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
         <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>
           {children}
           <CookieBanner />
+          <Toaster />
         </ContextProviders>
       </body>
     </html>

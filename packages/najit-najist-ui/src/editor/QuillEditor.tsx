@@ -1,7 +1,11 @@
 import { cx } from 'class-variance-authority';
 import { forwardRef, useCallback, useId, useState } from 'react';
 import Quill, { ReactQuillProps } from 'react-quill';
-import { FormControlWrapper, FormControlWrapperProps } from '../form';
+
+import {
+  FormControlWrapper,
+  type FormControlWrapperProps,
+} from '../form/FormControlWrapper.js';
 
 type QuillProp<T extends keyof ReactQuillProps> = NonNullable<
   ReactQuillProps[T]

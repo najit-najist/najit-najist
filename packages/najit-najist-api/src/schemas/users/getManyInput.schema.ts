@@ -1,6 +1,7 @@
-import { municipalitySchema } from 'schemas/municipality.schema';
-import { defaultGetManySchema } from '../base.get-many.schema';
 import { z } from 'zod';
+
+import { defaultGetManySchema } from '../base.get-many.schema';
+import { municipalitySchema } from '../municipality.schema';
 
 export const getManyUsersInputFilterSchema = z.object({
   address: z.array(municipalitySchema.pick({ id: true })).optional(),

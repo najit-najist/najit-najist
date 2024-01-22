@@ -3,7 +3,7 @@
 import { DATETIME_LOCAL_INPUT_FORMAT } from '@constants';
 import { Input } from '@najit-najist/ui';
 import dayjs from 'dayjs';
-import { FC } from 'react';
+import { ChangeEventHandler, FC } from 'react';
 import { Controller } from 'react-hook-form';
 
 export const PublishedAtEdit: FC = () => {
@@ -28,11 +28,13 @@ export const PublishedAtEdit: FC = () => {
                 : dayjs(field.value).format(DATETIME_LOCAL_INPUT_FORMAT)
             }
             onBlur={field.onBlur}
-            onChange={(event) => {
-              const value = event.target.valueAsDate ?? event.target.value;
+            onChange={
+              ((event) => {
+                const value = event.target.valueAsDate ?? event.target.value;
 
-              field.onChange(dayjs(value).toDate());
-            }}
+                field.onChange(dayjs(value).toDate());
+              }) satisfies ChangeEventHandler<HTMLInputElement>
+            }
           />
         );
       }}

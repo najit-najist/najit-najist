@@ -1,8 +1,10 @@
-import Compressor from 'compressorjs';
 import {
+  DeliveryMethod,
+  Order,
   getMediaTypeFromBase64Url,
   setFileNameToBase64,
 } from '@najit-najist/api';
+import Compressor from 'compressorjs';
 import { FormState } from 'react-hook-form';
 
 export enum ReadFileError {
@@ -61,3 +63,13 @@ export function getChangedValues<G extends Record<any, any>>(
     ])
   ) as Partial<G>;
 }
+
+export const isLocalPickup = (
+  delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+) => delivery?.slug === 'local-pickup';
+
+export const getTotalPrice = (order: Order) => {
+  return (
+    order.subtotal + order.delivery_method_price + order.payment_method_price
+  );
+};

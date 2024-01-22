@@ -1,7 +1,10 @@
+import { z } from 'zod';
+
 import { baseCollectionSchema } from '../base.collection.schema';
 import { defaultGetManySchema } from '../base.get-many.schema';
 import { zodImage } from '../zodImage';
-import { z } from 'zod';
+import { zodPublishedAt } from '../zodPublishedAt';
+import { zodSlug } from '../zodSlug';
 import { productCategorySchema } from './product-categories';
 import {
   createProductPriceSchema,
@@ -13,8 +16,6 @@ import {
   productStockSchema,
   updateProductStockSchema,
 } from './product-stocks';
-import { zodPublishedAt } from '../zodPublishedAt';
-import { zodSlug } from '../zodSlug';
 
 export const productSchema = baseCollectionSchema.extend({
   name: z.string().min(1, 'Toto pole je povinné').trim(),
@@ -22,9 +23,10 @@ export const productSchema = baseCollectionSchema.extend({
   images: z.array(zodImage).min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
   category: productCategorySchema.optional(),
+  onlyDeliveryMethods: z.array(z.string()).default([]),
   publishedAt: zodPublishedAt,
   price: productPriceSchema,
-  stock: productStockSchema,
+  stock: productStockSchema.nullable().optional(),
 });
 
 export const createProductSchema = productSchema
@@ -41,7 +43,10 @@ export const createProductSchema = productSchema
   .extend({
     category: productCategorySchema.pick({ id: true }).optional(),
     price: createProductPriceSchema.omit({ product: true }),
-    stock: createProductStockSchema.omit({ product: true }),
+    stock: createProductStockSchema
+      .omit({ product: true })
+      .nullable()
+      .optional(),
   });
 
 export const updateProductSchema = createProductSchema
@@ -51,12 +56,12 @@ export const updateProductSchema = createProductSchema
   })
   .extend({
     price: updateProductPriceSchema,
-    stock: updateProductStockSchema,
+    stock: updateProductStockSchema.nullable().optional(),
   })
   .partial();
 
 export const getManyProductsSchema = defaultGetManySchema.extend({
-  categorySlug: zodSlug.optional(),
+  categorySlug: z.array(zodSlug).optional(),
 });
 export const getOneProductSchema = productSchema
   .pick({ id: true })

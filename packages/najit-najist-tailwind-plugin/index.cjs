@@ -180,6 +180,9 @@ const getTheme = () => ({
       animation: {
         'bounce-z': 'bounceZ 12s linear infinite',
       },
+      screens: {
+        xs: '460px',
+      },
     },
     fontFamily: {
       sans: ['var(--font-montserrat)'],

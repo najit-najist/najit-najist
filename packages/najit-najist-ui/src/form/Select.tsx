@@ -1,4 +1,5 @@
-import { Fragment, ReactElement, ReactNode } from 'react';
+'use client';
+
 import { Listbox, Transition } from '@headlessui/react';
 import {
   CheckIcon,
@@ -6,9 +7,11 @@ import {
   PlusIcon,
 } from '@heroicons/react/20/solid';
 import { cva, cx } from 'class-variance-authority';
-import { labelStyles } from './Label';
-import { ErrorMessage } from './ErrorMessage';
+import { Fragment, ReactElement, ReactNode } from 'react';
 import { FieldError } from 'react-hook-form';
+
+import { ErrorMessage } from './ErrorMessage.js';
+import { labelStyles } from './Label.js';
 
 const selectButtonStyles = cva(
   'relative w-full cursor-default rounded-md bg-white text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
@@ -138,7 +141,7 @@ export function Select<T extends ItemBase>({
                 {onAddNewItem ? (
                   <Listbox.Option
                     className={
-                      'relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-ocean-600 hover:text-white text-ocean-600 w-full text-left group border-t-2'
+                      'relative select-none py-2 pl-3 pr-9 hover:bg-project-secondary hover:text-white text-project-secondary w-full text-left group border-t-2 cursor-pointer'
                     }
                     onClick={onAddNewItem}
                     value={selected}
@@ -149,7 +152,7 @@ export function Select<T extends ItemBase>({
 
                     <span
                       className={cx(
-                        'absolute inset-y-0 right-0 flex items-center pr-4 text-ocean-600 group-hover:text-white'
+                        'absolute inset-y-0 right-0 flex items-center pr-4 text-project-secondary group-hover:text-white'
                       )}
                     >
                       <PlusIcon className="h-5 w-5" aria-hidden="true" />

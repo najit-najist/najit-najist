@@ -7,10 +7,10 @@ const nextConfig = {
     serverActions: true,
   },
   transpilePackages: [
-    '@najitnajist/ui',
-    '@najitnajist/api',
-    '@najitnajist/pb',
-    '@najitnajist/email-templates',
+    '@najit-najist/ui',
+    '@najit-najist/api',
+    '@najit-najist/pb',
+    '@najit-najist/email-templates',
     '@najit-najist/tailwind-plugin',
   ],
   webpack(config, { isServer }) {
@@ -36,6 +36,17 @@ const nextConfig = {
     );
 
     return config;
+  },
+  async rewrites() {
+    const pocketbaseOrigin = String(process.env.POCKETBASE_ORIGIN);
+    console.log({ pocketbaseOrigin });
+
+    return [
+      {
+        source: '/files/:path*',
+        destination: `${pocketbaseOrigin}/api/files/:path*`,
+      },
+    ];
   },
   async redirects() {
     return [

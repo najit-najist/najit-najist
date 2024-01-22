@@ -5,6 +5,8 @@
   "compilerOptions": {
     "outDir": "dist",
     "lib": ["dom"],
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "baseUrl": "./src",
     "rootDir": "src",
   },

@@ -1,6 +1,9 @@
-import { Section } from '@components/portal';
+'use client';
+
+import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
-import { FC, FormEventHandler } from 'react';
+import { Section } from '@components/portal';
+import { UpdateProfile, User } from '@najit-najist/api';
 import {
   Button,
   Checkbox,
@@ -8,9 +11,10 @@ import {
   FormBreak,
   Input,
 } from '@najit-najist/ui';
+import { FC, ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
-import { UpdateProfile, User } from '@najit-najist/api';
-import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+
+import { AddressFields } from './AddressFields';
 
 export type ViewType = 'edit' | 'create' | 'edit-myself';
 
@@ -24,10 +28,10 @@ const viewTypeToButtonText: Record<
 };
 
 export const EditUserUnderPage: FC<{
-  onSubmit: FormEventHandler<HTMLFormElement>;
   userId?: User['id'];
   viewType: ViewType;
-}> = ({ onSubmit, userId, viewType }) => {
+  afterProfileImageSlot?: ReactNode;
+}> = ({ userId, viewType, afterProfileImageSlot }) => {
   const { register, formState } = useFormContext<UpdateProfile>();
   const email = useWatch({ name: 'email' });
 
@@ -35,12 +39,10 @@ export const EditUserUnderPage: FC<{
   const buttonText = viewTypeToButtonText[viewType];
 
   return (
-    <form
-      className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
-      onSubmit={onSubmit}
-    >
+    <>
       <div className="col-span-2 px-5 sm:px-10 mb-5 md:mb-0 pt-5">
         <UserAvatarPicker userId={userId} />
+        {afterProfileImageSlot}
       </div>
       <div className="col-span-4">
         <Section>
@@ -91,13 +93,12 @@ export const EditUserUnderPage: FC<{
               />
             </div>
             <div className="mt-5" />
+
             <FormBreak label="Adresa" />
 
-            <MunicipalitySelect
-              className="mt-3"
-              label="Obec"
-              name="address.municipality"
-            />
+            <div className="grid gap-4 grid-cols-1 mt-5">
+              <AddressFields />
+            </div>
 
             <div className="mt-5" />
             <FormBreak className="mb-3" />
@@ -124,6 +125,6 @@ export const EditUserUnderPage: FC<{
           </div>
         </Section>
       </div>
-    </form>
+    </>
   );
 };

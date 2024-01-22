@@ -26,6 +26,7 @@ export const config = {
     name: APP_NAME,
     root: '../../packages/najit-najist-api',
     version: 'dev123',
+    origin: process.env.APP_ORIGIN ?? 'https://najitnajist.cz',
   },
   server: {
     domain: baseDomain,

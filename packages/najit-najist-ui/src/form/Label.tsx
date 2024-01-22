@@ -1,11 +1,10 @@
+import { cva, VariantProps } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
-  FC,
   forwardRef,
   LabelHTMLAttributes,
   PropsWithChildren,
 } from 'react';
-import { cva, VariantProps } from 'class-variance-authority';
 
 export interface LabelProps
   extends DetailedHTMLProps<

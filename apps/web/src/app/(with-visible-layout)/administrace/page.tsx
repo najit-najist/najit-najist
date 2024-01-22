@@ -18,6 +18,7 @@ export const metadata = {
 };
 
 export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function Page() {
   return (
@@ -42,6 +43,10 @@ export default async function Page() {
         <div className="flex gap-5 flex-wrap pl-4">
           <Item title="Produkty" href="/produkty" />
           <Item title="Nový produkt" href="/produkty/novy" />
+        </div>
+
+        <div className="flex gap-5 flex-wrap pl-4">
+          <Item title="Objednávky" href="/administrace/objednavky" />
         </div>
       </div>
     </div>

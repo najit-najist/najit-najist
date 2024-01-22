@@ -1,11 +1,10 @@
 import type { OutputData } from '@editorjs/editorjs';
 import type { FC } from 'react';
-import {
-  DelimiterRenderer,
-  HeaderRenderer,
-  ListRenderer,
-  ParagraphRenderer,
-} from './renderers';
+
+import { DelimiterRenderer } from './renderers/DelimiterRenderer.js';
+import { HeaderRenderer } from './renderers/HeaderRenderer.js';
+import { ListRenderer } from './renderers/ListRenderer.js';
+import { ParagraphRenderer } from './renderers/Paragraph.js';
 
 export type DataRendererProps = {
   data: OutputData;

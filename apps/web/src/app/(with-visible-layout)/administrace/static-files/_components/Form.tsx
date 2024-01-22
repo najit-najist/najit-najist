@@ -2,7 +2,7 @@
 
 import { Button, Input } from '@najit-najist/ui';
 import { useMutation } from '@tanstack/react-query';
-import { FC } from 'react';
+import { ChangeEventHandler, FC } from 'react';
 import { FormProvider, useController, useForm } from 'react-hook-form';
 
 export const Form: FC = () => {
@@ -74,9 +74,11 @@ export const Form: FC = () => {
           error={contentsFieldState.error}
           onBlur={contentsField.onBlur}
           name={contentsField.name}
-          onChange={(event) => {
-            contentsField.onChange(event.target.files?.[0]);
-          }}
+          onChange={
+            ((event) => {
+              contentsField.onChange(event.target.files?.[0]);
+            }) satisfies ChangeEventHandler<HTMLInputElement>
+          }
         />
         <Input {...register('root')} />
 

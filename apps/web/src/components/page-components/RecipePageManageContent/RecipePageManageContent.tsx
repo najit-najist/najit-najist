@@ -4,29 +4,26 @@ import {
   getFileUrl,
   Recipe,
 } from '@najit-najist/api';
-import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
-import { Aside } from './Aside';
+import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
+import { getCachedTrpcCaller } from '@server-utils';
 import HTMLReactParser from 'html-react-parser';
+import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
+
+import { Aside } from './Aside';
+import { CustomImage } from './CustomImage';
+import { EditorHeader } from './EditorHeader';
+import { LazyUserListActions } from './LazyUserListActions';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
+import { DifficultyEdit } from './editorComponents/DifficultyEdit';
 import { Form } from './editorComponents/Form';
+import { ImagesEdit } from './editorComponents/ImagesEdit';
+import { PortionsEdit } from './editorComponents/PortionsEdit';
 import { ResourcesEdit } from './editorComponents/ResourcesEdit/ResourcesEdit';
 import { ResourcesRenderer } from './editorComponents/ResourcesRenderer';
 import { StepsEdit } from './editorComponents/StepsEdit';
 import { StepsRenderer } from './editorComponents/StepsRenderer';
 import { TitleEdit } from './editorComponents/TitleEdit';
-import { EditorHeader } from './EditorHeader';
-import { CustomImage } from './CustomImage';
-import { ImagesEdit } from './editorComponents/ImagesEdit';
-import {
-  RecipeDifficultyService,
-  RecipesService,
-} from '@najit-najist/api/server';
 import { TypeEdit } from './editorComponents/TypeEdit';
-import { DifficultyEdit } from './editorComponents/DifficultyEdit';
-import { Skeleton } from '@najit-najist/ui';
-import { LazyUserListActions } from './LazyUserListActions';
-import { PortionsEdit } from './editorComponents/PortionsEdit';
-import Link from 'next/link';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
@@ -47,14 +44,12 @@ export const RecipePageManageContent = async ({
   isEditorHeaderShown,
   ...props
 }: RecipePageManageContentProps): Promise<ReactElement> => {
+  const trpc = getCachedTrpcCaller();
   const [{ items: metrics }, { items: types }, { items: difficulties }] =
     await Promise.all([
-      RecipesService.resourceMetrics.getMany({
-        page: 1,
-        perPage: 999,
-      }),
-      RecipesService.types.getMany({ page: 1, perPage: 999 }),
-      RecipeDifficultyService.getMany({ page: 1, perPage: 999 }),
+      trpc.recipes.metrics.getMany({ page: 1, perPage: 9999 }),
+      trpc.recipes.types.getMany({ page: 1, perPage: 9999 }),
+      trpc.recipes.difficulties.getMany({ page: 1, perPage: 9999 }),
     ]);
 
   const { viewType } = props;
@@ -67,6 +62,33 @@ export const RecipePageManageContent = async ({
 
   const content = (
     <>
+      <div className="container mt-6 mb-3">
+        <Breadcrumbs
+          items={[
+            { link: '/recepty', text: 'Recepty' },
+            ...(recipe
+              ? [
+                  {
+                    link: `/recepty?type=${recipe.type.slug}`,
+                    text: recipe.type.title,
+                  },
+
+                  {
+                    link: `/produkty/${recipe.slug}`,
+                    text: recipe.title,
+                    active: true,
+                  },
+                ]
+              : [
+                  {
+                    link: '/recepty/novy',
+                    text: 'Nový',
+                    active: true,
+                  },
+                ]),
+          ]}
+        />
+      </div>
       <div className="flex flex-wrap lg:grid grid-cols-12 w-full gap-y-5 lg:gap-x-5 my-5 px-5 max-w-[1920px] mx-auto">
         <div className="w-full md:w-4/12 lg:w-auto lg:col-span-4">
           {props.viewType === 'view' ? (
@@ -114,16 +136,8 @@ export const RecipePageManageContent = async ({
         </div>
 
         <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
-          <Link
-            href="/recepty"
-            className="mt-5 mb-3 text-sm uppercase font-semibold text-project-secondary block font-title"
-          >
-            Recept
-          </Link>
           {!isEditorEnabled ? (
-            <h1 className="text-4xl font-title text-project-primary">
-              {title}
-            </h1>
+            <h1 className="text-5xl font-title mt-4">{title}</h1>
           ) : (
             <TitleEdit />
           )}

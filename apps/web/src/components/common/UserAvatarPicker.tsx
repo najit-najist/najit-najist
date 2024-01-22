@@ -1,12 +1,8 @@
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon, UserIcon } from '@heroicons/react/24/outline';
-import { CameraIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import {
-  getFileUrl,
-  AvailableModels,
-  IMAGE_FILE_REGEX,
-  isFileBase64,
-} from '@najit-najist/api';
+import { CameraIcon } from '@heroicons/react/24/solid';
+import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/api';
+import { Collections, getFileUrl } from '@najit-najist/pb';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { useRef, ChangeEventHandler, FC, useMemo, useState } from 'react';
@@ -88,7 +84,7 @@ const Avatar: FC<{ userId?: string }> = ({ userId }) => {
       return avatar ?? '';
     }
 
-    return getFileUrl(AvailableModels.USER, userId, avatar ?? '', {
+    return getFileUrl(Collections.USERS, userId, avatar ?? '', {
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
     });
