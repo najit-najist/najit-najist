@@ -48,13 +48,6 @@ export const userCartRoutes = t.router({
           )
           .catch(() => undefined);
 
-        if (!productStock) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Tento produkt nevedeme',
-          });
-        }
-
         if (!productStock?.count) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
@@ -96,20 +89,6 @@ export const userCartRoutes = t.router({
         })
       )
       .mutation(async ({ input, ctx }) => {
-        const productStock = await pocketbaseByCollections.productStocks
-          .getFirstListItem<ProductStock>(
-            `product="${input.product.id}"`,
-            createRequestPocketbaseRequestOptions(ctx)
-          )
-          .catch(() => undefined);
-
-        if (!productStock) {
-          throw new TRPCError({
-            code: 'NOT_FOUND',
-            message: 'Tento produkt nevedeme',
-          });
-        }
-
         const cart = await getCurrentCart();
         const existingProductInCart = cart.products.find(
           ({ product }) => product.id === input.product.id
