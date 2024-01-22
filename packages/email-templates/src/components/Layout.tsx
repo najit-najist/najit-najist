@@ -23,8 +23,8 @@ export const Layout: FC<
   >
 > = ({ title, newsletterUuid, children, siteOrigin, attachments }) => {
   return (
-    <Html lang="cs">
-      <Tailwind config={theme}>
+    <Tailwind config={theme}>
+      <Html lang="cs">
         <Head>
           <title>{title}</title>
           <Fonts />
@@ -91,7 +91,7 @@ export const Layout: FC<
             ) : null}
           </footer>
         </main>
-      </Tailwind>
-    </Html>
+      </Html>
+    </Tailwind>
   );
 };
