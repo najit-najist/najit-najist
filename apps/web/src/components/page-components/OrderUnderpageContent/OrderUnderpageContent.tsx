@@ -121,7 +121,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 <div className="flex flex-auto flex-col">
                   <div>
                     <h4 className="font-medium text-gray-900 font-title text-2xl">
-                      <Link href={`/produkty/${cartItem.product.id}`}>
+                      <Link href={`/produkty/${cartItem.product.slug}`}>
                         {cartItem.product.name}
                       </Link>
                     </h4>
