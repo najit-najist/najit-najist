@@ -32,9 +32,11 @@ export const Form: FC<
       viewType === 'edit' ? updateProductSchema : createProductSchema
     ),
   });
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, formState } = formMethods;
   const { mutateAsync: updateProduct } = trpc.products.update.useMutation();
   const { mutateAsync: createProduct } = trpc.products.create.useMutation();
+
+  console.log(formState.errors);
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
