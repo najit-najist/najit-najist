@@ -49,26 +49,32 @@ export const StockEdit: FC = () => {
           size="md"
         />
       </CheckboxWrapper>
+      {stockEnabled ? (
+        <>
+          <hr className="h-0.5 bg-gray-100 border-none mt-4 mb-5" />
 
-      <hr className="h-0.5 bg-gray-100 border-none mt-4 mb-5" />
-
-      <Input
-        label="Počet produktů na skladě"
-        type="number"
-        placeholder="Sklad"
-        // TODO: is it possible to get this value from schema somehow?
-        min={0}
-        suffix={
-          <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
-            <span className="flex items-center justify-center px-3 h-full">
-              Ks
-            </span>
-          </div>
-        }
-        error={formState.errors.price?.value}
-        disabled={!stockEnabled}
-        {...register('stock.count', { valueAsNumber: true })}
-      />
+          <Input
+            label="Počet produktů na skladě"
+            type="number"
+            placeholder="Sklad"
+            // TODO: is it possible to get this value from schema somehow?
+            min={0}
+            suffix={
+              <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+                <span className="flex items-center justify-center px-3 h-full">
+                  Ks
+                </span>
+              </div>
+            }
+            error={formState.errors.price?.value}
+            disabled={!stockEnabled}
+            {...register('stock.count', {
+              valueAsNumber: true,
+              shouldUnregister: true,
+            })}
+          />
+        </>
+      ) : null}
     </>
   );
 };
