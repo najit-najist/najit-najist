@@ -56,7 +56,7 @@ export const updateProductSchema = createProductSchema
   })
   .extend({
     price: updateProductPriceSchema,
-    stock: updateProductStockSchema.nullable().optional(),
+    stock: updateProductStockSchema.omit({ id: true }).nullable().optional(),
   })
   .partial();
 

@@ -74,23 +74,29 @@ export class ProductService {
           .update(priceId, priceUpdatePayload, requestOptions);
       }
 
-      if (stock) {
-        const { id: stockId, ...stockUpdatePayload } = stock;
-        await pocketbase
-          .collection(PocketbaseCollections.PRODUCT_STOCK)
-          .update(stockId, stockUpdatePayload, requestOptions);
-      } else if (stock === null) {
+      if (stock || stock === null) {
         const existingStock = await pocketbaseByCollections.productStocks
-          .getFirstListItem(`product="${id}"`, requestOptions)
+          .getFirstListItem<ProductStock>(`product="${id}"`, requestOptions)
           .catch((error) => {
             logger.error(
               error,
-              'Failed to remove product stock as its probably missign'
+              'Failed to get product stock on product update as its probably missing'
             );
             return undefined;
           });
 
-        if (existingStock) {
+        if (stock) {
+          if (!existingStock) {
+            await pocketbaseByCollections.productStocks.create<ProductStock>(
+              stock,
+              requestOptions
+            );
+          } else {
+            await pocketbase
+              .collection(PocketbaseCollections.PRODUCT_STOCK)
+              .update(existingStock.id, stock, requestOptions);
+          }
+        } else if (stock === null && existingStock) {
           await pocketbaseByCollections.productStocks.delete(
             existingStock.id,
             requestOptions
