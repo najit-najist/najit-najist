@@ -88,7 +88,7 @@ export class ProductService {
         if (stock) {
           if (!existingStock) {
             await pocketbaseByCollections.productStocks.create<ProductStock>(
-              stock,
+              { ...stock, product: id },
               requestOptions
             );
           } else {
