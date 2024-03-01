@@ -16,6 +16,7 @@ import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
 import { getCurrentCart } from '@utils/server/getCurrentUserCart';
 import { getOrderById } from '@utils/server/getOrderById';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { AUTHORIZATION_HEADER } from '../../../../constants';
@@ -80,6 +81,8 @@ export const userCartRoutes = t.router({
           },
           requestOptions
         );
+
+        revalidatePath('/muj-ucet/kosik/pokladna');
       }),
 
     update: protectedProcedure
@@ -114,6 +117,8 @@ export const userCartRoutes = t.router({
           },
           createRequestPocketbaseRequestOptions(ctx)
         );
+
+        revalidatePath('/muj-ucet/kosik/pokladna');
       }),
 
     remove: protectedProcedure
@@ -130,6 +135,8 @@ export const userCartRoutes = t.router({
           cartProduct.id,
           createRequestPocketbaseRequestOptions(ctx)
         );
+
+        revalidatePath('/muj-ucet/kosik/pokladna');
       }),
   }),
 
@@ -242,8 +249,21 @@ export const userCartRoutes = t.router({
             `Order flow - could not notify user to its email with order information`
           );
         }),
+
         MailService.send({
           to: config.mail.baseEmail,
+          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+          body: adminEmailContent,
+        }).catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify admin to its email with order information`
+          );
+        }),
+
+        MailService.send({
+          // TODO: move this to configuration
+          to: 'prodejnahk@najitnajist.cz',
           subject: `Nová objednávka #${order.id} na najitnajist.cz`,
           body: adminEmailContent,
         }).catch((error) => {
