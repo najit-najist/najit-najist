@@ -41,6 +41,7 @@ export const orderSchema = baseCollectionSchema.extend({
 
   products: z.array(orderProductSchema),
   user: userSchema.omit({ address: true }).optional(),
+  notes: z.string().optional().nullable(),
 
   state: orderStates,
 });

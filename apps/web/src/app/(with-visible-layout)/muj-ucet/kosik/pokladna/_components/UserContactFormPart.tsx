@@ -8,6 +8,7 @@ import {
   CheckboxWrapper,
   FormBreak,
   Input,
+  Textarea,
   inputPrefixSuffixStyles,
 } from '@najit-najist/ui';
 import { FC } from 'react';
@@ -93,6 +94,10 @@ export const UserContactFormPart: FC = () => {
           {...register('saveAddressToAccount')}
         />
       </CheckboxWrapper>
+
+      <FormBreak className="mt-4 mb-2" />
+
+      <Textarea disabled={fieldsAreDisabled} label="Poznámky" rows={8} />
     </div>
   );
 };

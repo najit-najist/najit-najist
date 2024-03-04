@@ -14,7 +14,7 @@ type Item = { id: string; [x: string]: any };
 
 export type ComboboxProps<I extends Item = Item> = Pick<
   InputVariantProps,
-  'size'
+  'size' | 'disabled'
 > & {
   isLoading?: boolean;
   label?: string;
@@ -47,6 +47,7 @@ export function Combobox<I extends Item>({
   placeholder,
   className,
   size,
+  disabled,
 }: ComboboxProps<I>): ReturnType<FC<ComboboxProps<I>>> {
   return (
     <ComboboxDefault
@@ -54,6 +55,7 @@ export function Combobox<I extends Item>({
       value={selectedValue}
       onChange={onSelectedValueChange}
       className={className}
+      disabled={disabled ?? false}
     >
       {label ? (
         <ComboboxDefault.Label className="mb-1" as={Label}>
@@ -64,7 +66,7 @@ export function Combobox<I extends Item>({
       <div className="relative">
         <ComboboxDefault.Input
           placeholder={placeholder}
-          className={inputStyles({ size })}
+          className={inputStyles({ size, disabled })}
           onChange={onInputValueChange}
           displayValue={displayValue}
         />

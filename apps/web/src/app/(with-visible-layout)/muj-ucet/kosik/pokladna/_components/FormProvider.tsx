@@ -64,7 +64,7 @@ export const FormProvider: FC<
         },
       });
 
-      const newOrder = await newOrderPromise;
+      const { order: newOrder, redirectTo } = await newOrderPromise;
 
       plausible.trackEvent('User order', {
         props: {
@@ -87,9 +87,13 @@ export const FormProvider: FC<
         });
       }
 
-      doTransition(() => {
-        router.push(`/muj-ucet/objednavky/${newOrder.id}`);
-      });
+      if (redirectTo.startsWith('http')) {
+        window.location.replace(redirectTo);
+      } else {
+        doTransition(() => {
+          router.push(`/muj-ucet/objednavky/${newOrder.id}`);
+        });
+      }
     },
     [doCheckout, router, plausible]
   );

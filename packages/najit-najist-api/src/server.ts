@@ -7,6 +7,8 @@ dayjs.extend(timezone);
 dayjs.extend(relativeTime);
 dayjs.extend(utc);
 
+export * from './comgate';
+
 export * from './trpc';
 export * from './utils/server';
 export * from './config';

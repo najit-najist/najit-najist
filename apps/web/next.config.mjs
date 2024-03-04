@@ -6,6 +6,14 @@ const nextConfig = {
     typedRoutes: true,
     serverActions: true,
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'www.comgate.cz',
+      },
+    ],
+  },
   transpilePackages: [
     '@najit-najist/ui',
     '@najit-najist/api',
@@ -39,7 +47,6 @@ const nextConfig = {
   },
   async rewrites() {
     const pocketbaseOrigin = String(process.env.POCKETBASE_ORIGIN);
-    console.log({ pocketbaseOrigin });
 
     return [
       {

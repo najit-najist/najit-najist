@@ -4,7 +4,11 @@ import {
   ThankYouOrder,
   ThankYouOrderAdmin,
 } from '@najit-najist/email-templates';
-import { pocketbase, pocketbaseByCollections } from '@najit-najist/pb';
+import {
+  PaymentMethodsSlug,
+  pocketbase,
+  pocketbaseByCollections,
+} from '@najit-najist/pb';
 import {
   DeliveryMethod,
   OrderPaymentMethod,
@@ -19,6 +23,7 @@ import { getOrderById } from '@utils/server/getOrderById';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { Comgate } from '../../../../comgate';
 import { AUTHORIZATION_HEADER } from '../../../../constants';
 import {
   addToCartSchema,
@@ -220,6 +225,21 @@ export const userCartRoutes = t.router({
         },
       });
 
+      let redirectTo = `/muj-ucet/objednavky/${order.id}`;
+
+      if (order.payment_method.slug === PaymentMethodsSlug.BY_CARD) {
+        const comgatePayment = await Comgate.createPayment({
+          order,
+        });
+
+        await pocketbaseByCollections.comgateTransactions.create({
+          transaction_id: comgatePayment.data.transId,
+          order: order.id,
+        });
+
+        redirectTo = comgatePayment.data.redirect ?? redirectTo;
+      }
+
       const [userEmailContent, adminEmailContent] = await Promise.all([
         renderAsync(
           ThankYouOrder({
@@ -274,6 +294,9 @@ export const userCartRoutes = t.router({
         }),
       ]);
 
-      return order;
+      return {
+        order,
+        redirectTo,
+      };
     }),
 });

@@ -18,13 +18,18 @@ type Item = {
 const items: Item[] = [
   { title: 'Restaurace', href: '/', imageSrc: waitressImage },
   { title: 'Akce', href: '/', imageSrc: eventsImage },
-  { title: 'Obchody', href: '/', imageSrc: shoppingImage },
+  {
+    title: 'Produkty',
+    href: '/produkty',
+    imageSrc: shoppingImage,
+    enabled: true,
+    isNew: true,
+  },
   {
     title: 'Naše prodejny',
     href: '/kontakt#prodejny',
     imageSrc: bakeryImage,
     enabled: true,
-    isNew: true,
   },
 ];
 

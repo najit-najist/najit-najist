@@ -63,6 +63,7 @@
     "dotenv": "^16.0.3",
     "fs-extra": "^10.1.0",
     "iron-session": "^6.3.1",
+    "query-string": "^9.0.0",
     "jsonwebtoken": "^9.0.0",
     "jwt-decode": "^3.1.2",
     "lru-cache": "^8.0.4",

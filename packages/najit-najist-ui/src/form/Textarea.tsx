@@ -25,7 +25,7 @@ export interface TextareaProps extends ParentProps {
 
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
-    { name, label, error, className, wrapperClassName, ...restProps },
+    { name, label, error, className, wrapperClassName, disabled, ...restProps },
     ref
   ) {
     const inputId = useId();
@@ -40,10 +40,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           className={inputStyles({
             className: cx(className, label ? 'mt-1' : ''),
+            disabled,
           })}
           ref={ref}
           id={inputId}
           name={name}
+          disabled={disabled}
           {...restProps}
         />
       </FormControlWrapper>

@@ -31,6 +31,8 @@ export enum Collections {
   ORDER_PRODUCTS = 'order_products',
   ORDER_PAYMENT_METHODS = 'order_payment_methods',
   ORDER_DELIVERY_METHODS = 'order_delivery_methods',
+
+  COMGATE_TRANSACTIONS = 'comgate_transactions',
 }
 
 export const pocketbase = new PocketBase(String(process.env.POCKETBASE_ORIGIN));
@@ -43,6 +45,8 @@ export const pocketbaseByCollections = {
   userCarts: pocketbase.collection(Collections.USER_CARTS),
   userCartProducts: pocketbase.collection(Collections.USER_CART_PRODUCTS),
   userAddresses: pocketbase.collection(Collections.USER_ADDRESSES),
+
+  comgateTransactions: pocketbase.collection(Collections.COMGATE_TRANSACTIONS),
 
   productStocks: pocketbase.collection(Collections.PRODUCT_STOCK),
   productPrices: pocketbase.collection(Collections.PRODUCT_PRICES),

@@ -2,11 +2,7 @@
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import {
-  DeliveryMethod,
-  OrderPaymentMethod,
-  UserCartProduct,
-} from '@najit-najist/api';
+import { DeliveryMethod, OrderPaymentMethod } from '@najit-najist/api';
 import {
   Alert,
   ErrorMessage,
@@ -74,6 +70,11 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
     () => deliveryMethods.filter((d) => !d.disabled),
     [deliveryMethods]
   );
+
+  // const mappedDeliveryMethods: RadioGroupItem[] = deliveryMethods.map((method) => ({
+  //   ...method,
+  //   description: metho
+  // }))
 
   return (
     <>
