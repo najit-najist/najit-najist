@@ -1,16 +1,20 @@
 import { PocketbaseCollections, PocketbaseErrorCodes } from '@custom-types';
 import { logger } from '@logger';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { subscribeToNewsletterSchema } from '@schemas';
 import { t } from '@trpc';
 import { loginWithAccount } from '@utils/pocketbase';
 import { randomUUID } from 'crypto';
+import { z } from 'zod';
 
 import { createRequestPocketbaseRequestOptions } from '../../server';
 
 export const newsletterRoutes = t.router({
   subscribe: t.procedure
-    .input(subscribeToNewsletterSchema)
+    .input(
+      z.object({
+        email: z.string().email(),
+      })
+    )
     .mutation(async ({ input }) => {
       const pbAccount = await loginWithAccount('contactForm');
 

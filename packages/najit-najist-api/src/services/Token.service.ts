@@ -1,6 +1,7 @@
-import { config } from '@config';
 import jwt, { Algorithm } from 'jsonwebtoken';
 import jwtDecode from 'jwt-decode';
+
+import { config } from '../config';
 
 export class TokenService {
   #algorithm: Algorithm = 'RS256';

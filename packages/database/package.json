@@ -1,0 +1,50 @@
+{
+  "name": "@najit-najist/database",
+  "version": "0.0.0",
+  "private": true,
+  "author": "ondrej-langr <langr.ondrej.work@gmail.com>",
+  "type": "module",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./models": {
+      "import": "./dist/models.js",
+      "types": "./dist/models.d.ts"
+    }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\" \"npm:dev:package:types:aliases\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
+    "dev:package:types:aliases": "npm run build:types:aliases -- --watch",
+    "prebuild": "rimraf dist",
+    "build": "npm run build:package && npm run build:types && npm run build:types:aliases",
+    "build:package": "swc ./src -d dist",
+    "build:types": "tsc",
+    "build:types:aliases": "tsc-alias",
+    "migration:create": "drizzle-kit generate:pg",
+    "migration:migrate": "node ./scripts/migrate.js",
+    "run-migration": "pnpm run migration:create && pnpm run migration:migrate",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "drizzle-orm": "^0.29.4",
+    "postgres": "^3.4.3"
+  },
+  "devDependencies": {
+    "@najit-najist/pb": "*",
+    "@najit-najist/tsconfig": "*",
+    "drizzle-kit": "^0.20.14",
+    "@types/node": "^18.11.3"
+  }
+}

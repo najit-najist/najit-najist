@@ -1,7 +1,7 @@
-import { config } from '@config';
 import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiHandler } from 'next';
 
+import { config } from '../../config';
 import rateLimit from './rateLimit';
 import { setupCors } from './setupCors';
 

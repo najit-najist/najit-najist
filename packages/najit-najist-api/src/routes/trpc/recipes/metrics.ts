@@ -3,12 +3,12 @@ import {
   onlyAdminProcedure,
   protectedProcedure,
 } from '@trpc-procedures/protectedProcedure';
+import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
 import {
   RecipeResourceMetric,
   createRecipeResourceMetricInputSchema,
-  getManyRecipeResourceMetricInputSchema,
 } from '../../../schemas/recipes';
 import { createRequestPocketbaseRequestOptions } from '../../../server';
 import { t } from '../../../trpc';
@@ -20,7 +20,14 @@ import {
 
 export const metricsRouter = t.router({
   getMany: protectedProcedure
-    .input(getManyRecipeResourceMetricInputSchema.optional())
+    .input(
+      z
+        .object({
+          page: z.number().min(1).default(1).optional(),
+          perPage: z.number().min(1).default(20).optional(),
+        })
+        .optional()
+    )
     .query(async ({ input, ctx }) => {
       const { page = 1, perPage = 40 } = input ?? {};
 

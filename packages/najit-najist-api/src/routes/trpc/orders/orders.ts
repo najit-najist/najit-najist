@@ -1,4 +1,3 @@
-import { config } from '@config';
 import { AUTHORIZATION_HEADER } from '@constants';
 import { PocketbaseCollections } from '@custom-types';
 import {
@@ -22,6 +21,7 @@ import { getItemId } from '@utils/internal';
 import { getOrderById } from '@utils/server/getOrderById';
 import { z } from 'zod';
 
+import { config } from '../../../config';
 import {
   DeliveryMethod,
   OrderPaymentMethod,

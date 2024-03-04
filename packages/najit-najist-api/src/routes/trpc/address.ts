@@ -1,12 +1,25 @@
 import { PocketbaseCollections } from '@custom-types';
 import { pocketbase, type ListResult } from '@najit-najist/pb';
-import { getManyMunicipalitySchema, Municipality } from '@schemas';
+import { Municipality } from '@schemas';
 import { t } from '@trpc';
 import { z } from 'zod';
 
 export const municipalityGetRoutes = t.router({
   many: t.procedure
-    .input(getManyMunicipalitySchema.optional())
+    .input(
+      z
+        .object({
+          query: z.string().optional(),
+          page: z.number().min(1).default(1),
+          perPage: z.number().min(10).max(100).default(10),
+          filter: z
+            .object({
+              id: z.array(z.string()).optional(),
+            })
+            .optional(),
+        })
+        .optional()
+    )
     .query(async ({ input }): Promise<ListResult<Municipality>> => {
       const { page, perPage, query, filter: filterFromInput } = input ?? {};
       const filter = [

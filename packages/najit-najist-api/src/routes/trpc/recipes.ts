@@ -1,13 +1,10 @@
 import { PocketbaseCollections } from '@custom-types';
 import { ListResult, pocketbase } from '@najit-najist/pb';
+import { slugSchema } from '@najit-najist/schemas';
 import {
   createRecipeInputSchema,
-  getManyRecipesSchema,
-  getOneRecipeInputSchema,
   Recipe,
-  RecipeDifficulty,
   recipeSchema,
-  RecipeType,
   updateRecipeInputSchema,
 } from '@schemas';
 import { RecipesService } from '@services';
@@ -19,6 +16,7 @@ import {
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
 import { createRequestPocketbaseRequestOptions } from '../../server';
 import { difficultiesRouter } from './recipes/difficulties';
 import { metricsRouter } from './recipes/metrics';
@@ -68,13 +66,28 @@ export const recipesRouter = t.router({
     }),
 
   getMany: protectedProcedure
-    .input(getManyRecipesSchema.optional())
+    .input(
+      defaultGetManySchema
+        .extend({
+          typeSlug: slugSchema.optional(),
+          difficultySlug: slugSchema.optional(),
+        })
+        .optional()
+    )
     .query<ListResult<Recipe>>(async ({ ctx, input }) =>
       RecipesService.getMany(input, createRequestPocketbaseRequestOptions(ctx))
     ),
 
   getOne: protectedProcedure
-    .input(getOneRecipeInputSchema)
+    .input(
+      z.object({
+        where: z
+          .object({
+            id: z.string(),
+          })
+          .or(z.object({ slug: z.string() })),
+      })
+    )
     .query<Recipe>(async ({ ctx, input }) =>
       RecipesService.getBy(
         'slug' in input.where ? 'slug' : 'id',

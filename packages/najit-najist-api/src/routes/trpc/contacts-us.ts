@@ -1,4 +1,3 @@
-import { config } from '@config';
 import { PocketbaseCollections } from '@custom-types';
 import { logger } from '@logger';
 import {
@@ -7,17 +6,18 @@ import {
   ContactUsUserReply,
 } from '@najit-najist/email-templates';
 import { pocketbase } from '@najit-najist/pb';
-import { contactUsSchema } from '@schemas';
+import { contactUsInputSchema } from '@schemas';
 import { MailService } from '@services';
 import { t } from '@trpc';
 import { loginWithAccount } from '@utils/pocketbase';
 import { z } from 'zod';
 
+import { config } from '../../config';
 import { AUTHORIZATION_HEADER } from '../../constants';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
-    .input(contactUsSchema)
+    .input(contactUsInputSchema)
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
       const pbAccount = await loginWithAccount('contactForm');

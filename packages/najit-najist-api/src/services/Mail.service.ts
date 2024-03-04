@@ -1,6 +1,7 @@
-import { config } from '@config';
 import { logger } from '@logger';
 import nodemailer from 'nodemailer';
+
+import { config } from '../config';
 
 export class MailService {
   private static transport = nodemailer.createTransport({

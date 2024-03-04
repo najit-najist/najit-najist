@@ -3,17 +3,14 @@ import { ApplicationError } from '@errors';
 import { logger } from '@logger';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
 import { pocketbaseByCollections } from '@najit-najist/pb';
+import { passwordZodSchema } from '@najit-najist/security';
 import {
   finalizeResetPasswordSchema,
   loginInputSchema,
   loginOutputSchema,
-  registerUserSchema,
+  municipalitySchema,
   resetPasswordSchema,
   updateProfileSchema,
-  User,
-  userSchema,
-  UserStates,
-  verifyRegistrationFromPreviewInputSchema,
 } from '@schemas';
 import { UserService } from '@services';
 import { t } from '@trpc';
@@ -21,12 +18,12 @@ import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
 import { AvailableModels, setSessionToCookies } from '@utils';
 import { loginWithAccount } from '@utils/pocketbase';
-import dayjs from 'dayjs';
 import omit from 'lodash/omit';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { z } from 'zod';
 
 import { AUTHORIZATION_HEADER } from '../../constants';
+import { dayjs } from '../../dayjs';
 import { createRequestPocketbaseRequestOptions } from '../../server';
 import { userCartRoutes } from './profile/cart/cart';
 import { userLikedRoutes } from './profile/liked';
@@ -285,7 +282,15 @@ export const profileRouter = t.router({
     }),
 
   verifyRegistrationFromPreview: t.procedure
-    .input(verifyRegistrationFromPreviewInputSchema)
+    .input(
+      z.object({
+        token: z.string(),
+        password: passwordZodSchema,
+        address: z.object({
+          municipality: municipalitySchema.pick({ id: true }),
+        }),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const { address, password, token } = input;
       const pbAccount = await loginWithAccount('contactForm');

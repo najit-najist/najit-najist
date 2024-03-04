@@ -1,6 +1,7 @@
-import { config } from '@config';
 import { getIronSession } from 'iron-session/edge';
 import { NextRequest, NextResponse } from 'next/server';
+
+import { config } from '../../config';
 
 /**
  * Gets next session in edge

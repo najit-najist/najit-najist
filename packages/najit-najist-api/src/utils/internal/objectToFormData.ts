@@ -1,6 +1,7 @@
 import { isFileBase64 } from '@utils/isFileBase64';
 import { splitBase64Url } from '@utils/splitBase64Url';
-import dayjs from 'dayjs';
+
+import { dayjs } from '../../dayjs';
 
 type Primitives =
   | string

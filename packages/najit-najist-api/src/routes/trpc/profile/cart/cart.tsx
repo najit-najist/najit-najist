@@ -1,4 +1,3 @@
-import { config } from '@config';
 import {
   renderAsync,
   ThankYouOrder,
@@ -24,6 +23,7 @@ import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { Comgate } from '../../../../comgate';
+import { config } from '../../../../config';
 import { AUTHORIZATION_HEADER } from '../../../../constants';
 import {
   addToCartSchema,

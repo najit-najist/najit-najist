@@ -1,6 +1,7 @@
-import { config } from '@config';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import NextCors from 'nextjs-cors';
+
+import { config } from '../../config';
 
 export const setupCors = (req: NextApiRequest, res: NextApiResponse) => {
   const corsOrigins = config.server.cors.allowed;

@@ -5,15 +5,7 @@ import {
   UserLikedPost,
 } from '@custom-types';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import {
-  createPostInputSchema,
-  dislikePostInputSchema,
-  getManyPostsInputSchema,
-  getOnePostInputSchema,
-  likePostInputSchema,
-  outputPostSchema,
-  updateOnePostInputSchema,
-} from '@schemas';
+import { slugSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import {
   onlyAdminProcedure,
@@ -90,7 +82,15 @@ export const postsRoute = t.router({
     }),
 
   getMany: t.procedure
-    .input(getManyPostsInputSchema.optional())
+    .input(
+      z
+        .object({
+          page: z.number().min(1).default(1).optional(),
+          perPage: z.number().min(1).default(20).optional(),
+          query: z.string().optional(),
+        })
+        .optional()
+    )
     .query(async ({ ctx, input = { page: 1, perPage: 20, query: '' } }) => {
       const filter = [
         input.query
@@ -113,7 +113,11 @@ export const postsRoute = t.router({
     }),
 
   getOne: t.procedure
-    .input(getOnePostInputSchema)
+    .input(
+      z.object({
+        slug: slugSchema,
+      })
+    )
     .query(async ({ ctx, input }) =>
       pocketbase
         .collection(PocketbaseCollections.POSTS)

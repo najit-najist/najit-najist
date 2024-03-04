@@ -1,0 +1,40 @@
+{
+  "name": "@najit-najist/schemas",
+  "version": "0.0.0",
+  "private": true,
+  "author": "ondrej-langr <langr.ondrej.work@gmail.com>",
+  "type": "module",
+  "exports": {
+    "./*": "./*",
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\" \"npm:dev:package:types:aliases\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
+    "dev:package:types:aliases": "npm run build:types:aliases -- --watch",
+    "prebuild": "rimraf dist",
+    "build": "npm run build:package && npm run build:types && npm run build:types:aliases",
+    "build:package": "swc ./src -d dist",
+    "build:types": "tsc",
+    "build:types:aliases": "tsc-alias",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "dependencies": {
+    "@najit-najist/database": "*",
+    "zod": "^3.22.4",
+    "js-base64": "^3.7.7",
+    "dayjs": "^1.11.10",
+    "drizzle-zod": "^0.5.1"
+  }
+}

@@ -1,6 +1,7 @@
-import { config } from '@config';
 import { logger } from '@logger';
 import { pocketbase } from '@najit-najist/pb';
+
+import { config } from '../../config';
 
 export const loginWithAccount = async (pocketbaseAccountName: string) => {
   const account = config.pb.accounts.get(pocketbaseAccountName);

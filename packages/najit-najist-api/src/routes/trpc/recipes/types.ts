@@ -7,10 +7,10 @@ import { slugifyString } from '@utils';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
+import { defaultGetManySchema } from '../../../schemas/base.get-many.schema';
 import {
   RecipeType,
   createRecipeTypeInputSchema,
-  getManyRecipeTypesSchema,
 } from '../../../schemas/recipes';
 import { createRequestPocketbaseRequestOptions } from '../../../server';
 import { t } from '../../../trpc';
@@ -45,7 +45,14 @@ export const typesRouter = t.router({
     }),
 
   getMany: protectedProcedure
-    .input(getManyRecipeTypesSchema.optional())
+    .input(
+      defaultGetManySchema
+        .omit({ perPage: true })
+        .extend({
+          perPage: z.number().min(1).default(99).optional(),
+        })
+        .optional()
+    )
     .query(async ({ input, ctx }) => {
       const { page = 1, perPage = 40 } = input ?? {};
 

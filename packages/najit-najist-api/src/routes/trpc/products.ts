@@ -6,16 +6,7 @@ import {
 import { ApplicationError } from '@errors';
 import { logger } from '@logger';
 import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import {
-  ProductCategory,
-  createProductCategorySchema,
-  createProductSchema,
-  getManyProductCategoriesSchema,
-  getManyProductsSchema,
-  getOneProductSchema,
-  productSchema,
-  updateProductSchema,
-} from '@schemas';
+import { nonEmptyStringSchema, slugSchema } from '@najit-najist/schemas';
 import { ProductService } from '@services/Product.service';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/protectedProcedure';
@@ -24,11 +15,16 @@ import { slugifyString } from '@utils';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
+import { entityLinkSchema } from '../../schemas/entityLinkSchema';
+import { productCategoryCreateInputSchema } from '../../schemas/productCategoryCreateInputSchema';
+import { productCreateInputSchema } from '../../schemas/productCreateInputSchema';
+import { productUpdateInputSchema } from '../../schemas/productUpdateInputSchema';
 import { createRequestPocketbaseRequestOptions } from '../../server';
 
 const getRoutes = t.router({
   one: publicProcedure
-    .input(getOneProductSchema)
+    .input(entityLinkSchema.or(z.object({ slug: nonEmptyStringSchema })))
     .query(async ({ input, ctx }) => {
       const by = 'id' in input ? 'id' : 'slug';
       return ProductService.getBy(
@@ -38,7 +34,11 @@ const getRoutes = t.router({
       );
     }),
   many: publicProcedure
-    .input(getManyProductsSchema)
+    .input(
+      defaultGetManySchema.extend({
+        categorySlug: z.array(slugSchema).optional(),
+      })
+    )
     .query(async ({ input, ctx }) =>
       ProductService.getMany(input, createRequestPocketbaseRequestOptions(ctx))
     ),
@@ -46,7 +46,14 @@ const getRoutes = t.router({
 
 const getCategoriesRoutes = t.router({
   many: t.procedure
-    .input(getManyProductCategoriesSchema.default({}))
+    .input(
+      defaultGetManySchema
+        .omit({ perPage: true })
+        .extend({
+          perPage: z.number().min(1).default(99).optional(),
+        })
+        .default({})
+    )
     .query(({ input, ctx }) => {
       const { page, perPage } = input ?? {};
 
@@ -64,7 +71,7 @@ const categoriesRoutes = t.router({
   get: getCategoriesRoutes,
 
   create: onlyAdminProcedure
-    .input(createProductCategorySchema.omit({ slug: true }))
+    .input(productCategoryCreateInputSchema)
     .mutation(async ({ input, ctx }) => {
       const { name } = input;
       try {
@@ -100,7 +107,7 @@ const categoriesRoutes = t.router({
 export const productsRoutes = t.router({
   get: getRoutes,
   create: onlyAdminProcedure
-    .input(createProductSchema)
+    .input(productCreateInputSchema)
     .mutation(async ({ input, ctx }) => {
       const result = await ProductService.create(
         {
@@ -115,7 +122,7 @@ export const productsRoutes = t.router({
     }),
 
   delete: onlyAdminProcedure
-    .input(productSchema.pick({ id: true, slug: true }))
+    .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {
       await pocketbase
         .collection(PocketbaseCollections.PRODUCTS)
@@ -128,7 +135,7 @@ export const productsRoutes = t.router({
     }),
 
   update: onlyAdminProcedure
-    .input(z.object({ id: z.string(), payload: updateProductSchema }))
+    .input(z.object({ id: z.string(), payload: productUpdateInputSchema }))
     .mutation(async ({ input, ctx }) => {
       const result = await ProductService.update(
         input.id,

@@ -1,5 +1,6 @@
-import { config } from '@config';
 import bcrypt from 'bcrypt';
+
+import { config } from '../config';
 
 export class PasswordService {
   static hash(value: string) {

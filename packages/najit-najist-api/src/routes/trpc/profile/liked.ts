@@ -3,12 +3,12 @@ import {
   RecordListOptions,
   pocketbase,
 } from '@najit-najist/pb';
-import { dislikeRecipeInputSchema, likeRecipeInputSchema } from '@schemas';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
+import { entityLinkSchema } from '../../../schemas/entityLinkSchema';
 import { createRequestPocketbaseRequestOptions } from '../../../server';
 import {
   ErrorCodes,
@@ -59,7 +59,7 @@ export const userLikedRecipesRoutes = t.router({
     ),
 
   add: protectedProcedure
-    .input(likeRecipeInputSchema)
+    .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) =>
       pocketbase
         .collection(PocketbaseCollections.USER_LIKED_RECIPES)
@@ -73,10 +73,10 @@ export const userLikedRecipesRoutes = t.router({
     ),
 
   remove: protectedProcedure
-    .input(dislikeRecipeInputSchema)
+    .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {
       const requestOptions = createRequestPocketbaseRequestOptions(ctx);
-      const recipe = await getOne(input.itemId, requestOptions);
+      const recipe = await getOne(input.id, requestOptions);
 
       await pocketbase
         .collection(PocketbaseCollections.USER_LIKED_RECIPES)
