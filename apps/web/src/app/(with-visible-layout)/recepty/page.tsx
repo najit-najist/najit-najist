@@ -2,13 +2,12 @@ import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { UserActions, canUser } from '@najit-najist/api';
 import {
-  AvailableModels,
+  RecipeCategory,
   RecipeDifficulty,
-  RecipeType,
-  UserActions,
-  canUser,
-} from '@najit-najist/api';
+  recipes as recipesModel,
+} from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -37,7 +36,7 @@ const fallbackDifficulty: RecipeDifficulty = {
   updated: '',
 };
 
-const fallbackType: RecipeType = {
+const fallbackType: RecipeCategory = {
   id: 'default',
   slug: '',
   title: 'Všechny',
@@ -78,7 +77,7 @@ export default async function RecipesPage({ searchParams }: Params) {
           {currentUser &&
           canUser(currentUser, {
             action: UserActions.CREATE,
-            onModel: AvailableModels.RECIPES,
+            onModel: recipesModel,
           }) ? (
             <Link href="/recepty/novy" className="">
               <PlusIcon className="inline w-12" />

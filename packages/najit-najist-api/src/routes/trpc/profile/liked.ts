@@ -1,86 +1,62 @@
-import {
-  ClientResponseError,
-  RecordListOptions,
-  pocketbase,
-} from '@najit-najist/pb';
+import { database } from '@najit-najist/database';
+import { userLikedRecipes } from '@najit-najist/database/models';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
-import { z } from 'zod';
-
-import { ApplicationError } from '../../../errors/ApplicationError';
-import { entityLinkSchema } from '../../../schemas/entityLinkSchema';
-import { createRequestPocketbaseRequestOptions } from '../../../server';
-import {
-  ErrorCodes,
-  PocketbaseCollections,
-  UserLikedRecipe,
-} from '../../../types';
-
-const getOne = async (
-  likedItem: string,
-  requestOptions?: RecordListOptions
-) => {
-  try {
-    return await pocketbase
-      .collection(PocketbaseCollections.USER_LIKED_RECIPES)
-      .getFirstListItem<UserLikedRecipe>(
-        `likedItem="${likedItem}"`,
-        requestOptions
-      );
-  } catch (error) {
-    if (error instanceof ClientResponseError && error.status === 400) {
-      throw new ApplicationError({
-        code: ErrorCodes.ENTITY_MISSING,
-        message: `Tento repect není v oblíbených receptech`,
-        origin: 'UserService',
-      });
-    }
-
-    throw error;
-  }
-};
+import { and, eq } from 'drizzle-orm';
 
 export const userLikedRecipesRoutes = t.router({
-  getMany: protectedProcedure.query(({ ctx }) =>
-    pocketbase
-      .collection(PocketbaseCollections.USER_LIKED_RECIPES)
-      .getFullList<UserLikedRecipe>({
-        ...createRequestPocketbaseRequestOptions(ctx),
-        filter: `likedBy="${ctx.sessionData.userId}"`,
-      })
+  getMany: protectedProcedure.query(async ({ ctx }) =>
+    database.query.userLikedRecipes.findMany({
+      where: (schema, { eq }) => eq(schema.userId, ctx.sessionData.userId),
+    })
   ),
 
   has: protectedProcedure
-    .input(z.string())
-    .query(({ input, ctx }) =>
-      getOne(input, createRequestPocketbaseRequestOptions(ctx)).catch(
-        () => false
-      )
-    ),
+    .input(entityLinkSchema)
+    .query(async ({ input, ctx }) => {
+      const liked = await database.query.userLikedRecipes.findFirst({
+        where: (schema, { eq, and }) =>
+          and(
+            eq(schema.userId, ctx.sessionData.userId),
+            eq(schema.recipeId, input.id)
+          ),
+      });
+
+      return !!liked;
+    }),
 
   add: protectedProcedure
     .input(entityLinkSchema)
-    .mutation(async ({ input, ctx }) =>
-      pocketbase
-        .collection(PocketbaseCollections.USER_LIKED_RECIPES)
-        .create<UserLikedRecipe>(
-          {
-            likedBy: ctx.sessionData.userId,
-            likedItem: input.id,
-          },
-          createRequestPocketbaseRequestOptions(ctx)
-        )
-    ),
+    .mutation(async ({ input, ctx }) => {
+      await database
+        .insert(userLikedRecipes)
+        .values({ userId: ctx.sessionData.userId, recipeId: input.id });
+    }),
 
   remove: protectedProcedure
     .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {
-      const requestOptions = createRequestPocketbaseRequestOptions(ctx);
-      const recipe = await getOne(input.id, requestOptions);
+      const liked = await database.query.userLikedRecipes.findFirst({
+        where: (schema, { eq, and }) =>
+          and(
+            eq(schema.userId, ctx.sessionData.userId),
+            eq(schema.recipeId, input.id)
+          ),
+      });
 
-      await pocketbase
-        .collection(PocketbaseCollections.USER_LIKED_RECIPES)
-        .delete(recipe.id, requestOptions);
+      if (!liked) {
+        return;
+      }
+
+      await database
+        .delete(userLikedRecipes)
+        .where(
+          and(
+            eq(userLikedRecipes.userId, ctx.sessionData.userId),
+            eq(userLikedRecipes.recipeId, input.id)
+          )
+        );
     }),
 });
 

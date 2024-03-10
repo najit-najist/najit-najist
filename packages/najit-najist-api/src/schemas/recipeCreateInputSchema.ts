@@ -3,9 +3,9 @@ import {
   nonEmptyStringSchema,
   slugSchema,
 } from '@najit-najist/schemas';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
 
-import { entityLinkSchema } from './entityLinkSchema';
 import { recipeResourceCreateInputSchema } from './recipeResourceCreateInputSchema';
 import { recipeStepCreateInputSchema } from './recipeStepCreateInputSchema';
 
@@ -20,9 +20,7 @@ export const recipeCreateInputSchema = z.object({
   type: entityLinkSchema,
   difficulty: entityLinkSchema,
   resources: z
-    .array(entityLinkSchema.or(recipeResourceCreateInputSchema))
+    .array(recipeResourceCreateInputSchema)
     .min(1, 'Alespoň jedna ingredience'),
-  steps: z
-    .array(entityLinkSchema.or(recipeStepCreateInputSchema))
-    .min(1, 'Alespoň jeden krok'),
+  steps: z.array(recipeStepCreateInputSchema).min(1, 'Alespoň jeden krok'),
 });

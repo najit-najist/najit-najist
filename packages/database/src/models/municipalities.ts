@@ -18,3 +18,5 @@ export const municipalities = pgTable(
     };
   }
 );
+
+export type Municipality = typeof municipalities.$inferSelect;

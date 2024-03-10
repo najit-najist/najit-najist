@@ -1,6 +1,6 @@
-import { Recipe } from '@schemas';
+import { RecipeStep } from '@najit-najist/database/models';
 
-export const extractTimeFromSteps = (steps: Recipe['steps']) =>
+export const extractTimeFromSteps = (steps: RecipeStep[]) =>
   steps.reduce(
     (finalValue, { parts }) =>
       finalValue +

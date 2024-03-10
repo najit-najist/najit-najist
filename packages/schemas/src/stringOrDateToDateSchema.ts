@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-import { dayjs } from './internals/dayjs';
+import { dayjs } from './internals/dates';
 
 export const stringOrDateToDateSchema = z
   .date()

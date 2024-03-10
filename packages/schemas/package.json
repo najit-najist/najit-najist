@@ -22,7 +22,7 @@
     "dev:package": "npm run build:package -- --watch",
     "dev:package:types": "npm run build:types -- --watch",
     "dev:package:types:aliases": "npm run build:types:aliases -- --watch",
-    "prebuild": "rimraf dist",
+    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
     "build": "npm run build:package && npm run build:types && npm run build:types:aliases",
     "build:package": "swc ./src -d dist",
     "build:types": "tsc",

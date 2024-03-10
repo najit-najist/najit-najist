@@ -1,6 +1,5 @@
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
-
-import { entityLinkSchema } from './entityLinkSchema';
 
 export const userCartUpdateInputSchema = z.object({
   product: entityLinkSchema,

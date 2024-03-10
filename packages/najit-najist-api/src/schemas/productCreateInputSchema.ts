@@ -3,9 +3,9 @@ import {
   slugSchema,
   stringOrDateToDateSchema,
 } from '@najit-najist/schemas';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
 
-import { entityLinkSchema } from './entityLinkSchema';
 import { productPriceCreateInputSchema } from './productPriceCreateInputSchema';
 import { productStockCreateInputSchema } from './productStockCreateInputSchema';
 

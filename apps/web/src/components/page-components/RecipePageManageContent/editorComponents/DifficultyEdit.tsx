@@ -3,7 +3,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   CreateRecipeDifficultyInput,
-  createRecipeDifficultyInputSchema,
   ErrorCodes,
   PocketbaseErrorCodes,
   Recipe,
@@ -35,7 +34,7 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
   const { mutateAsync: create } =
     trpc.recipes.difficulties.create.useMutation();
   const formMethods = useForm<CreateRecipeDifficultyInput>({
-    resolver: zodResolver(createRecipeDifficultyInputSchema),
+    resolver: zodResolver(recipeDifficultyCreateInputSchema),
   });
   const { handleSubmit, register, formState, reset, setError } = formMethods;
 

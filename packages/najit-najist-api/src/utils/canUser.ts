@@ -1,4 +1,11 @@
-import { User, UserRoles } from '@schemas';
+import {
+  User,
+  UserRoles,
+  posts,
+  products,
+  recipes,
+} from '@najit-najist/database/models';
+import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 
 export enum UserActions {
   DELETE = 'delete',
@@ -7,80 +14,87 @@ export enum UserActions {
   VIEW = 'view',
 }
 
-export enum AvailableModels {
-  USER = 'users',
-  POST = 'posts',
-  RECIPES = 'recipes',
-  PRODUCTS = 'products',
-}
-
 export enum SpecialSections {
   OG_PREVIEW = 'og-preview',
 }
 
 export type CanUserOptions = {
   action: UserActions;
-  onModel: AvailableModels | SpecialSections;
+  onModel: PgTableWithColumns<any> | SpecialSections;
 };
 
+class ActionsMap extends Map<
+  PgTableWithColumns<any> | SpecialSections,
+  Partial<Record<UserActions, boolean>> | boolean
+> {}
+
 export type RuleSet = Record<
-  UserRoles,
-  | Partial<
-      Record<
-        AvailableModels | SpecialSections,
-        Partial<Record<UserActions, boolean>> | boolean
-      >
-    >
-  | boolean
+  (typeof UserRoles)[keyof typeof UserRoles],
+  ActionsMap | boolean
 >;
 
 const ruleSet: RuleSet = {
   [UserRoles.ADMIN]: true,
-  [UserRoles.NORMAL]: {
-    [AvailableModels.POST]: {
-      [UserActions.VIEW]: true,
-    },
-    [AvailableModels.USER]: false,
-    [AvailableModels.RECIPES]: {
-      [UserActions.VIEW]: true,
-    },
-    [SpecialSections.OG_PREVIEW]: {
-      [UserActions.VIEW]: true,
-    },
-    [AvailableModels.PRODUCTS]: {
-      [UserActions.VIEW]: true,
-    },
-  },
-  [UserRoles.BASIC]: {
-    [AvailableModels.POST]: {
-      [UserActions.VIEW]: true,
-    },
-    [AvailableModels.USER]: false,
-    [AvailableModels.RECIPES]: {
-      [UserActions.VIEW]: true,
-    },
-    [AvailableModels.PRODUCTS]: {
-      [UserActions.VIEW]: true,
-    },
-  },
+  [UserRoles.NORMAL]: new ActionsMap([
+    [
+      posts,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+    [
+      recipes,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+    [
+      products,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+    [
+      SpecialSections.OG_PREVIEW,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+  ]),
+  [UserRoles.BASIC]: new ActionsMap([
+    [
+      posts,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+    [
+      recipes,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+    [
+      products,
+      {
+        [UserActions.VIEW]: true,
+      },
+    ],
+  ]),
   [UserRoles.PREMIUM]: false,
 };
 
 /**
  * Checks if provided user can or cannot do certain actions on model
  */
-export const canUser = (
-  user: Pick<User, 'role'>,
-  options: CanUserOptions,
-  customRuleSet = ruleSet
-) => {
-  const modelsForRole = customRuleSet[user.role];
+export const canUser = (user: Pick<User, 'role'>, options: CanUserOptions) => {
+  const modelsForRole = ruleSet[user.role];
 
   if (typeof modelsForRole === 'boolean') {
     return modelsForRole;
   }
 
-  const modelRules = modelsForRole[options.onModel] ?? false;
+  const modelRules = modelsForRole.get(options.onModel) ?? false;
 
   if (typeof modelRules === 'boolean') {
     return modelRules;

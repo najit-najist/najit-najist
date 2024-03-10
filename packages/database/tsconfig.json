@@ -5,6 +5,8 @@
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "preserve",
+    "declaration": true,
+    "rootDir": "./src",
     "outDir": "./dist",
   },
   "tsc-alias": {

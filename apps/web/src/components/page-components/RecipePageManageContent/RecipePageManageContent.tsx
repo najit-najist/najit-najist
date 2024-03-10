@@ -1,9 +1,6 @@
-import {
-  AvailableModels,
-  extractTimeFromSteps,
-  getFileUrl,
-  Recipe,
-} from '@najit-najist/api';
+import { RecipeWithRelations } from '@custom-types';
+import { extractTimeFromSteps, getFileUrl } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
 import { getCachedTrpcCaller } from '@server-utils';
 import HTMLReactParser from 'html-react-parser';
@@ -32,10 +29,10 @@ const Title: FC<PropsWithChildren> = ({ children }) => (
 export type RecipePageManageContentProps = {
   isEditorHeaderShown?: boolean;
 } & (
-  | { viewType: 'edit'; recipe: Recipe }
+  | { viewType: 'edit'; recipe: RecipeWithRelations }
   | {
       viewType: 'view';
-      recipe: Recipe;
+      recipe: RecipeWithRelations;
     }
   | { viewType: 'create' }
 );
@@ -97,7 +94,7 @@ export const RecipePageManageContent = async ({
                 <CustomImage
                   onlyImage
                   src={getFileUrl(
-                    AvailableModels.RECIPES,
+                    recipes,
                     props.recipe.id,
                     props.recipe.images[0]
                   )}
@@ -116,14 +113,10 @@ export const RecipePageManageContent = async ({
                 </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
-                {props.recipe.images.slice(1).map((imageUrl) => (
+                {props.recipe.images.slice(1).map(({ file: imageUrl }) => (
                   <CustomImage
                     key={imageUrl}
-                    src={getFileUrl(
-                      AvailableModels.RECIPES,
-                      props.recipe.id,
-                      imageUrl
-                    )}
+                    src={getFileUrl(recipes, props.recipe.id, imageUrl)}
                   />
                 ))}
               </div>

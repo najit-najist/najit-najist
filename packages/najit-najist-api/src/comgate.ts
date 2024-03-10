@@ -1,27 +1,22 @@
+import { Order } from '@najit-najist/database/models';
 import queryString from 'query-string';
 
-import { Order } from './schemas/orders';
 import { logger } from './server';
 
 export type CreatePaymentOptions = {
   order: Pick<
     Order,
-    | 'subtotal'
-    | 'delivery_method_price'
-    | 'payment_method_price'
-    | 'email'
-    | 'id'
+    'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'email' | 'id'
   >;
 };
 
 export const getTotalPrice = (
-  order: Pick<
-    Order,
-    'subtotal' | 'delivery_method_price' | 'payment_method_price'
-  >
+  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>
 ) => {
   return (
-    order.subtotal + order.delivery_method_price + order.payment_method_price
+    order.subtotal +
+    (order.deliveryMethodPrice ?? 0) +
+    (order.paymentMethodPrice ?? 0)
   );
 };
 
@@ -121,7 +116,7 @@ export class Comgate {
         country: 'CZ',
         curr: 'CZK',
         price: String(getTotalPrice(options.order) * 100),
-        refId: options.order.id,
+        refId: String(options.order.id),
         email: options.order.email,
         secret: this.secret,
         prepareOnly: String(true),

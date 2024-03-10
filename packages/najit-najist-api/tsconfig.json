@@ -5,6 +5,7 @@
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "preserve",
+    "rootDir": "./src",
     "outDir": "./dist",
     "paths": {
       "@custom-types": ["./src/types"],
@@ -31,6 +32,9 @@
     },
     {
       "path": "../../packages/schemas",
+    },
+    {
+      "path": "../../packages/security",
     },
   ],
   "include": ["src"]

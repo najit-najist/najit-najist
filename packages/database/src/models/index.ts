@@ -1,3 +1,4 @@
+export * from './comgatePayments';
 export * from './contactFormReplies';
 export * from './municipalities';
 export * from './newsletterSubscriptions';

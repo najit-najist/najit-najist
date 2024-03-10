@@ -1,26 +1,17 @@
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { passwordZodSchema } from '@najit-najist/security';
 import { z } from 'zod';
 
-import { municipalitySchema } from './municipality.schema';
-import { userSchema } from './user.schema';
+import { userCreateInputSchema } from './userCreateInputSchema';
 
-export const userRegisterInputSchema = userSchema
+export const userRegisterInputSchema = userCreateInputSchema
   .omit({
-    newsletterUuid: true,
     role: true,
     status: true,
-    address: true,
-    lastLoggedIn: true,
-    verified: true,
-    created: true,
-    emailVisibility: true,
-    id: true,
-    username: true,
-    updated: true,
   })
   .extend({
     address: z.object({
-      municipality: municipalitySchema.pick({ id: true }),
+      municipality: entityLinkSchema,
     }),
     password: passwordZodSchema,
   });

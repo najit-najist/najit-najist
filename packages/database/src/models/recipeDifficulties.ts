@@ -8,3 +8,5 @@ export const recipeDifficulties = pgTable('recipe_difficulties', {
   slug: varchar('slug', { length: 256 }).unique().notNull(),
   color: varchar('color', { length: 20 }).notNull(),
 });
+
+export type RecipeDifficulty = typeof recipeDifficulties.$inferSelect;

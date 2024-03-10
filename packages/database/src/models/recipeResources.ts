@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
@@ -17,3 +18,19 @@ export const recipeResources = pgTable('recipe_resources', {
   description: text('description').default(''),
   optional: boolean('optional').default(false),
 });
+
+export const recipeResourcesRelations = relations(
+  recipeResources,
+  ({ one }) => ({
+    recipe: one(recipes, {
+      fields: [recipeResources.recipeId],
+      references: [recipes.id],
+    }),
+    metric: one(recipeResourceMetrics, {
+      fields: [recipeResources.metricId],
+      references: [recipeResourceMetrics.id],
+    }),
+  })
+);
+
+export type RecipeResource = typeof recipeResources.$inferSelect;

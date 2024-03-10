@@ -9,12 +9,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import {
-  AvailableModels,
-  getFileUrl,
-  IMAGE_FILE_REGEX,
-  Recipe,
-} from '@najit-najist/api';
+import { getFileUrl } from '@najit-najist/api';
+import { Recipe, recipes } from '@najit-najist/database/models';
+import { IMAGE_FILE_REGEX } from '@najit-najist/schemas';
 import { Alert, Badge, Button, Skeleton } from '@najit-najist/ui';
 import { readFile } from '@utils';
 import clsx from 'clsx';
@@ -29,6 +26,7 @@ import {
   useState,
 } from 'react';
 import { FieldError, useController, useFormContext } from 'react-hook-form';
+
 import { CustomImage } from '../CustomImage';
 import { RecipeFormData } from '../_types';
 
@@ -93,7 +91,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
       recipeId && value
         ? isBase64(value)
           ? value
-          : getFileUrl(AvailableModels.RECIPES, recipeId, value)
+          : getFileUrl(recipes, recipeId, value)
         : value,
     [recipeId, value]
   );
@@ -162,7 +160,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
 const FIELD_NAME = 'images';
 
-export const ImagesEdit: FC<{ recipeId?: string }> = ({ recipeId }) => {
+export const ImagesEdit: FC<{ recipeId?: number }> = ({ recipeId }) => {
   const { getValues, resetField } = useFormContext<RecipeFormData>();
   const { field, fieldState } = useController<
     Pick<RecipeFormData, typeof FIELD_NAME>

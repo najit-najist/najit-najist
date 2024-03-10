@@ -1,38 +1,38 @@
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import {
-  onlyAdminProcedure,
-  protectedProcedure,
-} from '@trpc-procedures/protectedProcedure';
+import { database } from '@najit-najist/database';
+import { recipeDifficulties } from '@najit-najist/database/models';
+import { entityLinkSchema } from '@najit-najist/schemas';
+import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
+import { DrizzleError } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
+import { EntityNotFoundError } from '../../../errors/EntityNotFoundError';
 import { defaultGetManySchema } from '../../../schemas/base.get-many.schema';
-import {
-  RecipeDifficulty,
-  createRecipeDifficultyInputSchema,
-} from '../../../schemas/recipes';
-import { createRequestPocketbaseRequestOptions } from '../../../server';
+import { recipeDifficultyCreateInputSchema } from '../../../schemas/recipeDifficultyCreateInputSchema';
+import { logger } from '../../../server';
 import { t } from '../../../trpc';
-import {
-  ErrorCodes,
-  PocketbaseCollections,
-  PocketbaseErrorCodes,
-} from '../../../types';
+import { ErrorCodes } from '../../../types';
 
 export const difficultiesRouter = t.router({
   getOne: protectedProcedure
-    .input(z.object({ id: z.string() }))
+    .input(entityLinkSchema)
     .query(async ({ input, ctx }) => {
       try {
-        return await pocketbase
-          .collection(PocketbaseCollections.RECIPE_DIFFICULTY)
-          .getFirstListItem<RecipeDifficulty>(
-            `id="${input.id}"`,
-            createRequestPocketbaseRequestOptions(ctx)
-          );
+        const item = await database.query.recipeDifficulties.findFirst({
+          where: (schema, { eq }) => eq(schema.id, input.id),
+        });
+
+        if (!item) {
+          throw new EntityNotFoundError({
+            entityName: recipeDifficulties._.name,
+          });
+        }
+
+        return item;
       } catch (error) {
-        if (error instanceof ClientResponseError && error.status === 400) {
+        if (error instanceof EntityNotFoundError) {
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
             message: `Náročnost receptu pod daným polem 'id' nebyl nalezen`,
@@ -54,42 +54,36 @@ export const difficultiesRouter = t.router({
         .optional()
     )
     .query(({ input, ctx }) => {
+      // TODO: pagination
       const { page = 1, perPage = 40 } = input ?? {};
 
-      return pocketbase
-        .collection(PocketbaseCollections.RECIPE_DIFFICULTY)
-        .getList<RecipeDifficulty>(
-          page,
-          perPage,
-          createRequestPocketbaseRequestOptions(ctx)
-        );
+      return database.query.recipeDifficulties.findMany();
     }),
 
   create: onlyAdminProcedure
-    .input(createRecipeDifficultyInputSchema)
+    .input(recipeDifficultyCreateInputSchema)
     .mutation(async ({ input, ctx }) => {
       const { color, name } = input;
+
       try {
-        return await pocketbase
-          .collection(PocketbaseCollections.RECIPE_DIFFICULTY)
-          .create(
-            { name, color, slug: slugifyString(name) },
-            createRequestPocketbaseRequestOptions(ctx)
-          );
+        return await database
+          .insert(recipeDifficulties)
+          .values({ name, color, slug: slugifyString(name) })
+          .returning();
       } catch (error) {
-        if (error instanceof ClientResponseError) {
-          const data = error.data.data;
+        if (error instanceof DrizzleError) {
+          logger.error(error, 'Failed to create recipe difficulty');
 
           if (
-            data.name?.code === PocketbaseErrorCodes.NOT_UNIQUE ||
-            data.slug?.code === PocketbaseErrorCodes.NOT_UNIQUE
+            error.message.includes('name') ||
+            error.message.includes('slug')
           ) {
             throw new ApplicationError({
               code: ErrorCodes.ENTITY_DUPLICATE,
               message: `Název složitosti musí být unikátní`,
               origin: 'RecipeDifficultyService',
             });
-          } else if (data.color?.code === PocketbaseErrorCodes.NOT_UNIQUE) {
+          } else if (error.message.includes('color')) {
             throw new ApplicationError({
               code: ErrorCodes.ENTITY_DUPLICATE,
               message: `Barva složitosti musí být unikátní`,

@@ -4,7 +4,8 @@ import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
 import { logger } from '@logger';
-import { AppRouterInput, checkoutCartSchema } from '@najit-najist/api';
+import { AppRouterInput } from '@najit-najist/api';
+import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { getTotalPrice } from '@utils';
@@ -42,7 +43,7 @@ export const FormProvider: FC<
   const { mutateAsync: doCheckout } = trpc.profile.cart.checkout.useMutation();
   const formMethods = useForm({
     defaultValues: defaultFormValues,
-    resolver: zodResolver(checkoutCartSchema),
+    resolver: zodResolver(userCartCheckoutInputSchema),
   });
   const { handleSubmit } = formMethods;
 
@@ -68,9 +69,10 @@ export const FormProvider: FC<
 
       plausible.trackEvent('User order', {
         props: {
-          municipality: newOrder.address_municipality.name,
-          'delivery method': newOrder.delivery_method.name,
-          'payment method': newOrder.payment_method.name,
+          // TODO: print names instead
+          municipality: formValues.address.municipality.id.toString(),
+          'delivery method': formValues.deliveryMethod.id.toString(),
+          'payment method': formValues.paymentMethod.id.toString(),
         },
         revenue: {
           amount: getTotalPrice(newOrder),
@@ -78,14 +80,14 @@ export const FormProvider: FC<
         },
       });
 
-      for (const productInCart of newOrder.products) {
-        plausible.trackEvent('Product ordered', {
-          props: {
-            name: productInCart.product.name,
-            count: String(productInCart.count),
-          },
-        });
-      }
+      // for (const productInCart of newOrder.products) {
+      //   plausible.trackEvent('Product ordered', {
+      //     props: {
+      //       name: productInCart.product.name,
+      //       count: String(productInCart.count),
+      //     },
+      //   });
+      // }
 
       if (redirectTo.startsWith('http')) {
         window.location.replace(redirectTo);

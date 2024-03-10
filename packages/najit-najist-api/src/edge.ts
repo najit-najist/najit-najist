@@ -1,2 +1,2 @@
-export * from './constants/edge';
+export * from './constants';
 export * from './utils/edge';

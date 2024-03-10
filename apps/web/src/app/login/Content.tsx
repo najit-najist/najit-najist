@@ -7,12 +7,12 @@ import {
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { loginInputSchema } from '@najit-najist/api';
+import { userProfileLogInInputSchema } from '@najit-najist/api';
 import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
 import { Alert } from '@najit-najist/ui';
 import type { TRPCError } from '@trpc/server';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { trpc } from 'trpc';
@@ -21,7 +21,9 @@ import { z } from 'zod';
 import { BottomLinks } from './_components/BottomLInks';
 import { Title } from './_components/Title';
 
-type FormValues = z.infer<typeof loginInputSchema> & { errorPot: string };
+type FormValues = z.infer<typeof userProfileLogInInputSchema> & {
+  errorPot: string;
+};
 
 export const Content: FC = () => {
   const { mutateAsync: doLogin } = trpc.profile.login.useMutation();
@@ -29,7 +31,7 @@ export const Content: FC = () => {
   const searchParams = useSearchParams();
   const utils = trpc.useContext();
   const formMethods = useForm<FormValues>({
-    resolver: zodResolver(loginInputSchema),
+    resolver: zodResolver(userProfileLogInInputSchema),
   });
   const {
     register,

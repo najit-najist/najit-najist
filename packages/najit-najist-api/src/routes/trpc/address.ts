@@ -1,7 +1,8 @@
-import { PocketbaseCollections } from '@custom-types';
-import { pocketbase, type ListResult } from '@najit-najist/pb';
-import { Municipality } from '@schemas';
+import { database } from '@najit-najist/database';
+import { municipalities } from '@najit-najist/database/models';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
+import { SQL, eq, ilike, or } from 'drizzle-orm';
 import { z } from 'zod';
 
 export const municipalityGetRoutes = t.router({
@@ -14,38 +15,44 @@ export const municipalityGetRoutes = t.router({
           perPage: z.number().min(10).max(100).default(10),
           filter: z
             .object({
-              id: z.array(z.string()).optional(),
+              id: z.array(z.number()).optional(),
             })
             .optional(),
         })
         .optional()
     )
-    .query(async ({ input }): Promise<ListResult<Municipality>> => {
+    .query(async ({ input }) => {
       const { page, perPage, query, filter: filterFromInput } = input ?? {};
-      const filter = [
-        query ? `name ~ '${query}' || slug ~ '${query}'` : undefined,
-        filterFromInput?.id
-          ? `(${filterFromInput.id
-              .map((itemId) => `id = '${itemId}'`)
-              .join(' || ')})`
-          : undefined,
-      ].filter(Boolean);
+      const conditions: SQL[] = [];
 
-      return pocketbase
-        .collection(PocketbaseCollections.MUNICIPALITY)
-        .getList<Municipality>(page, perPage, {
-          sort: '-name',
-          filter: filter.join(' && '),
-        });
+      if (query) {
+        conditions.push(
+          or(
+            ilike(municipalities.name, query),
+            ilike(municipalities.slug, query)
+          )!
+        );
+      }
+
+      if (filterFromInput?.id) {
+        conditions.push(
+          or(...filterFromInput.id.map((id) => eq(municipalities.id, id)))!
+        );
+      }
+
+      // TODO: pagination
+      return database.query.municipalities.findMany({
+        where: (schema, { and }) =>
+          conditions.length ? and(...conditions) : undefined,
+        orderBy: (schema, { asc }) => [asc(schema.name)],
+      });
     }),
 
-  one: t.procedure
-    .input(z.string())
-    .query(async ({ input }): Promise<Municipality> => {
-      return pocketbase
-        .collection(PocketbaseCollections.MUNICIPALITY)
-        .getOne<Municipality>(input);
-    }),
+  one: t.procedure.input(entityLinkSchema).query(async ({ input }) => {
+    return database.query.municipalities.findFirst({
+      where: (schema, { eq }) => eq(schema.id, input.id),
+    });
+  }),
 });
 
 export const municipalityRoutes = t.router({

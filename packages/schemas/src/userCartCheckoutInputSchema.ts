@@ -1,11 +1,9 @@
-import {
-  nonEmptyStringSchema,
-  streetNameSchema,
-  telephoneNumberInputSchema,
-} from '@najit-najist/schemas';
 import { z } from 'zod';
 
 import { entityLinkSchema } from './entityLinkSchema';
+import { nonEmptyStringSchema } from './nonEmptyStringSchema';
+import { streetNameSchema } from './streetNameSchema';
+import { telephoneNumberInputSchema } from './telephoneNumberInputSchema';
 
 const MESSAGES = {
   requiredHouseNumber: 'Vyplňte číslo Vašeho baráku',
@@ -21,6 +19,7 @@ export const userCartCheckoutInputSchema = z.object({
     (value) => value.length >= 1,
     'Zadejte telefonní číslo'
   ),
+  notes: z.string().optional(),
   address: z.object({
     municipality: entityLinkSchema,
     houseNumber: z

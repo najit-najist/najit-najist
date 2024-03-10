@@ -1,4 +1,4 @@
-import { splitBase64Url } from './splitBase64Url';
+import { splitBase64Url } from '@najit-najist/schemas';
 
 export const setFileNameToBase64 = (
   base64Url: string,

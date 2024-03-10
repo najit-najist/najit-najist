@@ -1,12 +1,14 @@
+import { PostWithRelations } from '@custom-types';
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
-import HTMLReactParser from 'html-react-parser';
+import { getFileUrl } from '@najit-najist/api';
+import { posts } from '@najit-najist/database/models';
 import dayjs from 'dayjs';
+import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
-export const Item: FC<Post> = (post) => {
+export const Item: FC<PostWithRelations> = (post) => {
   const link: any = `/clanky/${post.slug}`;
   return (
     <article className="relative isolate flex flex-col gap-8 lg:flex-row">
@@ -19,7 +21,7 @@ export const Item: FC<Post> = (post) => {
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl(AvailableModels.POST, post.id, post.image)}
+            src={getFileUrl(posts, post.id, post.image)}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />
@@ -33,10 +35,10 @@ export const Item: FC<Post> = (post) => {
       <div>
         <div className="flex items-center gap-x-4 text-xs mt-2">
           <time
-            dateTime={String(post.publishedAt) ?? post.created}
+            dateTime={String(post.publishedAt) ?? post.createdAt}
             className="text-gray-500"
           >
-            {dayjs(post.publishedAt ? post.publishedAt : post.created).format(
+            {dayjs(post.publishedAt ? post.publishedAt : post.createdAt).format(
               'DD. MM. YYYY @ HH:mm'
             )}
             {!post.publishedAt ? (
@@ -44,7 +46,7 @@ export const Item: FC<Post> = (post) => {
             ) : null}
           </time>
           <div className="flex space-x-3">
-            {post.categories.map(({ id, title }) => (
+            {post.categories.map(({ category: { id, title } }) => (
               <button
                 key={id}
                 className="relative z-10 rounded-full bg-gray-50 py-1.5 px-3 font-medium text-gray-600 hover:bg-gray-100"

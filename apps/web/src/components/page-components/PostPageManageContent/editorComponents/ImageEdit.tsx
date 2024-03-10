@@ -2,13 +2,9 @@
 
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import {
-  AvailableModels,
-  getFileUrl,
-  IMAGE_FILE_REGEX,
-  isFileBase64,
-  Post,
-} from '@najit-najist/api';
+import { getFileUrl } from '@najit-najist/api';
+import { Post, posts } from '@najit-najist/database/models';
+import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/schemas';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { ChangeEventHandler, FC, useMemo, useRef, useState } from 'react';
@@ -53,7 +49,7 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
       return value ?? '';
     }
 
-    return getFileUrl(AvailableModels.POST, postId, value ?? '', {
+    return getFileUrl(posts, postId, value ?? '', {
       width: 200,
       height: 200,
     });

@@ -1,15 +1,10 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import {
-  AppRouterOutput,
-  AvailableModels,
-  getFileUrl,
-  orderStates,
-} from '@najit-najist/api';
+import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
+import { OrderState, products } from '@najit-najist/database/models';
 import { Alert, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { FC, Fragment } from 'react';
-import { z } from 'zod';
 
 import { EditOrderControllbar } from './EditOrderControlbar';
 import { OrderSubtitle } from './OrderSubtitle';
@@ -21,7 +16,10 @@ export type OrderUnderpageProps = {
   viewType: OrderUnderpageViewType;
 };
 
-const orderStateToTitle: Record<z.infer<typeof orderStates>, string> = {
+const orderStateToTitle: Record<
+  (typeof OrderState)[keyof typeof OrderState],
+  string
+> = {
   confirmed: 'Brzy to bude!',
   dropped: 'Zrušeno',
   finished: 'A je to doma!',
@@ -97,11 +95,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
             let mainImage = cartItem.product.images.at(0);
 
             if (mainImage) {
-              mainImage = getFileUrl(
-                AvailableModels.PRODUCTS,
-                cartItem.product.id,
-                mainImage
-              );
+              mainImage = getFileUrl(products, cartItem.product.id, mainImage);
             }
 
             return (
@@ -172,10 +166,10 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                       {order.firstName} {order.lastName}
                     </span>
                     <span className="block">
-                      {order.address_streetName}, {order.address_houseNumber}
+                      {order.address?.streetName}, {order.address?.houseNumber}
                     </span>
                     <span className="block">
-                      {order.address_city} {order.address_postalCode}
+                      {order.address?.city} {order.address?.postalCode}
                     </span>
                   </address>
                 </dd>
@@ -199,8 +193,8 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                   Platební metoda
                 </dt>
                 <dd className="mt-2 text-gray-700">
-                  <p>{order.payment_method.name}</p>
-                  {order.state === 'unpaid' && order.payment_method.notes ? (
+                  <p>{order.paymentMethod.name}</p>
+                  {order.state === 'unpaid' && order.paymentMethod.notes ? (
                     <Alert
                       color="warning"
                       heading={
@@ -213,7 +207,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                     >
                       <div
                         dangerouslySetInnerHTML={{
-                          __html: order.payment_method.notes,
+                          __html: order.paymentMethod.notes,
                         }}
                       ></div>
                     </Alert>
@@ -230,12 +224,10 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                   Doručovací metoda
                 </dt>
                 <dd className="mt-2 text-gray-700">
-                  {order.delivery_method ? (
+                  {order.deliveryMethod ? (
                     <>
-                      <p>{order.delivery_method.name}</p>
-                      <p className="mt-1">
-                        {order.delivery_method.description}
-                      </p>
+                      <p>{order.deliveryMethod.name}</p>
+                      <p className="mt-1">{order.deliveryMethod.description}</p>
                     </>
                   ) : (
                     <p>Neznámá doručovací metoda</p>
@@ -264,15 +256,15 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Doprava</dt>
                 <dd className="text-gray-700">
-                  {order.delivery_method?.price
-                    ? `${order.delivery_method.price} Kč`
+                  {order.deliveryMethod?.price
+                    ? `${order.deliveryMethod.price} Kč`
                     : 'Zdarma'}
                 </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
                 <dd className="text-project-secondary">
-                  {order.subtotal + (order.delivery_method?.price ?? 0)} Kč
+                  {order.subtotal + (order.deliveryMethod?.price ?? 0)} Kč
                 </dd>
               </div>
             </dl>

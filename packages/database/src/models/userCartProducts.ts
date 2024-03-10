@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
@@ -14,3 +15,17 @@ export const userCartProducts = pgTable('user_cart_products', {
     .references(() => products.id)
     .notNull(),
 });
+
+export const userCartProductsRelations = relations(
+  userCartProducts,
+  ({ one }) => ({
+    product: one(products, {
+      fields: [userCartProducts.productId],
+      references: [products.id],
+    }),
+    cart: one(userCarts, {
+      fields: [userCartProducts.cartId],
+      references: [userCarts.id],
+    }),
+  })
+);

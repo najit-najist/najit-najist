@@ -1,44 +1,29 @@
-import { PocketbaseCollections, PocketbaseErrorCodes } from '@custom-types';
-import { logger } from '@logger';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+import { database } from '@najit-najist/database';
+import { userNewsletters } from '@najit-najist/database/models';
+import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
-import { loginWithAccount } from '@utils/pocketbase';
-import { randomUUID } from 'crypto';
-import { z } from 'zod';
-
-import { createRequestPocketbaseRequestOptions } from '../../server';
+import { eq } from 'drizzle-orm';
 
 export const newsletterRoutes = t.router({
   subscribe: t.procedure
-    .input(
-      z.object({
-        email: z.string().email(),
-      })
-    )
+    .input(subscribeToNewsletterInputSchema)
     .mutation(async ({ input }) => {
-      const pbAccount = await loginWithAccount('contactForm');
+      const existing = await database.query.userNewsletters.findFirst({
+        where: (schema, { eq }) => eq(schema.email, input.email),
+      });
 
-      try {
-        await pocketbase
-          .collection(PocketbaseCollections.NEWSLETTER_SUBSCRIPTIONS)
-          .create(
-            {
-              email: input.email,
-              uuid: randomUUID(),
-            },
-            createRequestPocketbaseRequestOptions({ sessionData: pbAccount })
-          );
-      } catch (error) {
-        if (error instanceof ClientResponseError) {
-          const data = error.data.data;
-
-          if (data.email?.code === PocketbaseErrorCodes.NOT_UNIQUE) {
-            logger.info(input, `User already is subscribed`);
-            return null;
-          }
-        }
-
-        throw error;
+      if (!existing) {
+        await database.insert(userNewsletters).values({
+          email: input.email,
+          enabled: true,
+        });
+      } else if (!existing.enabled) {
+        await database
+          .update(userNewsletters)
+          .set({
+            enabled: true,
+          })
+          .where(eq(userNewsletters.email, input.email));
       }
 
       return null;

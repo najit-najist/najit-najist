@@ -1,12 +1,13 @@
 'use client';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, getFileUrl } from '@najit-najist/api';
+import { getFileUrl } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import clsx from 'clsx';
+import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
-import { useKeenSlider } from 'keen-slider/react.es';
 
 const arrowButtonClassName = clsx(
   'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r'
@@ -16,7 +17,7 @@ const arrowClassName = clsx('w-4 h-4');
 export const ImageSlider: FC<{
   imageUrls: string[];
   itemLink: string;
-  itemId: string;
+  itemId: number;
 }> = ({ imageUrls, itemLink, itemId }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
@@ -33,7 +34,7 @@ export const ImageSlider: FC<{
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(AvailableModels.RECIPES, itemId, imageName)}
+                src={getFileUrl(recipes, itemId, imageName)}
                 alt=""
                 className="rounded-t-lg absolute top-0 left-0 w-full h-full object-center object-cover"
               />

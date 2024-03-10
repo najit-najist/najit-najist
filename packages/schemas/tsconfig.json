@@ -5,10 +5,12 @@
     "module": "ESNext",
     "target": "ESNext",
     "jsx": "preserve",
+    "rootDir": "./src",
     "outDir": "./dist",
   },
   "tsc-alias": {
     "resolveFullPaths": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["node_modules", "dist"]
 }

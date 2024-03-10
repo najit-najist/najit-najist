@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
@@ -9,3 +10,10 @@ export const productPrices = pgTable('product_prices', {
   discount: integer('discount'),
   productId: integer('product_id').references(() => products.id),
 });
+
+export const productPricesRelations = relations(productPrices, ({ one }) => ({
+  product: one(products, {
+    fields: [productPrices.productId],
+    references: [products.id],
+  }),
+}));

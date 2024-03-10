@@ -21,3 +21,5 @@ export const telephoneNumbers = pgTable(
     };
   }
 );
+
+export type TelephoneNumber = typeof telephoneNumbers.$inferSelect;

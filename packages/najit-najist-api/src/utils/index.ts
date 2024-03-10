@@ -1,6 +1,4 @@
 export * from './canUser';
-export * from './deserializePocketToken';
-export * from './expandPocketFields';
 export * from './extractTimeFromSteps';
 export * from './formatErrorMessage';
 export * from './getFileUrl';

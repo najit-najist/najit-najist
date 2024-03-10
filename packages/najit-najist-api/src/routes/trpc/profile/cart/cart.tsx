@@ -1,145 +1,170 @@
+import { database } from '@najit-najist/database';
+import {
+  OrderState,
+  comgatePayments,
+  orderDeliveryMethods,
+  orderPaymentMethods,
+  orderedProducts,
+  orders,
+  productStock,
+  telephoneNumbers,
+  userCartProducts,
+  userCarts,
+} from '@najit-najist/database/models';
 import {
   renderAsync,
   ThankYouOrder,
   ThankYouOrderAdmin,
 } from '@najit-najist/email-templates';
 import {
-  PaymentMethodsSlug,
-  pocketbase,
-  pocketbaseByCollections,
-} from '@najit-najist/pb';
-import {
-  DeliveryMethod,
-  OrderPaymentMethod,
-  ProductStock,
-  checkoutCartSchema,
-} from '@schemas';
+  EntityLink,
+  entityLinkSchema,
+  userCartCheckoutInputSchema,
+} from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
-import { getCurrentCart } from '@utils/server/getCurrentUserCart';
-import { getOrderById } from '@utils/server/getOrderById';
+import { and, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { Comgate } from '../../../../comgate';
 import { config } from '../../../../config';
-import { AUTHORIZATION_HEADER } from '../../../../constants';
-import {
-  addToCartSchema,
-  userCartProductSchema,
-} from '../../../../schemas/profile/cart/cart.schema';
-import {
-  MailService,
-  createRequestPocketbaseRequestOptions,
-  logger,
-} from '../../../../server';
+import { PaymentMethodsSlug } from '../../../../schemas/orderPaymentMethodCreateInputSchema';
+import { userCartAddItemInputSchema } from '../../../../schemas/userCartAddItemInputSchema';
+import { userCartUpdateInputSchema } from '../../../../schemas/userCartUpdateInputSchema';
+import { MailService, logger } from '../../../../server';
+
+type UserCartWithRelations = {};
+
+export const getUserCart = async (link: EntityLink) => {
+  let cart = await database.query.userCarts.findFirst({
+    where: (schema, { eq }) => eq(schema.userId, link.id),
+    with: {
+      products: {
+        with: {
+          product: {
+            with: {
+              price: true,
+              stock: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  if (!cart) {
+    const [createdCart] = await database
+      .insert(userCarts)
+      .values({ userId: link.id })
+      .returning();
+
+    cart = {
+      ...createdCart,
+      products: [],
+    };
+  }
+
+  let subtotal = 0;
+
+  for (const productInCart of cart.products) {
+    const { count, product } = productInCart;
+
+    subtotal += count * (product.price?.value ?? 0);
+  }
+
+  // TODO: deselect items from cart if user is not eligible
+  return { ...cart, subtotal };
+};
 
 export const userCartRoutes = t.router({
   products: t.router({
     get: t.router({
-      many: protectedProcedure.query(async () => {
-        return getCurrentCart().then((res) => res.products);
+      many: protectedProcedure.query(async ({ ctx }) => {
+        return getUserCart({ id: ctx.sessionData.userId }).then(
+          (res) => res.products
+        );
       }),
     }),
 
     add: protectedProcedure
-      .input(addToCartSchema)
+      .input(userCartAddItemInputSchema)
+      // TODO: improve, all those calls to db can be merged into one bigger query
       .mutation(async ({ input, ctx }) => {
-        const requestOptions = createRequestPocketbaseRequestOptions(ctx);
-        const productStock = await pocketbaseByCollections.productStocks
-          .getFirstListItem<ProductStock>(
-            `product="${input.product.id}"`,
-            requestOptions
-          )
-          .catch(() => undefined);
+        const productStock = await database.query.productStock.findFirst({
+          where: (schema, { eq }) => eq(schema.productId, input.product.id),
+        });
 
-        if (productStock?.count === 0) {
+        if (productStock?.value === 0) {
           throw new TRPCError({
             code: 'BAD_REQUEST',
             message: 'Produkt není na skladě',
           });
         }
 
-        const currentCart = await getCurrentCart();
+        const currentCart = await getUserCart({ id: ctx.sessionData.userId });
         const existingProductInCart = currentCart.products.find(
           ({ product }) => product.id === input.product.id
         );
 
         if (existingProductInCart) {
-          await pocketbaseByCollections.userCartProducts.update(
-            existingProductInCart.id,
-            {
+          await database
+            .update(userCartProducts)
+            .set({
               count: input.count + existingProductInCart.count,
-            },
-            requestOptions
-          );
-
-          return;
-        }
-
-        await pocketbaseByCollections.userCartProducts.create(
-          {
-            product: input.product.id,
-            cart: currentCart.id,
+            })
+            .where(eq(userCartProducts.cartId, currentCart.id));
+        } else {
+          await database.insert(userCartProducts).values({
+            productId: input.product.id,
+            cartId: currentCart.id,
             count: input.count,
-          },
-          requestOptions
-        );
+          });
+        }
 
         revalidatePath('/muj-ucet/kosik/pokladna');
       }),
 
     update: protectedProcedure
-      .input(
-        addToCartSchema.omit({ count: true }).extend({
-          count: z.number().min(1),
-        })
-      )
+      .input(userCartUpdateInputSchema)
       .mutation(async ({ input, ctx }) => {
-        const cart = await getCurrentCart();
+        const cart = await getUserCart({ id: ctx.sessionData.userId });
         const existingProductInCart = cart.products.find(
           ({ product }) => product.id === input.product.id
         );
 
         if (existingProductInCart) {
-          await pocketbaseByCollections.userCartProducts.update(
-            existingProductInCart.id,
-            {
+          await database
+            .update(userCartProducts)
+            .set({
               count: input.count,
-            },
-            createRequestPocketbaseRequestOptions(ctx)
-          );
-
-          return;
-        }
-
-        await pocketbaseByCollections.userCartProducts.create(
-          {
-            product: input.product.id,
-            cart: cart.id,
+            })
+            .where(eq(userCartProducts.cartId, cart.id));
+        } else {
+          await database.insert(userCartProducts).values({
+            productId: input.product.id,
+            cartId: cart.id,
             count: input.count,
-          },
-          createRequestPocketbaseRequestOptions(ctx)
-        );
+          });
+        }
 
         revalidatePath('/muj-ucet/kosik/pokladna');
       }),
 
     remove: protectedProcedure
-      .input(z.object({ product: userCartProductSchema.pick({ id: true }) }))
+      .input(z.object({ product: entityLinkSchema }))
       .mutation(async ({ input, ctx }) => {
-        // Check that it exists first
-        const cartProduct =
-          await pocketbaseByCollections.userCartProducts.getFirstListItem(
-            `product.id="${input.product.id}"`,
-            createRequestPocketbaseRequestOptions(ctx)
-          );
+        const cart = await getUserCart({ id: ctx.sessionData.userId });
 
-        await pocketbaseByCollections.userCartProducts.delete(
-          cartProduct.id,
-          createRequestPocketbaseRequestOptions(ctx)
-        );
+        await database
+          .delete(userCartProducts)
+          .where(
+            and(
+              eq(userCartProducts.cartId, cart.id),
+              eq(userCartProducts.productId, input.product.id)
+            )
+          );
 
         revalidatePath('/muj-ucet/kosik/pokladna');
       }),
@@ -147,14 +172,21 @@ export const userCartRoutes = t.router({
 
   checkout: protectedProcedure
     .input(
-      checkoutCartSchema.superRefine(async (value, ctx) => {
+      userCartCheckoutInputSchema.superRefine(async (value, ctx) => {
         const [paymentMethod, deliveryMethod] = await Promise.all([
-          pocketbaseByCollections.orderPaymentMethods
-            .getOne<OrderPaymentMethod>(value.paymentMethod.id)
-            .catch(() => undefined),
-          pocketbaseByCollections.orderDeliveryMethods
-            .getOne<DeliveryMethod>(value.deliveryMethod.id)
-            .catch(() => undefined),
+          database.query.orderPaymentMethods.findFirst({
+            where: eq(orderPaymentMethods.id, value.paymentMethod.id),
+            with: {
+              exceptDeliveryMethods: {
+                with: {
+                  deliveryMethod: true,
+                },
+              },
+            },
+          }),
+          database.query.orderDeliveryMethods.findFirst({
+            where: eq(orderDeliveryMethods.id, value.deliveryMethod.id),
+          }),
         ]);
 
         // We dont need to check delivery method now, we attach payment method only to order
@@ -167,9 +199,9 @@ export const userCartRoutes = t.router({
           });
         } else if (
           !deliveryMethod ||
-          paymentMethod.except_delivery_methods.includes(
-            value.deliveryMethod.id
-          )
+          paymentMethod.exceptDeliveryMethods
+            .map(({ deliveryMethod }) => deliveryMethod.id)
+            .includes(value.deliveryMethod.id)
         ) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -181,7 +213,7 @@ export const userCartRoutes = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
-      const cart = await getCurrentCart();
+      const cart = await getUserCart({ id: ctx.sessionData.userId });
 
       if (!cart.products.length) {
         throw new TRPCError({
@@ -190,55 +222,122 @@ export const userCartRoutes = t.router({
         });
       }
 
-      const created = await pocketbase
-        .send<{ newOrder: { id: string } }>('/cart/checkout', {
-          method: 'POST',
-          headers: {
-            ...(ctx.sessionData.token
-              ? { [AUTHORIZATION_HEADER]: ctx.sessionData.token }
-              : null),
+      const [paymentMethod, deliveryMethod] = await Promise.all([
+        database.query.orderPaymentMethods.findFirst({
+          where: eq(orderPaymentMethods.id, input.paymentMethod.id),
+          with: {
+            exceptDeliveryMethods: {
+              with: {
+                deliveryMethod: true,
+              },
+            },
           },
-          body: {
-            address_houseNumber: input.address.houseNumber,
-            address_streetName: input.address.streetName,
-            address_city: input.address.city,
-            address_postalCode: input.address.postalCode,
-            address_municipality_id: input.address.municipality.id,
+        }),
+        database.query.orderDeliveryMethods.findFirst({
+          where: eq(orderDeliveryMethods.id, input.deliveryMethod.id),
+        }),
+      ]);
+
+      if (!paymentMethod || !deliveryMethod) {
+        throw new Error(
+          'Either invalid payment method or delivery method has been selected for order, does schema work?'
+        );
+      }
+
+      const { order, redirectTo } = await database.transaction(async (tx) => {
+        let telephone = await tx.query.telephoneNumbers.findFirst({
+          where: (schema, { eq }) =>
+            eq(schema.telephone, input.telephoneNumber),
+        });
+
+        if (!telephone) {
+          [telephone] = await tx
+            .insert(telephoneNumbers)
+            .values({
+              telephone: input.telephoneNumber,
+              code: '420',
+            })
+            .returning();
+        }
+
+        const [order] = await tx
+          .insert(orders)
+          .values({
+            deliveryMethodId: input.deliveryMethod.id,
             email: input.email,
-            telephoneNumber: input.telephoneNumber,
+            telephoneId: telephone.id,
             firstName: input.firstName,
             lastName: input.lastName,
-            payment_method_id: input.paymentMethod.id,
-            delivery_method_id: input.deliveryMethod.id,
-            save_address: String(input.saveAddressToAccount),
-          },
-        })
-        .catch((error) => {
-          logger.error(error, 'Failed to checkout cart inside pocketbase');
+            notes: input.notes,
+            paymentMethodId: input.paymentMethod.id,
+            state: OrderState.NEW,
+            userId: ctx.sessionData.userId,
+            paymentMethodPrice: paymentMethod.price,
+            deliveryMethodPrice: deliveryMethod.price,
+            subtotal: cart.subtotal,
+          })
+          .returning();
 
-          throw error;
-        });
+        // Update stock values
+        const stockUpdatesAsPromises: Promise<any>[] = [];
+        for (const productInCart of cart.products) {
+          if (!productInCart.product.stock) {
+            continue;
+          }
 
-      const order = await getOrderById(created.newOrder.id, {
-        headers: {
-          [AUTHORIZATION_HEADER]: ctx.sessionData.token,
-        },
+          // TODO: doing this way will be imperfect if there will be more requests
+          stockUpdatesAsPromises.push(
+            database
+              .update(productStock)
+              .set({
+                value: Math.max(
+                  0,
+                  productInCart.product.stock.value - productInCart.count
+                ),
+              })
+              .where(eq(productStock.id, productInCart.product.stock.id))
+          );
+        }
+
+        await Promise.all([
+          // Paste products from cart to order
+          tx.insert(orderedProducts).values(
+            cart.products.map((productInCart) => ({
+              count: productInCart.count,
+              productId: productInCart.product.id,
+              orderId: order.id,
+              totalPrice:
+                productInCart.count * (productInCart.product.price?.value ?? 0),
+            }))
+          ),
+          tx.delete(userCartProducts).where(
+            inArray(
+              userCartProducts.id,
+              cart.products.map(({ id }) => id)
+            )
+          ),
+          // Include stock updates in one promise
+          stockUpdatesAsPromises,
+        ]);
+
+        let redirectTo = `/muj-ucet/objednavky/${order.id}`;
+
+        // Handle comgate payment as last thing
+        if (paymentMethod.slug === PaymentMethodsSlug.BY_CARD) {
+          const comgatePayment = await Comgate.createPayment({
+            order,
+          });
+
+          await database.insert(comgatePayments).values({
+            transactionId: comgatePayment.data.transId!,
+            orderId: order.id,
+          });
+
+          redirectTo = comgatePayment.data.redirect ?? redirectTo;
+        }
+
+        return { order, redirectTo };
       });
-
-      let redirectTo = `/muj-ucet/objednavky/${order.id}`;
-
-      if (order.payment_method.slug === PaymentMethodsSlug.BY_CARD) {
-        const comgatePayment = await Comgate.createPayment({
-          order,
-        });
-
-        await pocketbaseByCollections.comgateTransactions.create({
-          transaction_id: comgatePayment.data.transId,
-          order: order.id,
-        });
-
-        redirectTo = comgatePayment.data.redirect ?? redirectTo;
-      }
 
       const [userEmailContent, adminEmailContent] = await Promise.all([
         renderAsync(
@@ -258,6 +357,7 @@ export const userCartRoutes = t.router({
         ),
       ]);
 
+      // Is it really necessary to wait here?
       await Promise.all([
         MailService.send({
           to: input.email,

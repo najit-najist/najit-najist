@@ -1,3 +1,4 @@
+import type { AppRouterOutput } from '@najit-najist/api';
 import { ReactNode } from 'react';
 
 export type PLAUSIBLE_EVENTS =
@@ -19,3 +20,9 @@ export interface LayoutProps {
 export type LayoutComponent = (
   props: LayoutProps
 ) => React.ReactNode | Promise<React.ReactNode>;
+
+export type PostWithRelations =
+  AppRouterOutput['posts']['getMany']['items'][number];
+
+export type UserWithRelations = AppRouterOutput['users']['getOne'];
+export type RecipeWithRelations = AppRouterOutput['recipes']['getOne'];

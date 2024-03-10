@@ -1,6 +1,6 @@
 import { nonEmptyStringSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
 
-export const entityLinkSchema = z.object({
-  id: nonEmptyStringSchema,
+export const recipeCategoryCreateInputSchema = z.object({
+  title: nonEmptyStringSchema,
 });

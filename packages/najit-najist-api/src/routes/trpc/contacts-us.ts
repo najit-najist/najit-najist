@@ -1,44 +1,34 @@
-import { PocketbaseCollections } from '@custom-types';
 import { logger } from '@logger';
+import { database } from '@najit-najist/database';
+import { contactFormReplies } from '@najit-najist/database/models';
 import {
   renderAsync,
   ContactUsAdminReply,
   ContactUsUserReply,
 } from '@najit-najist/email-templates';
-import { pocketbase } from '@najit-najist/pb';
 import { contactUsInputSchema } from '@schemas';
 import { MailService } from '@services';
 import { t } from '@trpc';
-import { loginWithAccount } from '@utils/pocketbase';
 import { z } from 'zod';
 
 import { config } from '../../config';
-import { AUTHORIZATION_HEADER } from '../../constants';
 
 export const contactUsRoutes = t.router({
   contactSend: t.procedure
     .input(contactUsInputSchema)
     .output(z.boolean())
     .mutation(async ({ ctx, input }) => {
-      const pbAccount = await loginWithAccount('contactForm');
-
-      const createdResponse = await pocketbase
-        .collection(PocketbaseCollections.CONTACT_FORM_REPLIES)
-        .create(
-          {
-            email: input.email,
-            firstName: input.firstName,
-            lastName: input.lastName,
-            message: input.message,
-            telephone: input.telephone,
-            subscribeToNewsletter: false,
-          },
-          {
-            headers: {
-              [AUTHORIZATION_HEADER]: pbAccount.token,
-            },
-          }
-        )
+      const createdResponse = await database
+        .insert(contactFormReplies)
+        .values({
+          email: input.email,
+          firstName: input.firstName,
+          lastName: input.lastName,
+          message: input.message,
+          telephone: input.telephone,
+          userId: ctx.sessionData?.authContent?.userId,
+        })
+        .returning()
         .catch((error) => {
           logger.error(
             { error },

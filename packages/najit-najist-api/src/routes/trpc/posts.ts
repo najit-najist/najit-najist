@@ -1,81 +1,197 @@
+import { database } from '@najit-najist/database';
 import {
-  ErrorCodes,
-  PocketbaseCollections,
   Post,
-  UserLikedPost,
-} from '@custom-types';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
+  posts,
+  userLikedPosts,
+  users,
+} from '@najit-najist/database/models';
 import { slugSchema } from '@najit-najist/schemas';
+import { EntityLink, entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
-import {
-  onlyAdminProcedure,
-  protectedProcedure,
-} from '@trpc-procedures/protectedProcedure';
+import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
-import { objectToFormData } from '@utils/internal';
+import { generateCursor } from 'drizzle-cursor';
+import { SQL, and, eq, ilike, or, sql } from 'drizzle-orm';
+import fs from 'fs-extra';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-import { AUTHORIZATION_HEADER } from '../..';
-import { ApplicationError } from '../../errors/ApplicationError';
+import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
+import { libraryManager } from '../../libraryManager';
+import { postCreateInputSchema } from '../../schemas/postCreateInputSchema';
+import { postUpdateInputSchema } from '../../schemas/postUpdateInputSchema';
+import { logger } from '../../server';
+
+const getOneBy = async <V extends keyof Post>(by: V, value: Post[V]) => {
+  const item = await database.query.posts.findFirst({
+    where: (schema, { eq }) => eq(schema[by], value as any),
+    with: {
+      categories: {
+        with: { category: true },
+      },
+    },
+  });
+
+  if (!item) {
+    throw new EntityNotFoundError({
+      entityName: posts._.name,
+    });
+  }
+
+  return item;
+};
+
+const toggleLike = async (options: { user: EntityLink; post: EntityLink }) => {
+  const filter = and(
+    eq(userLikedPosts.userId, options.user.id),
+    eq(userLikedPosts.postId, options.post.id)
+  );
+
+  const existing = await database.query.userLikedPosts.findFirst({
+    where: filter,
+  });
+
+  if (existing) {
+    await database.delete(userLikedPosts).where(filter);
+  } else {
+    await database.insert(userLikedPosts).values({
+      postId: options.post.id,
+      userId: options.user.id,
+    });
+  }
+};
 
 export const postsRoute = t.router({
   create: onlyAdminProcedure
-    .input(createPostInputSchema)
+    .input(postCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const result = await pocketbase
-        .collection(PocketbaseCollections.POSTS)
-        .create<Post>(
-          await objectToFormData({
-            ...input,
-            slug: slugifyString(input.title),
-            createdBy: ctx.sessionData.userId,
-          }),
-          {
-            headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
+      let imageToDelete: string | undefined = undefined;
+      let post: Post;
+
+      try {
+        post = await database.transaction(async (tx) => {
+          let [created] = await tx
+            .insert(posts)
+            .values({
+              ...input,
+              slug: slugifyString(input.title),
+              content: input.content
+                ? JSON.stringify(input.content)
+                : undefined,
+              createdBy: ctx.sessionData.userId,
+            })
+            .returning();
+
+          if (input.image) {
+            const { absoluteFilename, filename } =
+              await libraryManager.saveFile(posts, post.id, input.image);
+            imageToDelete = absoluteFilename;
+
+            [created] = await tx
+              .update(posts)
+              .set({
+                image: filename,
+              })
+              .returning();
           }
-        );
+
+          return created;
+        });
+      } catch (error) {
+        if (imageToDelete) {
+          await fs.remove(imageToDelete);
+        }
+
+        logger.error({ error, input }, 'Failed to create post');
+
+        throw error;
+      }
 
       revalidatePath('/clanky');
 
-      return result;
+      return post;
     }),
 
   update: onlyAdminProcedure
-    .input(z.object({ id: z.string(), data: updateOnePostInputSchema }))
+    .input(entityLinkSchema.extend({ data: postUpdateInputSchema }))
     .mutation(async ({ ctx, input }) => {
-      const result = await pocketbase
-        .collection(PocketbaseCollections.POSTS)
-        .update<Post>(
-          input.id,
-          await objectToFormData({
-            ...input.data,
-            updatedBy: ctx.sessionData.userId,
-            ...(input.data.title
-              ? { slug: slugifyString(input.data.title) }
-              : null),
-          }),
-          {
-            headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
+      let imageToDelete: string | undefined = undefined;
+      let prevImageToDelete: string | undefined = undefined;
+      let post: Post;
+
+      try {
+        const { image: newImage, ...updateOptions } = input.data;
+
+        post = await database.transaction(async (tx) => {
+          let [updated] = await tx
+            .update(posts)
+            .set({
+              ...updateOptions,
+              ...(updateOptions.title
+                ? { slug: slugifyString(updateOptions.title) }
+                : null),
+              content: updateOptions.content
+                ? JSON.stringify(updateOptions.content)
+                : undefined,
+              createdBy: ctx.sessionData.userId,
+            })
+            .returning();
+
+          if (newImage) {
+            const { absoluteFilename, filename } =
+              await libraryManager.saveFile(users, updated.id, newImage);
+
+            imageToDelete = absoluteFilename;
+
+            const [newlyUpdated] = await tx
+              .update(posts)
+              .set({
+                image: filename,
+              })
+              .returning();
+
+            if (updated.image) {
+              prevImageToDelete = updated.image;
+            }
+
+            updated = newlyUpdated;
           }
-        );
 
-      revalidatePath(`/clanky/${result.slug}`);
-      revalidatePath('/clanky');
+          return updated;
+        });
 
-      return result;
+        if (prevImageToDelete) {
+          await libraryManager.deleteFilesFromStorage(
+            posts,
+            post.id,
+            prevImageToDelete
+          );
+        }
+
+        revalidatePath(`/clanky/${post.slug}`);
+        revalidatePath('/clanky');
+
+        return post;
+      } catch (error) {
+        if (imageToDelete) {
+          await fs.remove(imageToDelete);
+        }
+
+        logger.error({ error, input }, 'Failed to create post');
+
+        throw error;
+      }
     }),
 
   delete: onlyAdminProcedure
-    .input(outputPostSchema.pick({ id: true, slug: true }))
+    .input(entityLinkSchema)
     .mutation(async ({ ctx, input }) => {
-      await pocketbase
-        .collection(PocketbaseCollections.POSTS)
-        .delete(input.id, {
-          headers: { [AUTHORIZATION_HEADER]: ctx.sessionData?.token },
-        });
+      const existing = await getOneBy('id', input.id);
 
-      revalidatePath(`/clanky/${input.slug}`);
+      await database.delete(posts).where(eq(posts.id, input.id));
+
+      revalidatePath(`/clanky/${existing.slug}`);
       revalidatePath('/clanky');
 
       return;
@@ -85,31 +201,66 @@ export const postsRoute = t.router({
     .input(
       z
         .object({
-          page: z.number().min(1).default(1).optional(),
+          page: z.string().optional(),
           perPage: z.number().min(1).default(20).optional(),
           query: z.string().optional(),
         })
         .optional()
     )
-    .query(async ({ ctx, input = { page: 1, perPage: 20, query: '' } }) => {
-      const filter = [
-        input.query
-          ? `(title ~ '${input.query}' || description ~ '${input.query}')`
-          : undefined,
-      ]
-        .filter(Boolean)
-        .join(' && ');
+    .query(async ({ ctx, input = { perPage: 20, query: '' } }) => {
+      // TODO: pagination
+      const conditions: SQL[] = [];
 
-      return pocketbase
-        .collection(PocketbaseCollections.POSTS)
-        .getList<Post>(input?.page, input?.perPage, {
-          filter,
-          expand: `categories`,
-          sort: '-publishedAt',
-          headers: ctx.sessionData?.token
-            ? { [AUTHORIZATION_HEADER]: ctx.sessionData?.token }
-            : undefined,
-        });
+      if (input.query) {
+        conditions.push(
+          or(
+            ilike(posts.title, `%${input.query}%`),
+            ilike(posts.description, `%${input.query}%`)
+          )!
+        );
+      }
+
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: posts.id.name,
+          schema: posts.id,
+        },
+        cursors: [
+          {
+            order: 'ASC',
+            key: posts.publishedAt.name,
+            schema: posts.publishedAt,
+          },
+        ],
+      });
+
+      const [items, [{ count }]] = await Promise.all([
+        database.query.posts.findMany({
+          with: {
+            categories: {
+              with: { category: true },
+            },
+          },
+          where: (schema, { and }) =>
+            conditions.length
+              ? and(...conditions, cursor.where(input.page))
+              : cursor.where(input.page),
+          orderBy: cursor.orderBy,
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(posts)
+          .where(and(...conditions)),
+      ]);
+
+      return {
+        items,
+        nextToken: cursor.serialize(items.at(-1)),
+        total: count,
+      };
     }),
 
   getOne: t.procedure
@@ -118,58 +269,33 @@ export const postsRoute = t.router({
         slug: slugSchema,
       })
     )
-    .query(async ({ ctx, input }) =>
-      pocketbase
-        .collection(PocketbaseCollections.POSTS)
-        .getFirstListItem<Post>(`slug="${input.slug}"`, {
-          expand: `categories`,
-          headers: ctx.sessionData?.token
-            ? { [AUTHORIZATION_HEADER]: ctx.sessionData?.token }
-            : undefined,
-        })
-    ),
+    .query(async ({ ctx, input }) => await getOneBy('slug', input.slug)),
 
+  /**
+   * @deprecated
+   */
   likeOne: protectedProcedure
-    .input(likePostInputSchema)
+    .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {
-      await pocketbase
-        .collection(PocketbaseCollections.USER_LIKED_POSTS)
-        .create<UserLikedPost>(
-          {
-            likedBy: ctx.sessionData.userId,
-            likedItem: input.id,
-          },
-          { headers: { [AUTHORIZATION_HEADER]: ctx.sessionData.token } }
-        );
+      await toggleLike({
+        post: input,
+        user: {
+          id: ctx.sessionData.userId,
+        },
+      });
     }),
 
+  /**
+   * @deprecated
+   */
   dislikeOne: protectedProcedure
-    .input(dislikePostInputSchema)
+    .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {
-      try {
-        const requestOptions = {
-          headers: { [AUTHORIZATION_HEADER]: ctx.sessionData.token },
-        };
-        const likedPost = await pocketbase
-          .collection(PocketbaseCollections.USER_LIKED_RECIPES)
-          .getFirstListItem<UserLikedPost>(
-            `likedItem="${input.itemId}"`,
-            requestOptions
-          );
-
-        await pocketbase
-          .collection(PocketbaseCollections.USER_LIKED_POSTS)
-          .delete(likedPost.id, requestOptions);
-      } catch (error) {
-        if (error instanceof ClientResponseError && error.status === 400) {
-          throw new ApplicationError({
-            code: ErrorCodes.ENTITY_MISSING,
-            message: `Tento like neexistuje`,
-            origin: 'UserService',
-          });
-        }
-
-        throw error;
-      }
+      await toggleLike({
+        post: input,
+        user: {
+          id: ctx.sessionData.userId,
+        },
+      });
     }),
 });

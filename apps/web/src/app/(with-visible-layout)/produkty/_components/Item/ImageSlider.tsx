@@ -1,7 +1,8 @@
 'use client';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, getFileUrl } from '@najit-najist/api';
+import { getFileUrl } from '@najit-najist/api';
+import { products } from '@najit-najist/database/models';
 import clsx from 'clsx';
 import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
@@ -16,7 +17,7 @@ const arrowClassName = clsx('w-4 h-4');
 export const ImageSlider: FC<{
   imageUrls: string[];
   itemLink: string;
-  itemId: string;
+  itemId: number;
 }> = ({ imageUrls, itemLink, itemId }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
@@ -36,7 +37,7 @@ export const ImageSlider: FC<{
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(AvailableModels.PRODUCTS, itemId, imageName)}
+                src={getFileUrl(products, itemId, imageName)}
                 alt=""
                 className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg absolute top-0 left-0 w-full h-full object-center object-cover"
               />

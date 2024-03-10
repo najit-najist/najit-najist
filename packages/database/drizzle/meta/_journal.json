@@ -8,6 +8,20 @@
       "when": 1709570853241,
       "tag": "0000_cynical_wonder_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1709921194492,
+      "tag": "0001_mighty_nuke",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709921653836,
+      "tag": "0002_workable_arachne",
+      "breakpoints": true
     }
   ]
 }

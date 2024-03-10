@@ -1,6 +1,6 @@
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, Post } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
+import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
+import { posts } from '@najit-najist/database/models';
 import { getCachedTrpcCaller } from '@server-utils';
 import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
@@ -8,11 +8,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
-const Item: FC<Post> = ({
+type PostWithRelations = AppRouterOutput['posts']['getMany']['items'][number];
+
+const Item: FC<PostWithRelations> = ({
   image,
   id,
   publishedAt,
-  created,
+  createdAt,
   categories,
   description,
   title,
@@ -31,7 +33,7 @@ const Item: FC<Post> = ({
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl(Collections.POSTS, id, image)}
+            src={getFileUrl(posts, id, image)}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />
@@ -45,20 +47,20 @@ const Item: FC<Post> = ({
       <div className="px-2">
         <div className="flex items-center gap-x-4 text-xs mt-2">
           <time
-            dateTime={String(publishedAt) ?? created}
+            dateTime={String(publishedAt) ?? createdAt}
             className="text-gray-500 mt-1"
           >
-            {dayjs(publishedAt ? publishedAt : created).format(
+            {dayjs(publishedAt ? publishedAt : createdAt).format(
               'DD. MM. YYYY @ HH:mm'
             )}
           </time>
           <div className="flex space-x-3">
-            {categories.map(({ id, title }) => (
+            {categories.map(({ category }) => (
               <button
-                key={id}
+                key={category.id}
                 className="relative z-10 rounded-full bg-gray-50 py-1.5 px-3 font-medium text-gray-600 hover:bg-gray-100"
               >
-                {title}
+                {category.title}
               </button>
             ))}
           </div>

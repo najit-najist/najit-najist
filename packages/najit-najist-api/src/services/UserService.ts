@@ -1,0 +1,232 @@
+import { database } from '@najit-najist/database';
+import {
+  Municipality,
+  TelephoneNumber,
+  User,
+  UserAddress,
+  telephoneNumbers,
+  userAddresses,
+  users,
+} from '@najit-najist/database/models';
+import { EntityLink } from '@najit-najist/schemas';
+import { eq } from 'drizzle-orm';
+import path from 'path';
+
+import { LibraryService } from '../LibraryService';
+import { EntityNotFoundError } from '../errors/EntityNotFoundError';
+import { ToCreateSchema } from '../types/ToCreateSchema';
+
+export type UserWithRelations = User & {
+  telephone?: TelephoneNumber | null;
+  address?: (UserAddress & { municipality: Municipality }) | null;
+};
+
+type Address = Omit<ToCreateSchema<UserAddress>, 'userId'>;
+
+export type UserServiceCreateOptions = Omit<
+  ToCreateSchema<User>,
+  'lastLoggedIn' | 'telephoneId' | '_passwordResetToken'
+> & {
+  lastLoggedIn?: User['lastLoggedIn'];
+  telephoneId?: User['telephoneId'];
+  _passwordResetToken?: User['_passwordResetToken'];
+  telephone?: Pick<TelephoneNumber, 'telephone'>;
+  address: Pick<Address, 'municipalityId'> &
+    Partial<Omit<Address, 'municipalityId'>>;
+};
+
+export type UserServiceUpdateOptions = Omit<
+  Partial<UserServiceCreateOptions>,
+  'address'
+> & {
+  address?: Partial<UserServiceCreateOptions['address']>;
+};
+
+export class UserService {
+  private forUser: UserWithRelations;
+
+  constructor(user: UserWithRelations) {
+    this.forUser = user;
+  }
+
+  async update(updatePayload: UserServiceUpdateOptions) {
+    const library = new LibraryService(users);
+
+    try {
+      library.beginTransaction();
+
+      const updated = await database.transaction(async (tx) => {
+        if (updatePayload.avatar) {
+          const { filepath: newAvatarFilepath } = await library.create(
+            this.forUser,
+            updatePayload.avatar
+          );
+          const newAvatarFilename = path.basename(newAvatarFilepath);
+
+          updatePayload.avatar = newAvatarFilename;
+
+          if (this.forUser.avatar) {
+            await library.delete(this.forUser, this.forUser.avatar);
+          }
+        }
+
+        if (updatePayload.telephone) {
+          const { telephone: existingTelephone } = this.forUser;
+
+          if (!existingTelephone) {
+            const [created] = await tx
+              .insert(telephoneNumbers)
+              .values({
+                code: '420',
+                telephone: updatePayload.telephone.telephone,
+              })
+              .returning();
+
+            updatePayload.telephoneId = created.id;
+          } else {
+            await tx
+              .update(telephoneNumbers)
+              .set({
+                telephone: updatePayload.telephone.telephone,
+              })
+              .where(eq(telephoneNumbers.id, existingTelephone.id));
+          }
+        }
+
+        const updateAddressOptions = updatePayload.address;
+        if (updateAddressOptions) {
+          await tx
+            .update(userAddresses)
+            .set(updateAddressOptions)
+            .where(eq(userAddresses.id, this.forUser.id));
+        }
+
+        const [updated] = await tx
+          .update(users)
+          .set(updatePayload)
+          .where(eq(users.id, this.forUser.id))
+          .returning();
+
+        await library.commit();
+
+        return updated;
+      });
+
+      return updated;
+    } catch (error) {
+      // Delete new avatar if something fails
+      library.endTransaction();
+
+      throw error;
+    }
+  }
+
+  static async create(options: UserServiceCreateOptions) {
+    const library = new LibraryService(users);
+
+    try {
+      await database.transaction(async (tx) => {
+        library.beginTransaction();
+
+        const {
+          avatar: newAvatar,
+          telephone: newTelephone,
+          address: newAddress,
+          ...createOptions
+        } = options;
+        const [created] = await tx
+          .insert(users)
+          .values(createOptions)
+          .returning();
+
+        const postCreateUpdatePayload: Partial<User> = {};
+
+        await tx.insert(userAddresses).values({
+          ...newAddress,
+          userId: created.id,
+        });
+
+        if (newAvatar) {
+          const { filepath: newAvatarFilepath } = await library.create(
+            {
+              id: created.id,
+            },
+            newAvatar
+          );
+          const newAvatarFilename = path.basename(newAvatarFilepath);
+
+          postCreateUpdatePayload.avatar = newAvatarFilename;
+        }
+
+        const telephoneNumber = options.telephone?.telephone;
+        if (telephoneNumber) {
+          let existing = await tx.query.telephoneNumbers.findFirst({
+            where: (schema, { eq }) => eq(schema.telephone, telephoneNumber),
+          });
+
+          if (!existing) {
+            [existing] = await tx
+              .insert(telephoneNumbers)
+              .values({
+                code: '420',
+                telephone: telephoneNumber,
+              })
+              .returning();
+          }
+
+          postCreateUpdatePayload.telephoneId = existing.id;
+        }
+
+        if (Object.keys(postCreateUpdatePayload).length) {
+          await tx
+            .update(users)
+            .set(postCreateUpdatePayload)
+            .where(eq(users.id, created.id));
+        }
+
+        await library.commit();
+      });
+
+      return await UserService.getOneBy('email', options.email);
+    } catch (error) {
+      library.endTransaction();
+
+      throw error;
+    }
+  }
+
+  static async getOneBy<V extends keyof User>(
+    by: V,
+    value: User[V]
+  ): Promise<UserWithRelations> {
+    const item = await database.query.users.findFirst({
+      where: (schema, { eq }) => eq(schema[by], value as any),
+      with: {
+        telephone: true,
+        address: {
+          with: { minicipality: true },
+        },
+      },
+    });
+
+    if (!item) {
+      throw new EntityNotFoundError({
+        entityName: users._.name,
+      });
+    }
+
+    return item as UserWithRelations;
+  }
+
+  static forUserSync(user: UserWithRelations) {
+    return new UserService(user);
+  }
+
+  static async forUser(link: EntityLink | UserWithRelations) {
+    return new UserService(
+      Object.keys(link).length > 1 && link.id
+        ? (link as UserWithRelations)
+        : await this.getOneBy('id', link.id)
+    );
+  }
+}

@@ -11,3 +11,7 @@ export const recipeSteps = pgTable('recipe_steps', {
   title: varchar('title', { length: 256 }).notNull(),
   parts: json('parts').notNull().default([]),
 });
+
+export type RecipeStep = typeof recipeSteps.$inferSelect & {
+  parts: { duration: number }[];
+};

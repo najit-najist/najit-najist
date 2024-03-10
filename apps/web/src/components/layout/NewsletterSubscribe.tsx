@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentUser, usePlausible } from '@hooks';
-import { subscribeToNewsletterSchema } from '@najit-najist/api';
+import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import { Button, buttonStyles, Input } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import Link from 'next/link';
@@ -16,7 +16,7 @@ export const NewsletterSubscribe: FC = () => {
     defaultValues: {
       email: '',
     },
-    resolver: zodResolver(subscribeToNewsletterSchema),
+    resolver: zodResolver(subscribeToNewsletterInputSchema),
   });
   const { trackEvent } = usePlausible();
   const { handleSubmit, register, formState } = formMethods;

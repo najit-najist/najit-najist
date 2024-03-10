@@ -1,15 +1,13 @@
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { AdjustmentsVerticalIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { PlusIcon } from '@heroicons/react/24/outline';
+import { UserActions, canUser } from '@najit-najist/api';
 import {
-  AppRouterOutput,
-  AvailableModels,
   ProductCategory,
-  UserActions,
-  canUser,
-} from '@najit-najist/api';
-import { Button, Tooltip } from '@najit-najist/ui';
+  products as productsModel,
+} from '@najit-najist/database/models';
+import { Tooltip } from '@najit-najist/ui';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -69,7 +67,7 @@ export default async function RecipesPage({ searchParams }: Params) {
           {currentUser &&
           canUser(currentUser, {
             action: UserActions.CREATE,
-            onModel: AvailableModels.PRODUCTS,
+            onModel: productsModel,
           }) ? (
             <Tooltip
               trigger={

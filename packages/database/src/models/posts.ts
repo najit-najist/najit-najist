@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import {
   integer,
   pgTable,
@@ -22,6 +23,10 @@ export const posts = pgTable('posts', {
   image: fileFieldType('image'),
 });
 
+export const postsRelations = relations(posts, ({ many }) => ({
+  categories: many(postsToPostCategories),
+}));
+
 export const postsToPostCategories = pgTable('posts_to_post_categories', {
   postId: integer('post_id')
     .notNull()
@@ -30,3 +35,19 @@ export const postsToPostCategories = pgTable('posts_to_post_categories', {
     .notNull()
     .references(() => postCategories.id),
 });
+
+export const postsToPostCategoriesRelations = relations(
+  postsToPostCategories,
+  ({ one }) => ({
+    post: one(posts, {
+      fields: [postsToPostCategories.postId],
+      references: [posts.id],
+    }),
+    category: one(postCategories, {
+      fields: [postsToPostCategories.categoryId],
+      references: [postCategories.id],
+    }),
+  })
+);
+
+export type Post = typeof posts.$inferSelect;

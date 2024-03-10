@@ -1,9 +1,8 @@
-import { isTokenExpired, pocketbase } from '@najit-najist/pb';
-import { User } from '@schemas';
-import { AvailableModels } from '../canUser';
-import jwtDecode from 'jwt-decode';
-import { UserTokenData } from '@custom-types';
+import { database } from '@najit-najist/database';
+import { type User, users } from '@najit-najist/database/models';
 import { IronSessionData } from 'iron-session/edge';
+
+import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 
 export type GetEdgeLoggedInUserOptions = {
   session: IronSessionData;
@@ -12,26 +11,21 @@ export type GetEdgeLoggedInUserOptions = {
 export const getEdgeLoggedInUser = async ({
   session,
 }: GetEdgeLoggedInUserOptions): Promise<User> => {
-  const tokenExpired = isTokenExpired(session.authContent?.token ?? '');
+  const { userId } = session.authContent ?? {};
 
-  if (tokenExpired) {
+  if (!userId) {
     throw new Error('User needs to be logged in first');
   }
 
-  const sessionData = jwtDecode<UserTokenData>(
-    session.authContent?.token ?? ''
-  );
+  const item = await database.query.users.findFirst({
+    where: (schema, { eq }) => eq(schema.id, userId),
+  });
 
-  pocketbase.authStore.save(
-    session.authContent!.token,
-    session.authContent!.model
-  );
+  if (!item) {
+    throw new EntityNotFoundError({
+      entityName: users._.name,
+    });
+  }
 
-  const result = await pocketbase
-    .collection(AvailableModels.USER)
-    .getOne<User>(sessionData.id, {});
-
-  pocketbase.authStore.clear();
-
-  return result;
+  return item;
 };

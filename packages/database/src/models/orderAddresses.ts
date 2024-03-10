@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 
 import { addressModelsBase } from '../internal/addressModelsBase';
@@ -9,3 +10,12 @@ export const orderAddresses = pgTable('order_addresses', {
     .references(() => orders.id)
     .notNull(),
 });
+
+export const orderAddressesRelations = relations(orderAddresses, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderAddresses.orderId],
+    references: [orders.id],
+  }),
+}));
+
+export type OrderedAddress = typeof orderAddresses.$inferSelect;

@@ -1,30 +1,29 @@
-import { ErrorCodes } from '@custom-types';
-import { ApplicationError } from '@errors';
 import { logger } from '@logger';
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import { pocketbaseByCollections } from '@najit-najist/pb';
+import { database } from '@najit-najist/database';
+import { UserRoles, UserStates, users } from '@najit-najist/database/models';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { passwordZodSchema } from '@najit-najist/security';
-import {
-  finalizeResetPasswordSchema,
-  loginInputSchema,
-  loginOutputSchema,
-  municipalitySchema,
-  resetPasswordSchema,
-  updateProfileSchema,
-} from '@schemas';
-import { UserService } from '@services';
+import { ProfileService } from '@services/Profile.service';
+import { UserService, UserWithRelations } from '@services/UserService';
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
-import { AvailableModels, setSessionToCookies } from '@utils';
-import { loginWithAccount } from '@utils/pocketbase';
+import { setSessionToCookies } from '@utils';
+import { eq } from 'drizzle-orm';
 import omit from 'lodash/omit';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { DatabaseError } from 'pg';
 import { z } from 'zod';
 
-import { AUTHORIZATION_HEADER } from '../../constants';
-import { dayjs } from '../../dayjs';
-import { createRequestPocketbaseRequestOptions } from '../../server';
+import { userProfileLogInInputSchema } from '../../schemas/userProfileLogInInputSchema';
+import {
+  finalizeResetPasswordSchema,
+  resetPasswordSchema,
+} from '../../schemas/userProfileResetPasswordInputSchema';
+import { userProfileUpdateInputSchema } from '../../schemas/userProfileUpdateInputSchema';
+import { userRegisterInputSchema } from '../../schemas/userRegisterInputSchema';
+import { PasswordService } from '../../server';
+import { PostgresErrorCodes } from '../../types/PostgresErrorCodes';
 import { userCartRoutes } from './profile/cart/cart';
 import { userLikedRoutes } from './profile/liked';
 
@@ -38,11 +37,11 @@ const passwordResetRoutes = t.router({
     .input(resetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbase
-          .collection(AvailableModels.USER)
-          .requestPasswordReset(input.email);
+        const user = await UserService.getOneBy('email', input.email);
+
+        await ProfileService.forUser(user).resetPassword();
       } catch (error) {
-        logger.info({ input, error }, 'Request user password reset failed');
+        logger.error({ input, error }, 'Request user password reset failed');
 
         throw error;
       }
@@ -55,13 +54,16 @@ const passwordResetRoutes = t.router({
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbaseByCollections.users.confirmPasswordReset(
-          input.token,
-          input.password,
+        const user = await UserService.getOneBy(
+          '_passwordResetToken',
+          input.token
+        );
+
+        await ProfileService.forUser(user).finalizePasswordReset(
           input.password
         );
       } catch (error) {
-        logger.info({ error }, 'User password reset finalize failed');
+        logger.error({ error }, 'User password reset finalize failed');
 
         throw error;
       }
@@ -77,41 +79,24 @@ export const profileRouter = t.router({
   cart: userCartRoutes,
 
   update: protectedProcedure
-    .input(updateProfileSchema)
-    .output(userSchema)
-    .mutation(async ({ ctx, input }) =>
-      UserService.update(
-        { id: ctx.sessionData.userId },
-        input,
-        createRequestPocketbaseRequestOptions(ctx)
-      )
-    ),
+    .input(userProfileUpdateInputSchema)
+    .mutation(async ({ ctx, input }) => {
+      const user = await UserService.forUser({ id: ctx.sessionData.userId });
 
-  me: protectedProcedure
-    .output(userSchema)
-    .query(async ({ ctx }) =>
-      UserService.getBy(
-        'id',
-        ctx.sessionData.userId,
-        createRequestPocketbaseRequestOptions(ctx)
-      )
-    ),
+      await user.update(input);
+    }),
+
+  me: protectedProcedure.query(async ({ ctx }) => {
+    return await UserService.forUser({ id: ctx.sessionData.userId });
+  }),
 
   login: t.procedure
-    .input(loginInputSchema)
-    .output(loginOutputSchema)
+    .input(userProfileLogInInputSchema)
     .mutation(async ({ ctx, input }) => {
-      let user: User | undefined;
+      let user: UserWithRelations | undefined;
 
       try {
-        // Try to log in
-        const { record } =
-          await pocketbaseByCollections.users.authWithPassword<User>(
-            input.email,
-            input.password
-          );
-
-        user = record;
+        user = await UserService.getOneBy('email', input.email);
       } catch (error) {
         logger.info(
           { email: input.email, error },
@@ -121,18 +106,21 @@ export const profileRouter = t.router({
         throw INVALID_CREDENTIALS_ERROR;
       }
 
-      const { isValid, token, model } = pocketbase.authStore;
+      const validCredentials = await PasswordService.validate(
+        user._password,
+        input.password
+      );
 
-      if (!isValid || !user) {
+      if (!validCredentials || !user) {
         logger.info(
-          { email: input.email, isUser: !!user, isTokenValid: isValid },
+          { email: input.email, isUser: !!user, validCredentials },
           'User invalid credentials'
         );
 
         throw INVALID_CREDENTIALS_ERROR;
       }
 
-      if (!user.verified) {
+      if (user.status === UserStates.INVITED) {
         logger.info({ email: input.email }, 'Unverified user tried to log in');
 
         throw new TRPCError({
@@ -159,17 +147,11 @@ export const profileRouter = t.router({
       logger.info({ email: input.email }, 'User successfully logged in');
 
       try {
-        await pocketbaseByCollections.users.update(
-          user.id,
-          {
-            lastLoggedIn: dayjs().utc().format(),
-          },
-          {
-            headers: {
-              [AUTHORIZATION_HEADER]: token,
-            },
-          }
-        );
+        await (
+          await UserService.forUser(user)
+        ).update({
+          lastLoggedIn: new Date(),
+        });
       } catch (error) {
         logger.error(
           { email: input.email, error },
@@ -183,37 +165,40 @@ export const profileRouter = t.router({
           // TODO: This should be removed after release
           previewAuthorized: true,
           authContent: {
-            model: {
-              collectionId: model?.collectionId,
-              username: user.username,
-              verified: user.verified,
-            },
-            token,
+            userId: user.id,
           },
         },
         new ResponseCookies(ctx.resHeaders)
       );
 
       return {
-        token,
+        id: user.id,
+        email: user.email,
       };
     }),
 
   register: t.procedure
-    .input(registerUserSchema)
+    .input(userRegisterInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const pbAccount = await loginWithAccount('contactForm');
-
       try {
-        const user = await UserService.create(input, true, {
-          headers: {
-            [AUTHORIZATION_HEADER]: pbAccount.token,
+        const user = await UserService.create({
+          _password: input.password,
+          ...input,
+          telephone: {
+            telephone: input.telephone,
+          },
+          role: UserRoles.BASIC,
+          status: UserStates.INVITED,
+          avatar: input.avatar ?? null,
+          address: {
+            municipalityId: input.address.municipality.id,
           },
         });
+
         logger.info(
           {
-            user: omit(user, ['password']),
-            input: omit(input, ['password']),
+            user: omit(user, ['_password']),
+            input: omit(input, ['_password']),
           },
           'Registering user - user created'
         );
@@ -222,20 +207,11 @@ export const profileRouter = t.router({
           email: user.email,
         };
       } catch (error) {
-        if (error instanceof ClientResponseError) {
-          logger.error(
-            { error, email: { ...input, password: undefined } },
-            'Registering user - bad request from pocketbase'
-          );
+        logger.error(error, 'Registering user - failed');
 
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            cause: error,
-            message: error.data.data,
-          });
-        } else if (
-          error instanceof ApplicationError &&
-          error.code === ErrorCodes.ENTITY_DUPLICATE
+        if (
+          error instanceof DatabaseError &&
+          error.code === PostgresErrorCodes.DUPLICATE_KEY
         ) {
           logger.error(
             { error, email: input.email },
@@ -248,8 +224,6 @@ export const profileRouter = t.router({
           });
         }
 
-        logger.error(error, 'Registering user - failed');
-
         throw error;
       }
     }),
@@ -260,21 +234,20 @@ export const profileRouter = t.router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        await pocketbaseByCollections.users.confirmVerification(input.token);
+        // TODO: validate token and extract userId from token
+        const userId = 0;
+
+        await database
+          .update(users)
+          .set({
+            status: UserStates.ACTIVE,
+          })
+          .where(eq(users.id, userId));
 
         logger.info({}, 'Registering user - verify - finished');
 
         return true;
       } catch (error) {
-        if (error instanceof ClientResponseError && error.status === 400) {
-          logger.error(error, 'Registering user - verify - invalid token');
-
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Invalid token',
-          });
-        }
-
         logger.error(error, 'Registering user - verify - error');
 
         throw error;
@@ -287,39 +260,43 @@ export const profileRouter = t.router({
         token: z.string(),
         password: passwordZodSchema,
         address: z.object({
-          municipality: municipalitySchema.pick({ id: true }),
+          municipality: entityLinkSchema,
         }),
       })
     )
     .mutation(async ({ ctx, input }) => {
       const { address, password, token } = input;
-      const pbAccount = await loginWithAccount('contactForm');
-      const requestOptions = {
-        headers: {
-          [AUTHORIZATION_HEADER]: pbAccount.token,
-        },
-      };
 
-      const user = await UserService.getBy(
-        'preregisteredUserToken',
-        token,
-        requestOptions
-      );
+      const previewSubscriber =
+        await database.query.previewSubscriberTokens.findFirst({
+          where: (schema, { eq }) => eq(schema.token, token),
+          with: {
+            forUser: true,
+          },
+        });
 
-      if (user.verified) {
+      if (!previewSubscriber || !previewSubscriber.forUser) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        });
+      }
+
+      if (previewSubscriber.forUser.status !== UserStates.INVITED) {
         throw new Error('Uživatel je již aktivován');
       }
 
-      await UserService.update(
-        { id: user.id },
-        {
-          address,
-          password,
-          status: UserStates.ACTIVE,
-          verified: true,
+      const user = await UserService.forUser({
+        id: previewSubscriber.forUser.id,
+      });
+
+      user.update({
+        address: {
+          ...address,
+          municipalityId: address.municipality.id,
         },
-        requestOptions
-      );
+        _password: await PasswordService.hash(password),
+        status: UserStates.ACTIVE,
+      });
 
       return null;
     }),

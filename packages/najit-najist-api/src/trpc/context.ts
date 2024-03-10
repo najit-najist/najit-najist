@@ -1,6 +1,7 @@
+import { UserWithRelations } from '@services/UserService';
 import { inferAsyncReturnType } from '@trpc/server';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
-
+import { IronSessionData } from 'iron-session';
 // Import type overrides
 import 'iron-session/next';
 
@@ -12,7 +13,7 @@ export const createContext = ({
     resHeaders,
     sessionData: undefined as
       | undefined
-      | { userId: string; authModel: string; token: string },
+      | (IronSessionData & { user?: UserWithRelations }),
   };
 
   return context;

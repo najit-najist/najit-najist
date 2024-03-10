@@ -18,5 +18,4 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "exclude": ["dist", "node_modules"]
 }

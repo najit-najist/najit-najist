@@ -1,15 +1,17 @@
+import { relations } from 'drizzle-orm';
 import {
+  index,
   integer,
   pgEnum,
   pgTable,
   timestamp,
-  uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
 import { fileFieldType } from '../internal/types/file';
 import { telephoneNumbers } from './telephoneNumbers';
+import { userAddresses } from './userAddresses';
 
 export const UserRoles = {
   ADMIN: 'admin',
@@ -53,20 +55,36 @@ export const users = pgTable(
   'users',
   {
     ...modelsBase,
-    email: varchar('email', { length: 256 }).notNull(),
+    email: varchar('email', { length: 256 }).unique().notNull(),
     firstName: varchar('firstname', { length: 256 }).notNull(),
-    lastName: varchar('firstname', { length: 256 }).notNull(),
+    lastName: varchar('lastname', { length: 256 }).notNull(),
     avatar: fileFieldType('avatar_filepath'),
     role: userRoleEnum('role').default('basic').notNull(),
-    status: userStateEnum('status').notNull(),
+    status: userStateEnum('status').default(UserStates.INVITED),
     lastLoggedIn: timestamp('last_logged_in', {
       withTimezone: true,
     }),
     telephoneId: integer('telephone_id').references(() => telephoneNumbers.id),
+
+    _passwordResetToken: varchar('password_reset_token', {
+      length: 1064,
+    }),
+    _password: varchar('password', { length: 1064 }).notNull(),
   },
   (users) => {
     return {
-      nameIndex: uniqueIndex('name_idx').on(users.firstName, users.lastName),
+      nameIndex: index('name_idx').on(users.firstName, users.lastName),
+      email: index('user_email_idx').on(users.email),
     };
   }
 );
+
+export const usersRelations = relations(users, ({ one }) => ({
+  telephone: one(telephoneNumbers, {
+    fields: [users.telephoneId],
+    references: [telephoneNumbers.id],
+  }),
+  address: one(userAddresses),
+}));
+
+export type User = typeof users.$inferSelect;

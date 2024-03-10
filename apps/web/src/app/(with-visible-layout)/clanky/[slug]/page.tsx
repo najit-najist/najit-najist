@@ -1,6 +1,7 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
-import { AvailableModels, canUser, Post, UserActions } from '@najit-najist/api';
-import { getTrpcCaller } from '@najit-najist/api/server';
+import { PostWithRelations } from '@custom-types';
+import { canUser, UserActions } from '@najit-najist/api';
+import { posts } from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
@@ -32,20 +33,20 @@ export default async function PostUnderPage({
   params: { slug: postSlug },
   searchParams,
 }: PageParams) {
-  let post: Post;
+  let post: PostWithRelations;
   const isEditorEnabled = !!searchParams.editor;
   const loggedInUser = await getCachedLoggedInUser();
   const canEdit =
     loggedInUser &&
     canUser(loggedInUser, {
       action: UserActions.UPDATE,
-      onModel: AvailableModels.POST,
+      onModel: posts,
     });
   const canCreate =
     loggedInUser &&
     canUser(loggedInUser, {
       action: UserActions.CREATE,
-      onModel: AvailableModels.POST,
+      onModel: posts,
     });
 
   try {

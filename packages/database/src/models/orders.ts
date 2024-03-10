@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import {
   integer,
   pgEnum,
@@ -8,8 +9,10 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
+import { orderAddresses } from './orderAddresses';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 import { orderPaymentMethods } from './orderPaymentMethods';
+import { orderedProducts } from './orderedProducts';
 import { telephoneNumbers } from './telephoneNumbers';
 import { users } from './users';
 
@@ -58,3 +61,23 @@ export const orders = pgTable('orders', {
   deliveryMethodPrice: integer('delivery_method_price').default(0),
   paymentMethodPrice: integer('payment_method_price').default(0),
 });
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  telephone: one(telephoneNumbers, {
+    fields: [orders.telephoneId],
+    references: [telephoneNumbers.id],
+  }),
+  paymentMethod: one(orderPaymentMethods, {
+    fields: [orders.paymentMethodId],
+    references: [orderPaymentMethods.id],
+  }),
+  deliveryMethod: one(orderDeliveryMethods, {
+    fields: [orders.deliveryMethodId],
+    references: [orderDeliveryMethods.id],
+  }),
+  address: one(orderAddresses),
+  orderedProducts: many(orderedProducts),
+  user: one(users, { fields: [orders.userId], references: [users.id] }),
+}));
+
+export type Order = typeof orders.$inferSelect;

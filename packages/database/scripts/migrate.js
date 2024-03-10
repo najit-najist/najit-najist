@@ -1,9 +1,9 @@
 // @ts-check
 import dotenv from 'dotenv';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import { migrate } from 'drizzle-orm/postgres-js/migrator';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { migrate } from 'drizzle-orm/node-postgres/migrator';
 import path from 'path';
-import postgres from 'postgres';
+import pg from 'pg';
 import * as url from 'url';
 
 const dirname = url.fileURLToPath(new URL('.', import.meta.url));
@@ -15,7 +15,11 @@ export const getDatabase = () => {
     throw new Error('Missing connection uri in dotenv');
   }
 
-  return drizzle(postgres(process.env.DATABASE_URL));
+  const client = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  return drizzle(client);
 };
 
 console.log('Migration starting!');

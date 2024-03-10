@@ -1,9 +1,12 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
 import { ownableModel } from '../internal/ownableModel';
 import { recipeCategories } from './recipeCategories';
 import { recipeDifficulties } from './recipeDifficulties';
+import { recipeImages } from './recipeImages';
+import { recipeResources } from './recipeResources';
 
 export const recipes = pgTable('recipes', {
   ...modelsBase,
@@ -19,3 +22,18 @@ export const recipes = pgTable('recipes', {
     .references(() => recipeDifficulties.id)
     .notNull(),
 });
+
+export const recipesRelations = relations(recipes, ({ one, many }) => ({
+  images: many(recipeImages),
+  category: one(recipeCategories, {
+    fields: [recipes.categoryId],
+    references: [recipeCategories.id],
+  }),
+  difficulty: one(recipeDifficulties, {
+    fields: [recipes.categoryId],
+    references: [recipeDifficulties.id],
+  }),
+  resources: many(recipeResources),
+}));
+
+export type Recipe = typeof recipes.$inferSelect;

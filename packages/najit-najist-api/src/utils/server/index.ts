@@ -1,5 +1,6 @@
 export * from './createRequestPocketbaseRequestOptions';
 export * from './createVideoRequestHandler';
+export * from './findUserById';
 export * from './getLoggedInUser';
 export * from './getTrpcCaller';
 export * from './rateLimit';

@@ -9,12 +9,9 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import {
-  AvailableModels,
-  getFileUrl,
-  IMAGE_FILE_REGEX,
-  Product,
-} from '@najit-najist/api';
+import { getFileUrl } from '@najit-najist/api';
+import { Product, products } from '@najit-najist/database/models';
+import { IMAGE_FILE_REGEX } from '@najit-najist/schemas';
 import { Alert, Badge, Button, Skeleton } from '@najit-najist/ui';
 import { readFile } from '@utils';
 import clsx from 'clsx';
@@ -29,6 +26,7 @@ import {
   useState,
 } from 'react';
 import { FieldError, useController, useFormContext } from 'react-hook-form';
+
 import { CustomImage } from '../CustomImage';
 import { ProductFormData } from '../_types';
 
@@ -93,7 +91,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
       productId && value
         ? isBase64(value)
           ? value
-          : getFileUrl(AvailableModels.PRODUCTS, productId, value)
+          : getFileUrl(products, productId, value)
         : value,
     [productId, value]
   );
@@ -162,7 +160,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
 
 const FIELD_NAME = 'images';
 
-export const ImagesEdit: FC<{ productId?: string }> = ({ productId }) => {
+export const ImagesEdit: FC<{ productId?: number }> = ({ productId }) => {
   const { getValues, resetField } = useFormContext<ProductFormData>();
   const { field, fieldState } = useController<
     Pick<ProductFormData, typeof FIELD_NAME>

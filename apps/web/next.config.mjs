@@ -17,12 +17,14 @@ const nextConfig = {
   transpilePackages: [
     '@najit-najist/ui',
     '@najit-najist/api',
-    '@najit-najist/pb',
+    '@najit-najist/database',
+    '@najit-najist/schemas',
     '@najit-najist/email-templates',
     '@najit-najist/tailwind-plugin',
   ],
-  webpack(config, { isServer }) {
+  webpack(config, { isServer, webpack, nextRuntime }) {
     config.externals.push('pino-pretty', 'thread-stream', 'encoding');
+
     config.module.rules.push(
       {
         test: /\.svg$/,
@@ -43,17 +45,19 @@ const nextConfig = {
       }
     );
 
-    return config;
-  },
-  async rewrites() {
-    const pocketbaseOrigin = String(process.env.POCKETBASE_ORIGIN);
+    config.plugins.push(
+      new webpack.IgnorePlugin({
+        resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
+      })
+    );
 
-    return [
-      {
-        source: '/files/:path*',
-        destination: `${pocketbaseOrigin}/api/files/:path*`,
-      },
-    ];
+    if (nextRuntime === 'edge') {
+      config.resolve.fallback = {
+        crypto: false,
+      };
+    }
+
+    return config;
   },
   async redirects() {
     return [

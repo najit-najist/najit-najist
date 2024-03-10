@@ -1,12 +1,9 @@
-import { addressSchema } from './address.schema';
-import { municipalitySchema } from './municipality.schema';
-import { createUserSchema } from './users';
+import { userAddressCreateInputSchema } from './userAddressCreateInputSchema';
+import { userCreateInputSchema } from './userCreateInputSchema';
 
-export const userUpdateInputSchema = createUserSchema
+export const userUpdateInputSchema = userCreateInputSchema
   .omit({ password: true, address: true })
   .extend({
-    address: addressSchema.pick({ id: true }).extend({
-      municipality: municipalitySchema.pick({ id: true }),
-    }),
+    address: userAddressCreateInputSchema.partial().optional(),
   })
   .partial();

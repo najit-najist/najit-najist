@@ -1,6 +1,8 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { AvailableModels, getFileUrl, Post } from '@najit-najist/api';
+import { PostWithRelations } from '@custom-types';
+import { getFileUrl } from '@najit-najist/api';
+import { posts } from '@najit-najist/database/models';
 import { Breadcrumbs } from '@najit-najist/ui';
 import { BlockEditorRenderer } from '@najit-najist/ui/editor-renderer';
 import dayjs from 'dayjs';
@@ -17,10 +19,10 @@ import { PublishedAtEdit } from './editorComponents/PublishedAtEdit';
 import { TitleEdit } from './editorComponents/TitleEdit';
 
 export type PostPageManageContent = { isEditorHeaderShown?: boolean } & (
-  | { viewType: 'edit'; post: Post }
+  | { viewType: 'edit'; post: PostWithRelations }
   | {
       viewType: 'view';
-      post: Post;
+      post: PostWithRelations;
     }
   | { viewType: 'create' }
 );
@@ -81,11 +83,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
                     width={300}
                     height={300}
                     unoptimized
-                    src={getFileUrl(
-                      AvailableModels.POST,
-                      props.post.id,
-                      props.post.image
-                    )}
+                    src={getFileUrl(posts, props.post.id, props.post.image!)}
                     alt=""
                     className="absolute inset-0 h-full w-full rounded-lg bg-gray-50 object-cover shadow-md"
                   />
@@ -114,7 +112,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
         <div className="container sm:text-lg pb-10 post-page-content">
           {props.viewType === 'view' ? (
             props.post.content ? (
-              <BlockEditorRenderer data={props.post.content} />
+              <BlockEditorRenderer data={JSON.parse(props.post.content)} />
             ) : null
           ) : (
             <ContentEdit />

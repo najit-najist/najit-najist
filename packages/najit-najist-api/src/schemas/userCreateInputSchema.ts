@@ -1,19 +1,21 @@
+import { UserRoles } from '@najit-najist/database/models';
+import {
+  encodedImageSchema,
+  nonEmptyStringSchema,
+  telephoneNumberInputSchema,
+} from '@najit-najist/schemas';
 import { passwordZodSchema } from '@najit-najist/security';
 import { z } from 'zod';
 
-import { municipalitySchema } from './municipality.schema';
-import { userSchema } from './user.schema';
+import { userAddressCreateInputSchema } from './userAddressCreateInputSchema';
 
-export const userCreateInputSchema = userSchema
-  .omit({
-    lastLoggedIn: true,
-    newsletterUuid: true,
-    role: true,
-    status: true,
-  })
-  .extend({
-    address: z.object({
-      municipality: municipalitySchema.pick({ id: true }),
-    }),
-    password: passwordZodSchema,
-  });
+export const userCreateInputSchema = z.object({
+  email: nonEmptyStringSchema.email(),
+  firstName: nonEmptyStringSchema.max(256),
+  lastName: nonEmptyStringSchema.max(256),
+  avatar: encodedImageSchema.optional(),
+  role: z.nativeEnum(UserRoles),
+  telephone: telephoneNumberInputSchema,
+  address: userAddressCreateInputSchema,
+  password: passwordZodSchema,
+});

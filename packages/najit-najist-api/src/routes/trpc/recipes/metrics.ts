@@ -1,22 +1,15 @@
-import { ClientResponseError, pocketbase } from '@najit-najist/pb';
-import {
-  onlyAdminProcedure,
-  protectedProcedure,
-} from '@trpc-procedures/protectedProcedure';
+import { database } from '@najit-najist/database';
+import { recipeResourceMetrics } from '@najit-najist/database/models';
+import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
+import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
+import { DrizzleError } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
-import {
-  RecipeResourceMetric,
-  createRecipeResourceMetricInputSchema,
-} from '../../../schemas/recipes';
-import { createRequestPocketbaseRequestOptions } from '../../../server';
+import { recipeResourceMetricCreateInputSchema } from '../../../schemas/recipeResourceMetricCreateInputSchema';
+import { logger } from '../../../server';
 import { t } from '../../../trpc';
-import {
-  ErrorCodes,
-  PocketbaseCollections,
-  PocketbaseErrorCodes,
-} from '../../../types';
+import { ErrorCodes } from '../../../types';
 
 export const metricsRouter = t.router({
   getMany: protectedProcedure
@@ -30,37 +23,25 @@ export const metricsRouter = t.router({
     )
     .query(async ({ input, ctx }) => {
       const { page = 1, perPage = 40 } = input ?? {};
+      // TODO: Pagination
+      const result = database.query.recipeResourceMetrics.findMany();
 
-      try {
-        const result = await pocketbase
-          .collection(PocketbaseCollections.RECIPE_RESOURCE_METRIC)
-          .getList<RecipeResourceMetric>(
-            page,
-            perPage,
-            createRequestPocketbaseRequestOptions(ctx)
-          );
-
-        return result;
-      } catch (error) {
-        throw error;
-      }
+      return result;
     }),
 
   create: onlyAdminProcedure
-    .input(createRecipeResourceMetricInputSchema)
+    .input(recipeResourceMetricCreateInputSchema)
     .mutation(async ({ input, ctx }) => {
       try {
-        return await pocketbase
-          .collection(PocketbaseCollections.RECIPE_RESOURCE_METRIC)
-          .create(
-            { name: input.name },
-            createRequestPocketbaseRequestOptions(ctx)
-          );
+        return await database
+          .insert(recipeResourceMetrics)
+          .values({ name: input.name })
+          .returning();
       } catch (error) {
-        if (error instanceof ClientResponseError) {
-          const data = error.data.data;
+        if (error instanceof DrizzleError) {
+          logger.error(error, 'Failed to create recipe resource metric');
 
-          if (data.name?.code === PocketbaseErrorCodes.NOT_UNIQUE) {
+          if (error.message.includes('name')) {
             throw new ApplicationError({
               code: ErrorCodes.ENTITY_DUPLICATE,
               message: `Název metriky musí být unikátní`,
