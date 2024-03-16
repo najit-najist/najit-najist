@@ -7,6 +7,7 @@ import {
   orderedProducts,
   orders,
   productStock,
+  products,
   telephoneNumbers,
   userCartProducts,
   userCarts,
@@ -24,7 +25,7 @@ import {
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
-import { and, eq, inArray } from 'drizzle-orm';
+import { and, asc, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
@@ -42,11 +43,15 @@ export const getUserCart = async (link: EntityLink) => {
     where: (schema, { eq }) => eq(schema.userId, link.id),
     with: {
       products: {
+        orderBy: [asc(orderedProducts.createdAt)],
         with: {
           product: {
             with: {
               price: true,
               stock: true,
+              images: true,
+              category: true,
+              onlyForDeliveryMethod: true,
             },
           },
         },
@@ -114,7 +119,12 @@ export const userCartRoutes = t.router({
             .set({
               count: input.count + existingProductInCart.count,
             })
-            .where(eq(userCartProducts.cartId, currentCart.id));
+            .where(
+              and(
+                eq(userCartProducts.cartId, currentCart.id),
+                eq(userCartProducts.productId, input.product.id)
+              )
+            );
         } else {
           await database.insert(userCartProducts).values({
             productId: input.product.id,
@@ -140,7 +150,12 @@ export const userCartRoutes = t.router({
             .set({
               count: input.count,
             })
-            .where(eq(userCartProducts.cartId, cart.id));
+            .where(
+              and(
+                eq(userCartProducts.cartId, cart.id),
+                eq(userCartProducts.productId, input.product.id)
+              )
+            );
         } else {
           await database.insert(userCartProducts).values({
             productId: input.product.id,
@@ -150,6 +165,10 @@ export const userCartRoutes = t.router({
         }
 
         revalidatePath('/muj-ucet/kosik/pokladna');
+
+        return {
+          count: input.count,
+        };
       }),
 
     remove: protectedProcedure

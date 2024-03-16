@@ -3,16 +3,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   AppRouterInput,
-  createProductCategorySchema,
   ErrorCodes,
-  PocketbaseErrorCodes,
-  ProductCategory,
+  productCategoryCreateInputSchema,
 } from '@najit-najist/api';
+import { ProductCategory } from '@najit-najist/database/models';
 import { Button, Input, Modal, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
+
 import { ProductFormData } from '../_types';
 
 export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
@@ -23,10 +23,8 @@ export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
     {
       initialData: {
         items: initialCategories,
-        page: 1,
-        perPage: initialCategories.length,
-        totalItems: initialCategories.length,
-        totalPages: 1,
+        nextToken: null,
+        total: initialCategories.length,
       },
       refetchInterval: 0,
       refetchOnMount: false,
@@ -38,7 +36,7 @@ export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
   const formMethods = useForm<
     AppRouterInput['products']['categories']['create']
   >({
-    resolver: zodResolver(createProductCategorySchema.omit({ slug: true })),
+    resolver: zodResolver(productCategoryCreateInputSchema),
   });
   const { handleSubmit, register, formState, reset, setError } = formMethods;
 
@@ -63,7 +61,7 @@ export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
       ) {
         setError('name', {
           message: 'Tato categorie již existuje',
-          type: PocketbaseErrorCodes.NOT_UNIQUE,
+          type: ErrorCodes.ENTITY_DUPLICATE,
         });
       } else {
         throw error;

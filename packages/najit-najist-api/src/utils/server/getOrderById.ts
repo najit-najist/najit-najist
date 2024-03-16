@@ -1,5 +1,6 @@
 import { database } from '@najit-najist/database';
 import { Order, orders } from '@najit-najist/database/models';
+import { getTableName } from 'drizzle-orm';
 
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 
@@ -11,7 +12,11 @@ export const getOrderById = async (orderId: Order['id']) => {
       deliveryMethod: true,
       orderedProducts: {
         with: {
-          product: true,
+          product: {
+            with: {
+              images: true,
+            },
+          },
         },
       },
       paymentMethod: {
@@ -20,12 +25,20 @@ export const getOrderById = async (orderId: Order['id']) => {
         },
       },
       telephone: true,
+      user: {
+        columns: {
+          id: true,
+          email: true,
+          firstName: true,
+          lastName: true,
+        },
+      },
     },
   });
 
   if (!item) {
     throw new EntityNotFoundError({
-      entityName: orders._.name,
+      entityName: getTableName(orders),
     });
   }
 

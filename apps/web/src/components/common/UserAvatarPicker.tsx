@@ -1,8 +1,13 @@
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon, UserIcon } from '@heroicons/react/24/outline';
 import { CameraIcon } from '@heroicons/react/24/solid';
-import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
+import { getFileUrl } from '@najit-najist/api';
+import { users } from '@najit-najist/database/models';
+import {
+  EntityLink,
+  IMAGE_FILE_REGEX,
+  isFileBase64,
+} from '@najit-najist/schemas';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { useRef, ChangeEventHandler, FC, useMemo, useState } from 'react';
@@ -75,7 +80,7 @@ const AvatarSelect = () => {
   );
 };
 
-const Avatar: FC<{ userId?: string }> = ({ userId }) => {
+const Avatar: FC<{ userId?: EntityLink['id'] }> = ({ userId }) => {
   const { watch, formState } = useFormContext<{ avatar?: string }>();
   const avatar = watch(FIELD_NAME);
 
@@ -84,7 +89,7 @@ const Avatar: FC<{ userId?: string }> = ({ userId }) => {
       return avatar ?? '';
     }
 
-    return getFileUrl(Collections.USERS, userId, avatar ?? '', {
+    return getFileUrl(users, userId, avatar ?? '', {
       width: IMAGE_SIZE,
       height: IMAGE_SIZE,
     });
@@ -115,7 +120,9 @@ const Avatar: FC<{ userId?: string }> = ({ userId }) => {
   );
 };
 
-export const UserAvatarPicker: FC<{ userId?: string }> = ({ userId }) => {
+export const UserAvatarPicker: FC<{ userId?: EntityLink['id'] }> = ({
+  userId,
+}) => {
   return (
     <div className="w-full aspect-square relative bg-gray-100 rounded-full mx-auto max-w-lg">
       <Avatar userId={userId} />

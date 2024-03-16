@@ -1,9 +1,8 @@
 import {
-  DeliveryMethod,
-  Order,
   getMediaTypeFromBase64Url,
   setFileNameToBase64,
 } from '@najit-najist/api';
+import { Order, OrderDeliveryMethod } from '@najit-najist/database/models';
 import Compressor from 'compressorjs';
 import { FormState } from 'react-hook-form';
 
@@ -65,11 +64,13 @@ export function getChangedValues<G extends Record<any, any>>(
 }
 
 export const isLocalPickup = (
-  delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
+  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
 ) => delivery?.slug === 'local-pickup';
 
 export const getTotalPrice = (order: Order) => {
   return (
-    order.subtotal + order.delivery_method_price + order.payment_method_price
+    order.subtotal +
+    (order.deliveryMethodPrice ?? 0) +
+    (order.paymentMethodPrice ?? 0)
   );
 };

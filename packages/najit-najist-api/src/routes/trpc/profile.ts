@@ -22,6 +22,7 @@ import {
 } from '../../schemas/userProfileResetPasswordInputSchema';
 import { userProfileUpdateInputSchema } from '../../schemas/userProfileUpdateInputSchema';
 import { userRegisterInputSchema } from '../../schemas/userRegisterInputSchema';
+import { verifyRegistrationFromPreviewInputSchema } from '../../schemas/verifyRegistrationFromPreviewInputSchema';
 import { PasswordService } from '../../server';
 import { PostgresErrorCodes } from '../../types/PostgresErrorCodes';
 import { userCartRoutes } from './profile/cart/cart';
@@ -87,7 +88,16 @@ export const profileRouter = t.router({
     }),
 
   me: protectedProcedure.query(async ({ ctx }) => {
-    return await UserService.forUser({ id: ctx.sessionData.userId });
+    const user = await UserService.getOneBy('id', ctx.sessionData.userId);
+
+    const newsletter = await database.query.userNewsletters.findFirst({
+      where: (schema, { eq }) => eq(schema.email, user.email),
+    });
+
+    return {
+      ...user,
+      newsletter: !!newsletter?.enabled,
+    };
   }),
 
   login: t.procedure
@@ -184,9 +194,6 @@ export const profileRouter = t.router({
         const user = await UserService.create({
           _password: input.password,
           ...input,
-          telephone: {
-            telephone: input.telephone,
-          },
           role: UserRoles.BASIC,
           status: UserStates.INVITED,
           avatar: input.avatar ?? null,
@@ -255,15 +262,7 @@ export const profileRouter = t.router({
     }),
 
   verifyRegistrationFromPreview: t.procedure
-    .input(
-      z.object({
-        token: z.string(),
-        password: passwordZodSchema,
-        address: z.object({
-          municipality: entityLinkSchema,
-        }),
-      })
-    )
+    .input(verifyRegistrationFromPreviewInputSchema)
     .mutation(async ({ ctx, input }) => {
       const { address, password, token } = input;
 

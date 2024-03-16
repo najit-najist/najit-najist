@@ -1,9 +1,9 @@
 import { ClockIcon } from '@heroicons/react/24/outline';
-import { Recipe } from '@najit-najist/api';
+import { RecipeStep } from '@najit-najist/database/models';
 import HTMLReactParser from 'html-react-parser';
 import { FC } from 'react';
 
-export const StepsRenderer: FC<Pick<Recipe, 'steps'>> = ({ steps }) => {
+export const StepsRenderer: FC<{ steps: RecipeStep[] }> = ({ steps }) => {
   return (
     <ul className="list-inside grid gap-4">
       {steps.length

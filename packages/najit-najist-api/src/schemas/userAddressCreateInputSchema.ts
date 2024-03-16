@@ -4,8 +4,8 @@ import { z } from 'zod';
 
 export const userAddressCreateInputSchema = z.object({
   municipality: entityLinkSchema,
-  houseNumber: z.string().optional(),
-  streetName: streetNameSchema.optional(),
-  city: z.string().optional(),
-  postalCode: z.string().optional(),
+  houseNumber: z.string().nullable().optional(),
+  streetName: streetNameSchema.nullable().optional(),
+  city: z.string().nullable().optional(),
+  postalCode: z.string().nullable().optional(),
 });

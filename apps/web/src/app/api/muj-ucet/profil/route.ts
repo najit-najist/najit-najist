@@ -4,7 +4,6 @@ import { NextResponse } from 'next/server';
 export const GET = async (): Promise<NextResponse> => {
   try {
     const currentUser = await getLoggedInUser();
-    console.log({ currentUser });
 
     return NextResponse.json(currentUser, {
       status: 200,

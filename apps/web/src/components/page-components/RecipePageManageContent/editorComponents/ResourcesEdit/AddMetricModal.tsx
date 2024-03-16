@@ -1,10 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  createRecipeResourceMetricInputSchema,
-  ErrorCodes,
-  PocketbaseErrorCodes,
-  RecipeResourceMetric,
-} from '@najit-najist/api';
+import { ErrorCodes, recipeResourceCreateInputSchema } from '@najit-najist/api';
+import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, Input, Modal, ModalProps } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { TRPCClientError } from '@trpc/client';
@@ -20,7 +16,7 @@ export const AddMetricModal: FC<Pick<ModalProps, 'open' | 'onClose'>> = ({
     Pick<RecipeResourceMetric, 'name'>
   >({
     defaultValues: { name: '' },
-    resolver: zodResolver(createRecipeResourceMetricInputSchema),
+    resolver: zodResolver(recipeResourceCreateInputSchema),
   });
 
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async (input) => {
@@ -35,7 +31,7 @@ export const AddMetricModal: FC<Pick<ModalProps, 'open' | 'onClose'>> = ({
       ) {
         setError('name', {
           message: 'Tato metrika již existuje',
-          type: PocketbaseErrorCodes.NOT_UNIQUE,
+          type: ErrorCodes.ENTITY_DUPLICATE,
         });
       } else {
         throw error;

@@ -1,5 +1,6 @@
 import { database } from '@najit-najist/database';
 import { User, users } from '@najit-najist/database/models';
+import { getTableName } from 'drizzle-orm';
 
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 
@@ -13,7 +14,7 @@ export const findUserById = async (userId: User['id']) => {
   });
 
   if (!item) {
-    throw new EntityNotFoundError({ entityName: users._.name });
+    throw new EntityNotFoundError({ entityName: getTableName(users) });
   }
 
   return item;

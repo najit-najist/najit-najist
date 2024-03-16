@@ -1,10 +1,10 @@
 'use client';
 
-import { Post } from '@najit-najist/api';
+import { PostWithRelations } from '@custom-types';
 import { BlockEditorCode } from '@najit-najist/ui/editor';
 import { useEditorJSInstances } from 'contexts/editorJsInstancesContext';
 import dynamic from 'next/dynamic';
-import { FC, useEffect, useId, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 const LazyEditor = dynamic(
@@ -19,7 +19,7 @@ const LazyEditor = dynamic(
 );
 
 export const ContentEdit: FC = () => {
-  const { formState, watch } = useFormContext<Post>();
+  const { formState, watch } = useFormContext<PostWithRelations>();
   const [instance, setInstance] = useState<BlockEditorCode>();
   const editorInstances = useEditorJSInstances();
   const fieldsAreDisabled = formState.isSubmitting;
@@ -38,7 +38,7 @@ export const ContentEdit: FC = () => {
 
   return (
     <LazyEditor
-      defaultValue={editorData}
+      defaultValue={editorData ? JSON.parse(editorData) : undefined}
       onInitialize={setInstance}
       readOnly={fieldsAreDisabled}
       minHeight={200}

@@ -1,9 +1,10 @@
-import { UserRoles } from '@najit-najist/api';
 import { createVideoRequestHandler } from '@najit-najist/api/dist/utils/server/createVideoRequestHandler.js';
 import { getLoggedInUser } from '@najit-najist/api/dist/utils/server/getLoggedInUser.js';
+import { UserRoles } from '@najit-najist/database/models';
 import { NextApiHandler } from 'next';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import path from 'path';
+
 import { SHARED_STATIC_FILES_DIRECTORY_PATH } from '../../../../app/videos/_constants';
 
 const handler: NextApiHandler = async (request, response) => {

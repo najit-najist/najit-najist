@@ -10,7 +10,7 @@ import { ErrorMessage } from './ErrorMessage.js';
 import { InputVariantProps, inputStyles } from './Input.js';
 import { Label } from './Label.js';
 
-type Item = { id: string; [x: string]: any };
+type Item = { id: string | number; [x: string]: any };
 
 export type ComboboxProps<I extends Item = Item> = Pick<
   InputVariantProps,

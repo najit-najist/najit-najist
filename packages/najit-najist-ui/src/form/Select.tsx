@@ -7,6 +7,7 @@ import {
   PlusIcon,
 } from '@heroicons/react/20/solid';
 import { cva, cx } from 'class-variance-authority';
+import clsx from 'clsx';
 import { Fragment, ReactElement, ReactNode } from 'react';
 import { FieldError } from 'react-hook-form';
 
@@ -14,7 +15,7 @@ import { ErrorMessage } from './ErrorMessage.js';
 import { labelStyles } from './Label.js';
 
 const selectButtonStyles = cva(
-  'relative w-full cursor-default rounded-md bg-white text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
+  'relative w-full cursor-default rounded-md bg-white disabled:bg-gray-100 text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
   {
     variants: {
       size: {
@@ -31,7 +32,7 @@ const selectButtonStyles = cva(
   }
 );
 
-export type ItemBase = { id: string };
+export type ItemBase = { id: string | number };
 
 export type SelectProps<T extends ItemBase> = {
   label?: string;
@@ -79,8 +80,11 @@ export function Select<T extends ItemBase>({
           {label ? (
             <Listbox.Label className={labelStyles()}>{label}</Listbox.Label>
           ) : null}
-          <div className="relative mt-1">
-            <Listbox.Button className={selectButtonStyles()}>
+          <div className={cx('relative', label ? 'mt-1' : '')}>
+            <Listbox.Button
+              aria-disabled={disabled}
+              className={selectButtonStyles()}
+            >
               <span className="block truncate">
                 {selected ? formatter(selected) ?? '' : fallbackButtonContents}
               </span>

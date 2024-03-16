@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { boolean, integer, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const userNewsletters = pgTable('user_newsletters', {
   id: uuid('id')

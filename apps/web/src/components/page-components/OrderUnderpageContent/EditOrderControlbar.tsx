@@ -1,5 +1,5 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { Order } from '@najit-najist/api';
+import { OrderState } from '@najit-najist/database/models';
 import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import clsx from 'clsx';
@@ -11,32 +11,30 @@ import {
 } from './EditOrderStateButtons';
 import { OrderUnderpageProps } from './OrderUnderpageContent';
 
-type OrderState = Order['state'];
-
 export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
-  const isOrderLocalPickup = isLocalPickup(order.delivery_method);
+  const isOrderLocalPickup = isLocalPickup(order.deliveryMethod);
 
   const orderStateToButtons: Record<OrderState, ActiveButtonConfig[]> = {
     new: [],
     unpaid: [
       {
-        nextState: 'unconfirmed',
+        nextState: OrderState.UNCONFIRMED,
         text: 'Označit jako nepotvrzeno',
       },
       {
-        nextState: 'confirmed',
+        nextState: OrderState.CONFIRMED,
         text: 'Označit jako potvrzeno',
       },
     ],
     unconfirmed: [
       {
-        nextState: 'confirmed',
+        nextState: OrderState.CONFIRMED,
         text: 'Označit jako potvrzeno',
       },
     ],
     confirmed: [
       {
-        nextState: 'shipped',
+        nextState: OrderState.SHIPPED,
         text: isOrderLocalPickup
           ? 'Označit jako připraveno k vyzvednutí'
           : 'Označit jako odesláno',
@@ -46,7 +44,7 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
     finished: [],
     shipped: [
       {
-        nextState: 'finished',
+        nextState: OrderState.FINISHED,
         text: 'Označit jako dokončeno',
       },
     ],

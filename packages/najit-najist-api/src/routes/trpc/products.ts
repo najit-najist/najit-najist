@@ -5,24 +5,38 @@ import { database } from '@najit-najist/database';
 import {
   Product,
   productCategories,
+  productImages,
   productPrices,
   productStock,
   products,
-  users,
+  userCartProducts,
 } from '@najit-najist/database/models';
-import { nonEmptyStringSchema, slugSchema } from '@najit-najist/schemas';
+import {
+  isFileBase64,
+  nonEmptyStringSchema,
+  slugSchema,
+} from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { publicProcedure } from '@trpc-procedures/publicProcedure';
 import { slugifyString } from '@utils';
-import { DrizzleError, SQL, eq, ilike, inArray, or } from 'drizzle-orm';
-import fs from 'fs-extra';
+import generateCursor from 'drizzle-cursor';
+import {
+  DrizzleError,
+  SQL,
+  and,
+  eq,
+  getTableName,
+  ilike,
+  inArray,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { z } from 'zod';
+import { promise, z } from 'zod';
 
 import { LibraryService } from '../../LibraryService';
-import { libraryManager } from '../../libraryManager';
 import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
 import { productCategoryCreateInputSchema } from '../../schemas/productCategoryCreateInputSchema';
 import { productCreateInputSchema } from '../../schemas/productCreateInputSchema';
@@ -47,7 +61,7 @@ export const getOneProductBy = async <V extends keyof Product>(
 
   if (!item) {
     throw new EntityNotFoundError({
-      entityName: products._.name,
+      entityName: getTableName(products),
     });
   }
 
@@ -85,38 +99,82 @@ const getRoutes = t.router({
       })
     )
     .query(async ({ input, ctx }) => {
-      const { page = 1, perPage = 40, search, categorySlug } = input ?? {};
-      // TODO: pagination
+      const { search, categorySlug } = input ?? {};
 
-      try {
-        const conditions: SQL[] = [];
+      const conditions: SQL[] = [];
 
-        if (categorySlug?.length) {
-          conditions.push(inArray(productCategories.slug, categorySlug));
-        }
-
-        if (search) {
-          conditions.push(
-            or(
-              ilike(products.name, `%${search}%`),
-              ilike(products.description, `%${search}%`)
-            )!
-          );
-        }
-
-        const result = database.query.products.findMany({
-          where: (schema, { and }) =>
-            conditions.length ? and(...conditions) : undefined,
-          with: {
-            category: true,
-            images: true,
-            onlyForDeliveryMethod: true,
-            price: true,
-            stock: true,
-          },
+      if (categorySlug?.length) {
+        const categories = await database.query.productCategories.findMany({
+          where: inArray(productCategories.slug, categorySlug),
         });
 
-        return result;
+        conditions.push(
+          inArray(
+            products.categoryId,
+            categories.map(({ id }) => id)
+          )
+        );
+      }
+
+      if (search) {
+        conditions.push(
+          or(
+            ilike(products.name, `%${search}%`),
+            ilike(products.description, `%${search}%`)
+          )!
+        );
+      }
+
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: products.id.name,
+          schema: products.id,
+        },
+        cursors: [
+          {
+            order: 'DESC',
+            key: products.createdAt.name,
+            schema: products.createdAt,
+          },
+          {
+            order: 'ASC',
+            key: products.publishedAt.name,
+            schema: products.publishedAt,
+          },
+        ],
+      });
+
+      try {
+        const [items, [{ count }]] = await Promise.all([
+          database.query.products.findMany({
+            where: and(...conditions, cursor.where(input.page)),
+            orderBy: cursor.orderBy,
+            limit: input.perPage,
+            with: {
+              category: true,
+              images: true,
+              onlyForDeliveryMethod: true,
+              price: true,
+              stock: true,
+            },
+          }),
+          database
+            .select({
+              count: sql`count(*)`.mapWith(Number).as('count'),
+            })
+            .from(products)
+            .where(and(...conditions)),
+        ]);
+
+        return {
+          items,
+          nextToken:
+            input.perPage === items.length
+              ? cursor.serialize(items.at(-1))
+              : null,
+          total: count,
+        };
       } catch (error) {
         logger.error(error, 'Failed to get many products');
 
@@ -135,11 +193,43 @@ const getCategoriesRoutes = t.router({
         })
         .default({})
     )
-    .query(({ input, ctx }) => {
-      const { page, perPage } = input ?? {};
-      // TODO: pagination
+    .query(async ({ input, ctx }) => {
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: productCategories.id.name,
+          schema: productCategories.id,
+        },
+        cursors: [
+          {
+            order: 'ASC',
+            key: productCategories.name.name,
+            schema: productCategories.name,
+          },
+        ],
+      });
 
-      return database.query.productCategories.findMany();
+      const [items, [{ count }]] = await Promise.all([
+        database.query.productCategories.findMany({
+          limit: input.perPage,
+          where: cursor.where(input.page),
+          orderBy: cursor.orderBy,
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(productCategories),
+      ]);
+
+      return {
+        items,
+        nextToken:
+          input.perPage === items.length
+            ? cursor.serialize(items.at(-1))
+            : null,
+        total: count,
+      };
     }),
 });
 
@@ -185,61 +275,77 @@ export const productsRoutes = t.router({
   create: onlyAdminProcedure
     .input(productCreateInputSchema)
     .mutation(async ({ input }) => {
-      let filesToDelete: string[] = [];
+      const library = new LibraryService(products);
+
       try {
-        await database.transaction(async (tx) => {
+        library.beginTransaction();
+
+        const created = await database.transaction(async (tx) => {
+          const {
+            onlyForDeliveryMethod,
+            price,
+            images,
+            category,
+            stock,
+            ...createPayload
+          } = input;
+
           const [createdProduct] = await tx
             .insert(products)
             .values({
-              ...input,
+              ...createPayload,
               slug: slugifyString(input.name),
               categoryId: input.category?.id,
+              ...(typeof onlyForDeliveryMethod !== 'undefined'
+                ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
+                : {}),
             })
             .returning();
 
           await tx
             .insert(productPrices)
-            .values({ ...input.price, productId: createdProduct.id })
+            .values({ ...price, productId: createdProduct.id })
             .returning();
 
-          if (input.stock) {
+          if (stock) {
             await tx
               .insert(productStock)
               .values({
                 productId: createdProduct.id,
-                value: input.stock.count,
+                value: stock.value,
               })
               .returning();
           }
 
-          const createdImagePaths: string[] = [];
           const imagesThatAreBeingCreated: Promise<any>[] = [];
-          for (const imageBase64 of input.images) {
+          for (const imageBase64 of images) {
             imagesThatAreBeingCreated.push(
-              libraryManager
-                .saveFile(users, createdProduct.id, imageBase64)
-                .then(({ filename, absoluteFilename }) => {
-                  createdImagePaths.push(filename);
-                  filesToDelete.push(absoluteFilename);
+              library.create(createdProduct, imageBase64).then(({ filename }) =>
+                tx.insert(productImages).values({
+                  productId: createdProduct.id,
+                  file: filename,
                 })
+              )
             );
           }
           await Promise.all(imagesThatAreBeingCreated);
+
+          await library.commit();
+
+          return createdProduct;
         });
 
         revalidatePath(`/produkty`);
+
+        return created;
       } catch (error) {
+        library.endTransaction();
+
         logger.error(
           {
             error,
           },
           'Failed to create product'
-        );
-
-        await Promise.all(
-          filesToDelete.map(async (absoluteFilepath) =>
-            fs.remove(absoluteFilepath)
-          )
         );
 
         throw error;
@@ -262,69 +368,143 @@ export const productsRoutes = t.router({
   update: onlyAdminProcedure
     .input(entityLinkSchema.extend({ payload: productUpdateInputSchema }))
     .mutation(async ({ input, ctx }) => {
-      const library = new LibraryService(users);
+      const library = new LibraryService(products);
 
       try {
         const existing = await getOneProductBy('id', input.id);
 
         const updated = await database.transaction(async (tx) => {
-          if (input.payload.price) {
+          const {
+            images,
+            price,
+            stock,
+            category,
+            onlyForDeliveryMethod,
+            ...updatePayload
+          } = input.payload;
+
+          const [updated] = await tx
+            .update(products)
+            .set({
+              ...updatePayload,
+              ...(updatePayload.name
+                ? { slug: slugifyString(updatePayload.name) }
+                : {}),
+              ...(category?.id ? { categoryId: category.id } : {}),
+              ...(typeof onlyForDeliveryMethod !== 'undefined'
+                ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
+                : {}),
+            })
+            .where(eq(products.id, existing.id))
+            .returning();
+
+          if (typeof stock?.value === 'number') {
+            await tx
+              .update(productStock)
+              .set({
+                value: stock.value,
+              })
+              .where(eq(productStock.productId, existing.id));
+          }
+
+          if (
+            typeof price?.value === 'number' ||
+            typeof price?.discount === 'number'
+          ) {
             await tx
               .update(productPrices)
-              .set(input.payload.price)
+              .set({
+                value: price.value,
+                discount: price.discount,
+              })
               .where(eq(productPrices.productId, existing.id));
           }
 
-          const stockUpdatePayload = input.payload.stock;
-
-          if (stockUpdatePayload || stockUpdatePayload === null) {
-            if (stockUpdatePayload) {
+          if (typeof stock?.value === 'number' || stock === null) {
+            if (stock) {
               if (!existing.stock) {
                 await tx.insert(productStock).values({
-                  value: stockUpdatePayload.count ?? 1,
+                  value: stock.value ?? 1,
                   productId: existing.id,
                 });
               } else {
                 await tx
-                  .update(productPrices)
+                  .update(productStock)
                   .set({
-                    value: stockUpdatePayload.count,
+                    value: stock.value,
                   })
-                  .where(eq(productPrices.productId, existing.id));
+                  .where(eq(productStock.productId, existing.id));
               }
-            } else if (stockUpdatePayload === null && existing.stock) {
+            } else if (stock === null && existing.stock) {
               await tx
                 .delete(productStock)
                 .where(eq(productStock.productId, existing.id));
             }
           }
 
-          // TODO: Handle images
+          if (images) {
+            const filesToDelete = existing.images.filter(
+              ({ file }) => !images.includes(file)
+            );
 
-          // TODO: remove products from carts when product is removed, disabled or has no stock
+            const promisesToFulfill: Promise<any>[] = [];
 
-          const [updated] = await database
-            .update(products)
-            .set({
-              ...input.payload,
-              ...(input.payload.name ? { slug: input.payload.name } : {}),
-            })
-            .where(eq(products.id, existing.id))
-            .returning();
+            if (filesToDelete.length) {
+              promisesToFulfill.push(
+                tx.delete(productImages).where(
+                  inArray(
+                    productImages.id,
+                    filesToDelete.map(({ id }) => id)
+                  )
+                ),
+                ...filesToDelete.map(({ file }) =>
+                  library.delete(existing, file)
+                )
+              );
+            }
+
+            promisesToFulfill.push(
+              ...images
+                .filter((newOrExistingImage) =>
+                  isFileBase64(newOrExistingImage)
+                )
+                .map((newImage) =>
+                  library
+                    .create(existing, newImage)
+                    .then(({ filename }) =>
+                      tx
+                        .insert(productImages)
+                        .values({ file: filename, productId: existing.id })
+                    )
+                )
+            );
+
+            await Promise.all(promisesToFulfill);
+          }
+
+          // Remove disabled products from user carts if it should not be published
+          if (updatePayload.publishedAt === null) {
+            await tx
+              .delete(userCartProducts)
+              .where(eq(userCartProducts.productId, existing.id));
+          }
 
           await library.commit();
 
           return updated;
         });
 
+        revalidatePath('/muj-ucet/kosik/pokladna');
         revalidatePath(`/produkty/${updated.slug}`);
         revalidatePath(`/produkty`);
+
+        return updated;
       } catch (error) {
         logger.error(error, 'Failed to update product');
 
         library.endTransaction();
 
-        if (EntityNotFoundError) {
+        if (error instanceof EntityNotFoundError) {
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
             message: `Recept pod daným id '${input.id}' nebyl nalezen`,

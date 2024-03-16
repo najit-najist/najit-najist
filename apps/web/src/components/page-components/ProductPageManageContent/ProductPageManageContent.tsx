@@ -1,7 +1,8 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { StarIcon, TagIcon, TruckIcon } from '@heroicons/react/24/solid';
-import { Product } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
+import { ProductWithRelationsLocal } from '@custom-types';
+import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
+import { getFileUrl } from '@najit-najist/api';
+import { products } from '@najit-najist/database/models';
 import {
   Badge,
   BreadcrumbItem,
@@ -37,10 +38,10 @@ const Title: FC<PropsWithChildren> = ({ children }) => (
 export type ProductPageManageContentProps = {
   isEditorHeaderShown?: boolean;
 } & (
-  | { viewType: 'edit'; product: Product }
+  | { viewType: 'edit'; product: ProductWithRelationsLocal }
   | {
       viewType: 'view';
-      product: Product;
+      product: ProductWithRelationsLocal;
     }
   | { viewType: 'create' }
 );
@@ -95,7 +96,10 @@ export const ProductPageManageContent: FC<
           ]}
         />
       </div>
-      <div className="flex flex-wrap lg:grid grid-cols-12 w-full gap-y-5 lg:gap-x-5 my-5 px-5 max-w-[1920px] mx-auto">
+      <div
+        data-product-id={product?.id || 'none'}
+        className="flex flex-wrap lg:grid grid-cols-12 w-full gap-y-5 lg:gap-x-5 my-5 px-5 max-w-[1920px] mx-auto"
+      >
         <div className="w-full md:w-4/12 lg:w-auto lg:col-span-4">
           {props.viewType === 'view' ? (
             <>
@@ -104,9 +108,9 @@ export const ProductPageManageContent: FC<
                   onlyImage
                   className={!product?.publishedAt ? 'opacity-40' : ''}
                   src={getFileUrl(
-                    Collections.PRODUCTS,
+                    products,
                     props.product.id,
-                    props.product.images[0]
+                    props.product.images[0].file
                   )}
                 />
                 <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
@@ -118,15 +122,11 @@ export const ProductPageManageContent: FC<
                 </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
-                {props.product.images.slice(1).map((imageUrl) => (
+                {props.product.images.slice(1).map(({ file: imageName }) => (
                   <CustomImage
                     className={!product?.publishedAt ? 'opacity-40' : ''}
-                    key={imageUrl}
-                    src={getFileUrl(
-                      Collections.PRODUCTS,
-                      props.product.id,
-                      imageUrl
-                    )}
+                    key={imageName}
+                    src={getFileUrl(products, props.product.id, imageName)}
                   />
                 ))}
               </div>
@@ -154,13 +154,11 @@ export const ProductPageManageContent: FC<
               <EditorOnlyDeliveryMethodRenderer
                 deliveryMethods={deliveryMethodsAsObject}
               />
-            ) : product && !!product.onlyDeliveryMethods.length ? (
+            ) : product && !!product.onlyForDeliveryMethod ? (
               <OnlyDeliveryMethodBadge
-                onlyDeliveryMethods={product.onlyDeliveryMethods
-                  .filter((dId) => dId in deliveryMethodsAsObject)
-                  .map((deliveryMethodId) =>
-                    deliveryMethodsAsObject[deliveryMethodId].name.toLowerCase()
-                  )}
+                onlyDeliveryMethods={[
+                  product.onlyForDeliveryMethod.name.toLowerCase(),
+                ]}
               />
             ) : null}
           </div>
@@ -194,7 +192,7 @@ export const ProductPageManageContent: FC<
             {isEditorEnabled ? (
               <PriceEditor />
             ) : (
-              <Price value={product!.price.value} size="lg" />
+              <Price value={product!.price?.value!} size="lg" />
             )}
           </div>
 
@@ -235,25 +233,27 @@ export const ProductPageManageContent: FC<
               <Paper className="p-3 mt-4">
                 <AvailibilityEdit deliveryMethods={deliveryMethods} />
               </Paper>
-              {product?.created || product?.updated || product?.publishedAt ? (
+              {product?.createdAt ||
+              product?.updatedAt ||
+              product?.publishedAt ? (
                 <Paper className="p-3 mt-4">
                   <h3 className="font-bold font-title">Časová osa</h3>
                   <hr className="h-0.5 bg-gray-100 border-none mt-2 mb-3" />
                   <div className="grid gap-5">
-                    {product?.created ? (
+                    {product?.createdAt ? (
                       <Input
                         label="Vytvořeno"
-                        value={dayjs(product.created).format(
+                        value={dayjs(product.createdAt).format(
                           DEFAULT_DATE_FORMAT
                         )}
                         disabled
                       />
                     ) : null}
 
-                    {product?.updated ? (
+                    {product?.updatedAt ? (
                       <Input
                         label="Upraveno"
-                        value={dayjs(product.updated).format(
+                        value={dayjs(product.updatedAt).format(
                           DEFAULT_DATE_FORMAT
                         )}
                         disabled

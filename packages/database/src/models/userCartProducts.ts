@@ -8,13 +8,15 @@ import { userCarts } from './userCarts';
 export const userCartProducts = pgTable('user_cart_products', {
   ...modelsBase,
   cartId: integer('cart_id')
-    .references(() => userCarts.id)
+    .references(() => userCarts.id, { onDelete: 'cascade' })
     .notNull(),
-  count: integer('count').notNull(),
+  count: integer('count').default(1).notNull(),
   productId: integer('product_id')
-    .references(() => products.id)
+    .references(() => products.id, { onDelete: 'cascade' })
     .notNull(),
 });
+
+export type UserCartProduct = typeof userCartProducts.$inferSelect;
 
 export const userCartProductsRelations = relations(
   userCartProducts,

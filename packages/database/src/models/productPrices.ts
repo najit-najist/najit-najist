@@ -8,7 +8,9 @@ export const productPrices = pgTable('product_prices', {
   ...modelsBase,
   value: integer('value').notNull(),
   discount: integer('discount'),
-  productId: integer('product_id').references(() => products.id),
+  productId: integer('product_id').references(() => products.id, {
+    onDelete: 'cascade',
+  }),
 });
 
 export const productPricesRelations = relations(productPrices, ({ one }) => ({

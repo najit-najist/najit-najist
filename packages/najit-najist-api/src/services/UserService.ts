@@ -8,8 +8,8 @@ import {
   userAddresses,
   users,
 } from '@najit-najist/database/models';
-import { EntityLink } from '@najit-najist/schemas';
-import { eq } from 'drizzle-orm';
+import { EntityLink, isFileBase64 } from '@najit-najist/schemas';
+import { eq, getTableName } from 'drizzle-orm';
 import path from 'path';
 
 import { LibraryService } from '../LibraryService';
@@ -57,16 +57,19 @@ export class UserService {
 
       const updated = await database.transaction(async (tx) => {
         if (updatePayload.avatar) {
-          const { filepath: newAvatarFilepath } = await library.create(
-            this.forUser,
-            updatePayload.avatar
-          );
-          const newAvatarFilename = path.basename(newAvatarFilepath);
+          if (!isFileBase64(updatePayload.avatar)) {
+            updatePayload.avatar = undefined;
+          } else {
+            const { filename: newAvatarFilename } = await library.create(
+              this.forUser,
+              updatePayload.avatar
+            );
 
-          updatePayload.avatar = newAvatarFilename;
+            updatePayload.avatar = newAvatarFilename;
 
-          if (this.forUser.avatar) {
-            await library.delete(this.forUser, this.forUser.avatar);
+            if (this.forUser.avatar) {
+              await library.delete(this.forUser, this.forUser.avatar);
+            }
           }
         }
 
@@ -147,13 +150,12 @@ export class UserService {
         });
 
         if (newAvatar) {
-          const { filepath: newAvatarFilepath } = await library.create(
+          const { filename: newAvatarFilename } = await library.create(
             {
               id: created.id,
             },
             newAvatar
           );
-          const newAvatarFilename = path.basename(newAvatarFilepath);
 
           postCreateUpdatePayload.avatar = newAvatarFilename;
         }
@@ -204,14 +206,14 @@ export class UserService {
       with: {
         telephone: true,
         address: {
-          with: { minicipality: true },
+          with: { municipality: true },
         },
       },
     });
 
     if (!item) {
       throw new EntityNotFoundError({
-        entityName: users._.name,
+        entityName: getTableName(users),
       });
     }
 

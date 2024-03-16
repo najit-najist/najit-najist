@@ -1,13 +1,12 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { AppRouterOutput, orderStates } from '@najit-najist/api';
-import { Badge } from '@najit-najist/ui';
+import { AppRouterOutput } from '@najit-najist/api';
+import { OrderState } from '@najit-najist/database/models';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { FC } from 'react';
-import { z } from 'zod';
 
-const orderStateToLabel: Record<z.infer<typeof orderStates>, string> = {
+const orderStateToLabel: Record<OrderState, string> = {
   confirmed: 'Potvrzeno',
   dropped: 'Zrušeno',
   finished: 'Dokončeno',
@@ -27,7 +26,7 @@ export const Orders: FC<{
           <tr key={order.id}>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {dayjs(order.created).format(DEFAULT_DATE_FORMAT)}
+                {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
               </div>
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -42,7 +41,7 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {order.subtotal + order.delivery_method?.price} Kč
+                {order.subtotal + (order.deliveryMethod?.price ?? 0)} Kč
               </div>
             </td>
 

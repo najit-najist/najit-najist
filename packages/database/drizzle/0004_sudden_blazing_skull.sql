@@ -1,0 +1,1 @@
+ALTER TABLE "contact_form_replies" DROP CONSTRAINT "contact_form_replies_email_unique";

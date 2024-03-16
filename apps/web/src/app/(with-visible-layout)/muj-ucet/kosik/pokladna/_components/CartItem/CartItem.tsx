@@ -3,8 +3,8 @@ import {
   TagIcon,
   TruckIcon,
 } from '@heroicons/react/24/outline';
-import { AppRouterOutput, DeliveryMethod, Product } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
+import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
+import { OrderDeliveryMethod, products } from '@najit-najist/database/models';
 import { Badge, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -15,13 +15,13 @@ import { PriceInfo } from './PriceInfo';
 
 export const CartItem: FC<
   AppRouterOutput['profile']['cart']['products']['get']['many'][number] & {
-    deliveryMethods: Map<DeliveryMethod['id'], DeliveryMethod>;
+    deliveryMethods: Map<OrderDeliveryMethod['id'], OrderDeliveryMethod>;
   }
-> = ({ product, count: countInCart, id, deliveryMethods }) => {
-  let mainImage = product.images.at(0);
+> = ({ product, count: countInCart, id }) => {
+  let mainImage = product.images.at(0)?.file;
 
   if (mainImage) {
-    mainImage = getFileUrl(Collections.PRODUCTS, product.id, mainImage);
+    mainImage = getFileUrl(products, product.id, mainImage);
   }
 
   return (
@@ -36,8 +36,8 @@ export const CartItem: FC<
             className="w-20 rounded-md"
           />
           <div className="absolute top-1 left-1">
-            {product.stock?.count !== undefined &&
-            product.stock.count < countInCart ? (
+            {product.stock?.value !== undefined &&
+            product.stock.value < countInCart ? (
               <Tooltip
                 trigger={
                   <div className="text-orange-700 bg-orange-200 rounded-md w-7 h-7 p-1">
@@ -71,15 +71,10 @@ export const CartItem: FC<
                 <TagIcon className="w-3 h-3" />{' '}
                 {product.category?.name ?? 'Ostatní'}
               </Badge>
-              {product.onlyDeliveryMethods.length ? (
+              {product.onlyForDeliveryMethod ? (
                 <Badge color="yellow">
                   <TruckIcon className="w-3 h-3" /> Pouze{' '}
-                  {product.onlyDeliveryMethods
-                    .filter((dId) => deliveryMethods.has(dId))
-                    .map((deliveryMethodId) =>
-                      deliveryMethods.get(deliveryMethodId)!.name.toLowerCase()
-                    )
-                    .join(' nebo ')}
+                  {product.onlyForDeliveryMethod!.name.toLowerCase()}
                 </Badge>
               ) : null}
             </div>
@@ -94,7 +89,7 @@ export const CartItem: FC<
           <PriceInfo
             productId={product.id}
             countInCart={countInCart}
-            productPrice={product.price.value}
+            productPrice={product.price!.value}
           />
         </div>
       </div>

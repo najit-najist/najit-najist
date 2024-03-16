@@ -14,10 +14,11 @@ import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { getOrderById } from '@utils/server/getOrderById';
-import { eq } from 'drizzle-orm';
+import { SQL, and, eq, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { config } from '../../../config';
+import { defaultGetManyPagedSchema } from '../../../schemas/base.get-many.schema';
 import { MailService, logger } from '../../../server';
 
 const isLocalPickup = (
@@ -27,8 +28,24 @@ const isLocalPickup = (
 const paymentMethodRoutes = t.router({
   get: t.router({
     many: t.procedure.query(async () => {
-      const paymentMethods =
-        await database.query.orderPaymentMethods.findMany();
+      const paymentMethods = await database.query.orderPaymentMethods
+        .findMany({
+          with: {
+            exceptDeliveryMethods: {
+              with: {
+                deliveryMethod: true,
+              },
+            },
+          },
+        })
+        .then((items) =>
+          items.map((item) => ({
+            ...item,
+            exceptDeliveryMethods: item.exceptDeliveryMethods.map(
+              (exc) => exc.deliveryMethod
+            ),
+          }))
+        );
 
       return paymentMethods;
     }),
@@ -55,43 +72,60 @@ export const orderRoutes = t.router({
       }),
     many: protectedProcedure
       .input(
-        z
-          .object({
+        defaultGetManyPagedSchema
+          .extend({
             user: z.object({ id: z.array(z.number()) }).optional(),
-            page: z.number().min(1).default(1),
-            perPage: z.number().min(1).default(15),
           })
+          .omit({ search: true })
           .default({})
       )
       .query(async ({ input, ctx }) => {
+        const { page, perPage } = input;
         // TODO - paginations
-        const items = database.query.orders.findMany({
-          orderBy: (schema, { asc }) => [asc(schema.createdAt)],
-          where: (schema, { inArray }) =>
-            input.user?.id.length
-              ? inArray(schema.userId, input.user.id ?? [])
-              : undefined,
 
-          with: {
-            orderedProducts: {
-              with: {
-                product: true,
+        const conditions: SQL<unknown>[] = [];
+
+        if (input.user?.id.length) {
+          conditions.push(inArray(orders.userId, input.user.id ?? []));
+        }
+
+        const [items, [{ count }]] = await Promise.all([
+          database.query.orders.findMany({
+            orderBy: (schema, { asc }) => [asc(schema.createdAt)],
+            where: and(...conditions),
+            with: {
+              orderedProducts: {
+                with: {
+                  product: true,
+                },
+              },
+              paymentMethod: true,
+              deliveryMethod: true,
+              user: {
+                columns: {
+                  id: true,
+                  email: true,
+                  firstName: true,
+                  lastName: true,
+                },
               },
             },
-            paymentMethod: true,
-            deliveryMethod: true,
-            user: {
-              columns: {
-                id: true,
-                email: true,
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        });
+          }),
 
-        return items;
+          database
+            .select({
+              count: sql`count(*)`.mapWith(Number).as('count'),
+            })
+            .from(orders)
+            .where(and(...conditions)),
+        ]);
+
+        return {
+          items,
+          totalItems: count,
+          page,
+          totalPages: Math.max(1, Math.floor(count / perPage)),
+        };
       }),
   }),
 

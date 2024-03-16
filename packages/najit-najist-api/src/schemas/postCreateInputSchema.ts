@@ -9,5 +9,5 @@ export const postCreateInputSchema = z.object({
   publishedAt: stringOrDateToDateSchema,
   content: z.record(z.any()).optional(),
   description: z.string().min(2, 'Minimálně dva znaky'),
-  image: encodedImageSchema.optional(),
+  image: encodedImageSchema.nullable().optional(),
 });

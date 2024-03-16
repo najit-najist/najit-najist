@@ -3,15 +3,13 @@
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { loginPageCallbacks } from '@constants';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  VerifyRegistrationFromPreviewInput,
-  verifyRegistrationFromPreviewInputSchema,
-} from '@najit-najist/api';
+import { verifyRegistrationFromPreviewInputSchema } from '@najit-najist/api';
 import { Button, ErrorMessage, FormBreak } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
 
 import { PasswordInputs } from '../../../_components/PasswordInputs';
 
@@ -19,7 +17,9 @@ export const Form: FC<{ token: string }> = ({ token }) => {
   const router = useRouter();
   const { mutateAsync: finishRegistration } =
     trpc.profile.verifyRegistrationFromPreview.useMutation();
-  const formMethods = useForm<VerifyRegistrationFromPreviewInput>({
+  const formMethods = useForm<
+    z.infer<typeof verifyRegistrationFromPreviewInputSchema>
+  >({
     defaultValues: {
       token,
       password: '',

@@ -1,6 +1,5 @@
 import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
-import { canUser, UserActions } from '@najit-najist/api';
-import { getEdgeLoggedInUser, getEdgeSession } from '@najit-najist/api/edge';
+import { getEdgeSession, canUser, UserActions } from '@najit-najist/api/edge';
 import {
   User,
   UserRoles,
@@ -68,10 +67,10 @@ export async function middleware(request: NextRequest) {
 
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
     const currentUserResponse = await fetch(
-      'http://localhost:3000/api/muj-ucet/profil'
+      'http://localhost:3000/api/muj-ucet/profil',
+      { headers: request.headers }
     );
     const currentUser = (await currentUserResponse.json()) as User;
-    console.log({ currentUser });
 
     if (!currentUser && isLoggedInOnlyPath) {
       const url = requestUrl.clone();

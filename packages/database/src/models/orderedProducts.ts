@@ -8,10 +8,10 @@ import { products } from './products';
 export const orderedProducts = pgTable('ordered_products', {
   ...modelsBase,
   orderId: integer('order_id')
-    .references(() => orders.id)
+    .references(() => orders.id, { onDelete: 'cascade' })
     .notNull(),
   productId: integer('product_id')
-    .references(() => products.id)
+    .references(() => products.id, { onDelete: 'restrict' })
     .notNull(),
   count: integer('count').notNull(),
   totalPrice: integer('total_price').notNull(),

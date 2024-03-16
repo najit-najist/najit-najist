@@ -5,20 +5,21 @@ import {
   userLikedPosts,
   users,
 } from '@najit-najist/database/models';
-import { slugSchema } from '@najit-najist/schemas';
+import { isFileBase64, slugSchema } from '@najit-najist/schemas';
 import { EntityLink, entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
 import { generateCursor } from 'drizzle-cursor';
-import { SQL, and, eq, ilike, or, sql } from 'drizzle-orm';
+import { SQL, and, eq, getTableName, ilike, or, sql } from 'drizzle-orm';
 import fs from 'fs-extra';
 import { revalidatePath } from 'next/cache';
+import path from 'path';
 import { z } from 'zod';
 
+import { LibraryService } from '../../LibraryService';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
-import { libraryManager } from '../../libraryManager';
 import { postCreateInputSchema } from '../../schemas/postCreateInputSchema';
 import { postUpdateInputSchema } from '../../schemas/postUpdateInputSchema';
 import { logger } from '../../server';
@@ -35,7 +36,7 @@ const getOneBy = async <V extends keyof Post>(by: V, value: Post[V]) => {
 
   if (!item) {
     throw new EntityNotFoundError({
-      entityName: posts._.name,
+      entityName: getTableName(posts),
     });
   }
 
@@ -66,10 +67,12 @@ export const postsRoute = t.router({
   create: onlyAdminProcedure
     .input(postCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
-      let imageToDelete: string | undefined = undefined;
       let post: Post;
+      const library = new LibraryService(posts);
 
       try {
+        library.beginTransaction();
+
         post = await database.transaction(async (tx) => {
           let [created] = await tx
             .insert(posts)
@@ -79,14 +82,12 @@ export const postsRoute = t.router({
               content: input.content
                 ? JSON.stringify(input.content)
                 : undefined,
-              createdBy: ctx.sessionData.userId,
+              createdById: ctx.sessionData.userId,
             })
             .returning();
 
           if (input.image) {
-            const { absoluteFilename, filename } =
-              await libraryManager.saveFile(posts, post.id, input.image);
-            imageToDelete = absoluteFilename;
+            const { filename } = await library.create(created, input.image);
 
             [created] = await tx
               .update(posts)
@@ -96,12 +97,12 @@ export const postsRoute = t.router({
               .returning();
           }
 
+          library.commit();
+
           return created;
         });
       } catch (error) {
-        if (imageToDelete) {
-          await fs.remove(imageToDelete);
-        }
+        library.endTransaction();
 
         logger.error({ error, input }, 'Failed to create post');
 
@@ -116,14 +117,15 @@ export const postsRoute = t.router({
   update: onlyAdminProcedure
     .input(entityLinkSchema.extend({ data: postUpdateInputSchema }))
     .mutation(async ({ ctx, input }) => {
-      let imageToDelete: string | undefined = undefined;
-      let prevImageToDelete: string | undefined = undefined;
       let post: Post;
+      const library = new LibraryService(posts);
 
       try {
         const { image: newImage, ...updateOptions } = input.data;
 
         post = await database.transaction(async (tx) => {
+          library.beginTransaction();
+
           let [updated] = await tx
             .update(posts)
             .set({
@@ -134,51 +136,54 @@ export const postsRoute = t.router({
               content: updateOptions.content
                 ? JSON.stringify(updateOptions.content)
                 : undefined,
-              createdBy: ctx.sessionData.userId,
+              updateById: ctx.sessionData.userId,
             })
+            .where(eq(posts.id, input.id))
             .returning();
 
-          if (newImage) {
-            const { absoluteFilename, filename } =
-              await libraryManager.saveFile(users, updated.id, newImage);
-
-            imageToDelete = absoluteFilename;
+          if (newImage && isFileBase64(newImage)) {
+            const { filename } = await library.create(updated, newImage);
 
             const [newlyUpdated] = await tx
               .update(posts)
               .set({
                 image: filename,
               })
+              .where(eq(posts.id, input.id))
               .returning();
 
             if (updated.image) {
-              prevImageToDelete = updated.image;
+              await library.delete(updated, updated.image);
             }
 
             updated = newlyUpdated;
           }
 
+          await library.commit();
+
           return updated;
         });
-
-        if (prevImageToDelete) {
-          await libraryManager.deleteFilesFromStorage(
-            posts,
-            post.id,
-            prevImageToDelete
-          );
-        }
 
         revalidatePath(`/clanky/${post.slug}`);
         revalidatePath('/clanky');
 
         return post;
       } catch (error) {
-        if (imageToDelete) {
-          await fs.remove(imageToDelete);
-        }
+        library.endTransaction();
 
-        logger.error({ error, input }, 'Failed to create post');
+        logger.error(
+          {
+            error,
+            input: {
+              ...input,
+              data: {
+                ...input.data,
+                image: null,
+              },
+            },
+          },
+          'Failed to update post'
+        );
 
         throw error;
       }
@@ -208,7 +213,6 @@ export const postsRoute = t.router({
         .optional()
     )
     .query(async ({ ctx, input = { perPage: 20, query: '' } }) => {
-      // TODO: pagination
       const conditions: SQL[] = [];
 
       if (input.query) {
@@ -228,7 +232,7 @@ export const postsRoute = t.router({
         },
         cursors: [
           {
-            order: 'ASC',
+            order: 'DESC',
             key: posts.publishedAt.name,
             schema: posts.publishedAt,
           },
@@ -242,10 +246,8 @@ export const postsRoute = t.router({
               with: { category: true },
             },
           },
-          where: (schema, { and }) =>
-            conditions.length
-              ? and(...conditions, cursor.where(input.page))
-              : cursor.where(input.page),
+          limit: input.perPage,
+          where: and(...conditions, cursor.where(input.page)),
           orderBy: cursor.orderBy,
         }),
         database
@@ -258,7 +260,10 @@ export const postsRoute = t.router({
 
       return {
         items,
-        nextToken: cursor.serialize(items.at(-1)),
+        nextToken:
+          input.perPage === items.length
+            ? cursor.serialize(items.at(-1))
+            : null,
         total: count,
       };
     }),

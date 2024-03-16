@@ -30,6 +30,10 @@ export const buttonStyles = cva(
         spaceless: '',
         normal: 'py-2 px-8',
       },
+      size: {
+        normal: '',
+        lg: 'text-xl px-8 py-3',
+      },
       padding: {
         off: '',
         sm: 'py-2 px-4',
@@ -61,6 +65,7 @@ export const buttonStyles = cva(
       appearance: 'normal',
       color: 'normal',
       padding: 'off',
+      size: 'normal',
       isLoading: false,
       notRounded: false,
       notAnimated: false,

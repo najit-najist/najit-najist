@@ -65,17 +65,16 @@ export default async function Page() {
 
   // Create new set for delivery method
   for (const productInCart of productsInCart) {
-    if (productInCart.product.onlyDeliveryMethods.length) {
-      for (const deliveryMethodId of productInCart.product
-        .onlyDeliveryMethods) {
-        const deliveryMethod = deliveryMethods.get(deliveryMethodId);
+    if (productInCart.product.onlyForDeliveryMethod) {
+      const deliveryMethod = deliveryMethods.get(
+        productInCart.product.onlyForDeliveryMethod.id
+      );
 
-        if (deliveryMethod) {
-          deliveryMethod.disabled = false;
+      if (deliveryMethod) {
+        deliveryMethod.disabled = false;
 
-          if (!productsInCartLimitDeliveryMethods) {
-            productsInCartLimitDeliveryMethods = true;
-          }
+        if (!productsInCartLimitDeliveryMethods) {
+          productsInCartLimitDeliveryMethods = true;
         }
       }
     }
@@ -100,7 +99,7 @@ export default async function Page() {
         },
         products: productsInCart.map((p) => ({
           id: p.product,
-          onlyDeliveryMethods: p.product.onlyDeliveryMethods,
+          onlyForDeliveryMethod: p.product.onlyForDeliveryMethod,
         })),
         deliveryMethods: deliverMethodsAsArray.map((d) => ({ id: d.id })),
       },
@@ -114,12 +113,14 @@ export default async function Page() {
 
   const defaultPaymentMethod = paymentMethods.find(
     (item) =>
-      !item.except_delivery_methods.includes(defaultDeliveryMethod.id ?? '')
+      !item.exceptDeliveryMethods
+        .map(({ id }) => id)
+        .includes(defaultDeliveryMethod.id ?? '')
   );
 
   const priceTotal = productsInCart.reduce(
     (priceTotalPredicate, cartItem) =>
-      priceTotalPredicate + cartItem.product.price.value * cartItem.count,
+      priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
     0
   );
 
@@ -132,20 +133,20 @@ export default async function Page() {
       </PageHeader>
       <FormProvider
         defaultFormValues={{
-          deliveryMethod: { id: defaultDeliveryMethod.id ?? null },
-          paymentMethod: { id: defaultPaymentMethod?.id ?? null },
+          deliveryMethod: { id: (defaultDeliveryMethod.id ?? null) as any },
+          paymentMethod: { id: (defaultPaymentMethod?.id ?? null) as any },
           address: {
-            city: '',
-            houseNumber: '',
-            postalCode: '',
-            streetName: '',
             municipality: { id: null as any },
             ...user?.address,
+            city: user?.address?.city ?? '',
+            houseNumber: user?.address?.houseNumber ?? '',
+            postalCode: user?.address?.postalCode ?? '',
+            streetName: user?.address?.streetName ?? '',
           },
           email: user?.email ?? '',
           firstName: user?.firstName ?? '',
           lastName: user?.lastName ?? '',
-          telephoneNumber: user?.telephoneNumber ?? '',
+          telephoneNumber: user?.telephone?.telephone ?? '',
           saveAddressToAccount: false,
         }}
       >

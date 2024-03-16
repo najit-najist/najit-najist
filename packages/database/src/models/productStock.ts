@@ -7,8 +7,12 @@ import { products } from './products';
 export const productStock = pgTable('product_stock', {
   ...modelsBase,
   value: integer('value').notNull(),
-  productId: integer('product_id').references(() => products.id),
+  productId: integer('product_id').references(() => products.id, {
+    onDelete: 'cascade',
+  }),
 });
+
+export type ProductStock = typeof productStock.$inferSelect;
 
 export const productStocksRelations = relations(productStock, ({ one }) => ({
   product: one(products, {

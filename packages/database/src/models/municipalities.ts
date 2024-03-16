@@ -6,8 +6,8 @@ export const municipalities = pgTable(
   'municipalities',
   {
     ...modelsBase,
-    name: varchar('firstname', { length: 256 }).notNull(),
-    slug: varchar('firstname', { length: 256 }).notNull(),
+    name: varchar('name', { length: 256 }).notNull(),
+    slug: varchar('slug', { length: 256 }).notNull(),
   },
   (municipalities) => {
     return {

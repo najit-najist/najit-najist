@@ -40,19 +40,19 @@ export const orders = pgTable('orders', {
   ...modelsBase,
   subtotal: real('subtotal').notNull(),
   userId: integer('user_id')
-    .references(() => users.id)
+    .references(() => users.id, { onDelete: 'cascade' })
     .notNull(),
   email: varchar('email', { length: 256 }).notNull(),
   telephoneId: integer('telephone_id')
     .references(() => telephoneNumbers.id)
     .notNull(),
   firstName: varchar('firstname', { length: 256 }).notNull(),
-  lastName: varchar('firstname', { length: 256 }).notNull(),
+  lastName: varchar('lastname', { length: 256 }).notNull(),
   paymentMethodId: integer('payment_method_id')
-    .references(() => orderPaymentMethods.id)
+    .references(() => orderPaymentMethods.id, { onDelete: 'restrict' })
     .notNull(),
   deliveryMethodId: integer('delivery_method_id')
-    .references(() => orderDeliveryMethods.id)
+    .references(() => orderDeliveryMethods.id, { onDelete: 'restrict' })
     .notNull(),
   state: userState('state').default(OrderState.NEW).notNull(),
 

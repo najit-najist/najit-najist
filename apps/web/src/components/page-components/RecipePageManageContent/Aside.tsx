@@ -1,30 +1,30 @@
 'use client';
 
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { Recipe } from '@najit-najist/api';
+import { Recipe } from '@najit-najist/database/models';
 import { Input, Paper } from '@najit-najist/ui';
 import dayjs from 'dayjs';
 import { FC } from 'react';
 
-export const Aside: FC<Partial<Pick<Recipe, 'updated' | 'created'>>> = ({
-  updated,
-  created,
+export const Aside: FC<Partial<Pick<Recipe, 'createdAt' | 'updatedAt'>>> = ({
+  updatedAt,
+  createdAt,
 }) => {
   return (
     <Paper className="p-2 sm:p-5">
       <div className="grid gap-5">
-        {created ? (
+        {createdAt ? (
           <Input
             label="Vytvořeno"
-            value={dayjs(created).format(DEFAULT_DATE_FORMAT)}
+            value={dayjs(createdAt).format(DEFAULT_DATE_FORMAT)}
             disabled
           />
         ) : null}
 
-        {updated ? (
+        {updatedAt ? (
           <Input
             label="Upraveno"
-            value={dayjs(updated).format(DEFAULT_DATE_FORMAT)}
+            value={dayjs(updatedAt).format(DEFAULT_DATE_FORMAT)}
             disabled
           />
         ) : null}

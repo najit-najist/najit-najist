@@ -1,17 +1,18 @@
 'use client';
 
+import { ProductWithRelationsLocal } from '@custom-types';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { Button, Switch, buttonStyles } from '@najit-najist/ui';
+import { trpc } from '@trpc';
+import clsx from 'clsx';
+import dayjs from 'dayjs';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
+
 import { ProductFormData, ViewType } from './_types';
-import clsx from 'clsx';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { trpc } from '@trpc';
-import { Product } from '@najit-najist/api';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import dayjs from 'dayjs';
 
 const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
   const [changePublishedAtTo, setChangePublishedAtTo] = useState<
@@ -59,7 +60,7 @@ const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
 
 export const EditorHeader: FC<{
   viewType: ViewType;
-  product?: Pick<Product, 'id' | 'slug'>;
+  product?: Pick<ProductWithRelationsLocal, 'id' | 'slug'>;
 }> = ({ viewType, product }) => {
   const pathname = usePathname();
   const router = useRouter();

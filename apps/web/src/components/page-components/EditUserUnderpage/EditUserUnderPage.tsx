@@ -1,9 +1,9 @@
 'use client';
 
-import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { Section } from '@components/portal';
-import { UpdateProfile, User } from '@najit-najist/api';
+import { userProfileUpdateInputSchema } from '@najit-najist/api';
+import { User } from '@najit-najist/database/models';
 import {
   Button,
   Checkbox,
@@ -13,6 +13,7 @@ import {
 } from '@najit-najist/ui';
 import { FC, ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
+import { z } from 'zod';
 
 import { AddressFields } from './AddressFields';
 
@@ -32,7 +33,8 @@ export const EditUserUnderPage: FC<{
   viewType: ViewType;
   afterProfileImageSlot?: ReactNode;
 }> = ({ userId, viewType, afterProfileImageSlot }) => {
-  const { register, formState } = useFormContext<UpdateProfile>();
+  const { register, formState } =
+    useFormContext<z.infer<typeof userProfileUpdateInputSchema>>();
   const email = useWatch({ name: 'email' });
 
   const fieldsAreDisabled = formState.isSubmitting;

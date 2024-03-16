@@ -65,24 +65,24 @@ export default async function Page({ searchParams }: Params) {
     filter: filter['address.municipality']
       ? {
           address: filter['address.municipality'].map((itemId) => ({
-            id: itemId,
+            id: Number(itemId),
           })),
         }
       : undefined,
   });
 
   let selectedMunicipality:
-    | AppRouterOutput['address']['municipality']['get']['many']['items'][number]
+    | AppRouterOutput['address']['municipality']['get']['many'][number]
     | undefined = undefined;
   // TODO: implement selecting more
   const selectedMunicipalityId = filter['address.municipality']?.at(0);
 
   if (selectedMunicipalityId) {
     const municipalities = await getTrpcCaller().address.municipality.get.many({
-      filter: { id: [selectedMunicipalityId] },
+      filter: { id: [Number(selectedMunicipalityId)] },
     });
 
-    selectedMunicipality = municipalities.items.at(0);
+    selectedMunicipality = municipalities.at(0);
   }
 
   return (

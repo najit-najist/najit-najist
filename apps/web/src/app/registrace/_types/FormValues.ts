@@ -1,6 +1,6 @@
-import { registerUserSchema } from '@najit-najist/api';
+import { userRegisterInputSchema } from '@najit-najist/api';
 import { z } from 'zod';
 
-export type FormValues = z.infer<typeof registerUserSchema> & {
+export type FormValues = z.infer<typeof userRegisterInputSchema> & {
   passwordAgain: string;
 };

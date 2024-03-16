@@ -22,9 +22,12 @@ export const products = pgTable('products', {
   slug: varchar('slug', { length: 256 }).unique().notNull(),
   description: text('description'),
   publishedAt: timestamp('published_at'),
-  categoryId: integer('category_id').references(() => productCategories.id),
+  categoryId: integer('category_id').references(() => productCategories.id, {
+    onDelete: 'restrict',
+  }),
   onlyForDeliveryMethodId: integer('only_for_delivery_method_id').references(
-    () => orderDeliveryMethods.id
+    () => orderDeliveryMethods.id,
+    { onDelete: 'cascade' }
   ),
 });
 

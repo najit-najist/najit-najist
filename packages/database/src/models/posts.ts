@@ -30,10 +30,10 @@ export const postsRelations = relations(posts, ({ many }) => ({
 export const postsToPostCategories = pgTable('posts_to_post_categories', {
   postId: integer('post_id')
     .notNull()
-    .references(() => posts.id),
+    .references(() => posts.id, { onDelete: 'cascade' }),
   categoryId: integer('category_id')
     .notNull()
-    .references(() => postCategories.id),
+    .references(() => postCategories.id, { onDelete: 'cascade' }),
 });
 
 export const postsToPostCategoriesRelations = relations(

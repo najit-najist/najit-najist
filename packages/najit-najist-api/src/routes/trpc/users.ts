@@ -5,19 +5,19 @@ import { entityLinkSchema } from '@najit-najist/schemas';
 import { UserService } from '@services/UserService';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
-import { SQL, like, or } from 'drizzle-orm';
+import { SQL, and, getTableName, like, or, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../errors/ApplicationError';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
-import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
+import { defaultGetManyPagedSchema } from '../../schemas/base.get-many.schema';
 import { userUpdateInputSchema } from '../../schemas/userUpdateInputSchema';
 import { ErrorCodes } from '../../types/ErrorCodes';
 
 export const usersRoute = t.router({
   getMany: onlyAdminProcedure
     .input(
-      defaultGetManySchema
+      defaultGetManyPagedSchema
         .extend({
           filter: z
             .object({
@@ -70,19 +70,35 @@ export const usersRoute = t.router({
 
       // TODO: pagination
 
-      return database.query.users.findMany({
-        where: (schema, { and }) =>
-          conditions.length
-            ? conditions.length === 1
-              ? conditions.at(0)
-              : and(...conditions)
-            : undefined,
-        with: {
-          telephone: true,
-          address: true,
-        },
-        orderBy: (schema, { asc }) => [asc(schema.createdAt)],
-      });
+      const [items, [{ count }]] = await Promise.all([
+        database.query.users.findMany({
+          where: (schema, { and }) => and(...conditions),
+          with: {
+            telephone: true,
+            address: {
+              with: {
+                municipality: true,
+              },
+            },
+          },
+          limit: perPage,
+          offset: (page - 1) * perPage,
+          orderBy: (schema, { desc }) => [desc(schema.createdAt)],
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(users)
+          .where(and(...conditions)),
+      ]);
+
+      return {
+        items,
+        totalItems: count,
+        page,
+        totalPages: Math.max(1, Math.floor(count / perPage)),
+      };
     }),
 
   getOne: onlyAdminProcedure
@@ -99,7 +115,7 @@ export const usersRoute = t.router({
           'preregisteredUserToken' in input
             ? await database.query.previewSubscriberTokens
                 .findFirst({
-                  where: (schema, { eq }) =>
+                  where: (schema, { eq, and }) =>
                     eq(schema.token, input.preregisteredUserToken),
                   with: {
                     forUser: {
@@ -128,7 +144,7 @@ export const usersRoute = t.router({
               });
 
         if (!user) {
-          throw new EntityNotFoundError({ entityName: users._.name });
+          throw new EntityNotFoundError({ entityName: getTableName(users) });
         }
 
         return user;
@@ -159,7 +175,7 @@ export const usersRoute = t.router({
 
       user.update({
         ...payload,
-        telephone: telephone ? { telephone } : undefined,
+        telephone,
         address: address
           ? { ...address, municipalityId: address.municipality?.id }
           : undefined,

@@ -6,7 +6,9 @@ import { users } from './users';
 
 export const previewSubscriberTokens = pgTable('preview_subscriber_tokens', {
   ...modelsBase,
-  forUserId: integer('for_user_id').references(() => users.id),
+  forUserId: integer('for_user_id').references(() => users.id, {
+    onDelete: 'cascade',
+  }),
   token: varchar('token', { length: 256 }),
 });
 

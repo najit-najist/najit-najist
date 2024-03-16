@@ -1,9 +1,8 @@
-import { Order, orderStates } from '@najit-najist/api';
+import { Order, OrderState } from '@najit-najist/database/models';
 import { Badge, BadgeProps } from '@najit-najist/ui';
 import { FC } from 'react';
-import { z } from 'zod';
 
-const orderStateToLabel: Record<z.infer<typeof orderStates>, string> = {
+const orderStateToLabel: Record<OrderState, string> = {
   confirmed: 'Potvrzeno',
   dropped: 'Zrušeno',
   finished: 'Dokončeno 🎉',
@@ -14,7 +13,7 @@ const orderStateToLabel: Record<z.infer<typeof orderStates>, string> = {
 };
 
 const orderStateToColor: Partial<
-  Record<z.infer<typeof orderStates>, NonNullable<BadgeProps['color']>>
+  Record<OrderState, NonNullable<BadgeProps['color']>>
 > = {
   dropped: 'red',
   confirmed: 'blue',

@@ -5,7 +5,7 @@ import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { Municipality } from '@najit-najist/api';
+import { Municipality } from '@najit-najist/database/models';
 import { Button, Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { usePathname, useRouter } from 'next/navigation';
@@ -41,7 +41,10 @@ export const SearchForm: FC<{
       }
 
       if (address?.municipality) {
-        searchParams.set('address.municipality', address.municipality.id);
+        searchParams.set(
+          'address.municipality',
+          String(address.municipality.id)
+        );
       } else {
         searchParams.delete('address.municipality');
       }

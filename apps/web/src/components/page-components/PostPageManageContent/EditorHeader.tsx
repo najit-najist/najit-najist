@@ -1,21 +1,22 @@
 'use client';
 
+import { PostWithRelations } from '@custom-types';
+import { TrashIcon } from '@heroicons/react/24/outline';
+import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { Button, Switch, buttonStyles } from '@najit-najist/ui';
+import { trpc } from '@trpc';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
-import { ViewType } from './_types';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { trpc } from '@trpc';
-import { Post } from '@najit-najist/api';
 import { useController, useFormContext } from 'react-hook-form';
+
+import { ViewType } from './_types';
 
 const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
   const [changePublishedAtTo, setChangePublishedAtTo] = useState<
     null | boolean
   >(viewType === 'create' ? true : null);
-  const { formState } = useFormContext<Post>();
+  const { formState } = useFormContext<PostWithRelations>();
   const { field } = useController({ name: 'publishedAt' });
 
   const toggleChangePublishedAt = () =>
@@ -57,7 +58,7 @@ const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
 
 export const EditorHeader: FC<{
   viewType: ViewType;
-  post?: Pick<Post, 'id' | 'slug'>;
+  post?: Pick<PostWithRelations, 'id' | 'slug'>;
 }> = ({ viewType, post }) => {
   const pathname = usePathname();
   const router = useRouter();

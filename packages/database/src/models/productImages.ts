@@ -7,7 +7,9 @@ import { products } from './products';
 
 export const productImages = pgTable('product_images', {
   ...modelsBase,
-  productId: integer('product_id').references(() => products.id),
+  productId: integer('product_id').references(() => products.id, {
+    onDelete: 'cascade',
+  }),
   file: fileFieldType('file').notNull(),
 });
 

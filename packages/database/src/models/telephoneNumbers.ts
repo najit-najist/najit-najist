@@ -1,4 +1,4 @@
-import { pgTable, unique, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
 import { telephoneNumberCodes } from './telephoneNumberCodes';
@@ -9,7 +9,7 @@ export const telephoneNumbers = pgTable(
     ...modelsBase,
     telephone: varchar('telephone', { length: 100 }).notNull(),
     code: varchar('code')
-      .references(() => telephoneNumberCodes.code)
+      .references(() => telephoneNumberCodes.code, { onDelete: 'restrict' })
       .notNull(),
   },
   (userTelephoneNumbers) => {

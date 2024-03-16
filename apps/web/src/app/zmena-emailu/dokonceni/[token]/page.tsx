@@ -1,21 +1,22 @@
 'use client';
+
+import { zodResolver } from '@hookform/resolvers/zod';
+import { userRegisterInputSchema } from '@najit-najist/api';
 import { Button, PasswordInput } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { trpc } from 'trpc';
 import { z } from 'zod';
 
 import { BottomLinks } from './_components/BottomLinks';
 import { Title } from './_components/Title';
-import { registerUserSchema } from '@najit-najist/api';
 
-type FormValues = z.infer<typeof registerUserSchema> & {
+type FormValues = z.infer<typeof userRegisterInputSchema> & {
   passwordAgain: string;
 };
 
-const schema = registerUserSchema.extend({
+const schema = userRegisterInputSchema.extend({
   passwordAgain: z.string(),
 });
 

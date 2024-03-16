@@ -9,7 +9,7 @@ import { cx } from 'class-variance-authority';
 import { ReactNode } from 'react';
 
 export type RadioGroupItem = {
-  id: string;
+  id: string | number;
   name: string;
   description: ReactNode;
   disabled?: boolean;

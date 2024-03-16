@@ -1,6 +1,6 @@
 import { Logo } from '@components/common/Logo';
-import { User } from '@najit-najist/api';
 import { logger } from '@najit-najist/api/server';
+import { UserStates } from '@najit-najist/database/models';
 import { getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,15 +19,20 @@ const RegistrationFinalizationPage = async ({
 }: {
   params: { token: string };
 }) => {
-  let result: User;
+  let result: Awaited<ReturnType<typeof trpc.users.getOne>>;
   const trpc = getCachedTrpcCaller();
 
   try {
     result = await trpc.users.getOne({
-      where: {
-        preregisteredUserToken: token,
-      },
+      preregisteredUserToken: token,
     });
+
+    if (
+      result.status !== UserStates.INVITED &&
+      result.status !== UserStates.ACTIVE
+    ) {
+      throw new Error(`User is not invited, but has state: ${result.status}`);
+    }
   } catch (error) {
     logger.error(
       { error },
@@ -46,7 +51,7 @@ const RegistrationFinalizationPage = async ({
         <h2 className="mt-6 text-center text-5xl font-bold tracking-tight text-gray-900 font-title">
           Děkujeme!
         </h2>
-        {result.verified ? (
+        {result.status === UserStates.ACTIVE ? (
           <p className="mt-4 text-center text-xl">
             Váš účet je již aktivovaný! Nyní se stačí jen{' '}
             <Link href="/login" className="text-green-400 hover:underline">
@@ -63,7 +68,7 @@ const RegistrationFinalizationPage = async ({
         )}
       </div>
 
-      {!result.verified ? <Form token={token} /> : null}
+      {result.status === UserStates.INVITED ? <Form token={token} /> : null}
     </div>
   );
 };

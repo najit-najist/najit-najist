@@ -1,5 +1,6 @@
 import { splitBase64Url } from '@najit-najist/schemas';
 import { EntityLink } from '@najit-najist/schemas';
+import { getTableName } from 'drizzle-orm';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import fs from 'fs-extra';
 import crypto from 'node:crypto';
@@ -29,8 +30,10 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
 
   private async commitFile(absoluteFilepath: string, base64Content: string) {
     try {
-      const fileAsBlob = await fetch(base64Content).then((res) => res.blob());
-      await fs.writeFile(absoluteFilepath, fileAsBlob);
+      await fs.outputFile(
+        absoluteFilepath,
+        Buffer.from(base64Content, 'base64')
+      );
     } catch (error) {
       logger.error(
         { error, absoluteFilepath },
@@ -55,12 +58,12 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
   }
 
   private createOwnerRoot(owner: EntityLink) {
-    const webRoot = require.resolve('@najit-najist/web');
+    const webRoot = process.cwd();
     return path.join(
       webRoot,
       'private',
       'uploads',
-      this.model._.name,
+      getTableName(this.model),
       String(owner.id)
     );
   }
@@ -89,7 +92,13 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
       await this.commitFile(absoluteFilepath, base64);
     }
 
-    return { filepath: absoluteFilepath };
+    return {
+      /**
+       * absolute filepath
+       */
+      filepath: absoluteFilepath,
+      filename: path.basename(absoluteFilepath),
+    };
   }
 
   async delete(owner: EntityLink, filename: string) {
@@ -117,7 +126,13 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
   }
 
   async commit() {
-    // TODO
+    await Promise.all(
+      this.actions.map((action) =>
+        action.action === 'CREATE'
+          ? this.commitFile(action.filepath, action.content)
+          : this.commitDelete(action.filepath)
+      )
+    );
     this.endTransaction();
   }
 }

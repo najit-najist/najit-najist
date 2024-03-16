@@ -1,5 +1,5 @@
 import { AddToCartButton } from '@components/page-components/ProductPageManageContent/AddToCartButton';
-import { Product } from '@najit-najist/api';
+import { ProductWithRelationsLocal } from '@custom-types';
 import { Badge, Price } from '@najit-najist/ui';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
@@ -9,7 +9,9 @@ import { FC, Suspense } from 'react';
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 
-export const Item: FC<Product & { showEditLink?: boolean }> = ({
+export const Item: FC<
+  ProductWithRelationsLocal & { showEditLink?: boolean }
+> = ({
   images,
   name,
   price,
@@ -26,7 +28,7 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
     <article className="flex flex-col pt-5 first:pt-0 xs:pt-0">
       <div className={clsx('relative block w-full aspect-square flex-none')}>
         <ImageSlider
-          imageUrls={images.slice(0, 4)}
+          imageUrls={images.slice(0, 4).map(({ file }) => file)}
           itemId={id}
           itemLink={linkHref}
         />
@@ -65,15 +67,16 @@ export const Item: FC<Product & { showEditLink?: boolean }> = ({
         </div>
 
         <div className="flex items-center justify-between">
-          <Price value={price.value} />
+          <Price value={price?.value ?? 0} />
           <AddToCartButton
             productId={id}
             productMetadata={{
               images,
               name,
+              slug,
             }}
             disabled={
-              (typeof stock?.count === 'number' && !stock?.count) ||
+              (typeof stock?.value === 'number' && !stock?.value) ||
               !publishedAt
             }
             withIcon

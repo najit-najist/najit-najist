@@ -26,3 +26,8 @@ export type PostWithRelations =
 
 export type UserWithRelations = AppRouterOutput['users']['getOne'];
 export type RecipeWithRelations = AppRouterOutput['recipes']['getOne'];
+export type ProductWithRelationsLocal =
+  AppRouterOutput['products']['get']['one'];
+
+export type OrderPaymentMethodWithRelations =
+  AppRouterOutput['orders']['paymentMethods']['get']['many'][number];

@@ -8,7 +8,7 @@ import { CheckboxWrapper } from './CheckboxWrapper.js';
 import { ErrorMessage } from './ErrorMessage.js';
 import { Label } from './Label.js';
 
-export type ItemType = { id: string | 'default'; [x: string]: any };
+export type ItemType = { id: string | 0 | number; [x: string]: any };
 
 export type CheckboxGroupProps<T extends ItemType> = {
   name: string;
@@ -38,7 +38,10 @@ export function CheckboxGroup<T extends ItemType>({
   const onItemCheckedChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       const isChecked = event.target.checked;
-      const morphedItem = options.find((item) => item.id === event.target.id);
+      const morphedItem = options.find(
+        (item) =>
+          item.id === event.target.id || item.id === Number(event.target.id)
+      );
 
       if (!morphedItem) {
         console.warn(
@@ -49,7 +52,7 @@ export function CheckboxGroup<T extends ItemType>({
       }
 
       onChange((prev) => {
-        if (morphedItem.id === 'default') {
+        if (morphedItem.id === 0) {
           if (isChecked) {
             return [...options];
           }
@@ -82,11 +85,11 @@ export function CheckboxGroup<T extends ItemType>({
         return (
           <CheckboxWrapper
             key={itemValue.id}
-            childId={itemId}
+            childId={String(itemId)}
             title={itemValue[titleField]}
           >
             <Checkbox
-              id={itemId}
+              id={String(itemId)}
               checked={itemIds?.includes(itemValue.id)}
               onChange={onItemCheckedChange}
             />

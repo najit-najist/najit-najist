@@ -7,6 +7,7 @@ import { recipeCategories } from './recipeCategories';
 import { recipeDifficulties } from './recipeDifficulties';
 import { recipeImages } from './recipeImages';
 import { recipeResources } from './recipeResources';
+import { recipeSteps } from './recipeSteps';
 
 export const recipes = pgTable('recipes', {
   ...modelsBase,
@@ -16,10 +17,10 @@ export const recipes = pgTable('recipes', {
   description: text('description').notNull(),
   numberOfPortions: integer('number_of_portions').default(1),
   categoryId: integer('category_id')
-    .references(() => recipeCategories.id)
+    .references(() => recipeCategories.id, { onDelete: 'restrict' })
     .notNull(),
   difficultyId: integer('difficulty_id')
-    .references(() => recipeDifficulties.id)
+    .references(() => recipeDifficulties.id, { onDelete: 'restrict' })
     .notNull(),
 });
 
@@ -29,8 +30,9 @@ export const recipesRelations = relations(recipes, ({ one, many }) => ({
     fields: [recipes.categoryId],
     references: [recipeCategories.id],
   }),
+  steps: many(recipeSteps),
   difficulty: one(recipeDifficulties, {
-    fields: [recipes.categoryId],
+    fields: [recipes.difficultyId],
     references: [recipeDifficulties.id],
   }),
   resources: many(recipeResources),

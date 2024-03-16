@@ -1,21 +1,23 @@
 'use client';
 
+import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
-import { Product } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
+import { getFileUrl } from '@najit-najist/api';
+import { products } from '@najit-najist/database/models';
 import { Button, Tooltip, toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
+import Link from 'next/link';
 import { FC, ReactElement, ReactNode } from 'react';
 
 import { CustomImage } from './CustomImage';
 
 export type AddToCartButtonProps = {
-  productId: Product['id'];
+  productId: ProductWithRelationsLocal['id'];
   disabled?: boolean;
   withoutText?: boolean;
   withIcon?: boolean;
-  productMetadata?: Pick<Product, 'name' | 'images'>;
+  productMetadata?: Pick<ProductWithRelationsLocal, 'name' | 'images' | 'slug'>;
 };
 
 const SuccessMessage: FC<
@@ -28,9 +30,9 @@ const SuccessMessage: FC<
           <CustomImage
             onlyImage
             src={getFileUrl(
-              Collections.PRODUCTS,
+              products,
               productId,
-              productMetadata.images.at(0)!,
+              productMetadata.images.at(0)!.file,
               { height: 50, quality: 60 }
             )}
           />
@@ -40,9 +42,12 @@ const SuccessMessage: FC<
         <b>
           Přidali jste si{' '}
           {productMetadata?.name ? (
-            <span className="text-project-secondary">
+            <Link
+              href={`/produkty/${productMetadata.slug}`}
+              className="text-project-secondary hover:underline"
+            >
               {productMetadata.name}
-            </span>
+            </Link>
           ) : (
             'produkt'
           )}{' '}

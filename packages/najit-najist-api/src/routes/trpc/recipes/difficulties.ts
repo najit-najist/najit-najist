@@ -4,7 +4,8 @@ import { entityLinkSchema } from '@najit-najist/schemas';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
-import { DrizzleError } from 'drizzle-orm';
+import generateCursor from 'drizzle-cursor';
+import { DrizzleError, getTableName, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
@@ -26,7 +27,7 @@ export const difficultiesRouter = t.router({
 
         if (!item) {
           throw new EntityNotFoundError({
-            entityName: recipeDifficulties._.name,
+            entityName: getTableName(recipeDifficulties),
           });
         }
 
@@ -49,15 +50,47 @@ export const difficultiesRouter = t.router({
       defaultGetManySchema
         .omit({ perPage: true })
         .extend({
-          perPage: z.number().min(1).default(99).optional(),
+          perPage: z.number().min(1).default(40).optional(),
         })
-        .optional()
+        .default({})
     )
-    .query(({ input, ctx }) => {
-      // TODO: pagination
-      const { page = 1, perPage = 40 } = input ?? {};
+    .query(async ({ input, ctx }) => {
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: recipeDifficulties.id.name,
+          schema: recipeDifficulties.id,
+        },
+        cursors: [
+          {
+            order: 'DESC',
+            key: recipeDifficulties.createdAt.name,
+            schema: recipeDifficulties.createdAt,
+          },
+        ],
+      });
 
-      return database.query.recipeDifficulties.findMany();
+      const [items, [{ count }]] = await Promise.all([
+        database.query.recipeDifficulties.findMany({
+          limit: input.perPage,
+          where: cursor.where(input.page),
+          orderBy: cursor.orderBy,
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(recipeDifficulties),
+      ]);
+
+      return {
+        items,
+        nextToken:
+          input.perPage === items.length
+            ? cursor.serialize(items.at(-1))
+            : null,
+        total: count,
+      };
     }),
 
   create: onlyAdminProcedure

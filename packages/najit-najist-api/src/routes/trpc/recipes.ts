@@ -5,21 +5,31 @@ import {
   recipeCategories,
   recipeDifficulties,
   recipeImages,
-  recipeResourceMetrics,
   recipeResources,
   recipeSteps,
   recipes,
 } from '@najit-najist/database/models';
-import { slugSchema } from '@najit-najist/schemas';
+import { isFileBase64, slugSchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
-import { SQL, and, eq, ilike, or } from 'drizzle-orm';
+import generateCursor from 'drizzle-cursor';
+import {
+  SQL,
+  and,
+  eq,
+  getTableName,
+  ilike,
+  inArray,
+  or,
+  sql,
+} from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
+import { LibraryService } from '../../LibraryService';
 import { ApplicationError } from '../../errors/ApplicationError';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
@@ -39,6 +49,7 @@ const includeWith = {
       metric: true,
     },
   },
+  steps: true,
 } as const;
 
 const getOneBy = async <V extends keyof Recipe>(by: V, value: Recipe[V]) => {
@@ -48,7 +59,7 @@ const getOneBy = async <V extends keyof Recipe>(by: V, value: Recipe[V]) => {
   });
 
   if (!item) {
-    throw new EntityNotFoundError({ entityName: recipes._.name });
+    throw new EntityNotFoundError({ entityName: getTableName(recipes) });
   }
 
   return item;
@@ -58,43 +69,66 @@ export const recipesRouter = t.router({
   create: onlyAdminProcedure
     .input(recipeCreateInputSchema)
     .mutation(async ({ ctx, input }) => {
+      const library = new LibraryService(recipes);
+
       try {
-        // TODO: Transactions!
-        const [recipe] = await database
-          .insert(recipes)
-          .values({
-            ...input,
-            categoryId: input.type.id,
-            difficultyId: input.difficulty.id,
-            slug: slugifyString(input.title),
-            createdBy: ctx.sessionData.userId,
-          })
-          .returning();
+        const recipe = await database.transaction(async (tx) => {
+          library.beginTransaction();
 
-        await database.insert(recipeSteps).values(
-          input.steps.map((step) => ({
-            recipeId: recipe.id,
-            title: step.title,
-            parts: step.parts,
-          }))
-        );
+          const { images, steps, resources, ...createPayload } = input;
+          const [created] = await tx
+            .insert(recipes)
+            .values({
+              ...createPayload,
+              categoryId: input.category.id,
+              difficultyId: input.difficulty.id,
+              slug: slugifyString(input.title),
+              createdById: ctx.sessionData.userId,
+            })
+            .returning();
 
-        await database.insert(recipeResources).values(
-          input.resources.map((resource) => ({
-            recipeId: recipe.id,
-            count: resource.count,
-            metricId: resource.metric.id,
-            title: resource.title,
-            description: resource.description,
-            optional: resource.isOptional,
-          }))
-        );
+          await Promise.all([
+            ...images.map((encoded) =>
+              library
+                .create(created, encoded)
+                .then(({ filename }) =>
+                  tx
+                    .insert(recipeImages)
+                    .values({ file: filename, recipeId: created.id })
+                )
+            ),
+            tx.insert(recipeSteps).values(
+              steps.map((step) => ({
+                recipeId: recipe.id,
+                title: step.title,
+                parts: step.parts,
+              }))
+            ),
+            tx.insert(recipeResources).values(
+              resources.map((resource) => ({
+                recipeId: recipe.id,
+                count: resource.count,
+                metricId: resource.metric.id,
+                title: resource.title,
+                description: resource.description,
+                optional: resource.optional,
+              }))
+            ),
+          ]);
+
+          await library.commit();
+
+          return created;
+        });
 
         // TODO: handle images
 
         revalidatePath(`/recepty/${recipe.slug}`);
         revalidatePath(`/recepty`);
+
+        return recipe;
       } catch (error) {
+        library.endTransaction();
         logger.error(error, 'Could not create recipe');
 
         throw error;
@@ -104,14 +138,200 @@ export const recipesRouter = t.router({
   update: onlyAdminProcedure
     .input(entityLinkSchema.extend({ data: recipeUpdateInputSchema }))
     .mutation(async ({ ctx, input }) => {
+      const library = new LibraryService(recipes);
+      library.beginTransaction();
+
       try {
         const existing = await getOneBy('id', input.id);
+        const {
+          images,
+          category,
+          difficulty,
+          resources,
+          steps,
+          ...updatePayload
+        } = input.data;
 
-        // TODO: Update
+        await database.transaction(async (tx) => {
+          await tx
+            .update(recipes)
+            .set({
+              ...updatePayload,
+              updateById: ctx.sessionData.userId,
+              updatedAt: new Date(),
+              ...(category?.id ? { categoryId: category.id } : {}),
+              ...(difficulty?.id ? { difficultyId: difficulty.id } : {}),
+            })
+            .where(eq(recipes.id, existing.id));
+
+          if (steps) {
+            const stepsThatRemain = steps.filter(({ id }) => !!id);
+            const stepsThatRemainAsIds = stepsThatRemain.map(({ id }) => id);
+            const promisesToFulfill: Promise<any>[] = [];
+
+            const stepsToDelete = existing.resources.filter(
+              ({ id }) => !stepsThatRemainAsIds.includes(id)
+            );
+            if (stepsToDelete.length) {
+              promisesToFulfill.push(
+                tx.delete(recipeSteps).where(
+                  and(
+                    eq(recipeSteps.recipeId, existing.id),
+                    inArray(
+                      recipeSteps.id,
+                      stepsToDelete.map(({ id }) => id)
+                    )
+                  )
+                )
+              );
+            }
+
+            if (stepsThatRemain.length) {
+              for (const step of stepsThatRemain) {
+                promisesToFulfill.push(
+                  tx
+                    .update(recipeSteps)
+                    .set({
+                      parts: step.parts,
+                      updatedAt: new Date(),
+                      title: step.title,
+                    })
+                    .where(
+                      and(
+                        eq(recipeSteps.id, step.id!),
+                        eq(recipeSteps.recipeId, existing.id)
+                      )
+                    )
+                );
+              }
+            }
+
+            const stepsToCreate = steps.filter(({ id }) => !id);
+            if (stepsToCreate.length) {
+              promisesToFulfill.push(
+                tx.insert(recipeSteps).values(
+                  stepsToCreate.map((step) => ({
+                    ...step,
+                    recipeId: existing.id,
+                  }))
+                )
+              );
+            }
+
+            await Promise.all(promisesToFulfill);
+          }
+
+          if (resources) {
+            const resourcesThatRemain = resources.filter(({ id }) => !!id);
+            const resourcesThatRemainAsIds = resourcesThatRemain.map(
+              ({ id }) => id
+            );
+            const promisesToFulfill: Promise<any>[] = [];
+
+            const resourcesToDelete = existing.resources.filter(
+              ({ id }) => !resourcesThatRemainAsIds.includes(id)
+            );
+            if (resourcesToDelete.length) {
+              promisesToFulfill.push(
+                tx.delete(recipeResources).where(
+                  and(
+                    eq(recipeSteps.recipeId, existing.id),
+                    inArray(
+                      recipeResources.id,
+                      resourcesToDelete.map(({ id }) => id)
+                    )
+                  )
+                )
+              );
+            }
+
+            if (resourcesThatRemain.length) {
+              for (const resource of resourcesThatRemain) {
+                promisesToFulfill.push(
+                  tx
+                    .update(recipeResources)
+                    .set({
+                      count: resource.count,
+                      description: resource.description,
+                      updatedAt: new Date(),
+                      metricId: resource.metric.id,
+                      title: resource.title,
+                      optional: resource.optional,
+                    })
+                    .where(
+                      and(
+                        eq(recipeResources.id, resource.id!),
+                        eq(recipeResources.recipeId, existing.id)
+                      )
+                    )
+                );
+              }
+            }
+
+            const resourcesToCreate = resources.filter(({ id }) => !id);
+            if (resourcesToCreate.length) {
+              promisesToFulfill.push(
+                tx.insert(recipeResources).values(
+                  resourcesToCreate.map((resource) => ({
+                    ...resource,
+                    metricId: resource.metric.id,
+                    recipeId: existing.id,
+                  }))
+                )
+              );
+            }
+
+            await Promise.all(promisesToFulfill);
+          }
+
+          if (images) {
+            const filesToDelete = existing.images.filter(
+              ({ file }) => !images.includes(file)
+            );
+
+            const promisesToFullfill: Promise<any>[] = [];
+
+            if (filesToDelete.length) {
+              promisesToFullfill.push(
+                tx.delete(recipeImages).where(
+                  inArray(
+                    recipeImages.id,
+                    filesToDelete.map(({ id }) => id)
+                  )
+                ),
+                ...filesToDelete.map(({ file }) =>
+                  library.delete(existing, file)
+                )
+              );
+            }
+
+            promisesToFullfill.push(
+              ...images
+                .filter((newOrExistingImage) =>
+                  isFileBase64(newOrExistingImage)
+                )
+                .map((newImage) =>
+                  library
+                    .create(existing, newImage)
+                    .then(({ filename }) =>
+                      tx
+                        .insert(recipeImages)
+                        .values({ file: filename, recipeId: existing.id })
+                    )
+                )
+            );
+
+            await Promise.all(promisesToFullfill);
+          }
+        });
 
         revalidatePath(`/recepty/${existing.slug}`);
         revalidatePath(`/recepty`);
+
+        return existing;
       } catch (error) {
+        library.endTransaction();
+
         if (error instanceof EntityNotFoundError) {
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
@@ -144,16 +364,10 @@ export const recipesRouter = t.router({
           typeSlug: slugSchema.optional(),
           difficultySlug: slugSchema.optional(),
         })
-        .optional()
+        .default({})
     )
     .query(async ({ ctx, input }) => {
-      const {
-        page = 1,
-        perPage = 40,
-        difficultySlug,
-        search,
-        typeSlug,
-      } = input ?? {};
+      const { difficultySlug, search, typeSlug } = input ?? {};
 
       const conditions: SQL[] = [];
 
@@ -171,26 +385,44 @@ export const recipesRouter = t.router({
         );
       }
 
-      const items = await database
-        .select()
-        .from(recipes)
-        .leftJoin(
-          recipeDifficulties,
-          eq(recipes.difficultyId, recipeDifficulties.id)
-        )
-        .leftJoin(recipeCategories, eq(recipes.categoryId, recipeCategories.id))
-        .leftJoin(recipeSteps, eq(recipes.id, recipeSteps.recipeId))
-        .leftJoin(recipeImages, eq(recipes.id, recipeImages.recipeId))
-        .leftJoin(recipeResources, eq(recipes.id, recipeResources.recipeId))
-        .leftJoin(
-          recipeResourceMetrics,
-          eq(recipeResourceMetrics.id, recipeResources.metricId)
-        )
-        .where(conditions.length ? and(...conditions) : undefined);
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: recipes.id.name,
+          schema: recipes.id,
+        },
+        cursors: [
+          {
+            order: 'DESC',
+            key: recipes.createdAt.name,
+            schema: recipes.createdAt,
+          },
+        ],
+      });
 
-      // TODO: Paginations
+      const [items, [{ count }]] = await Promise.all([
+        database.query.recipes.findMany({
+          with: includeWith,
+          orderBy: cursor.orderBy,
+          limit: input.perPage,
+          where: and(...conditions, cursor.where(input.page)),
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(recipeDifficulties)
+          .where(and(...conditions)),
+      ]);
 
-      return items;
+      return {
+        items,
+        nextToken:
+          input.perPage === items.length
+            ? cursor.serialize(items.at(-1))
+            : null,
+        total: count,
+      };
     }),
 
   getOne: protectedProcedure

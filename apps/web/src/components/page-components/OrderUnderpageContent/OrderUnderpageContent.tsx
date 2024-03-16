@@ -87,20 +87,24 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
           </h2>
 
           <h3 className="sr-only">Items</h3>
-          {order.products.map((cartItem) => {
-            if (typeof cartItem.product === 'string') {
-              return <Fragment key={cartItem.id}></Fragment>;
+          {order.orderedProducts.map((orderedProduct) => {
+            if (typeof orderedProduct.product === 'string') {
+              return <Fragment key={orderedProduct.id}></Fragment>;
             }
 
-            let mainImage = cartItem.product.images.at(0);
+            let mainImage = orderedProduct.product.images.at(0)?.file;
 
             if (mainImage) {
-              mainImage = getFileUrl(products, cartItem.product.id, mainImage);
+              mainImage = getFileUrl(
+                products,
+                orderedProduct.product.id,
+                mainImage
+              );
             }
 
             return (
               <div
-                key={cartItem.id}
+                key={orderedProduct.id}
                 className="flex space-x-6 border-b border-gray-200 py-10"
               >
                 {mainImage ? (
@@ -115,15 +119,15 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 <div className="flex flex-auto flex-col">
                   <div>
                     <h4 className="font-medium text-gray-900 font-title text-2xl">
-                      <Link href={`/produkty/${cartItem.product.slug}`}>
-                        {cartItem.product.name}
+                      <Link href={`/produkty/${orderedProduct.product.slug}`}>
+                        {orderedProduct.product.name}
                       </Link>
                     </h4>
-                    {cartItem.product.description ? (
+                    {orderedProduct.product.description ? (
                       <div
                         className="mt-2 text-sm text-gray-600"
                         dangerouslySetInnerHTML={{
-                          __html: cartItem.product.description,
+                          __html: orderedProduct.product.description,
                         }}
                       ></div>
                     ) : null}
@@ -133,7 +137,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                       <div className="flex">
                         <dt className="font-medium text-gray-900">Počet: </dt>
                         <dd className="ml-2 text-gray-700">
-                          {cartItem.count}x
+                          {orderedProduct.count}x
                         </dd>
                       </div>
                       <div className="flex pl-4 sm:pl-6">
@@ -141,7 +145,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                           Cena za produkt celkem:
                         </dt>
                         <dd className="ml-2 text-gray-700">
-                          {cartItem.totalPrice} Kč
+                          {orderedProduct.totalPrice} Kč
                         </dd>
                       </div>
                     </dl>

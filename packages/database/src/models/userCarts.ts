@@ -7,7 +7,9 @@ import { users } from './users';
 
 export const userCarts = pgTable('user_carts', {
   ...modelsBase,
-  userId: integer('user_id').references(() => users.id),
+  userId: integer('user_id').references(() => users.id, {
+    onDelete: 'cascade',
+  }),
 });
 
 export const userCartsRelations = relations(userCarts, ({ one, many }) => ({

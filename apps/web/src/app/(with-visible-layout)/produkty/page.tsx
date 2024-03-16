@@ -1,3 +1,4 @@
+import { Pagination } from '@app-components/Pagination';
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
@@ -7,7 +8,7 @@ import {
   ProductCategory,
   products as productsModel,
 } from '@najit-najist/database/models';
-import { Tooltip } from '@najit-najist/ui';
+import { Button, Tooltip } from '@najit-najist/ui';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -28,10 +29,11 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 const fallbackCategories: ProductCategory = {
-  id: 'default',
+  id: 0,
   slug: '',
   name: 'Všechny',
-  created: new Date(),
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export default async function RecipesPage({ searchParams }: Params) {
@@ -41,11 +43,14 @@ export default async function RecipesPage({ searchParams }: Params) {
   const trpc = getCachedTrpcCaller();
   const categoriesAsArray = categoriesSlugFromUrl?.split(',');
 
-  const [{ items: products }, { items: categories }] = await Promise.all([
+  const [
+    { items: products, nextToken: nextProductsToken },
+    { items: categories },
+  ] = await Promise.all([
     trpc.products.get.many({
       search: query,
-      perPage: 999,
       categorySlug: categoriesAsArray,
+      perPage: 15,
     }),
     trpc.products.categories.get.many(),
   ]);
@@ -59,7 +64,6 @@ export default async function RecipesPage({ searchParams }: Params) {
 
   return (
     <>
-      {/* TODO: make this into editable notice? */}
       {/* <Notice /> */}
       <PageHeader className="container">
         <div className="flex justify-between items-center">
@@ -94,18 +98,31 @@ export default async function RecipesPage({ searchParams }: Params) {
           categories={[fallbackCategories, ...categories]}
           initialValues={{ query, categories: selectedCategories }}
         />
-        <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xs:gap-5 sm:gap-10 w-full divide-y-2 xs:divide-y-0">
-          {products.length ? (
-            products.map((props) => <Item key={props.id} {...props} />)
-          ) : (
-            <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">
-              {userDidSearch ? (
-                <>Pro Vaše vyhledávání nemáme žádné produkty ☹️</>
-              ) : (
-                <>Zatím pro Vás nemáme žádné produkty...</>
-              )}
+        <div className="w-full">
+          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xs:gap-5 sm:gap-10 w-full divide-y-2 xs:divide-y-0">
+            {products.length ? (
+              products.map((props) => <Item key={props.id} {...props} />)
+            ) : (
+              <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">
+                {userDidSearch ? (
+                  <>Pro Vaše vyhledávání nemáme žádné produkty ☹️</>
+                ) : (
+                  <>Zatím pro Vás nemáme žádné produkty...</>
+                )}
+              </div>
+            )}
+          </div>
+          {nextProductsToken ? (
+            <div className="w-full">
+              <Button
+                appearance="spaceless"
+                size="lg"
+                className="my-10 mx-auto block"
+              >
+                Načíst další
+              </Button>
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </>

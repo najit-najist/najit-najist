@@ -1,18 +1,20 @@
 import { LazyUserListActions } from '@components/page-components/RecipePageManageContent/LazyUserListActions';
+import { RecipeWithRelations } from '@custom-types';
 import {
   AcademicCapIcon,
   ArchiveBoxIcon,
   ClockIcon,
 } from '@heroicons/react/24/outline';
-import { extractTimeFromSteps, Recipe, stripHtml } from '@najit-najist/api';
+import { extractTimeFromSteps, stripHtml } from '@najit-najist/api';
 import { Badge, Skeleton } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
+
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 import { ItemLink } from './ItemLink';
 
-export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
+export const Item: FC<RecipeWithRelations & { showEditLink?: boolean }> = ({
   images,
   slug,
   title,
@@ -20,7 +22,7 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
   description,
   steps,
   difficulty,
-  type,
+  category,
 }) => {
   const linkHref = `/recepty/${slug}` as const;
 
@@ -28,7 +30,7 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
     <div className="sm:max-w-sm bg-white border border-ocean-300 rounded-lg shadow flex flex-col">
       <div className="relative block w-full aspect-square flex-none">
         <ImageSlider
-          imageUrls={images.slice(0, 4)}
+          imageUrls={images.map(({ file }) => file).slice(0, 4)}
           itemId={id}
           itemLink={linkHref}
         />
@@ -41,7 +43,7 @@ export const Item: FC<Recipe & { showEditLink?: boolean }> = ({
             <AcademicCapIcon className="w-4 h-4" /> {difficulty.name}
           </Badge>
           <Badge className="whitespace-nowrap">
-            <ArchiveBoxIcon className="w-4 h-4" /> {type.title}
+            <ArchiveBoxIcon className="w-4 h-4" /> {category.title}
           </Badge>
         </div>
 

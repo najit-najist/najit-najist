@@ -1,7 +1,6 @@
 import {
   encodedImageSchema,
   nonEmptyStringSchema,
-  slugSchema,
 } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
@@ -11,13 +10,12 @@ import { recipeStepCreateInputSchema } from './recipeStepCreateInputSchema';
 
 export const recipeCreateInputSchema = z.object({
   title: nonEmptyStringSchema,
-  slug: slugSchema,
   images: z.array(encodedImageSchema).min(1, 'Toto pole je povinné'),
   numberOfPortions: z.number({ required_error: 'Toto pole je povinné' }).min(1),
   description: z
     .string({ required_error: 'Toto pole je povinné' })
     .describe('A html description'),
-  type: entityLinkSchema,
+  category: entityLinkSchema,
   difficulty: entityLinkSchema,
   resources: z
     .array(recipeResourceCreateInputSchema)

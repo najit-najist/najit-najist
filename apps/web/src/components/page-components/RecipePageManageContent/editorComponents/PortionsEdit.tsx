@@ -1,12 +1,12 @@
 'use client';
 
-import { CreateRecipeInput } from '@najit-najist/api';
+import { Recipe } from '@najit-najist/database/models';
 import { Input } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 export const PortionsEdit: FC = () => {
-  const { register, formState } = useFormContext<CreateRecipeInput>();
+  const { register, formState } = useFormContext<Recipe>();
 
   return (
     <>

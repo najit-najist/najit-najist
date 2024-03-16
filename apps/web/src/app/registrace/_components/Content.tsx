@@ -3,7 +3,7 @@
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { registerUserSchema } from '@najit-najist/api';
+import { userRegisterInputSchema } from '@najit-najist/api';
 import {
   Button,
   Input,
@@ -24,7 +24,7 @@ import { BottomLinks } from './Links';
 import { PasswordInputs } from './PasswordInputs';
 import { Title } from './Title';
 
-const schema = registerUserSchema
+const schema = userRegisterInputSchema
   .extend({
     passwordAgain: z.string(),
   })
@@ -149,9 +149,12 @@ export const Content: FC = () => {
                   </span>
                 }
                 inputMode="numeric"
-                error={formState.errors.telephoneNumber}
+                error={
+                  formState.errors.telephone?.telephone ??
+                  formState.errors.telephone
+                }
                 disabled={fieldsAreDisabled}
-                {...register('telephoneNumber')}
+                {...register('telephone.telephone')}
               />
 
               <FormBreak />

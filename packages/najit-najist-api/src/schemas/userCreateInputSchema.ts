@@ -13,9 +13,10 @@ export const userCreateInputSchema = z.object({
   email: nonEmptyStringSchema.email(),
   firstName: nonEmptyStringSchema.max(256),
   lastName: nonEmptyStringSchema.max(256),
-  avatar: encodedImageSchema.optional(),
+  avatar: encodedImageSchema.nullable().optional(),
   role: z.nativeEnum(UserRoles),
-  telephone: telephoneNumberInputSchema,
+  telephone: z.object({ telephone: telephoneNumberInputSchema }),
   address: userAddressCreateInputSchema,
   password: passwordZodSchema,
+  newsletter: z.boolean().nullable().optional(),
 });

@@ -1,4 +1,5 @@
 import { EntityLink } from '@najit-najist/schemas';
+import { getTableName } from 'drizzle-orm';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 
 const getThumbParam = (width?: number, height?: number): string =>
@@ -20,7 +21,7 @@ export const getFileUrl = <M extends PgTableWithColumns<any>>(
   const { width, height } = options ?? {};
 
   parts.push('files');
-  parts.push(encodeURIComponent(model._.name));
+  parts.push(encodeURIComponent(getTableName(model)));
   parts.push(encodeURIComponent(ownerId));
   parts.push(encodeURIComponent(filename));
 

@@ -102,6 +102,7 @@ export const inputStyles = cva(
       withPrefix: false,
       withSuffix: false,
       readOnly: false,
+      disabled: false,
       // withLeftIcon: false,
       // withRightIcon: false,
     },
@@ -188,9 +189,6 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             withPrefix: !!prefix,
             withSuffix: !!suffix,
             readOnly,
-            // withLeftIcon: !!leftIcon,
-            // withRightIcon: !!rightIcon,
-            ...rest,
           })}
           type={type}
           id={id}

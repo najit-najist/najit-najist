@@ -2,7 +2,8 @@ import {
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
   X_REQUEST_PATH_HEADER_NAME,
 } from '@constants';
-import { canUser, SpecialSections, User, UserActions } from '@najit-najist/api';
+import { UserWithRelations } from '@custom-types';
+import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
 import { getCachedLoggedInUser } from '@server-utils';
 import { headers } from 'next/headers';
 import Link from 'next/link';
@@ -16,7 +17,7 @@ export const metadata = {
 };
 
 export default async function Page() {
-  let user: User | undefined;
+  let user: Awaited<ReturnType<typeof getCachedLoggedInUser>> | undefined;
 
   try {
     user = await getCachedLoggedInUser();

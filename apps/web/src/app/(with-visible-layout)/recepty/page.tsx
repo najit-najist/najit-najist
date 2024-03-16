@@ -28,20 +28,20 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 const fallbackDifficulty: RecipeDifficulty = {
-  id: 'default',
+  id: 0,
   slug: '',
   name: 'Všechny',
   color: '',
-  created: '',
-  updated: '',
+  createdAt: null,
+  updatedAt: null,
 };
 
 const fallbackType: RecipeCategory = {
-  id: 'default',
+  id: 0,
   slug: '',
   title: 'Všechny',
-  created: '',
-  updated: '',
+  createdAt: null,
+  updatedAt: null,
 };
 
 export default async function RecipesPage({ searchParams }: Params) {
@@ -56,7 +56,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
   const [
     { items: recipeDifficulties },
-    { items: recipeTypes },
+    { items: recipeCategories },
     { items: recipes },
   ] = await Promise.all([
     trpc.recipes.difficulties.getMany({ perPage: 999 }),
@@ -87,7 +87,7 @@ export default async function RecipesPage({ searchParams }: Params) {
         <PageDescription>{metadata.description}</PageDescription>
       </PageHeader>
       <SearchForm
-        types={[fallbackType, ...recipeTypes]}
+        types={[fallbackType, ...recipeCategories]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
         initialValues={{
           query,

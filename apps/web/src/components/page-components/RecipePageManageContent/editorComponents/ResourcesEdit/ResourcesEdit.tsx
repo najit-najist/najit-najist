@@ -2,11 +2,12 @@
 
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { RecipeResourceMetric } from '@najit-najist/api';
+import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, ErrorMessage, Input, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+
 import { RecipeFormData } from '../../_types';
 import { AddMetricModal } from './AddMetricModal';
 
@@ -16,14 +17,12 @@ const MetricSelect: FC<{
 }> = ({ initialMetrics, index }) => {
   const [addNewItemModalOpen, setAddNewItemModalOpen] = useState(false);
   const { data: metrics, refetch } = trpc.recipes.metrics.getMany.useQuery(
-    undefined,
+    {},
     {
       initialData: {
+        nextToken: null,
+        total: initialMetrics.length,
         items: initialMetrics,
-        page: 1,
-        perPage: initialMetrics.length,
-        totalItems: initialMetrics.length,
-        totalPages: 1,
       },
       refetchInterval: 0,
       refetchOnMount: false,
@@ -50,10 +49,10 @@ const MetricSelect: FC<{
         }) => (
           <Select
             name={name}
-            selected={metricsSet.get(value)}
+            selected={metricsSet.get(value?.id)}
             items={metrics.items}
             formatter={({ name }) => name}
-            onChange={(item) => onChange(item?.id)}
+            onChange={(item) => onChange(item)}
             disabled={formState.isSubmitting}
             error={fieldState.error}
             className="min-w-[140px]"
@@ -87,8 +86,10 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
       {
         count: 0,
         title: '',
-        isOptional: false,
-        metric: '',
+        optional: false,
+        metric: {
+          id: 0,
+        },
         description: '',
       },
       { shouldFocus: true }

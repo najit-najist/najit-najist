@@ -1,5 +1,6 @@
 import { database } from '@najit-najist/database';
 import { type User, users } from '@najit-najist/database/models';
+import { getTableName } from 'drizzle-orm';
 import { IronSessionData } from 'iron-session/edge';
 
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
@@ -23,7 +24,7 @@ export const getEdgeLoggedInUser = async ({
 
   if (!item) {
     throw new EntityNotFoundError({
-      entityName: users._.name,
+      entityName: getTableName(users),
     });
   }
 

@@ -1,5 +1,5 @@
-import { UserRoles } from '@najit-najist/api';
 import { getLoggedInUser } from '@najit-najist/api/server';
+import { UserRoles } from '@najit-najist/database/models';
 import fs from 'fs-extra';
 import { NextRequest, NextResponse } from 'next/server';
 import path from 'node:path';

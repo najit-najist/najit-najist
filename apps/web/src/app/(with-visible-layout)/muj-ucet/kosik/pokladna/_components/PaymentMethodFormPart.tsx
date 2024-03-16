@@ -1,7 +1,7 @@
 'use client';
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { OrderPaymentMethod } from '@najit-najist/api';
+import { OrderPaymentMethodWithRelations } from '@custom-types';
 import { PaymentMethodsSlug } from '@najit-najist/pb';
 import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
 import Image from 'next/image';
@@ -9,7 +9,7 @@ import { FC, useMemo } from 'react';
 import { useController, useFormState, useWatch } from 'react-hook-form';
 
 export const PaymentMethodFormPart: FC<{
-  paymentMethods: OrderPaymentMethod[];
+  paymentMethods: OrderPaymentMethodWithRelations[];
 }> = ({ paymentMethods }) => {
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
@@ -25,7 +25,10 @@ export const PaymentMethodFormPart: FC<{
     () =>
       paymentMethods
         .filter(
-          (item) => !item.except_delivery_methods.includes(selectedDeliveryId)
+          (item) =>
+            !item.exceptDeliveryMethods
+              .map(({ id }) => id)
+              .includes(selectedDeliveryId)
         )
         .map((item) => ({
           ...item,

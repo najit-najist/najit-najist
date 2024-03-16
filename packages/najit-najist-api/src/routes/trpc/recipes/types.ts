@@ -4,7 +4,8 @@ import { entityLinkSchema } from '@najit-najist/schemas';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { slugifyString } from '@utils';
-import { DrizzleError } from 'drizzle-orm';
+import generateCursor from 'drizzle-cursor';
+import { DrizzleError, getTableName, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../../errors/ApplicationError';
@@ -25,7 +26,7 @@ export const typesRouter = t.router({
 
         if (!item) {
           throw new EntityNotFoundError({
-            entityName: recipeCategories._.name,
+            entityName: getTableName(recipeCategories),
           });
         }
 
@@ -50,14 +51,45 @@ export const typesRouter = t.router({
         .extend({
           perPage: z.number().min(1).default(99).optional(),
         })
-        .optional()
+        .default({})
     )
     .query(async ({ input, ctx }) => {
-      const { page = 1, perPage = 40 } = input ?? {};
+      const cursor = generateCursor({
+        primaryCursor: {
+          order: 'ASC',
+          key: recipeCategories.id.name,
+          schema: recipeCategories.id,
+        },
+        cursors: [
+          {
+            order: 'DESC',
+            key: recipeCategories.createdAt.name,
+            schema: recipeCategories.createdAt,
+          },
+        ],
+      });
 
-      // TODO: pagination
+      const [items, [{ count }]] = await Promise.all([
+        database.query.recipeCategories.findMany({
+          limit: input.perPage,
+          where: cursor.where(input.page),
+          orderBy: cursor.orderBy,
+        }),
+        database
+          .select({
+            count: sql`count(*)`.mapWith(Number).as('count'),
+          })
+          .from(recipeCategories),
+      ]);
 
-      return await database.query.recipeCategories.findMany();
+      return {
+        items,
+        nextToken:
+          input.perPage === items.length
+            ? cursor.serialize(items.at(-1))
+            : null,
+        total: count,
+      };
     }),
 
   create: onlyAdminProcedure

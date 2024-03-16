@@ -1,20 +1,20 @@
 'use client';
 
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
-import { User } from '@najit-najist/api';
+import { UserWithRelations } from '@custom-types';
 import { trpc } from '@trpc';
 import { getChangedValues } from '@utils';
 import { FC, useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 
-export const Content: FC<{ user: User }> = ({ user }) => {
+export const Content: FC<{ user: UserWithRelations }> = ({ user }) => {
   const { mutateAsync: updateProfile } = trpc.users.update.useMutation();
-  const formMethods = useForm<User>({
+  const formMethods = useForm<UserWithRelations>({
     defaultValues: user,
   });
   const { handleSubmit, formState, reset } = formMethods;
 
-  const onSubmit: SubmitHandler<User> = useCallback(
+  const onSubmit: SubmitHandler<UserWithRelations> = useCallback(
     async (values) => {
       const nextValues = getChangedValues(values, formState.dirtyFields);
 
@@ -23,7 +23,14 @@ export const Content: FC<{ user: User }> = ({ user }) => {
         nextValues.address.id = user.address?.id;
       }
 
-      await updateProfile({ id: user.id, payload: nextValues });
+      await updateProfile({
+        id: user.id,
+        payload: {
+          ...nextValues,
+          telephone: nextValues.telephone ?? undefined,
+          address: nextValues.address ?? undefined,
+        },
+      });
       reset(undefined, { keepValues: true });
     },
     [formState.dirtyFields, reset, updateProfile, user.address?.id, user.id]

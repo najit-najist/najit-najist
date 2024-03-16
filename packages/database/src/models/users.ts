@@ -64,7 +64,9 @@ export const users = pgTable(
     lastLoggedIn: timestamp('last_logged_in', {
       withTimezone: true,
     }),
-    telephoneId: integer('telephone_id').references(() => telephoneNumbers.id),
+    telephoneId: integer('telephone_id').references(() => telephoneNumbers.id, {
+      onDelete: 'set null',
+    }),
 
     _passwordResetToken: varchar('password_reset_token', {
       length: 1064,

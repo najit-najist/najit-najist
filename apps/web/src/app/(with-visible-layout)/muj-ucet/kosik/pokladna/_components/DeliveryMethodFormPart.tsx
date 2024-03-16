@@ -1,8 +1,9 @@
 'use client';
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
+import { OrderPaymentMethodWithRelations } from '@custom-types';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { DeliveryMethod, OrderPaymentMethod } from '@najit-najist/api';
+import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import {
   Alert,
   ErrorMessage,
@@ -13,8 +14,8 @@ import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
 
 export type DeliveryMethodFormPartProps = {
-  deliveryMethods: (DeliveryMethod & { disabled?: boolean })[];
-  paymentMethods: OrderPaymentMethod[];
+  deliveryMethods: (OrderDeliveryMethod & { disabled?: boolean })[];
+  paymentMethods: OrderPaymentMethodWithRelations[];
 };
 
 export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
@@ -30,11 +31,17 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
 
   // Setup for quick access
   const paymentMethodsForDeliveryId = useMemo(() => {
-    const result: Record<DeliveryMethod['id'], OrderPaymentMethod[]> = {};
+    const result: Record<
+      OrderDeliveryMethod['id'],
+      OrderPaymentMethodWithRelations[]
+    > = {};
 
     for (const deliveryMethod of deliveryMethods) {
       result[deliveryMethod.id] = paymentMethods.filter(
-        (item) => !item.except_delivery_methods.includes(deliveryMethod.id)
+        (item) =>
+          !item.exceptDeliveryMethods
+            .map(({ id }) => id)
+            .includes(deliveryMethod.id)
       );
     }
 
@@ -42,7 +49,7 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   }, [paymentMethods, deliveryMethods]);
 
   const handleChange = useCallback<
-    NonNullable<RadioGroupProps<DeliveryMethod>['onChange']>
+    NonNullable<RadioGroupProps<OrderDeliveryMethod>['onChange']>
   >(
     (nextItem) => {
       const { onChange } = controller.field;
@@ -78,7 +85,7 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
 
   return (
     <>
-      <RadioGroup<DeliveryMethod>
+      <RadioGroup<OrderDeliveryMethod>
         disabled={formState.isSubmitting || isActive}
         value={controller.field.value}
         onChange={handleChange}

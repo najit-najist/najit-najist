@@ -10,7 +10,7 @@ function handler(request: NextRequest) {
     router: appRouter,
     createContext,
     onError({ type, error, path, ctx }) {
-      const { userId } = ctx?.sessionData ?? {};
+      const { authContent } = ctx?.sessionData ?? {};
 
       logger.error(
         {
@@ -21,7 +21,7 @@ function handler(request: NextRequest) {
             stack: error.stack,
           },
           path,
-          userId,
+          userId: authContent?.userId,
         },
         'An error happened in TRPC handlers'
       );

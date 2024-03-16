@@ -6,6 +6,6 @@ export const recipeResourceCreateInputSchema = z.object({
   count: z.number(),
   metric: entityLinkSchema,
   title: nonEmptyStringSchema,
-  description: z.string().optional(),
-  isOptional: z.boolean().default(false),
+  description: z.string().nullable().optional(),
+  optional: z.boolean().nullable().default(false),
 });
