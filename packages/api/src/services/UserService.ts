@@ -15,6 +15,7 @@ import { eq, getTableName } from 'drizzle-orm';
 import { LibraryService } from '../LibraryService';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
 import { ToCreateSchema } from '../types/ToCreateSchema';
+import { PasswordService } from './Password.service';
 
 export type UserWithRelations = User & {
   telephone?: TelephoneNumber | null;
@@ -62,7 +63,8 @@ export class UserService {
       library.beginTransaction();
 
       const updated = await database.transaction(async (tx) => {
-        const { newsletter, address, ...updatePayload } = updateOptions;
+        const { newsletter, address, _password, ...updatePayload } =
+          updateOptions;
 
         if (updatePayload.avatar) {
           if (!isFileBase64(updatePayload.avatar)) {
@@ -117,6 +119,9 @@ export class UserService {
           .update(users)
           .set({
             ...updatePayload,
+            ...(_password
+              ? { _password: await PasswordService.hash(_password) }
+              : {}),
             updatedAt: new Date(),
           })
           .where(eq(users.id, this.forUser.id))
@@ -166,11 +171,15 @@ export class UserService {
           telephone: newTelephone,
           address: newAddress,
           newsletter,
+          _password,
           ...createOptions
         } = options;
         const [created] = await tx
           .insert(users)
-          .values(createOptions)
+          .values({
+            ...createOptions,
+            _password: await PasswordService.hash(_password),
+          })
           .returning();
 
         const postCreateUpdatePayload: Partial<User> = {};
