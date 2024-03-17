@@ -1,9 +1,9 @@
 import { IronSessionData, unsealData } from 'iron-session';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
-import { cookies as getCookies } from 'next/headers';
+import { cookies as getCookies } from 'next/headers.js';
 
 import { config } from '../config.js';
-import { normalizeStringPasswordToMap } from './normalizeStringPasswordToMap';
+import { normalizeStringPasswordToMap } from './normalizeStringPasswordToMap.js';
 
 export type GetSessionFromCookiesOptions = {
   cookies?: RequestCookies;
