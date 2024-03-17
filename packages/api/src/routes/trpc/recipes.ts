@@ -381,7 +381,10 @@ export const recipesRouter = t.router({
 
       if (search) {
         conditions.push(
-          or(ilike(recipes.title, search), ilike(recipes.slug, search))!
+          or(
+            ilike(recipes.title, `%${search}%`),
+            ilike(recipes.slug, `%${search}%`)
+          )!
         );
       }
 
@@ -437,7 +440,7 @@ export const recipesRouter = t.router({
       try {
         const [filter] = Object.entries(input);
 
-        return getOneBy(filter[0] as keyof Recipe, filter[1]);
+        return await getOneBy(filter[0] as keyof Recipe, filter[1]);
       } catch (error) {
         if (error instanceof EntityNotFoundError) {
           throw new ApplicationError({

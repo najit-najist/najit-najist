@@ -10,9 +10,19 @@ import { EntityLink, entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
-import { slugifyString } from '@utils';
+import { UserActions, canUser, slugifyString } from '@utils';
 import { generateCursor } from 'drizzle-cursor';
-import { SQL, and, eq, getTableName, ilike, or, sql } from 'drizzle-orm';
+import {
+  SQL,
+  and,
+  eq,
+  getTableName,
+  ilike,
+  isNotNull,
+  not,
+  or,
+  sql,
+} from 'drizzle-orm';
 import fs from 'fs-extra';
 import { revalidatePath } from 'next/cache';
 import path from 'path';
@@ -214,6 +224,7 @@ export const postsRoute = t.router({
     )
     .query(async ({ ctx, input = { perPage: 20, query: '' } }) => {
       const conditions: SQL[] = [];
+      const loggedInUser = ctx.sessionData?.user;
 
       if (input.query) {
         conditions.push(
@@ -222,6 +233,13 @@ export const postsRoute = t.router({
             ilike(posts.description, `%${input.query}%`)
           )!
         );
+      }
+
+      if (
+        !loggedInUser ||
+        !canUser(loggedInUser, { action: UserActions.UPDATE, onModel: posts })
+      ) {
+        conditions.push(isNotNull(posts.publishedAt));
       }
 
       const cursor = generateCursor({
@@ -274,7 +292,23 @@ export const postsRoute = t.router({
         slug: slugSchema,
       })
     )
-    .query(async ({ ctx, input }) => await getOneBy('slug', input.slug)),
+    .query(async ({ ctx, input }) => {
+      const post = await getOneBy('slug', input.slug);
+      const loggedInUser = ctx.sessionData?.user;
+
+      if (
+        (!loggedInUser ||
+          !canUser(loggedInUser, {
+            action: UserActions.UPDATE,
+            onModel: posts,
+          })) &&
+        !post.publishedAt
+      ) {
+        throw new EntityNotFoundError({ entityName: getTableName(posts) });
+      }
+
+      return post;
+    }),
 
   /**
    * @deprecated

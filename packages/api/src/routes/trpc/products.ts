@@ -20,7 +20,7 @@ import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { publicProcedure } from '@trpc-procedures/publicProcedure';
-import { slugifyString } from '@utils';
+import { UserActions, canUser, slugifyString } from '@utils';
 import generateCursor from 'drizzle-cursor';
 import {
   DrizzleError,
@@ -30,11 +30,12 @@ import {
   getTableName,
   ilike,
   inArray,
+  isNotNull,
   or,
   sql,
 } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
-import { promise, z } from 'zod';
+import { z } from 'zod';
 
 import { LibraryService } from '../../LibraryService';
 import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
@@ -73,9 +74,22 @@ const getRoutes = t.router({
     .input(entityLinkSchema.or(z.object({ slug: nonEmptyStringSchema })))
     .query(async ({ input, ctx }) => {
       const by = 'id' in input ? 'id' : 'slug';
+      const loggedInUser = ctx.sessionData.user;
 
       try {
-        return getOneProductBy(by, (input as any)[by]);
+        const product = await getOneProductBy(by, (input as any)[by]);
+
+        if (
+          !canUser(loggedInUser, {
+            action: UserActions.UPDATE,
+            onModel: products,
+          }) &&
+          !product.publishedAt
+        ) {
+          throw new EntityNotFoundError({ entityName: getTableName(products) });
+        }
+
+        return product;
       } catch (error) {
         logger.error({ error, input }, 'Failed to get product');
 
@@ -94,14 +108,15 @@ const getRoutes = t.router({
     }),
   many: publicProcedure
     .input(
-      defaultGetManySchema.extend({
+      defaultGetManySchema.omit({ page: true }).extend({
+        cursor: z.string().optional(),
         categorySlug: z.array(slugSchema).optional(),
       })
     )
     .query(async ({ input, ctx }) => {
       const { search, categorySlug } = input ?? {};
-
       const conditions: SQL[] = [];
+      const loggedInUser = ctx.sessionData.user;
 
       if (categorySlug?.length) {
         const categories = await database.query.productCategories.findMany({
@@ -125,30 +140,39 @@ const getRoutes = t.router({
         );
       }
 
+      if (
+        !canUser(loggedInUser, {
+          action: UserActions.UPDATE,
+          onModel: products,
+        })
+      ) {
+        conditions.push(isNotNull(products.publishedAt));
+      }
+
       const cursor = generateCursor({
         primaryCursor: {
           order: 'ASC',
           key: products.id.name,
           schema: products.id,
         },
-        cursors: [
-          {
-            order: 'DESC',
-            key: products.createdAt.name,
-            schema: products.createdAt,
-          },
-          {
-            order: 'ASC',
-            key: products.publishedAt.name,
-            schema: products.publishedAt,
-          },
-        ],
+        // cursors: [
+        //   {
+        //     order: 'DESC',
+        //     key: products.createdAt.name,
+        //     schema: products.createdAt,
+        //   },
+        //   {
+        //     order: 'ASC',
+        //     key: products.publishedAt.name,
+        //     schema: products.publishedAt,
+        //   },
+        // ],
       });
 
       try {
         const [items, [{ count }]] = await Promise.all([
           database.query.products.findMany({
-            where: and(...conditions, cursor.where(input.page)),
+            where: and(...conditions, cursor.where(input.cursor)),
             orderBy: cursor.orderBy,
             limit: input.perPage,
             with: {
@@ -169,7 +193,7 @@ const getRoutes = t.router({
 
         return {
           items,
-          nextToken:
+          nextCursor:
             input.perPage === items.length
               ? cursor.serialize(items.at(-1))
               : null,

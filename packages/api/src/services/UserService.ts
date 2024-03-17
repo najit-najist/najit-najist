@@ -6,11 +6,11 @@ import {
   UserAddress,
   telephoneNumbers,
   userAddresses,
+  userNewsletters,
   users,
 } from '@najit-najist/database/models';
 import { EntityLink, isFileBase64 } from '@najit-najist/schemas';
 import { eq, getTableName } from 'drizzle-orm';
-import path from 'path';
 
 import { LibraryService } from '../LibraryService';
 import { EntityNotFoundError } from '../errors/EntityNotFoundError';
@@ -19,6 +19,7 @@ import { ToCreateSchema } from '../types/ToCreateSchema';
 export type UserWithRelations = User & {
   telephone?: TelephoneNumber | null;
   address?: (UserAddress & { municipality: Municipality }) | null;
+  newsletter: boolean;
 };
 
 type Address = Omit<ToCreateSchema<UserAddress>, 'userId'>;
@@ -27,6 +28,7 @@ export type UserServiceCreateOptions = Omit<
   ToCreateSchema<User>,
   'lastLoggedIn' | 'telephoneId' | '_passwordResetToken'
 > & {
+  newsletter?: boolean | null;
   lastLoggedIn?: User['lastLoggedIn'];
   telephoneId?: User['telephoneId'];
   _passwordResetToken?: User['_passwordResetToken'];
@@ -49,13 +51,19 @@ export class UserService {
     this.forUser = user;
   }
 
-  async update(updatePayload: UserServiceUpdateOptions) {
+  getFor() {
+    return this.forUser;
+  }
+
+  async update(updateOptions: UserServiceUpdateOptions) {
     const library = new LibraryService(users);
 
     try {
       library.beginTransaction();
 
       const updated = await database.transaction(async (tx) => {
+        const { newsletter, address, ...updatePayload } = updateOptions;
+
         if (updatePayload.avatar) {
           if (!isFileBase64(updatePayload.avatar)) {
             updatePayload.avatar = undefined;
@@ -93,22 +101,44 @@ export class UserService {
                 telephone: updatePayload.telephone.telephone,
               })
               .where(eq(telephoneNumbers.id, existingTelephone.id));
+
+            delete updatePayload.telephone;
           }
         }
 
-        const updateAddressOptions = updatePayload.address;
-        if (updateAddressOptions) {
+        if (address) {
           await tx
             .update(userAddresses)
-            .set(updateAddressOptions)
+            .set(address)
             .where(eq(userAddresses.id, this.forUser.id));
         }
 
         const [updated] = await tx
           .update(users)
-          .set(updatePayload)
+          .set({
+            ...updatePayload,
+            updatedAt: new Date(),
+          })
           .where(eq(users.id, this.forUser.id))
           .returning();
+
+        if (typeof newsletter === 'boolean') {
+          const existingNewsletter = await tx.query.userNewsletters.findFirst({
+            where: eq(userNewsletters.email, updated.email),
+          });
+          if (existingNewsletter) {
+            await tx
+              .update(userNewsletters)
+              .set({
+                enabled: newsletter,
+              })
+              .where(eq(userNewsletters.email, updated.email));
+          } else {
+            await tx
+              .insert(userNewsletters)
+              .values({ email: updated.email, enabled: newsletter });
+          }
+        }
 
         await library.commit();
 
@@ -135,6 +165,7 @@ export class UserService {
           avatar: newAvatar,
           telephone: newTelephone,
           address: newAddress,
+          newsletter,
           ...createOptions
         } = options;
         const [created] = await tx
@@ -186,6 +217,24 @@ export class UserService {
             .where(eq(users.id, created.id));
         }
 
+        if (typeof newsletter === 'boolean') {
+          const existingNewsletter = await tx.query.userNewsletters.findFirst({
+            where: eq(userNewsletters.email, created.email),
+          });
+          if (existingNewsletter) {
+            await tx
+              .update(userNewsletters)
+              .set({
+                enabled: newsletter,
+              })
+              .where(eq(userNewsletters.email, created.email));
+          } else {
+            await tx
+              .insert(userNewsletters)
+              .values({ email: created.email, enabled: newsletter });
+          }
+        }
+
         await library.commit();
       });
 
@@ -208,6 +257,7 @@ export class UserService {
         address: {
           with: { municipality: true },
         },
+        newsletter: true,
       },
     });
 
@@ -217,7 +267,10 @@ export class UserService {
       });
     }
 
-    return item as UserWithRelations;
+    return {
+      ...item,
+      newsletter: !!item.newsletter?.enabled,
+    } as UserWithRelations;
   }
 
   static forUserSync(user: UserWithRelations) {

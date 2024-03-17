@@ -10,6 +10,7 @@ import {
 
 import { modelsBase } from '../internal/modelsBase';
 import { fileFieldType } from '../internal/types/file';
+import { userNewsletters } from './newsletterSubscriptions';
 import { telephoneNumbers } from './telephoneNumbers';
 import { userAddresses } from './userAddresses';
 
@@ -86,6 +87,7 @@ export const usersRelations = relations(users, ({ one }) => ({
     fields: [users.telephoneId],
     references: [telephoneNumbers.id],
   }),
+  newsletter: one(userNewsletters),
   address: one(userAddresses),
 }));
 

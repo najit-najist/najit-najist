@@ -1,4 +1,3 @@
-import { Pagination } from '@app-components/Pagination';
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
@@ -8,16 +7,13 @@ import {
   ProductCategory,
   products as productsModel,
 } from '@najit-najist/database/models';
-import { Button, Tooltip } from '@najit-najist/ui';
+import { Tooltip } from '@najit-najist/ui';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
 import { AsideFilters } from './_components/AsideFilters';
-import { Item } from './_components/Item';
-
-type Params = {
-  searchParams: { query?: string; 'category-slug'?: string };
-};
+import { InfiniteProducts } from './_components/InfiniteProducts';
+import { ProductsMainPageParams } from './_types';
 
 export const metadata = {
   title: 'Všechny Produkty',
@@ -36,22 +32,22 @@ const fallbackCategories: ProductCategory = {
   updatedAt: new Date(),
 };
 
-export default async function RecipesPage({ searchParams }: Params) {
+export default async function RecipesPage({
+  searchParams,
+}: ProductsMainPageParams) {
   const { query, 'category-slug': categoriesSlugFromUrl } = searchParams;
   const userDidSearch = !!query || !!categoriesSlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
   const trpc = getCachedTrpcCaller();
   const categoriesAsArray = categoriesSlugFromUrl?.split(',');
+  const search = {
+    search: query,
+    categorySlug: categoriesAsArray,
+    perPage: 15,
+  };
 
-  const [
-    { items: products, nextToken: nextProductsToken },
-    { items: categories },
-  ] = await Promise.all([
-    trpc.products.get.many({
-      search: query,
-      categorySlug: categoriesAsArray,
-      perPage: 15,
-    }),
+  const [productsQueryResult, { items: categories }] = await Promise.all([
+    trpc.products.get.many(search),
     trpc.products.categories.get.many(),
   ]);
 
@@ -99,30 +95,11 @@ export default async function RecipesPage({ searchParams }: Params) {
           initialValues={{ query, categories: selectedCategories }}
         />
         <div className="w-full">
-          <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3 xs:gap-5 sm:gap-10 w-full divide-y-2 xs:divide-y-0">
-            {products.length ? (
-              products.map((props) => <Item key={props.id} {...props} />)
-            ) : (
-              <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">
-                {userDidSearch ? (
-                  <>Pro Vaše vyhledávání nemáme žádné produkty ☹️</>
-                ) : (
-                  <>Zatím pro Vás nemáme žádné produkty...</>
-                )}
-              </div>
-            )}
-          </div>
-          {nextProductsToken ? (
-            <div className="w-full">
-              <Button
-                appearance="spaceless"
-                size="lg"
-                className="my-10 mx-auto block"
-              >
-                Načíst další
-              </Button>
-            </div>
-          ) : null}
+          <InfiniteProducts
+            userDidSearch={userDidSearch}
+            initialSearch={search}
+            initialSearchResult={productsQueryResult}
+          />
         </div>
       </div>
     </>

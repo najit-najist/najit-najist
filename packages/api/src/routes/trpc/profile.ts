@@ -15,6 +15,7 @@ import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 
+import { privateUserOutputSchema } from '../../schemas/privateUserOutputSchema';
 import { userProfileLogInInputSchema } from '../../schemas/userProfileLogInInputSchema';
 import {
   finalizeResetPasswordSchema,
@@ -87,18 +88,20 @@ export const profileRouter = t.router({
       await user.update(input);
     }),
 
-  me: protectedProcedure.query(async ({ ctx }) => {
-    const user = await UserService.getOneBy('id', ctx.sessionData.userId);
+  me: protectedProcedure
+    .output(privateUserOutputSchema)
+    .query(async ({ ctx }) => {
+      const user = await UserService.getOneBy('id', ctx.sessionData.userId);
 
-    const newsletter = await database.query.userNewsletters.findFirst({
-      where: (schema, { eq }) => eq(schema.email, user.email),
-    });
+      const newsletter = await database.query.userNewsletters.findFirst({
+        where: (schema, { eq }) => eq(schema.email, user.email),
+      });
 
-    return {
-      ...user,
-      newsletter: !!newsletter?.enabled,
-    };
-  }),
+      return {
+        ...user,
+        newsletter: !!newsletter?.enabled,
+      };
+    }),
 
   login: t.procedure
     .input(userProfileLogInInputSchema)

@@ -39,10 +39,10 @@
   "exclude": ["out", "build", "node_modules"],
   "references": [
     {
-      "path": "../../packages/najit-najist-api",
+      "path": "../../packages/api",
     },
     {
-      "path": "../../packages/najit-najist-ui",
+      "path": "../../packages/ui",
     },
     {
       "path": "../../packages/schemas",

@@ -1,5 +1,7 @@
-import { sql } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import { boolean, pgTable, uuid, varchar } from 'drizzle-orm/pg-core';
+
+import { users } from './users';
 
 export const userNewsletters = pgTable('user_newsletters', {
   id: uuid('id')
@@ -9,3 +11,13 @@ export const userNewsletters = pgTable('user_newsletters', {
   enabled: boolean('enabled').default(true),
   email: varchar('email', { length: 256 }).unique().notNull(),
 });
+
+export const userNewslettersRelations = relations(
+  userNewsletters,
+  ({ one }) => ({
+    user: one(users, {
+      fields: [userNewsletters.email],
+      references: [users.email],
+    }),
+  })
+);

@@ -1,16 +1,19 @@
 import { database } from '@najit-najist/database';
-import { users } from '@najit-najist/database/models';
+import { userNewsletters, users } from '@najit-najist/database/models';
 import { municipalitySchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { UserService } from '@services/UserService';
 import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
-import { SQL, and, getTableName, like, or, sql } from 'drizzle-orm';
+import { isDatabaseError } from '@utils/isDatabaseError';
+import { SQL, and, eq, getTableName, ilike, or, sql } from 'drizzle-orm';
+import { DatabaseError } from 'pg';
 import { z } from 'zod';
 
 import { ApplicationError } from '../../errors/ApplicationError';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import { defaultGetManyPagedSchema } from '../../schemas/base.get-many.schema';
+import { privateUserOutputSchema } from '../../schemas/privateUserOutputSchema';
 import { userUpdateInputSchema } from '../../schemas/userUpdateInputSchema';
 import { ErrorCodes } from '../../types/ErrorCodes';
 
@@ -42,9 +45,9 @@ export const usersRoute = t.router({
       if (search) {
         conditions.push(
           or(
-            like(users.firstName, `%${search}%`),
-            like(users.lastName, `%${search}%`),
-            like(users.email, `%${search}%`)
+            ilike(users.firstName, `%${search}%`),
+            ilike(users.lastName, `%${search}%`),
+            ilike(users.email, `%${search}%`)
           )!
         );
       }
@@ -68,8 +71,6 @@ export const usersRoute = t.router({
         }
       }
 
-      // TODO: pagination
-
       const [items, [{ count }]] = await Promise.all([
         database.query.users.findMany({
           where: (schema, { and }) => and(...conditions),
@@ -80,6 +81,10 @@ export const usersRoute = t.router({
                 municipality: true,
               },
             },
+          },
+          columns: {
+            _password: false,
+            _passwordResetToken: false,
           },
           limit: perPage,
           offset: (page - 1) * perPage,
@@ -109,6 +114,7 @@ export const usersRoute = t.router({
         })
         .or(z.object({ preregisteredUserToken: z.string() }))
     )
+    .output(privateUserOutputSchema)
     .query(async ({ ctx, input }) => {
       try {
         const user =
@@ -168,14 +174,13 @@ export const usersRoute = t.router({
     .mutation(async ({ input }) => {
       const {
         id: userId,
-        payload: { address, telephone, ...payload },
+        payload: { address, ...payload },
       } = input;
 
       const user = await UserService.forUser({ id: userId });
 
-      user.update({
+      await user.update({
         ...payload,
-        telephone,
         address: address
           ? { ...address, municipalityId: address.municipality?.id }
           : undefined,
