@@ -1,5 +1,4 @@
 import { appRouter, createContext, logger } from '@najit-najist/api/server';
-import { pocketbase } from '@najit-najist/pb';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { NextRequest } from 'next/server';
 
@@ -27,8 +26,6 @@ function handler(request: NextRequest) {
       );
     },
   }).then((resp) => {
-    pocketbase.authStore.clear();
-
     return resp;
   });
 

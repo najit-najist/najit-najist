@@ -1,11 +1,12 @@
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { Collections, getFileUrl } from '@najit-najist/pb';
 import { cva, cx, VariantProps } from 'class-variance-authority';
+import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import Image from 'next/image.js';
 import { FC, useCallback, useId, useMemo } from 'react';
 import { DropzoneOptions, useDropzone } from 'react-dropzone';
 
 import { Badge } from '../Badge.js';
+import { getFileUrl } from '../internal/getFileUrl.js';
 import { FormControlWrapper } from './FormControlWrapper.js';
 
 export interface ImageSelectProps
@@ -18,11 +19,11 @@ export interface ImageSelectProps
   /**
    * Parent id under which are images added
    */
-  parentId?: string;
+  parentId?: number;
   /**
    * Model Name
    */
-  modelName: Collections;
+  model: PgTableWithColumns<any>;
   onChange?: (nextValue: string[]) => void;
 }
 
@@ -42,8 +43,8 @@ const rootStyles = cva(
 );
 
 const PreviewImage: FC<
-  { src: string } & Pick<ImageSelectProps, 'parentId' | 'modelName'>
-> = ({ src, parentId, modelName }) => {
+  { src: string } & Pick<ImageSelectProps, 'parentId' | 'model'>
+> = ({ src, parentId, model }) => {
   const imageIsBase64 = useMemo(() => {
     const [, probableBase64] = src.split(';');
 
@@ -60,8 +61,8 @@ const PreviewImage: FC<
       return src;
     }
 
-    return getFileUrl(modelName, parentId, src, { width: 100, height: 100 });
-  }, [src, parentId, imageIsBase64, modelName]);
+    return getFileUrl(model, parentId, src, { width: 100, height: 100 });
+  }, [src, parentId, imageIsBase64, model]);
 
   return (
     <div className="relative aspect-square rounded-md overflow-hidden">
@@ -87,7 +88,7 @@ export const ImageSelect: FC<ImageSelectProps> = ({
   name,
   onChange,
   parentId,
-  modelName,
+  model,
   value,
 }) => {
   const inputId = useId();
@@ -136,7 +137,7 @@ export const ImageSelect: FC<ImageSelectProps> = ({
           <PreviewImage
             key={value}
             src={value}
-            modelName={modelName}
+            model={model}
             parentId={parentId}
           />
         ))}
