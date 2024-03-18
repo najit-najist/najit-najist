@@ -1,9 +1,6 @@
-import {
-  AvailableModels,
-  extractTimeFromSteps,
-  getFileUrl,
-  Recipe,
-} from '@najit-najist/api';
+import { RecipeWithRelations } from '@custom-types';
+import { extractTimeFromSteps, getFileUrl } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
 import { getCachedTrpcCaller } from '@server-utils';
 import HTMLReactParser from 'html-react-parser';
@@ -32,10 +29,10 @@ const Title: FC<PropsWithChildren> = ({ children }) => (
 export type RecipePageManageContentProps = {
   isEditorHeaderShown?: boolean;
 } & (
-  | { viewType: 'edit'; recipe: Recipe }
+  | { viewType: 'edit'; recipe: RecipeWithRelations }
   | {
       viewType: 'view';
-      recipe: Recipe;
+      recipe: RecipeWithRelations;
     }
   | { viewType: 'create' }
 );
@@ -47,14 +44,14 @@ export const RecipePageManageContent = async ({
   const trpc = getCachedTrpcCaller();
   const [{ items: metrics }, { items: types }, { items: difficulties }] =
     await Promise.all([
-      trpc.recipes.metrics.getMany({ page: 1, perPage: 9999 }),
-      trpc.recipes.types.getMany({ page: 1, perPage: 9999 }),
-      trpc.recipes.difficulties.getMany({ page: 1, perPage: 9999 }),
+      trpc.recipes.metrics.getMany({ perPage: 9999 }),
+      trpc.recipes.types.getMany({ perPage: 9999 }),
+      trpc.recipes.difficulties.getMany({ perPage: 9999 }),
     ]);
 
   const { viewType } = props;
   const recipe = props.viewType !== 'create' ? props.recipe : undefined;
-  const { created, updated, title } = recipe ?? {};
+  const { createdAt, updatedAt, title } = recipe ?? {};
   const isEditorEnabled = props.viewType !== 'view';
   const hrComponent = (
     <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
@@ -69,8 +66,8 @@ export const RecipePageManageContent = async ({
             ...(recipe
               ? [
                   {
-                    link: `/recepty?type=${recipe.type.slug}`,
-                    text: recipe.type.title,
+                    link: `/recepty?type=${recipe.category.slug}`,
+                    text: recipe.category.title,
                   },
 
                   {
@@ -97,9 +94,9 @@ export const RecipePageManageContent = async ({
                 <CustomImage
                   onlyImage
                   src={getFileUrl(
-                    AvailableModels.RECIPES,
+                    recipes,
                     props.recipe.id,
-                    props.recipe.images[0]
+                    props.recipe.images[0].file
                   )}
                 />
                 <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
@@ -116,14 +113,10 @@ export const RecipePageManageContent = async ({
                 </div>
               </div>
               <div className="grid grid-cols-6 gap-3 mt-3">
-                {props.recipe.images.slice(1).map((imageUrl) => (
+                {props.recipe.images.slice(1).map(({ file: imageUrl }) => (
                   <CustomImage
                     key={imageUrl}
-                    src={getFileUrl(
-                      AvailableModels.RECIPES,
-                      props.recipe.id,
-                      imageUrl
-                    )}
+                    src={getFileUrl(recipes, props.recipe.id, imageUrl)}
                   />
                 ))}
               </div>
@@ -149,7 +142,7 @@ export const RecipePageManageContent = async ({
               </>
             ) : (
               <p className="mt-1">
-                {props.recipe.type.title}, {props.recipe.difficulty.name}
+                {props.recipe.category.title}, {props.recipe.difficulty.name}
               </p>
             )}
           </div>
@@ -219,7 +212,7 @@ export const RecipePageManageContent = async ({
 
         <aside className="w-full lg:w-auto lg:col-span-2">
           {isEditorEnabled ? (
-            <Aside created={created} updated={updated} />
+            <Aside createdAt={createdAt} updatedAt={updatedAt} />
           ) : null}
         </aside>
       </div>

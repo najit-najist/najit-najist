@@ -2,7 +2,8 @@ import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
+import { UserActions, canUser } from '@najit-najist/api';
+import { posts as postsModel } from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -39,7 +40,7 @@ export default async function Page({ searchParams }: Params) {
           {currentUser &&
           canUser(currentUser, {
             action: UserActions.CREATE,
-            onModel: AvailableModels.POST,
+            onModel: postsModel,
           }) ? (
             <Link href="/clanky/novy" className="">
               <PlusIcon className="inline w-12" />

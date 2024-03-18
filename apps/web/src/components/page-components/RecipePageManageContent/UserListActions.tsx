@@ -3,7 +3,7 @@
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { usePlausible } from '@hooks';
-import { Recipe } from '@najit-najist/api';
+import { Recipe } from '@najit-najist/database/models';
 import { Button, ButtonProps } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
@@ -69,18 +69,21 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
     data: likedRecipeInfo,
     refetch,
     isRefetching,
-  } = trpc.profile.liked.recipes.has.useQuery(recipeId, {
-    suspense: true,
-    refetchInterval: 0,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-  });
+  } = trpc.profile.liked.recipes.has.useQuery(
+    { id: recipeId },
+    {
+      suspense: true,
+      refetchInterval: 0,
+      refetchOnMount: false,
+      refetchOnWindowFocus: false,
+    }
+  );
   const { mutateAsync: likeRecipe, isLoading } =
     trpc.profile.liked.recipes.add.useMutation({
       async onSuccess() {
         await refetch();
         trackEvent('Like recipe', {
-          props: { entityId: recipeId },
+          props: { entityId: String(recipeId) },
         });
       },
     });
@@ -89,14 +92,14 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
       async onSuccess() {
         await refetch();
         trackEvent('Dislike recipe', {
-          props: { entityId: recipeId },
+          props: { entityId: String(recipeId) },
         });
       },
     });
 
   const onHeartClickHandler = async () => {
     if (likedRecipeInfo) {
-      await dislikeRecipe({ itemId: recipeId });
+      await dislikeRecipe({ id: recipeId });
     } else {
       await likeRecipe({ id: recipeId });
     }

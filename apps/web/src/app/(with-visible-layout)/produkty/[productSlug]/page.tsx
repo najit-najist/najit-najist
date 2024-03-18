@@ -1,5 +1,6 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
-import { AvailableModels, UserActions, canUser } from '@najit-najist/api';
+import { UserActions, canUser } from '@najit-najist/api';
+import { products } from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { notFound } from 'next/navigation';
 
@@ -86,7 +87,7 @@ export default async function Page({ params, searchParams }: Params) {
         loggedInUser &&
         canUser(loggedInUser, {
           action: UserActions.UPDATE,
-          onModel: AvailableModels.PRODUCTS,
+          onModel: products,
         })
       }
       viewType={isEditorEnabled ? 'edit' : 'view'}

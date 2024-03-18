@@ -1,13 +1,14 @@
 'use client';
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { OrderPaymentMethod } from '@najit-najist/api';
+import { OrderPaymentMethodWithRelations } from '@custom-types';
 import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
+import Image from 'next/image';
 import { FC, useMemo } from 'react';
 import { useController, useFormState, useWatch } from 'react-hook-form';
 
 export const PaymentMethodFormPart: FC<{
-  paymentMethods: OrderPaymentMethod[];
+  paymentMethods: OrderPaymentMethodWithRelations[];
 }> = ({ paymentMethods }) => {
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
@@ -21,9 +22,39 @@ export const PaymentMethodFormPart: FC<{
 
   const filteredPaymentMethods = useMemo(
     () =>
-      paymentMethods.filter(
-        (item) => !item.except_delivery_methods.includes(selectedDeliveryId)
-      ),
+      paymentMethods
+        .filter(
+          (item) =>
+            !item.exceptDeliveryMethods
+              .map(({ id }) => id)
+              .includes(selectedDeliveryId)
+        )
+        .map((item) => ({
+          ...item,
+          ...(item.slug === 'comgate'
+            ? {
+                description: (
+                  <>
+                    <p>{item.description}</p>
+
+                    <a
+                      href="https://www.comgate.cz/"
+                      className="mt-3 inline-block p-1.5 bg-white rounded-lg shadow-lg border border-gray-100"
+                      title="Zprostředkovatel plateb je comgate.cz"
+                      target="_blank"
+                    >
+                      <Image
+                        alt="Comgate logo"
+                        width={100}
+                        height={24}
+                        src="https://www.comgate.cz/files/logo-web-280.png"
+                      />
+                    </a>
+                  </>
+                ),
+              }
+            : {}),
+        })),
     [paymentMethods, selectedDeliveryId]
   );
 

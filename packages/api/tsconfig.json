@@ -1,0 +1,44 @@
+{
+  "extends": "@najit-najist/tsconfig/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "module": "ESNext",
+    "target": "ESNext",
+    "jsx": "preserve",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "paths": {
+      "@custom-types": ["./src/types"],
+      "@schemas": ["./src/schemas"],
+      "@middleware": ["./src/middleware"],
+      "@errors": ["./src/errors"],
+      "@utils": ["./src/utils"],
+      "@utils/*": ["./src/utils/*"],
+      "@config": ["./src/config.js"],
+      "@constants": ["./src/constants.js"],
+      "@services/*": ["./src/services/*"],
+      "@services": ["./src/services"],
+      "@trpc": ["./src/trpc/index.js"],
+      "@trpc-procedures/*": ["./src/trpc/procedures/*"],
+      "@logger": ["./src/logger.js"]
+    }
+  },
+  "tsc-alias": {
+    "resolveFullPaths": true
+  },
+  "references": [
+    {
+      "path": "../../packages/database",
+    },
+    {
+      "path": "../../packages/schemas",
+    },
+    {
+      "path": "../../packages/security",
+    },
+    {
+      "path": "../../packages/email-templates",
+    },
+  ],
+  "include": ["src"]
+}

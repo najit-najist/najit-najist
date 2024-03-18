@@ -1,21 +1,20 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  CreateRecipeTypeInput,
-  createRecipeTypeInputSchema,
-  ErrorCodes,
-  PocketbaseErrorCodes,
-  RecipeType,
-} from '@najit-najist/api';
+import { ErrorCodes, recipeCategoryCreateInputSchema } from '@najit-najist/api';
+import { RecipeCategory } from '@najit-najist/database/models';
 import { Button, Input, Modal, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useMemo, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import { RecipeFormData } from '../_types';
 
-export const TypeEdit: FC<{ types: RecipeType[] }> = ({
+type FormData = z.infer<typeof recipeCategoryCreateInputSchema>;
+
+export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
   types: initialTypes,
 }) => {
   const { data: types, refetch } = trpc.recipes.types.getMany.useQuery(
@@ -23,10 +22,8 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
     {
       initialData: {
         items: initialTypes,
-        page: 1,
-        perPage: initialTypes.length,
-        totalItems: initialTypes.length,
-        totalPages: 1,
+        nextToken: null,
+        total: initialTypes.length,
       },
       refetchInterval: 0,
       refetchOnMount: false,
@@ -35,8 +32,8 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
   );
 
   const { mutateAsync: create } = trpc.recipes.types.create.useMutation();
-  const formMethods = useForm<CreateRecipeTypeInput>({
-    resolver: zodResolver(createRecipeTypeInputSchema),
+  const formMethods = useForm<FormData>({
+    resolver: zodResolver(recipeCategoryCreateInputSchema),
   });
   const { handleSubmit, register, formState, reset, setError } = formMethods;
 
@@ -63,7 +60,7 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
       ) {
         setError('title', {
           message: 'Tento typ již existuje',
-          type: PocketbaseErrorCodes.NOT_UNIQUE,
+          type: ErrorCodes.ENTITY_DUPLICATE,
         });
       } else {
         throw error;
@@ -73,12 +70,14 @@ export const TypeEdit: FC<{ types: RecipeType[] }> = ({
 
   return (
     <>
-      <Controller<Pick<RecipeFormData, 'type'>>
-        name="type"
+      <Controller<Pick<RecipeFormData, 'category'>>
+        name="category"
         render={({ field, fieldState, formState }) => (
-          <Select<RecipeType>
+          <Select<RecipeCategory>
             name={field.name}
-            selected={typesSet.get(field.value)}
+            selected={typesSet.get(
+              typeof field.value === 'number' ? field.value : field.value?.id
+            )}
             formatter={({ title }) => title}
             items={types.items}
             disabled={formState.isSubmitting}

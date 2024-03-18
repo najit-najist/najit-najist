@@ -36,5 +36,19 @@
     "jsx": "preserve"
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["out", "build", "node_modules"]
+  "exclude": ["out", "build", "node_modules"],
+  "references": [
+    {
+      "path": "../../packages/api",
+    },
+    {
+      "path": "../../packages/ui",
+    },
+    {
+      "path": "../../packages/schemas",
+    },
+    {
+      "path": "../../packages/database",
+    },
+  ],
 }

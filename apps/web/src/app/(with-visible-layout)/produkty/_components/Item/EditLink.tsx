@@ -2,7 +2,8 @@
 
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { useCurrentUser } from '@hooks';
-import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
+import { canUser, UserActions } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import { buttonStyles, Tooltip } from '@najit-najist/ui';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
@@ -26,7 +27,7 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
 
   const canEdit = canUser(loggedInUser, {
     action: UserActions.UPDATE,
-    onModel: AvailableModels.RECIPES,
+    onModel: recipes,
   });
 
   if (!canEdit) {

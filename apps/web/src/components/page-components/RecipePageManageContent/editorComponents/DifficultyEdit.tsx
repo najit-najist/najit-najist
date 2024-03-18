@@ -1,19 +1,20 @@
 'use client';
 
+import { RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  CreateRecipeDifficultyInput,
-  createRecipeDifficultyInputSchema,
   ErrorCodes,
-  PocketbaseErrorCodes,
-  Recipe,
-  RecipeDifficulty,
+  recipeDifficultyCreateInputSchema,
 } from '@najit-najist/api';
+import { RecipeDifficulty } from '@najit-najist/database/models';
 import { Button, ColorPicker, Input, Modal, Select } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useMemo, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+type FormData = z.infer<typeof recipeDifficultyCreateInputSchema>;
 
 export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
   difficulties: initialDifficulties,
@@ -22,10 +23,8 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
     trpc.recipes.difficulties.getMany.useQuery(undefined, {
       initialData: {
         items: initialDifficulties,
-        page: 1,
-        perPage: initialDifficulties.length,
-        totalItems: initialDifficulties.length,
-        totalPages: 1,
+        nextToken: null,
+        total: initialDifficulties.length,
       },
       refetchInterval: 0,
       refetchOnMount: false,
@@ -34,8 +33,8 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
 
   const { mutateAsync: create } =
     trpc.recipes.difficulties.create.useMutation();
-  const formMethods = useForm<CreateRecipeDifficultyInput>({
-    resolver: zodResolver(createRecipeDifficultyInputSchema),
+  const formMethods = useForm<FormData>({
+    resolver: zodResolver(recipeDifficultyCreateInputSchema),
   });
   const { handleSubmit, register, formState, reset, setError } = formMethods;
 
@@ -63,12 +62,12 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
         if (error.message.includes('color')) {
           setError('name', {
             message: 'Tato složitost již existuje',
-            type: PocketbaseErrorCodes.NOT_UNIQUE,
+            type: ErrorCodes.ENTITY_DUPLICATE,
           });
         } else {
           setError('color', {
             message: 'Tato barva patří už k jiné složitosti',
-            type: PocketbaseErrorCodes.NOT_UNIQUE,
+            type: ErrorCodes.ENTITY_DUPLICATE,
           });
         }
       } else {
@@ -79,13 +78,15 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
 
   return (
     <>
-      <Controller<Pick<Recipe, 'difficulty'>>
+      <Controller<Pick<RecipeWithRelations, 'difficulty'>>
         name="difficulty"
         render={({ field, fieldState, formState }) => (
           <Select<RecipeDifficulty>
             name={field.name}
             selected={difficultiesSet.get(
-              typeof field.value === 'string' ? field.value : field.value?.id
+              typeof field.value === 'string'
+                ? Number(field.value)
+                : (field.value as RecipeDifficulty)?.id
             )}
             formatter={({ name }) => name}
             items={difficulties.items}

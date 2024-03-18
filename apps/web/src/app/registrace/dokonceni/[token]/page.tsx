@@ -1,5 +1,5 @@
-import { getTrpcCaller } from '@najit-najist/api/server';
 import { Logo } from '@components/common/Logo';
+import { getTrpcCaller } from '@najit-najist/api/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -8,6 +8,9 @@ import { BottomLinks } from './_components/BottomLinks';
 export const metadata = {
   title: 'Dokončení registrace',
 };
+
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 const RegistrationFinalizationPage = async ({
   params: { token },

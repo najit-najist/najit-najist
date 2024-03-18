@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { UpdateProfile, updateProfileSchema } from '@najit-najist/api';
+import { userProfileUpdateInputSchema } from '@najit-najist/api';
 import { trpc } from '@trpc';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import {
@@ -26,33 +26,35 @@ export function getChangedValues<G extends Record<any, any>>(
   ) as Partial<G>;
 }
 
-export const FormProvider: FC<
-  PropsWithChildren<{ initialData: UpdateProfile }>
-> = ({ children, initialData }) => {
+type FormData = z.infer<typeof userProfileUpdateInputSchema>;
+
+export const FormProvider: FC<PropsWithChildren<{ initialData: FormData }>> = ({
+  children,
+  initialData,
+}) => {
   const { mutateAsync: updateProfile } = trpc.profile.update.useMutation();
-  const formMethods = useForm<UpdateProfile>({
+  const formMethods = useForm<FormData>({
     defaultValues: initialData,
-    resolver: zodResolver(updateProfileSchema),
+    resolver: zodResolver(userProfileUpdateInputSchema),
   });
   const { handleSubmit, formState, reset } = formMethods;
 
-  const onSubmit: SubmitHandler<z.input<typeof updateProfileSchema>> =
-    useCallback(
-      async (values) => {
-        const nextValues = getChangedValues(values, formState.dirtyFields);
+  const onSubmit: SubmitHandler<FormData> = useCallback(
+    async (values) => {
+      const nextValues = getChangedValues(values, formState.dirtyFields);
 
-        // TODO provide correct typings
+      // TODO provide correct typings
+      // @ts-ignore
+      if (nextValues.address && initialData.address?.id) {
         // @ts-ignore
-        if (nextValues.address && initialData.address?.id) {
-          // @ts-ignore
-          nextValues.address.id = initialData.address?.id;
-        }
+        nextValues.address.id = initialData.address?.id;
+      }
 
-        await updateProfile(nextValues);
-        reset(undefined, { keepValues: true });
-      },
-      [updateProfile, initialData, formState.dirtyFields, reset]
-    );
+      await updateProfile(nextValues);
+      reset(undefined, { keepValues: true });
+    },
+    [updateProfile, initialData, formState.dirtyFields, reset]
+  );
 
   return (
     <HookFormProvider {...formMethods}>

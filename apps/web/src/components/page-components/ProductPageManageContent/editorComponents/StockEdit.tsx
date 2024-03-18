@@ -1,6 +1,6 @@
 'use client';
 
-import { ProductStock } from '@najit-najist/api';
+import { ProductStock } from '@najit-najist/database/models';
 import {
   Checkbox,
   CheckboxProps,
@@ -13,23 +13,24 @@ import { useController, useFormContext } from 'react-hook-form';
 
 import { ProductFormData } from '../_types';
 
-const defaultStock: Pick<ProductStock, 'count'> = {
-  count: 0,
+const defaultStock: Pick<ProductStock, 'value'> = {
+  value: 0,
 };
 
 export const StockEdit: FC = () => {
   const { register, formState } = useFormContext<ProductFormData>();
-  const enableStockValue = useRef<Pick<ProductStock, 'count'> | undefined>(
+  const enableStockValue = useRef<Pick<ProductStock, 'value'> | undefined>(
     defaultStock
   );
   const stockInput = useController({
     name: 'stock',
   });
 
-  const stockEnabled = !!stockInput.field.value;
+  const fieldValue = stockInput.field.value as ProductStock | null | undefined;
+  const stockEnabled = typeof fieldValue?.value === 'number';
   const onStockToggle: CheckboxProps['onChange'] = (event) => {
     const nextValue = event.target.checked;
-    const currentStockValue = { ...(stockInput.field.value ?? defaultStock) };
+    const currentStockValue = { ...(fieldValue ?? defaultStock) };
 
     stockInput.field.onChange(nextValue ? enableStockValue.current : null);
     enableStockValue.current = currentStockValue ?? defaultStock;
@@ -66,9 +67,9 @@ export const StockEdit: FC = () => {
                 </span>
               </div>
             }
-            error={formState.errors.price?.value}
+            error={formState.errors.stock?.value}
             disabled={!stockEnabled}
-            {...register('stock.count', {
+            {...register('stock.value', {
               valueAsNumber: true,
               shouldUnregister: true,
             })}

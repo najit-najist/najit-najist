@@ -76,13 +76,14 @@ COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./ap
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./apps/web/public
 
 # Include api package as it its a monorepo dependency 
-COPY --from=builder /workspace-builder/packages/najit-najist-api/package.json \
-                    /workspace-builder/packages/najit-najist-api/node_modules/ \
-                    /workspace-builder/packages/najit-najist-api/dist/ \
-                    ./packages/najit-najist-api/
+COPY --from=builder /workspace-builder/packages/api/package.json \
+                    /workspace-builder/packages/api/node_modules/ \
+                    /workspace-builder/packages/api/dist/ \
+                    ./packages/api/
 
-COPY --from=builder /workspace-builder/packages/security/package.json \
-                    /workspace-builder/packages/security/dist/ \
+COPY --from=builder /workspace-builder/packages/database/package.json \
+                    /workspace-builder/packages/database/dist/ \
+                    /workspace-builder/packages/database/drizzle/ \
                     ./packages/security/
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
@@ -93,10 +94,19 @@ COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/pac
                     /workspace-builder/packages/najit-najist-tailwind-plugin/index.cjs \
                     ./packages/najit-najist-tailwind-plugin/
 
+COPY --from=builder /workspace-builder/packages/schemas/package.json \
+                    /workspace-builder/packages/schemas/node_modules/ \
+                    /workspace-builder/packages/schemas/dist/ \
+                    ./packages/schemas/
+
+COPY --from=builder /workspace-builder/packages/security/package.json \
+                    /workspace-builder/packages/security/dist/ \
+                    ./packages/security/
+
 # Include ui package as it its a monorepo dependency 
-COPY --from=builder /workspace-builder/packages/najit-najist-ui/package.json \
-                    /workspace-builder/packages/najit-najist-ui/dist/ \
-                    ./packages/najit-najist-ui/
+COPY --from=builder /workspace-builder/packages/ui/package.json \
+                    /workspace-builder/packages/ui/dist/ \
+                    ./packages/ui/
 
 # Copy node_modules
 COPY --from=builder /workspace-builder/node_modules             ./node_modules

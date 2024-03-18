@@ -1,6 +1,8 @@
 'use client';
 
-import { AppRouterOutput, Order, Product } from '@najit-najist/api';
+import { ProductWithRelationsLocal } from '@custom-types';
+import { AppRouterOutput } from '@najit-najist/api';
+import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import { Checkbox, CheckboxProps, CheckboxWrapper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import { FC, useMemo } from 'react';
@@ -17,27 +19,19 @@ export const AvailibilityEdit: FC<{
     throw new Error('No local pickup in database');
   }
 
-  const onlyDeliveryMethodsInput = useController<
-    Pick<Product, 'onlyDeliveryMethods'>
-  >({ name: 'onlyDeliveryMethods' });
-  const hasLocalPickupSelected = onlyDeliveryMethodsInput.field.value.includes(
-    localPickup?.id
-  );
+  const onlyForDeliveryMethodInput = useController<
+    Pick<ProductWithRelationsLocal, 'onlyForDeliveryMethod'>
+  >({ name: 'onlyForDeliveryMethod' });
+  const onlyForDeliveryMethodValue = onlyForDeliveryMethodInput.field
+    .value as null | OrderDeliveryMethod;
+
+  const hasLocalPickupSelected =
+    onlyForDeliveryMethodValue?.id === localPickup?.id;
 
   const handleLocalPickupToggle: CheckboxProps['onChange'] = (event) => {
     const checked = event.target.checked;
-    const fieldValue = onlyDeliveryMethodsInput.field.value;
 
-    let newValue = Array.isArray(fieldValue) ? [...fieldValue] : [fieldValue];
-
-    if (checked) {
-      newValue.push(localPickup.id);
-    } else {
-      newValue = newValue.filter((pickupId) => pickupId !== localPickup.id);
-    }
-
-    onlyDeliveryMethodsInput.field.onChange(newValue);
-    console.log({ newValue });
+    onlyForDeliveryMethodInput.field.onChange(checked ? localPickup : null);
   };
 
   return (

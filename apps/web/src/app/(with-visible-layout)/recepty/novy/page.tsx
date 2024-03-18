@@ -1,6 +1,6 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
-import { getLoggedInUser } from '@najit-najist/api/server';
+import { canUser, UserActions } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import { getCachedLoggedInUser } from '@server-utils';
 import { redirect } from 'next/navigation';
 
@@ -16,7 +16,7 @@ export default async function Page() {
     !loggedInUser ||
     !canUser(loggedInUser, {
       action: UserActions.CREATE,
-      onModel: AvailableModels.RECIPES,
+      onModel: recipes,
     })
   ) {
     redirect('/');

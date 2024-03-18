@@ -1,10 +1,11 @@
 {
   "extends": "@najit-najist/tsconfig/base.json",
   "compilerOptions": {
-    "composite": false,
+    "composite": true,
     "module": "ESNext",
     "target": "ESNext",
     "outDir": "./dist",
+    "rootDir": "./src",
     "paths": {
       "@utils": ["./src/utils"],
       "@utils/*": ["./src/utils/*"]

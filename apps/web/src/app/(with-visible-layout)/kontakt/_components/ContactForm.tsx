@@ -2,16 +2,21 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { contactUsSchema } from '@najit-najist/api';
+import { contactUsInputSchema } from '@najit-najist/api';
 import { Alert, Button, Input, Textarea } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-export const ContactForm: FC = () => {
-  const formMethods = useForm<z.infer<typeof contactUsSchema>>({
-    resolver: zodResolver(contactUsSchema),
+type FormValues = z.infer<typeof contactUsInputSchema>;
+
+export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
+  defaultValues,
+}) => {
+  const formMethods = useForm<FormValues>({
+    defaultValues,
+    resolver: zodResolver(contactUsInputSchema),
   });
   const { trackEvent } = usePlausible();
   const { formState, register, handleSubmit, setError } = formMethods;

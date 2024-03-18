@@ -1,10 +1,8 @@
-import { Column, Row, Section } from '@react-email/components';
-import { Heading } from '@react-email/heading';
-import { Link } from '@react-email/link';
+import { Heading, Link, Section } from '@react-email/components';
 
-import { CenteredRow } from './components/CenteredRow';
-import { Layout } from './components/Layout';
-import { Text } from './components/Text';
+import { CenteredRow } from './_components/CenteredRow';
+import { Layout } from './_components/Layout';
+import { Text } from './_components/Text';
 
 export interface ContactUsUserReplyProps {
   fullName: string;

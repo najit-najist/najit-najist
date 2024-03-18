@@ -18,10 +18,12 @@ export const metadata = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const order = await getCachedOrder({ id: params.orderId }).catch((error) => {
-    console.log({ error });
-    notFound();
-  });
+  const order = await getCachedOrder({ id: Number(params.orderId) }).catch(
+    (error) => {
+      console.log({ error });
+      notFound();
+    }
+  );
 
   return (
     <>

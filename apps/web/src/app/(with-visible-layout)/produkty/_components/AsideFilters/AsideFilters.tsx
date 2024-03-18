@@ -6,7 +6,7 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { useIsDesktop } from '@hooks';
-import { ProductCategory } from '@najit-najist/api';
+import { ProductCategory } from '@najit-najist/database/models';
 import {
   Button,
   CheckboxGroup,
@@ -15,8 +15,8 @@ import {
 } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
-import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
-import { Controller, FormProvider, useForm, useWatch } from 'react-hook-form';
+import { FC, useCallback, useEffect, useTransition } from 'react';
+import { Controller, FormProvider, useForm } from 'react-hook-form';
 import { useIsClient } from 'usehooks-ts';
 
 type FormValues = {

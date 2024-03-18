@@ -4,8 +4,20 @@
     "lib": ["DOM"],
     "rootDir": "src",
     "declaration": true,
+    "composite": true,
     "outDir": "./dist",
   },
   "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "exclude": ["dist", "build", "node_modules"],
+  "references": [
+    {
+      "path": "../../packages/ui",
+    },
+    {
+      "path": "../../packages/schemas",
+    },
+    {
+      "path": "../../packages/database",
+    },
+  ],
 }

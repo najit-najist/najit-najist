@@ -7,13 +7,8 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
-import {
-  canUser,
-  SpecialSections,
-  User,
-  UserActions,
-  UserRoles,
-} from '@najit-najist/api';
+import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
+import { User, UserRoles } from '@najit-najist/database/models';
 import { Menu, Transition } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';

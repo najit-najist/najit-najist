@@ -1,11 +1,10 @@
-import { orderStates } from '@najit-najist/api';
+import { OrderState } from '@najit-najist/database/models';
 import { isLocalPickup } from '@utils';
 import { FC, ReactNode } from 'react';
-import { z } from 'zod';
 
 import { OrderUnderpageProps } from './OrderUnderpageContent';
 
-type MessagesDictionary = Record<z.infer<typeof orderStates>, ReactNode>;
+type MessagesDictionary = Record<OrderState, ReactNode>;
 
 export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
   let contents: ReactNode = '';
@@ -15,7 +14,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
       confirmed: (
         <>
           Tato objednávka <b>#{order.id}</b> je potvrzená!{' '}
-          {isLocalPickup(order.delivery_method) ? (
+          {isLocalPickup(order.deliveryMethod) ? (
             <>
               Uživatel si vybral vyzvednutí na prodejně. Když bude vše hotové
               tak přepněte stav na <b>&apos;Připraveno v vyzvednutí&apos;</b>
@@ -39,7 +38,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
           objednávku přepněte do stavu <b>&apos;Potvrzeno&apos;</b>
         </>
       ),
-      shipped: isLocalPickup(order.delivery_method) ? (
+      shipped: isLocalPickup(order.deliveryMethod) ? (
         <>
           Objednávka byla připravena na prodejně. Čekáme až si pro ni uživatel
           dorazí.
@@ -67,7 +66,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
       confirmed: (
         <>
           Vaše objednávka <b>#{order.id}</b> je potvrzená!{' '}
-          {isLocalPickup(order.delivery_method) ? (
+          {isLocalPickup(order.deliveryMethod) ? (
             <>Již brzy dostanete info pro vyzvednutí!</>
           ) : (
             <>Nyní Vaši objednávku zabalíme a odešleme.</>
@@ -76,7 +75,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
       ),
       shipped: (
         <>
-          {isLocalPickup(order.delivery_method) ? (
+          {isLocalPickup(order.deliveryMethod) ? (
             <>
               Vaše objednávka na Vás čeká na naší prodejně. Přijďte si pro ni!
             </>

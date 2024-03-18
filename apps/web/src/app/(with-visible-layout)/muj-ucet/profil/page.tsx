@@ -71,7 +71,12 @@ export default async function Page() {
   );
 
   return (
-    <FormProvider initialData={user}>
+    <FormProvider
+      initialData={{
+        ...user,
+        address: user.address ?? undefined,
+      }}
+    >
       <EditUserUnderPage
         viewType="edit-myself"
         userId={user.id}

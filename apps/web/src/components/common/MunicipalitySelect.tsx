@@ -1,4 +1,4 @@
-import { Municipality } from '@najit-najist/api';
+import { Municipality } from '@najit-najist/database/models';
 import { Combobox, ComboboxProps } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { FC, useState } from 'react';
@@ -29,7 +29,7 @@ export const MunicipalitySelect: FC<
       placeholder="Začněte psát pro vyhledání"
       displayValue={({ name }) => name}
       itemLabelFormatter={({ name }) => name}
-      items={data?.items ?? []}
+      items={data ?? []}
       onInputValueChange={(event) => setQuery(event.currentTarget.value)}
       onSelectedValueChange={(nextValue) => {
         field.onBlur();
@@ -38,6 +38,7 @@ export const MunicipalitySelect: FC<
       selectedValue={field.value}
       isLoading={isLoading}
       error={fieldState.error}
+      disabled={rest.disabled ?? false}
       {...rest}
     />
   );

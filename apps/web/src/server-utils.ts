@@ -1,4 +1,4 @@
-import { AppRouterInput, GetManyUsersOptions } from '@najit-najist/api';
+import { AppRouterInput } from '@najit-najist/api';
 import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
 import { cache } from 'react';
 
@@ -8,8 +8,9 @@ export const getCachedLoggedInUser = cache(() =>
 
 export const getCachedTrpcCaller = cache(() => getTrpcCaller());
 
-export const getCachedUsers = cache((options?: GetManyUsersOptions) =>
-  getCachedTrpcCaller().users.getMany(options)
+export const getCachedUsers = cache(
+  (options?: AppRouterInput['users']['getMany']) =>
+    getCachedTrpcCaller().users.getMany(options)
 );
 
 export const getCachedDeliveryMethods = cache(() =>

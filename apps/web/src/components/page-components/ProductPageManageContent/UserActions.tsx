@@ -1,20 +1,22 @@
-import { Product, ProductStock } from '@najit-najist/api';
+import { ProductWithRelationsLocal } from '@custom-types';
+import { ProductStock } from '@najit-najist/database/models';
 import { FC } from 'react';
 
 import { AddToCartButton } from './AddToCartButton';
 
 export const UserActions: FC<{
-  product: Product;
+  product: ProductWithRelationsLocal;
   stock?: ProductStock | null;
 }> = ({ product, stock }) => {
   return (
     <>
       <AddToCartButton
         productId={product.id}
-        disabled={typeof stock?.count === 'number' && !stock.count}
+        disabled={typeof stock?.value === 'number' && !stock.value}
         productMetadata={{
           images: product.images,
           name: product.name,
+          slug: product.slug,
         }}
       />
       {/* TODO */}

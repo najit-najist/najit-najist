@@ -2,16 +2,16 @@
 
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import {
-  Button,
-  ErrorMessage,
-  FormControlWrapper,
-  Input,
-  Skeleton,
-} from '@najit-najist/ui';
+import { Button, ErrorMessage, Input, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { FC, useCallback } from 'react';
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import {
+  Controller,
+  useFieldArray,
+  useFormContext,
+  useWatch,
+} from 'react-hook-form';
+
 import { RecipeFormData } from '../_types';
 
 const LazyEditor = dynamic(
@@ -111,11 +111,10 @@ export const StepsEdit: FC = () => {
     remove,
   } = useFieldArray<RecipeFormData>({
     name: 'steps',
-    shouldUnregister: true,
   });
 
   const onAddGroup = useCallback(() => {
-    append({ parts: [], title: '' });
+    append({ parts: [], title: '' }, { shouldFocus: true });
   }, [append]);
 
   const onRemoveGroup = useCallback(

@@ -2,13 +2,12 @@ import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { UserActions, canUser } from '@najit-najist/api';
 import {
-  AvailableModels,
+  RecipeCategory,
   RecipeDifficulty,
-  RecipeType,
-  UserActions,
-  canUser,
-} from '@najit-najist/api';
+  recipes as recipesModel,
+} from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import Link from 'next/link';
 
@@ -29,20 +28,20 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 const fallbackDifficulty: RecipeDifficulty = {
-  id: 'default',
+  id: 0,
   slug: '',
   name: 'Všechny',
   color: '',
-  created: '',
-  updated: '',
+  createdAt: null,
+  updatedAt: null,
 };
 
-const fallbackType: RecipeType = {
-  id: 'default',
+const fallbackType: RecipeCategory = {
+  id: 0,
   slug: '',
   title: 'Všechny',
-  created: '',
-  updated: '',
+  createdAt: null,
+  updatedAt: null,
 };
 
 export default async function RecipesPage({ searchParams }: Params) {
@@ -57,7 +56,7 @@ export default async function RecipesPage({ searchParams }: Params) {
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
   const [
     { items: recipeDifficulties },
-    { items: recipeTypes },
+    { items: recipeCategories },
     { items: recipes },
   ] = await Promise.all([
     trpc.recipes.difficulties.getMany({ perPage: 999 }),
@@ -78,7 +77,7 @@ export default async function RecipesPage({ searchParams }: Params) {
           {currentUser &&
           canUser(currentUser, {
             action: UserActions.CREATE,
-            onModel: AvailableModels.RECIPES,
+            onModel: recipesModel,
           }) ? (
             <Link href="/recepty/novy" className="">
               <PlusIcon className="inline w-12" />
@@ -88,7 +87,7 @@ export default async function RecipesPage({ searchParams }: Params) {
         <PageDescription>{metadata.description}</PageDescription>
       </PageHeader>
       <SearchForm
-        types={[fallbackType, ...recipeTypes]}
+        types={[fallbackType, ...recipeCategories]}
         difficulties={[fallbackDifficulty, ...recipeDifficulties]}
         initialValues={{
           query,

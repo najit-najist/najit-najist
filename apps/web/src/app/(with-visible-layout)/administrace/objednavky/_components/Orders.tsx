@@ -15,7 +15,7 @@ export const Orders: FC<{
           <tr key={order.id}>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {dayjs(order.created).format(DEFAULT_DATE_FORMAT)}
+                {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
               </div>
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -42,7 +42,7 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {order.subtotal + order.delivery_method?.price} Kč
+                {order.subtotal + (order.deliveryMethodPrice ?? 0)} Kč
               </div>
             </td>
 

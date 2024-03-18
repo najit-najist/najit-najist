@@ -1,6 +1,5 @@
 'use server';
 
-import { PREVIEW_AUTH_PASSWORD } from '@najit-najist/api/edge';
 import {
   getSessionFromCookies,
   setSessionToCookies,
@@ -15,7 +14,7 @@ export const initiateSecretSession = async (data: FormData) => {
   const url = new URL('/', 'https://najitnajist.cz');
   const code = data.get('code');
 
-  if (code != PREVIEW_AUTH_PASSWORD) {
+  if (code != process.env.PREVIEW_AUTH_PASSWORD) {
     url.pathname = UNAUTHORIZED_URL;
     url.search = new URLSearchParams([['invalid', '']]).toString();
 

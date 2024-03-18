@@ -1,5 +1,6 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { AvailableModels, canUser, UserActions } from '@najit-najist/api';
+import { canUser, UserActions } from '@najit-najist/api';
+import { recipes } from '@najit-najist/database/models';
 import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
 import { notFound } from 'next/navigation';
 
@@ -15,7 +16,7 @@ export async function generateMetadata({ params, searchParams }: Params) {
   const trpc = getCachedTrpcCaller();
 
   try {
-    const recipe = await trpc.recipes.getOne({ where: { slug: receptSlug } });
+    const recipe = await trpc.recipes.getOne({ slug: receptSlug });
 
     return {
       title: !!searchParams.editor ? `Upravení ${recipe.title}` : recipe.title,
@@ -32,7 +33,7 @@ export default async function Page({ params, searchParams }: Params) {
   const trpc = getCachedTrpcCaller();
 
   const recipe = await trpc.recipes
-    .getOne({ where: { slug: receptSlug } })
+    .getOne({ slug: receptSlug })
     .catch(() => notFound());
 
   return (
@@ -41,7 +42,7 @@ export default async function Page({ params, searchParams }: Params) {
         loggedInUser &&
         canUser(loggedInUser, {
           action: UserActions.UPDATE,
-          onModel: AvailableModels.RECIPES,
+          onModel: recipes,
         })
       }
       viewType={isEditorEnabled ? 'edit' : 'view'}

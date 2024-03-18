@@ -1,12 +1,15 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getEdgeLoggedInUser, getEdgeSession } from '@najit-najist/api/edge';
 import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
+import { getEdgeSession, canUser, UserActions } from '@najit-najist/api/edge';
 import {
-  AvailableModels,
-  UserActions,
-  canUser,
-} from '@najit-najist/api/dist/utils/canUser';
-import { UserRoles } from '@najit-najist/api/dist/schemas/user.schema';
+  User,
+  UserRoles,
+  posts,
+  products,
+  recipes,
+  users,
+} from '@najit-najist/database/models';
+import type { PgTableWithColumns } from 'drizzle-orm/pg-core';
+import { NextRequest, NextResponse } from 'next/server';
 
 const loggedInPathsRegex = new RegExp(
   `^\/((administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*|clanky\/novy)$`,
@@ -17,6 +20,13 @@ const unauthorizedOnlyPaths = new RegExp(
   `\/(login|registrace|zapomenute-heslo|zmena-emailu)[^\n]*$`,
   'g'
 );
+
+const routesToModels: [RegExp, PgTableWithColumns<any>][] = [
+  [/\/uzivatele/, users],
+  [/\/recepty/, recipes],
+  [/\/produkty/, products],
+  [/\/clanky/, posts],
+];
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -56,11 +66,11 @@ export async function middleware(request: NextRequest) {
   );
 
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
-    const currentUser = await getEdgeLoggedInUser({ session }).catch((err) => {
-      console.log({ err });
-
-      return undefined;
-    });
+    const currentUserResponse = await fetch(
+      'http://localhost:3000/api/muj-ucet/profil',
+      { headers: request.headers }
+    );
+    const currentUser = (await currentUserResponse.json()) as User;
 
     if (!currentUser && isLoggedInOnlyPath) {
       const url = requestUrl.clone();
@@ -91,31 +101,21 @@ export async function middleware(request: NextRequest) {
       const { pathname: requestPathname, searchParams: requestSearchParams } =
         requestUrl;
       const isUnderAdministration = requestPathname.includes('/administrace');
-      // This page is defined under /administrace
-      const isUnderUsers = requestPathname.includes('/uzivatele');
-      const isUnderRecipes = requestPathname.includes('/recepty');
-      const isUnderProducts = requestPathname.includes('/produkty');
-      const isUnderPosts = requestPathname.includes('/clanky');
       const createNewPathnameChunk = '/novy';
       const editorParamName = 'editor';
-      const currentModel = isUnderRecipes
-        ? AvailableModels.RECIPES
-        : isUnderProducts
-        ? AvailableModels.PRODUCTS
-        : isUnderPosts
-        ? AvailableModels.POST
-        : isUnderUsers
-        ? AvailableModels.USER
-        : null;
 
       if (isUnderAdministration && currentUser.role !== UserRoles.ADMIN) {
         // TODO: create new page that shows 401
         return toPathname('/muj-ucet/profil');
       }
 
+      const modelForRoute = routesToModels.find(([matcher]) =>
+        matcher.test(requestPathname)
+      );
+
       // Lock create new
       if (requestPathname.includes(createNewPathnameChunk)) {
-        if (!currentModel) {
+        if (!modelForRoute) {
           throw new Error(
             `Not implemented model rule for create new item ${createNewPathnameChunk} ${requestPathname}`
           );
@@ -124,7 +124,7 @@ export async function middleware(request: NextRequest) {
         if (
           !canUser(currentUser, {
             action: UserActions.CREATE,
-            onModel: currentModel,
+            onModel: modelForRoute[1],
           })
         ) {
           // TODO: create new page that shows 401
@@ -136,14 +136,14 @@ export async function middleware(request: NextRequest) {
 
       // log editor
       if (requestSearchParams.has(editorParamName)) {
-        if (!currentModel) {
+        if (!modelForRoute?.[1]) {
           throw new Error('Not implemented model rule for update new item');
         }
 
         if (
           !canUser(currentUser, {
             action: UserActions.UPDATE,
-            onModel: currentModel,
+            onModel: modelForRoute[1],
           })
         ) {
           const newUrl = requestUrl.clone();

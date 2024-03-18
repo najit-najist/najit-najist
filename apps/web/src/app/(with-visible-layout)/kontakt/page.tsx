@@ -1,15 +1,16 @@
+import { getLoggedInUser } from '@najit-najist/api/server';
+import { StaticImageData } from 'next/image';
 import { FC } from 'react';
 
-import ondrejLangrUrl from '/public/images/team/ondrej-langr.jpg';
+import { ContactForm } from './_components/ContactForm';
+import { imagePosition, UserHead } from './_components/UserHead';
 import arnostZizkaUrl from '/public/images/team/arnost-zizka.jpg';
+import kristynaZizkovaUrl from '/public/images/team/kristyna-zizkova.jpg';
+import lenkaCernouskovaUrl from '/public/images/team/lenka-cernouskova.jpg';
 import martinStaryUrl from '/public/images/team/martin-stary.jpg';
+import ondrejLangrUrl from '/public/images/team/ondrej-langr.jpg';
 import terezaZizkovaUrl from '/public/images/team/tereza-zizkova.jpg';
 import vojtechZizkaUrl from '/public/images/team/vojtech-zizka.jpg';
-import lenkaCernouskovaUrl from '/public/images/team/lenka-cernouskova.jpg';
-import kristynaZizkovaUrl from '/public/images/team/kristyna-zizkova.jpg';
-import { imagePosition, UserHead } from './_components/UserHead';
-import { StaticImageData } from 'next/image';
-import { ContactForm } from './_components/ContactForm';
 
 export const metadata = {
   title: 'Kontakt',
@@ -75,7 +76,9 @@ const locations = [
   },
 ];
 
-const ContactPage: FC = () => {
+const ContactPage: FC = async () => {
+  const loggedInUser = await getLoggedInUser().catch(() => undefined);
+
   return (
     <>
       <div className="container">
@@ -85,7 +88,16 @@ const ContactPage: FC = () => {
           </h2>
         </div>
         <div>
-          <ContactForm />
+          <ContactForm
+            defaultValues={{
+              email: loggedInUser?.email,
+              firstName: loggedInUser?.firstName,
+              lastName: loggedInUser?.lastName,
+              telephone: loggedInUser?.telephone
+                ? `+${loggedInUser?.telephone?.code} ${loggedInUser?.telephone?.telephone}`
+                : undefined,
+            }}
+          />
         </div>
       </div>
 

@@ -31,6 +31,16 @@ export {
   type OrderShippedProps,
 } from './OrderShipped';
 
+export {
+  default as WelcomeAndFinish,
+  type WelcomeAndFinishProps,
+} from './WelcomeAndFinish';
+
+export {
+  default as PasswordReset,
+  type PasswordResetProps,
+} from './PasswordReset';
+
 export type {
   Attachment,
   BaseEmailProps,

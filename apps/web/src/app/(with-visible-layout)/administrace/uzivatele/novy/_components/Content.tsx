@@ -1,7 +1,7 @@
 'use client';
 
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
-import { User } from '@najit-najist/api';
+import { User } from '@najit-najist/database/models';
 import { FC, useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 

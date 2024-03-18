@@ -1,10 +1,10 @@
 'use client';
 
+import { ProductWithRelationsLocal } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  Product,
-  createProductSchema,
-  updateProductSchema,
+  productCreateInputSchema,
+  productUpdateInputSchema,
 } from '@najit-najist/api';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
@@ -15,28 +15,28 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { ProductFormData } from '../_types';
 
 export const Form: FC<
-  PropsWithChildren<{ viewType: 'create' | 'edit'; product?: Product }>
+  PropsWithChildren<{
+    viewType: 'create' | 'edit';
+    product?: ProductWithRelationsLocal;
+  }>
 > = ({ children, viewType, product }) => {
   const router = useRouter();
+
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
-      images: [],
-      stock: null,
-      price: {
-        value: 0,
-      },
-      onlyDeliveryMethods: [],
       ...product,
+      price: product?.price ?? undefined,
+      stock: product?.stock ?? undefined,
+      images: product?.images.map(({ file }) => file),
+      category: product?.category ?? undefined,
     },
     resolver: zodResolver(
-      viewType === 'edit' ? updateProductSchema : createProductSchema
+      viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema
     ),
   });
-  const { handleSubmit, formState } = formMethods;
+  const { handleSubmit } = formMethods;
   const { mutateAsync: updateProduct } = trpc.products.update.useMutation();
   const { mutateAsync: createProduct } = trpc.products.create.useMutation();
-
-  console.log(formState.errors);
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
@@ -57,7 +57,7 @@ export const Form: FC<
             stock: values.stock,
             publishedAt,
             category: values.category,
-            onlyDeliveryMethods: values.onlyDeliveryMethods,
+            onlyForDeliveryMethod: values.onlyForDeliveryMethod,
           },
         });
 
@@ -79,7 +79,7 @@ export const Form: FC<
           stock: values.stock,
           publishedAt,
           category: values.category,
-          onlyDeliveryMethods: values.onlyDeliveryMethods,
+          onlyForDeliveryMethod: values.onlyForDeliveryMethod,
         });
 
         toast.promise(createProductPromise, {

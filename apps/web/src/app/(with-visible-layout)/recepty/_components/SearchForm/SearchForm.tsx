@@ -4,7 +4,10 @@ import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { RecipeDifficulty, RecipeType } from '@najit-najist/api';
+import {
+  RecipeCategory,
+  RecipeDifficulty,
+} from '@najit-najist/database/models';
 import { Input, Select, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
@@ -12,7 +15,7 @@ import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 
 const typeLabelFormatter = (value: RecipeDifficulty) => value.name;
-const typesLabelFormatter = (value: RecipeType) => value.title;
+const typesLabelFormatter = (value: RecipeCategory) => value.title;
 type FormValues = {
   query?: string;
   difficultySlug?: string;
@@ -21,7 +24,7 @@ type FormValues = {
 
 export const SearchForm: FC<{
   difficulties: RecipeDifficulty[];
-  types: RecipeType[];
+  types: RecipeCategory[];
   initialValues?: Partial<FormValues>;
 }> = ({ difficulties, types, initialValues }) => {
   const router = useRouter();
@@ -92,7 +95,7 @@ export const SearchForm: FC<{
         <Controller<FormValues>
           name="typeSlug"
           render={({ field: { name, value, onChange } }) => (
-            <Select<RecipeType>
+            <Select<RecipeCategory>
               name={name}
               label="Typ"
               selected={typesAsMap.get(value ?? '')}

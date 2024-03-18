@@ -1,11 +1,13 @@
 'use client';
 
+import { RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import '@najit-najist/api';
 import {
-  createRecipeInputSchema,
-  Recipe,
-  updateRecipeInputSchema,
+  recipeCreateInputSchema,
+  recipeUpdateInputSchema,
 } from '@najit-najist/api';
+import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
@@ -13,24 +15,23 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { RecipeFormData } from '../_types';
 
-const getStringId = (input: string | { id: string; [x: string]: any }) =>
-  typeof input === 'object' ? input.id : input;
-
 export const Form: FC<
-  PropsWithChildren<{ recipe?: Recipe; viewType: 'edit' | 'create' }>
+  PropsWithChildren<{
+    recipe?: RecipeWithRelations;
+    viewType: 'edit' | 'create';
+  }>
 > = ({ recipe, children, viewType }) => {
   const router = useRouter();
   const formMethods = useForm<RecipeFormData>({
     defaultValues: {
-      numberOfPortions: 1,
       steps: [],
       resources: [],
       ...recipe,
-      type: recipe?.type.id,
-      difficulty: recipe?.difficulty.id,
+      images: recipe?.images.map(({ file }) => file),
+      numberOfPortions: recipe?.numberOfPortions ?? 1,
     },
     resolver: zodResolver(
-      viewType === 'edit' ? updateRecipeInputSchema : createRecipeInputSchema
+      viewType === 'edit' ? recipeUpdateInputSchema : recipeCreateInputSchema
     ),
   });
   const { handleSubmit } = formMethods;
@@ -40,34 +41,50 @@ export const Form: FC<
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
       if (viewType === 'edit') {
-        const result = await updateRecipe({
+        const action = updateRecipe({
           id: recipe!.id,
           data: {
             title: values.title,
             description: values.description,
             resources: values.resources,
             steps: values.steps,
-            difficulty: getStringId(values.difficulty),
-            type: getStringId(values.type),
+            difficulty: values.difficulty,
+            category: values.category,
             images: values.images,
             numberOfPortions: values.numberOfPortions ?? 1,
           },
         });
 
+        toast.promise(action, {
+          loading: 'Ukládám úpravy',
+          success: <b>Recept upraven!</b>,
+          error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
+        });
+
+        const result = await action;
+
         router.push(`/recepty/${result.slug}?editor=true`);
       } else if (viewType === 'create') {
-        const data = await createRecipe({
+        const action = createRecipe({
           title: values.title,
           description: values.description,
           resources: values.resources,
           steps: values.steps,
-          difficulty: getStringId(values.difficulty),
-          type: getStringId(values.type),
+          difficulty: values.difficulty,
+          category: values.category,
           images: values.images,
-          numberOfPortions: values.numberOfPortions,
+          numberOfPortions: values.numberOfPortions ?? 1,
         });
 
-        router.push(`/recepty/${data.slug}`);
+        toast.promise(action, {
+          loading: 'Vytvářím recept',
+          success: <b>Recept uložen!</b>,
+          error: (error) => <b>Recept nemohl být vytvořen. {error.message}</b>,
+        });
+
+        const result = await action;
+
+        router.push(`/recepty/${result.slug}`);
       }
     },
     [createRecipe, router, updateRecipe, viewType, recipe]

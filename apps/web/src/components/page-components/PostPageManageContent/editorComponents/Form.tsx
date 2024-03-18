@@ -1,30 +1,34 @@
 'use client';
 
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
+import { PostWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
-  CreatePostInput,
-  createPostInputSchema,
-  Post,
-  UpdateOnePostInput,
-  updateOnePostInputSchema,
+  postCreateInputSchema,
+  postUpdateInputSchema,
 } from '@najit-najist/api';
 import { trpc } from '@trpc';
-import dayjs from 'dayjs';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
+
 import { ViewType } from '../_types';
 
+type FormData = z.infer<typeof postCreateInputSchema>;
+
 export const Form: FC<
-  PropsWithChildren<{ post?: Post; viewType: ViewType }>
+  PropsWithChildren<{ post?: PostWithRelations; viewType: ViewType }>
 > = ({ post, children, viewType }) => {
   const router = useRouter();
   const editorReferences = useEditorJSInstances();
-  const formMethods = useForm<CreatePostInput>({
-    defaultValues: post,
+  const formMethods = useForm<FormData>({
+    defaultValues: {
+      ...post,
+      content: post?.content ? JSON.parse(post.content) : null,
+    },
     resolver: zodResolver(
-      viewType === 'create' ? createPostInputSchema : updateOnePostInputSchema
+      viewType === 'create' ? postCreateInputSchema : postUpdateInputSchema
     ),
   });
   const { handleSubmit } = formMethods;
