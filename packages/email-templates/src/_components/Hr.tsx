@@ -1,4 +1,4 @@
-import { Hr as HrBase, HrProps } from '@react-email/hr';
+import { Hr as HrBase, HrProps } from '@react-email/components';
 import clsx from 'clsx';
 import { FC } from 'react';
 

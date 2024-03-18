@@ -1,4 +1,4 @@
-import { Heading as HeadingBase } from '@react-email/heading';
+import { Heading as HeadingBase } from '@react-email/components';
 import clsx from 'clsx';
 import { FC, PropsWithChildren } from 'react';
 

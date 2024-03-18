@@ -1,5 +1,4 @@
-import { Column, Row } from '@react-email/components';
-import { Section } from '@react-email/section';
+import { Column, Row, Section } from '@react-email/components';
 import clsx from 'clsx';
 import { PropsWithChildren } from 'react';
 

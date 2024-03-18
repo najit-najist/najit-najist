@@ -1,5 +1,4 @@
-import { Column } from '@react-email/column';
-import { Row } from '@react-email/components';
+import { Column, Row } from '@react-email/components';
 import { FC, PropsWithChildren } from 'react';
 
 import { PaperColumn } from './PaperColumn';

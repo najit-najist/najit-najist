@@ -15,6 +15,7 @@ import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 
+import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import { privateUserOutputSchema } from '../../schemas/privateUserOutputSchema';
 import { userProfileLogInInputSchema } from '../../schemas/userProfileLogInInputSchema';
 import {
@@ -45,6 +46,10 @@ const passwordResetRoutes = t.router({
       } catch (error) {
         logger.error({ input, error }, 'Request user password reset failed');
 
+        if (error instanceof EntityNotFoundError) {
+          return null;
+        }
+
         throw error;
       }
 
@@ -56,14 +61,10 @@ const passwordResetRoutes = t.router({
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
       try {
-        const user = await UserService.getOneBy(
-          '_passwordResetToken',
-          input.token
-        );
+        const profileServiceForToken =
+          await ProfileService.getUserForPasswordResetToken(input.token);
 
-        await ProfileService.forUser(user).finalizePasswordReset(
-          input.password
-        );
+        await profileServiceForToken.finalizePasswordReset(input.password);
       } catch (error) {
         logger.error({ error }, 'User password reset finalize failed');
 
@@ -193,17 +194,12 @@ export const profileRouter = t.router({
   register: t.procedure
     .input(userRegisterInputSchema)
     .mutation(async ({ ctx, input }) => {
+      if (ctx.sessionData?.authContent?.userId) {
+        throw new Error('Před registrací se odhlaste');
+      }
+
       try {
-        const user = await UserService.create({
-          _password: input.password,
-          ...input,
-          role: UserRoles.BASIC,
-          status: UserStates.INVITED,
-          avatar: input.avatar ?? null,
-          address: {
-            municipalityId: input.address.municipality.id,
-          },
-        });
+        const user = await ProfileService.registerOne(input);
 
         logger.info(
           {
@@ -244,15 +240,10 @@ export const profileRouter = t.router({
     .input(z.object({ token: z.string() }))
     .mutation(async ({ ctx, input }) => {
       try {
-        // TODO: validate token and extract userId from token
-        const userId = 0;
-
-        await database
-          .update(users)
-          .set({
-            status: UserStates.ACTIVE,
-          })
-          .where(eq(users.id, userId));
+        const user = await ProfileService.getOneUserForRegisterToken(
+          input.token
+        );
+        await user.finishRegistration();
 
         logger.info({}, 'Registering user - verify - finished');
 

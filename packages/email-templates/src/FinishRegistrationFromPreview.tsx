@@ -1,8 +1,8 @@
-import { Button } from '@react-email/button';
+import { Button } from '@react-email/components';
 
-import { Heading } from './components/Heading';
-import { Layout } from './components/Layout';
-import { Text } from './components/Text';
+import { Heading } from './_components/Heading';
+import { Layout } from './_components/Layout';
+import { Text } from './_components/Text';
 
 export interface FinishRegistrationFromPreviewProps {
   fullName: string;

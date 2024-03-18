@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export enum PaymentMethodsSlug {
-  BY_CARD = 'card',
+  BY_CARD = 'comgate',
   BY_WIRE = 'wire',
   PREPAY_BY_WIRE = 'prepay_wire',
   ON_PLACE = 'on_place',

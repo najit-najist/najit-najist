@@ -1,7 +1,8 @@
 import { Order } from '@najit-najist/database/models';
 import queryString from 'query-string';
 
-import { logger } from './server';
+import { config } from './config';
+import { logger } from './logger';
 
 export type CreatePaymentOptions = {
   order: Pick<
@@ -45,9 +46,31 @@ export enum ComgateResponseCode {
   SERVER_ERROR = 1500, // 1500 neočekávaná chyba
 }
 
+export enum ComgateOrderState {
+  PENDING = 'PENDING',
+  PAID = 'PAID',
+  CANCELLED = 'CANCELLED',
+  AUTHORIZED = 'AUTHORIZED',
+}
+
 export type ComgateLikeResponse<T extends Record<string, any>> = T & {
   code: ComgateResponseCode;
 };
+
+type GetStatusOptions = {
+  transId: string;
+};
+
+type GetStatusSuccessResponse = {
+  code: ComgateResponseCode.OK;
+  message: string;
+  merchant: string;
+  status: ComgateOrderState;
+};
+
+export const isComgateStatusSuccessfulRequest = (
+  val: any
+): val is GetStatusSuccessResponse => val.code === ComgateResponseCode.OK;
 
 export class Comgate {
   private static merchantId = process.env.COMGATE_MERCHANT_ID;
@@ -57,6 +80,20 @@ export class Comgate {
     path: string,
     options?: RequestInit
   ) {
+    if (!this.merchantId || !this.secret) {
+      throw new Error('Missing merchantId or server');
+    }
+
+    if (options?.body instanceof URLSearchParams) {
+      options.body.set('merchant', this.merchantId);
+      options.body.set('secret', this.secret);
+    }
+
+    options ??= {};
+    options.headers ??= {};
+    (options.headers as any)['Content-Type'] =
+      'application/x-www-form-urlencoded';
+
     const response = await fetch(
       new URL(`/v1.0${path}`, 'https://payments.comgate.cz'),
       options
@@ -93,10 +130,25 @@ export class Comgate {
     };
   }
 
+  public static async getStatus(options: GetStatusOptions) {
+    const transId = String(options.transId);
+
+    return await this.doRequest<
+      | GetStatusSuccessResponse
+      | {
+          code: ComgateResponseCode;
+          message: string;
+        }
+    >('/status', {
+      method: 'POST',
+      body: new URLSearchParams({
+        transId: transId,
+      }),
+    });
+  }
+
   public static async createPayment(options: CreatePaymentOptions) {
-    if (!this.merchantId || !this.secret) {
-      throw new Error('Missing merchantId or server');
-    }
+    const refId = String(options.order.id);
 
     return await this.doRequest<{
       message: string;
@@ -107,25 +159,20 @@ export class Comgate {
       redirect?: string;
     }>('/create', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
       body: new URLSearchParams({
         test: String(process.env.NODE_ENV !== 'production'),
-        merchant: this.merchantId,
         country: 'CZ',
         curr: 'CZK',
         price: String(getTotalPrice(options.order) * 100),
-        refId: String(options.order.id),
+        refId,
         email: options.order.email,
-        secret: this.secret,
         prepareOnly: String(true),
         label: 'Eshop objednávka',
         method: 'ALL',
 
-        // url_paid	 ‘https://www.example.com/result.php?id=${id}&refId=${refId}’
-        // url_cancelled‘https://www.example.com/result.php?id=${id}&refId=${refId}’
-        // url_pending
+        url_paid: `${config.app.origin}/orders/payments/${refId}/paid`,
+        url_cancelled: `${config.app.origin}/orders/payments/${refId}/cancelled`,
+        url_pending: `${config.app.origin}/orders/payments/${refId}/pending`,
       }),
     });
   }

@@ -1,6 +1,7 @@
 export * from './types';
 export * from './constants';
 export * from './utils/canUser';
+export * from './errors/EntityNotFoundError';
 export * from './utils/extractTimeFromSteps';
 export * from './utils/getFileUrl';
 export * from './utils/getMediaTypeFromBase64Url';

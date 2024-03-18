@@ -1,3 +1,5 @@
+import { UserStates } from '@najit-najist/database/models';
+import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
 
 import { userAddressCreateInputSchema } from './userAddressCreateInputSchema';
@@ -9,6 +11,8 @@ export const privateUserOutputSchema = userCreateInputSchema
     telephone: true,
   })
   .extend({
+    id: z.number(),
+    status: z.nativeEnum(UserStates).nullable(),
     lastLoggedIn: z.date().optional().nullable(),
     createdAt: z.date().optional().nullable(),
     telephone: z
@@ -18,5 +22,12 @@ export const privateUserOutputSchema = userCreateInputSchema
       .nullable()
       .optional(),
 
-    address: userAddressCreateInputSchema.nullable().optional(),
+    address: userAddressCreateInputSchema
+      .omit({ municipality: true })
+      .extend({
+        id: z.number(),
+        municipality: entityLinkSchema.extend({ name: z.string() }),
+      })
+      .nullable()
+      .optional(),
   });

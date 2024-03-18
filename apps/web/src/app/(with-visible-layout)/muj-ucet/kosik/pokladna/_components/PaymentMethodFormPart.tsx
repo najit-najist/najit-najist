@@ -2,7 +2,6 @@
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { OrderPaymentMethodWithRelations } from '@custom-types';
-import { PaymentMethodsSlug } from '@najit-najist/pb';
 import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
@@ -32,7 +31,7 @@ export const PaymentMethodFormPart: FC<{
         )
         .map((item) => ({
           ...item,
-          ...(item.slug === PaymentMethodsSlug.BY_CARD
+          ...(item.slug === 'comgate'
             ? {
                 description: (
                   <>

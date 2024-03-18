@@ -103,8 +103,8 @@ export const Content: FC = () => {
             className="mb-5 shadow-md"
             heading="Požadavek zpracován"
           >
-            Dokončete změnu Vašeho hesla přes odkaz, který Vám byl zaslán na
-            Vaši emailovou adresu.
+            Dokončete změnu Vašeho hesla přes odkaz, který Vám byl zaslán pokud
+            zegistrujeme účet pod zadanou emailovou adresou.
           </Alert>
         ) : null}
         {isPasswordResetSuccessfulCallback ? (

@@ -19,3 +19,5 @@ export const productPricesRelations = relations(productPrices, ({ one }) => ({
     references: [products.id],
   }),
 }));
+
+export type ProductPrice = typeof productPrices.$inferSelect;

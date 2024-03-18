@@ -2,6 +2,7 @@ import { database } from '@najit-najist/database';
 import {
   OrderState,
   comgatePayments,
+  orderAddresses,
   orderDeliveryMethods,
   orderPaymentMethods,
   orderedProducts,
@@ -9,6 +10,7 @@ import {
   productStock,
   products,
   telephoneNumbers,
+  userAddresses,
   userCartProducts,
   userCarts,
 } from '@najit-najist/database/models';
@@ -25,6 +27,7 @@ import {
 import { t } from '@trpc';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { TRPCError } from '@trpc/server';
+import { getOrderById } from '@utils/server/getOrderById';
 import { and, asc, eq, inArray } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -263,107 +266,144 @@ export const userCartRoutes = t.router({
         );
       }
 
-      const { order, redirectTo } = await database.transaction(async (tx) => {
-        let telephone = await tx.query.telephoneNumbers.findFirst({
-          where: (schema, { eq }) =>
-            eq(schema.telephone, input.telephoneNumber),
-        });
+      const { redirectTo, newOrderId } = await database.transaction(
+        async (tx) => {
+          let telephone = await tx.query.telephoneNumbers.findFirst({
+            where: (schema, { eq }) =>
+              eq(schema.telephone, input.telephoneNumber),
+          });
 
-        if (!telephone) {
-          [telephone] = await tx
-            .insert(telephoneNumbers)
-            .values({
-              telephone: input.telephoneNumber,
-              code: '420',
-            })
-            .returning();
-        }
-
-        const [order] = await tx
-          .insert(orders)
-          .values({
-            deliveryMethodId: input.deliveryMethod.id,
-            email: input.email,
-            telephoneId: telephone.id,
-            firstName: input.firstName,
-            lastName: input.lastName,
-            notes: input.notes,
-            paymentMethodId: input.paymentMethod.id,
-            state: OrderState.NEW,
-            userId: ctx.sessionData.userId,
-            paymentMethodPrice: paymentMethod.price,
-            deliveryMethodPrice: deliveryMethod.price,
-            subtotal: cart.subtotal,
-          })
-          .returning();
-
-        // Update stock values
-        const stockUpdatesAsPromises: Promise<any>[] = [];
-        for (const productInCart of cart.products) {
-          if (!productInCart.product.stock) {
-            continue;
+          if (!telephone) {
+            [telephone] = await tx
+              .insert(telephoneNumbers)
+              .values({
+                telephone: input.telephoneNumber,
+                code: '420',
+              })
+              .returning();
           }
 
-          // TODO: doing this way will be imperfect if there will be more requests
-          stockUpdatesAsPromises.push(
-            database
-              .update(productStock)
-              .set({
-                value: Math.max(
-                  0,
-                  productInCart.product.stock.value - productInCart.count
-                ),
-              })
-              .where(eq(productStock.id, productInCart.product.stock.id))
-          );
-        }
+          const [order] = await tx
+            .insert(orders)
+            .values({
+              deliveryMethodId: input.deliveryMethod.id,
+              email: input.email,
+              telephoneId: telephone.id,
+              firstName: input.firstName,
+              lastName: input.lastName,
+              notes: input.notes,
+              paymentMethodId: input.paymentMethod.id,
+              state: paymentMethod.paymentOnCheckout
+                ? OrderState.UNPAID
+                : OrderState.NEW,
+              userId: ctx.sessionData.userId,
+              paymentMethodPrice: paymentMethod.price,
+              deliveryMethodPrice: deliveryMethod.price,
+              subtotal: cart.subtotal,
+            })
+            .returning();
 
-        await Promise.all([
-          // Paste products from cart to order
-          tx.insert(orderedProducts).values(
-            cart.products.map((productInCart) => ({
-              count: productInCart.count,
-              productId: productInCart.product.id,
-              orderId: order.id,
-              totalPrice:
-                productInCart.count * (productInCart.product.price?.value ?? 0),
-            }))
-          ),
-          tx.delete(userCartProducts).where(
-            inArray(
-              userCartProducts.id,
-              cart.products.map(({ id }) => id)
-            )
-          ),
-          // Include stock updates in one promise
-          stockUpdatesAsPromises,
-        ]);
-
-        let redirectTo = `/muj-ucet/objednavky/${order.id}`;
-
-        // Handle comgate payment as last thing
-        if (paymentMethod.slug === PaymentMethodsSlug.BY_CARD) {
-          const comgatePayment = await Comgate.createPayment({
-            order,
-          });
-
-          await database.insert(comgatePayments).values({
-            transactionId: comgatePayment.data.transId!,
+          const { municipality, ...addressPayload } = input.address;
+          await tx.insert(orderAddresses).values({
+            ...addressPayload,
             orderId: order.id,
+            municipalityId: input.address.municipality.id,
           });
 
-          redirectTo = comgatePayment.data.redirect ?? redirectTo;
-        }
+          // Update stock values
+          const stockUpdatesAsPromises: Promise<any>[] = [];
+          for (const productInCart of cart.products) {
+            if (!productInCart.product.stock) {
+              continue;
+            }
 
-        return { order, redirectTo };
-      });
+            // TODO: doing this way will be imperfect if there will be more requests
+            stockUpdatesAsPromises.push(
+              database
+                .update(productStock)
+                .set({
+                  value: Math.max(
+                    0,
+                    productInCart.product.stock.value - productInCart.count
+                  ),
+                })
+                .where(eq(productStock.id, productInCart.product.stock.id))
+            );
+          }
+
+          await Promise.all([
+            // Paste products from cart to order
+            tx.insert(orderedProducts).values(
+              cart.products.map((productInCart) => ({
+                count: productInCart.count,
+                productId: productInCart.product.id,
+                orderId: order.id,
+                totalPrice:
+                  productInCart.count *
+                  (productInCart.product.price?.value ?? 0),
+              }))
+            ),
+            tx.delete(userCartProducts).where(
+              inArray(
+                userCartProducts.id,
+                cart.products.map(({ id }) => id)
+              )
+            ),
+            // Include stock updates in one promise
+            stockUpdatesAsPromises,
+          ]);
+
+          if (input.saveAddressToAccount) {
+            await tx
+              .update(userAddresses)
+              .set({
+                ...addressPayload,
+                municipalityId: input.address.municipality.id,
+              })
+              .where(eq(userAddresses.userId, ctx.sessionData.user.id));
+          }
+
+          let redirectTo = `/muj-ucet/objednavky/${order.id}`;
+
+          // Handle comgate payment as last thing
+          if (paymentMethod.slug === PaymentMethodsSlug.BY_CARD) {
+            const comgatePayment = await Comgate.createPayment({
+              order,
+            });
+
+            await tx.insert(comgatePayments).values({
+              transactionId: comgatePayment.data.transId!,
+              orderId: order.id,
+            });
+
+            redirectTo = comgatePayment.data.redirect ?? redirectTo;
+          }
+
+          return { redirectTo, newOrderId: order.id };
+        }
+      );
+
+      const order = await getOrderById(newOrderId);
 
       const [userEmailContent, adminEmailContent] = await Promise.all([
         renderAsync(
           ThankYouOrder({
             needsPayment: false,
             orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
-            order,
+            order: {
+              ...order,
+              deliveryMethod,
+              paymentMethod,
+              address: order.address!,
+              orderedProducts: order.orderedProducts.map((product) => ({
+                ...product,
+                product: {
+                  ...product.product,
+                  images: product.product.images.map(({ file }) => file),
+                  price: product.product.price!,
+                },
+              })),
+            },
             siteOrigin: config.app.origin,
           })
         ),
@@ -412,6 +452,9 @@ export const userCartRoutes = t.router({
           );
         }),
       ]);
+
+      revalidatePath('/muj-ucet/kosik/pokladna');
+      revalidatePath('/produkty');
 
       return {
         order,

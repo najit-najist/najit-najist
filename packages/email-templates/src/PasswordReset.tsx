@@ -1,5 +1,4 @@
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { Order } from '@najit-najist/database/models';
+import { LinkIcon } from '@heroicons/react/24/outline';
 import { buttonStyles } from '@najit-najist/ui';
 import { Button, Column, Row, Section } from '@react-email/components';
 
@@ -8,38 +7,37 @@ import { Heading } from './_components/Heading';
 import { Layout } from './_components/Layout';
 import { Spacing } from './_components/Spacing';
 import { Text } from './_components/Text';
-import { testOrder } from './constants';
 
-export interface OrderConfirmedProps {
-  order: Order;
-  orderLink: string;
+export type PasswordResetProps = {
   siteOrigin: string;
-}
+  token: string;
+};
 
-export default function OrderConfirmed({
-  order = testOrder,
-  orderLink,
+export default function PasswordReset({
   siteOrigin,
-}: OrderConfirmedProps) {
-  const title = `Potvrzení objednávky #${order.id}`;
+  token,
+}: PasswordResetProps) {
+  const finishUrl = `${siteOrigin}/zapomenute-heslo/dokonceni/${token}`;
 
   return (
-    <Layout siteOrigin={siteOrigin} title={title}>
+    <Layout
+      siteOrigin={siteOrigin}
+      title={'Dokončení obnovy hesla na najitnajist.cz'}
+    >
       <Section>
         <Row>
           <Column>
             <Heading className="text-center" as="h2">
-              {title}
+              Dokončení obnovy hesla na najitnajist.cz
             </Heading>
           </Column>
         </Row>
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="normal">
-            Gratulujeme! Vaši objednávku jsme potvrdili a začínáme na ní
-            pracovat. <br />
-            Již brzy Vás budeme informovat o dalších krocích.
+          <Text className="text-center" size="medium">
+            Zažádali jste si o obnovu hesla. <br /> Pro dokončení obnovy hesla
+            pokračujte klikem na toto tlačítko:
           </Text>
         </CenteredRow>
         <Row>
@@ -49,17 +47,14 @@ export default function OrderConfirmed({
                 appearance: 'spaceless',
                 className: 'px-5 py-4',
               })}
-              href={orderLink}
+              href={finishUrl}
             >
-              <InformationCircleIcon
-                className="w-5 mr-2 -mb-1"
-                strokeWidth={2}
-              />
-              Zobrazit detail objednávky
+              <LinkIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+              Dokončit
             </Button>
           </Column>
         </Row>
-        <Spacing />
+        <Spacing size="lg" />
       </Section>
     </Layout>
   );

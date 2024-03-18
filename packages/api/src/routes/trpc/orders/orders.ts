@@ -172,7 +172,20 @@ export const orderRoutes = t.router({
               body: await renderAsync(
                 OrderShipped({
                   orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
-                  order,
+                  order: {
+                    ...order,
+                    deliveryMethod: order.deliveryMethod!,
+                    paymentMethod: order.paymentMethod!,
+                    address: order.address!,
+                    orderedProducts: order.orderedProducts.map((product) => ({
+                      ...product,
+                      product: {
+                        ...product.product,
+                        images: product.product.images.map(({ file }) => file),
+                        price: product.product.price!,
+                      },
+                    })),
+                  },
                   siteOrigin: config.app.origin,
                 })
               ),

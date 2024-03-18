@@ -84,7 +84,8 @@ export const usersRoute = t.router({
           },
           columns: {
             _password: false,
-            _passwordResetToken: false,
+            _passwordResetSecret: false,
+            _registerSecret: false,
           },
           limit: perPage,
           offset: (page - 1) * perPage,

@@ -14,7 +14,7 @@ export const orderPaymentMethods = pgTable('order_payment_methods', {
   paymentOnCheckout: boolean('payment_on_checkout').default(false),
 });
 
-export type OrderPaymentMethod = typeof orderDeliveryMethods.$inferSelect;
+export type OrderPaymentMethod = typeof orderPaymentMethods.$inferSelect;
 
 export const orderPaymentExceptDeliveryMethods = pgTable(
   'order_payment_methods_except_delivery_methods',

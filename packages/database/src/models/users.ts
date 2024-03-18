@@ -69,7 +69,10 @@ export const users = pgTable(
       onDelete: 'set null',
     }),
 
-    _passwordResetToken: varchar('password_reset_token', {
+    _passwordResetSecret: varchar('password_reset_secret', {
+      length: 1064,
+    }),
+    _registerSecret: varchar('register_secret', {
       length: 1064,
     }),
     _password: varchar('password', { length: 1064 }).notNull(),

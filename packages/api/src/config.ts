@@ -12,6 +12,7 @@ const sessionSecret =
   process.env.SESSION_SECRET_VALUE ?? 'supersecretconstantthatyoucannotbreak';
 const jwtSecret =
   process.env.JWT_SECRET_VALUE ?? 'supersecretconstantthatyoucannotbreak';
+
 const sessionLength = 84000;
 
 // Email

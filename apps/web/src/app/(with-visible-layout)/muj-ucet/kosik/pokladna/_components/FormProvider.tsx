@@ -38,6 +38,7 @@ export const FormProvider: FC<
   }>
 > = ({ children, defaultFormValues }) => {
   const [isDoingTransition, doTransition] = useTransition();
+  const trpcUtils = trpc.useUtils();
   const router = useRouter();
   const plausible = usePlausible();
   const { mutateAsync: doCheckout } = trpc.profile.cart.checkout.useMutation();
@@ -93,8 +94,9 @@ export const FormProvider: FC<
         window.location.replace(redirectTo);
       } else {
         doTransition(() => {
-          router.push(`/muj-ucet/objednavky/${newOrder.id}`);
+          router.push(redirectTo as any);
         });
+        await trpcUtils.profile.cart.products.get.many.invalidate();
       }
     },
     [doCheckout, router, plausible]

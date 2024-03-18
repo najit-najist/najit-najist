@@ -1,22 +1,19 @@
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-// import type { DeliveryMethod, Order } from '@najit-najist/api';
-import { buttonStyles } from '@najit-najist/ui/dist/Button/buttonStyles';
-import { Button } from '@react-email/button';
-import { Column, Row } from '@react-email/components';
-import { Section } from '@react-email/section';
+import { buttonStyles } from '@najit-najist/ui';
+import { Button, Column, Row, Section } from '@react-email/components';
 
-import { CenteredRow } from './components/CenteredRow';
-import { ColoredSection } from './components/ColoredSection';
-import { Heading } from './components/Heading';
-import { Layout } from './components/Layout';
-import { PaperCenteredRow } from './components/PaperCenteredRow';
-import { Spacing } from './components/Spacing';
-import { Text } from './components/Text';
+import { CenteredRow } from './_components/CenteredRow';
+import { ColoredSection } from './_components/ColoredSection';
+import { Heading } from './_components/Heading';
+import { Layout } from './_components/Layout';
+import { PaperCenteredRow } from './_components/PaperCenteredRow';
+import { Spacing } from './_components/Spacing';
+import { Text } from './_components/Text';
 import { testOrder } from './constants';
+import { OrderWithRelations } from './types';
 
 export interface OrderShippedProps {
-  // order: Order;
-  order: any;
+  order: OrderWithRelations;
   orderLink: string;
   siteOrigin: string;
 }
@@ -45,7 +42,7 @@ export default function OrderShipped({
   orderLink,
   siteOrigin,
 }: OrderShippedProps) {
-  const title = isLocalPickup(order.delivery_method)
+  const title = isLocalPickup(order.deliveryMethod)
     ? `Objednávka #${order.id} připravena na prodejně`
     : `Objednávka #${order.id} byla odeslána`;
 
@@ -86,7 +83,7 @@ export default function OrderShipped({
         </Row>
         <Spacing size="lg" />
       </Section>
-      {isLocalPickup(order.delivery_method) ? (
+      {isLocalPickup(order.deliveryMethod) ? (
         <ColoredSection>
           <Spacing />
 

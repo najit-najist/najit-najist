@@ -216,6 +216,12 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                       ></div>
                     </Alert>
                   ) : null}
+                  {order.state !== OrderState.UNPAID &&
+                  order.paymentMethod.slug === 'comgate' ? (
+                    <Alert color="success" heading="🤗 Zaplaceno">
+                      Děkujeme za provedení platby přes COMGATE.
+                    </Alert>
+                  ) : null}
                   {/* <p>Mastercard</p>
                   <p>
                     <span aria-hidden="true">••••</span>

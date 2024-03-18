@@ -1,3 +1,15 @@
+import {
+  Municipality,
+  Order,
+  OrderDeliveryMethod,
+  OrderPaymentMethod,
+  OrderedAddress,
+  OrderedProduct,
+  Product,
+  ProductPrice,
+  ProductStock,
+  TelephoneNumber,
+} from '@najit-najist/database/models';
 import { FC } from 'react';
 
 export type BaseEmailProps = {
@@ -34,4 +46,22 @@ export type LinkAttachment = {
    * Content url
    */
   content: string;
+};
+
+type UnsignedModel<T> = Omit<T, 'id' | 'createdAt' | 'updatedAt'>;
+
+export type OrderWithRelations = Order & {
+  orderedProducts: (OrderedProduct & {
+    product: Product & {
+      images: string[];
+      stock?: UnsignedModel<ProductStock> | null;
+      price: UnsignedModel<ProductPrice>;
+    };
+  })[];
+  deliveryMethod: UnsignedModel<OrderDeliveryMethod>;
+  paymentMethod: UnsignedModel<OrderPaymentMethod>;
+  address: Omit<UnsignedModel<OrderedAddress>, 'municipalityId' | 'orderId'> & {
+    municipality: Pick<Municipality, 'name' | 'slug'>;
+  };
+  telephoneNumber?: UnsignedModel<TelephoneNumber> | null;
 };

@@ -36,6 +36,9 @@
     {
       "path": "../../packages/security",
     },
+    {
+      "path": "../../packages/email-templates",
+    },
   ],
   "include": ["src"]
 }

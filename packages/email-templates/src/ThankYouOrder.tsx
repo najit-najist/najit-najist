@@ -1,31 +1,33 @@
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
-// import type { Order } from '@najit-najist/api';
-import { Collections, getFileUrl } from '@najit-najist/pb';
-import { Alert } from '@najit-najist/ui/dist/Alert';
-import { buttonStyles } from '@najit-najist/ui/dist/Button/buttonStyles';
-import { Price } from '@najit-najist/ui/dist/Price';
-import { Button } from '@react-email/button';
-import { Column, Img, Row } from '@react-email/components';
-import { Link } from '@react-email/link';
-import { Section } from '@react-email/section';
+import { products } from '@najit-najist/database/models';
+import { buttonStyles, Alert, Price } from '@najit-najist/ui';
+import {
+  Column,
+  Img,
+  Row,
+  Button,
+  Link,
+  Section,
+} from '@react-email/components';
 import dayjs from 'dayjs';
 import { FC, PropsWithChildren } from 'react';
 
-import { CenteredRow } from './components/CenteredRow';
-import { ColoredSection } from './components/ColoredSection';
-import { Heading } from './components/Heading';
-import { Layout } from './components/Layout';
-import { PaperCenteredRow } from './components/PaperCenteredRow';
-import { PaperColumn } from './components/PaperColumn';
-import { Spacing } from './components/Spacing';
-import { Text } from './components/Text';
+import { CenteredRow } from './_components/CenteredRow';
+import { ColoredSection } from './_components/ColoredSection';
+import { Heading } from './_components/Heading';
+import { Layout } from './_components/Layout';
+import { PaperCenteredRow } from './_components/PaperCenteredRow';
+import { PaperColumn } from './_components/PaperColumn';
+import { Spacing } from './_components/Spacing';
+import { Text } from './_components/Text';
 import { testOrder } from './constants';
+import { getFileUrl } from './getFileUrl';
+import { OrderWithRelations } from './types';
 
 export interface ThankYouOrderProps {
   needsPayment: boolean;
   siteOrigin: string;
-  // order: Order;
-  order: any;
+  order: OrderWithRelations;
   orderLink: string;
 }
 
@@ -44,11 +46,10 @@ const ItemListItem: FC<
   );
 };
 
-// const OrderProduct: FC<{ data: Order['products'][number] }> = ({ data }) => {
-const OrderProduct: FC<{ data: any; siteOrigin: string }> = ({
-  data,
-  siteOrigin,
-}) => {
+const OrderProduct: FC<{
+  data: ThankYouOrderProps['order']['orderedProducts'][number];
+  siteOrigin: string;
+}> = ({ data, siteOrigin }) => {
   const productImage = data.product.images[0];
   const imageSize = 40;
   return (
@@ -58,12 +59,10 @@ const OrderProduct: FC<{ data: any; siteOrigin: string }> = ({
           {productImage ? (
             <Img
               src={new URL(
-                getFileUrl(
-                  Collections.PRODUCTS,
-                  data.product.id,
-                  productImage,
-                  { height: imageSize, width: imageSize }
-                ),
+                getFileUrl(products, data.product.id, productImage, {
+                  height: imageSize,
+                  width: imageSize,
+                }),
                 siteOrigin
               ).toString()}
               width={imageSize}
@@ -131,21 +130,23 @@ export default function ThankYouOrder({
                       <Row>
                         <Column>Datum objednávky:</Column>
                         <Column className="text-right">
-                          {dayjs(order.created).format('DD. MM. YYYY v HH:mm')}
+                          {dayjs(order.createdAt).format(
+                            'DD. MM. YYYY v HH:mm'
+                          )}
                         </Column>
                       </Row>
                       <Spacing size="sm" />
                       <Row>
                         <Column>Typ dopravy:</Column>
                         <Column className="text-right">
-                          {order.delivery_method.name}
+                          {order.deliveryMethod.name}
                         </Column>
                       </Row>
                       <Spacing size="sm" />
                       <Row>
                         <Column>Typ platby:</Column>
                         <Column className="text-right">
-                          {order.payment_method.name}
+                          {order.paymentMethod.name}
                         </Column>
                       </Row>
                       <Spacing size="sm" />
@@ -156,8 +157,8 @@ export default function ThankYouOrder({
                             size={'sm'}
                             value={
                               order.subtotal +
-                              order.payment_method_price +
-                              order.delivery_method_price
+                              (order.paymentMethodPrice ?? 0) +
+                              (order.deliveryMethodPrice ?? 0)
                             }
                           />
                         </Column>
@@ -179,10 +180,10 @@ export default function ThankYouOrder({
                         {order.firstName} {order.lastName}
                       </span>
                       <span className="block mt-2">
-                        {order.address_streetName}, {order.address_houseNumber}
+                        {order.address.streetName}, {order.address.houseNumber}
                       </span>
                       <span className="block">
-                        {order.address_city} {order.address_postalCode}
+                        {order.address.city} {order.address.postalCode}
                       </span>
                     </address>
                   </PaperColumn>
@@ -201,7 +202,7 @@ export default function ThankYouOrder({
         <Heading as="h3">Položky</Heading>
       </CenteredRow>
       <PaperCenteredRow className="pt-5">
-        {order.products.map((product: any) => (
+        {order.orderedProducts.map((product: any) => (
           <OrderProduct
             key={product.id}
             siteOrigin={siteOrigin}
@@ -211,12 +212,12 @@ export default function ThankYouOrder({
         {/* footer */}
         <hr className="border-none bg-gray-200 w-full mt-5 h-0.5 mb-0" />
         <ItemListItem className="text-gray-700">
-          <Column>{order.delivery_method.name}</Column>
+          <Column>{order.deliveryMethod.name}</Column>
           <Column className="text-right">
-            <Price size={'sm'} value={order.delivery_method_price} />
+            <Price size={'sm'} value={order.deliveryMethodPrice ?? 0} />
           </Column>
         </ItemListItem>
-        {order.delivery_method.notes ? (
+        {order.deliveryMethod.notes ? (
           <ItemListItem skipSpacing className="text-gray-700">
             <Column colSpan={2}>
               <Alert
@@ -230,7 +231,7 @@ export default function ThankYouOrder({
               >
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: order.delivery_method.notes,
+                    __html: order.deliveryMethod.notes,
                   }}
                 />
               </Alert>
@@ -238,12 +239,12 @@ export default function ThankYouOrder({
           </ItemListItem>
         ) : null}
         <ItemListItem className="text-gray-700">
-          <Column>{order.payment_method.name}</Column>
+          <Column>{order.paymentMethod.name}</Column>
           <Column className="text-right">
-            <Price size={'sm'} value={order.payment_method_price} />
+            <Price size={'sm'} value={order.paymentMethodPrice ?? 0} />
           </Column>
         </ItemListItem>
-        {order.payment_method.notes ? (
+        {order.paymentMethod.notes ? (
           <ItemListItem skipSpacing className="text-gray-700">
             <Column colSpan={2}>
               <Alert
@@ -257,7 +258,7 @@ export default function ThankYouOrder({
               >
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: order.payment_method.notes,
+                    __html: order.paymentMethod.notes,
                   }}
                 />
               </Alert>
@@ -271,8 +272,8 @@ export default function ThankYouOrder({
               size={'sm'}
               value={
                 order.subtotal +
-                order.delivery_method_price +
-                order.payment_method_price
+                (order.paymentMethodPrice ?? 0) +
+                (order.deliveryMethodPrice ?? 0)
               }
             />
           </Column>

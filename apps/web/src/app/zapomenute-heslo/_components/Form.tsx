@@ -18,14 +18,17 @@ export const Form: FC = () => {
   const router = useRouter();
   const { mutateAsync: requestPasswordReset } =
     trpc.profile.passwordReset.do.useMutation();
-  const { register, handleSubmit, formState } = formMethods;
+  const { register, handleSubmit, formState, setError } = formMethods;
   const fieldsAreDisabled =
     formState.isSubmitSuccessful || formState.isSubmitting;
 
   const onSubmit = handleSubmit(async (values) => {
-    await requestPasswordReset(values);
-
-    router.push('/login?passwordResetCallback');
+    try {
+      await requestPasswordReset(values);
+      router.push('/login?passwordResetCallback');
+    } catch (error) {
+      setError('email', { message: (error as Error).message });
+    }
   });
 
   return (

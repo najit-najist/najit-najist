@@ -1,4 +1,4 @@
-import { pgTable, serial, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
+import { pgTable, uniqueIndex, varchar } from 'drizzle-orm/pg-core';
 
 import { modelsBase } from '../internal/modelsBase';
 
@@ -18,5 +18,13 @@ export const municipalities = pgTable(
     };
   }
 );
+
+// export const municipalitiesRelations = relations(
+//   municipalities,
+//   ({ many }) => ({
+//     orderAddresses: many(orderAddresses),
+//     userAddresses: many(userAddresses),
+//   })
+// );
 
 export type Municipality = typeof municipalities.$inferSelect;

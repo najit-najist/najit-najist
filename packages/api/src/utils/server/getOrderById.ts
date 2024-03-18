@@ -8,13 +8,19 @@ export const getOrderById = async (orderId: Order['id']) => {
   const item = await database.query.orders.findFirst({
     where: (schema, { eq }) => eq(schema.id, orderId),
     with: {
-      address: true,
+      address: {
+        with: {
+          municipality: true,
+        },
+      },
       deliveryMethod: true,
       orderedProducts: {
         with: {
           product: {
             with: {
               images: true,
+              price: true,
+              stock: true,
             },
           },
         },

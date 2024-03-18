@@ -27,12 +27,13 @@ type Address = Omit<ToCreateSchema<UserAddress>, 'userId'>;
 
 export type UserServiceCreateOptions = Omit<
   ToCreateSchema<User>,
-  'lastLoggedIn' | 'telephoneId' | '_passwordResetToken'
+  'lastLoggedIn' | 'telephoneId' | '_passwordResetSecret' | '_registerSecret'
 > & {
   newsletter?: boolean | null;
   lastLoggedIn?: User['lastLoggedIn'];
   telephoneId?: User['telephoneId'];
-  _passwordResetToken?: User['_passwordResetToken'];
+  _passwordResetSecret?: User['_passwordResetSecret'];
+  _registerSecret?: User['_registerSecret'];
   telephone?: Pick<TelephoneNumber, 'telephone'>;
   address: Pick<Address, 'municipalityId'> &
     Partial<Omit<Address, 'municipalityId'>>;
