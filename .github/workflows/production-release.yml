@@ -13,7 +13,6 @@ jobs:
     outputs:
       repo: ${{ steps.filter.outputs.repo }}
       web: ${{ steps.filter.outputs.web }}
-      pocketbase: ${{ steps.filter.outputs.pocketbase }}
     steps:
       - uses: n1hility/cancel-previous-runs@v3
         with: 
@@ -35,11 +34,11 @@ jobs:
               - 'package-lock.json'
             web:
               - 'apps/web/**'
-              - 'packages/najit-najist-api/**'
+              - 'packages/api/**'
               - 'packages/ui/**'
-            pocketbase:
-              - 'apps/pb/Dockerfile'
-              - 'apps/pb/migrations/**'
+              - 'packages/schema/**'
+              - 'packages/database/**'
+              - 'packages/email-templates/**'
 
   check-build:
     name: Check project build
@@ -73,48 +72,6 @@ jobs:
 
       - name: 🏗️ Build
         run: npm run build
-        env:
-          POCKETBASE_ORIGIN: http://localhost:3000
-
-  deploy-pocketbase:
-    name: "📍 Deploy Pocketbase to dokku"
-    needs: [prepare, check-build]
-    runs-on: ubuntu-latest
-    # if: needs.prepare.outputs.pocketbase == 'true'
-    steps:
-      - name: Cloning repo
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-
-      - name: Set up qemu
-        uses: docker/setup-qemu-action@v2
-
-      - name: Set up docker buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Login to docker hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: ondrejlangr/najit-najist-pb:${{ github.sha }}
-          file: ./apps/pb/Dockerfile
-
-      - name: Push to dokku
-        uses: dokku/github-action@master
-        with:
-          git_remote_url: 'ssh://dokku@najitnajist.cz:22/pocketbase'
-          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          deploy_docker_image: ondrejlangr/najit-najist-pb:${{ github.sha }}
-          branch: 'main'
-          git_push_flags: '--force'
 
   deploy-web:
     name: "📍 Deploy web to dokku"
@@ -149,7 +106,6 @@ jobs:
           build-args: |
             TURBO_TEAM=${{ secrets.TURBO_TEAM }} 
             TURBO_TOKEN=${{ secrets.TURBO_TOKEN }} 
-            POCKETBASE_ORIGIN=http://pocketbase.web:8090
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku
