@@ -1,7 +1,7 @@
 # Global variables
 ARG NODE_VERSION=18
 ARG ALPINE_VERSION=3.18
-ARG POCKETBASE_ORIGIN
+ARG DATABASE_URL
 ARG TURBO_TEAM
 ARG TURBO_TOKEN
 
@@ -35,11 +35,11 @@ RUN npm install
 
 FROM node:${NODE_VERSION}-alpine${ALPINE_VERSION} AS builder
 
-ARG POCKETBASE_ORIGIN
+ARG DATABASE_URL
 ARG TURBO_TEAM
 ARG TURBO_TOKEN
 
-ENV POCKETBASE_ORIGIN=${POCKETBASE_ORIGIN}
+ENV DATABASE_URL=${DATABASE_URL}
 ENV NODE_ENV=production
 ENV TURBO_TEAM=${TURBO_TEAM}
 ENV TURBO_TOKEN=${TURBO_TOKEN}
@@ -88,6 +88,7 @@ COPY --from=builder /workspace-builder/packages/database/package.json \
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
                     /workspace-builder/packages/email-templates/dist/ \
+                    /workspace-builder/packages/email-templates/node_modules/ \
                     ./packages/email-templates/
 
 COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/package.json \
@@ -106,6 +107,7 @@ COPY --from=builder /workspace-builder/packages/security/package.json \
 # Include ui package as it its a monorepo dependency 
 COPY --from=builder /workspace-builder/packages/ui/package.json \
                     /workspace-builder/packages/ui/dist/ \
+                    /workspace-builder/packages/ui/node_modules/ \
                     ./packages/ui/
 
 # Copy node_modules

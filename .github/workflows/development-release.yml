@@ -72,6 +72,8 @@ jobs:
 
       - name: 🏗️ Build
         run: npm run build
+        env:
+          DATABASE_URL: 'just-a-placeholder'
 
   deploy-web:
     name: "📍 Deploy web to dokku"
