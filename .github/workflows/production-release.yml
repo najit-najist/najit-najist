@@ -107,7 +107,8 @@ jobs:
           tags: ondrejlangr/najit-najist-web:${{ github.sha }}
           build-args: |
             TURBO_TEAM=${{ secrets.TURBO_TEAM }} 
-            TURBO_TOKEN=${{ secrets.TURBO_TOKEN }} 
+            TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
+            DATABASE_URL=just-a-placeholder
           file: ./apps/web/Dockerfile
 
       - name: Push to dokku

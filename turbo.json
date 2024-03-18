@@ -4,7 +4,7 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**"],
-      "env": ["POCKETBASE_ORIGIN"]
+      "env": ["DATABASE_URL"]
     },
     "lint": {
       "outputs": []
