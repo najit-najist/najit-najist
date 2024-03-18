@@ -39,6 +39,7 @@ Dockerfile
 docker-compose.*.yml
 docker-compose.yml
 docker
+private
 
 # Log files
 logs
