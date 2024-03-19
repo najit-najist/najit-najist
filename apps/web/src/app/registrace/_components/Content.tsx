@@ -115,6 +115,7 @@ export const Content: FC = () => {
                 className="mt-3"
                 label="Obec"
                 name="address.municipality"
+                disabled={fieldsAreDisabled}
                 required
               />
 
