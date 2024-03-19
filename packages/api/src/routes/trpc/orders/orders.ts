@@ -14,12 +14,15 @@ import { t } from '@trpc';
 import { onlyAdminProcedure } from '@trpc-procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@trpc-procedures/protectedProcedure';
 import { getOrderById } from '@utils/server/getOrderById';
-import { SQL, and, eq, inArray, sql } from 'drizzle-orm';
+import { SQL, and, eq, getTableName, inArray, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { config } from '../../../config';
+import { EntityNotFoundError } from '../../../errors/EntityNotFoundError';
+import { logger } from '../../../logger';
 import { defaultGetManyPagedSchema } from '../../../schemas/base.get-many.schema';
-import { MailService, logger } from '../../../server';
+import { MailService } from '../../../services';
+import { UserActions, canUser } from '../../../utils/canUser';
 
 const isLocalPickup = (
   delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
@@ -68,7 +71,21 @@ export const orderRoutes = t.router({
     one: protectedProcedure
       .input(entityLinkSchema)
       .query(async ({ input, ctx }) => {
-        return getOrderById(input.id);
+        const order = await getOrderById(input.id);
+
+        if (
+          !canUser(ctx.sessionData.user, {
+            action: UserActions.UPDATE,
+            onModel: orders,
+          }) &&
+          order.userId !== ctx.sessionData.userId
+        ) {
+          throw new EntityNotFoundError({
+            entityName: getTableName(orders),
+          });
+        }
+
+        return order;
       }),
     many: protectedProcedure
       .input(
@@ -84,6 +101,15 @@ export const orderRoutes = t.router({
         // TODO - paginations
 
         const conditions: SQL<unknown>[] = [];
+
+        if (
+          !canUser(ctx.sessionData.user, {
+            action: UserActions.UPDATE,
+            onModel: orders,
+          })
+        ) {
+          conditions.push(eq(orders.userId, ctx.sessionData.userId));
+        }
 
         if (input.user?.id.length) {
           conditions.push(inArray(orders.userId, input.user.id ?? []));
