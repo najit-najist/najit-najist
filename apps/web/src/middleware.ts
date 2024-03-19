@@ -64,10 +64,11 @@ export async function middleware(request: NextRequest) {
   const isUnauthorizedOnlyPath = unauthorizedOnlyPaths.test(
     requestUrl.pathname
   );
-
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
     const currentUserResponse = await fetch(
-      'http://localhost:4000/api/muj-ucet/profil',
+      `http://localhost:${
+        process.env.NODE_ENV === 'development' ? 3000 : 4000
+      }/api/muj-ucet/profil`,
       { headers: request.headers }
     );
     const currentUser = (await currentUserResponse.json()) as User;
