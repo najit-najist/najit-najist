@@ -11,7 +11,7 @@ import { FC } from 'react';
 export const Item: FC<PostWithRelations> = (post) => {
   const link: any = `/clanky/${post.slug}`;
   return (
-    <article className="relative isolate flex flex-col gap-8 lg:flex-row">
+    <article className="relative isolate flex flex-col gap-6 lg:flex-row">
       <Link
         href={link}
         className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0 block"

@@ -89,9 +89,6 @@ export const postsRoute = t.router({
             .values({
               ...input,
               slug: slugifyString(input.title),
-              content: input.content
-                ? JSON.stringify(input.content)
-                : undefined,
               createdById: ctx.sessionData.userId,
             })
             .returning();
@@ -129,6 +126,7 @@ export const postsRoute = t.router({
     .mutation(async ({ ctx, input }) => {
       let post: Post;
       const library = new LibraryService(posts);
+      const existing = await getOneBy('id', input.id);
 
       try {
         const { image: newImage, ...updateOptions } = input.data;
@@ -143,10 +141,8 @@ export const postsRoute = t.router({
               ...(updateOptions.title
                 ? { slug: slugifyString(updateOptions.title) }
                 : null),
-              content: updateOptions.content
-                ? JSON.stringify(updateOptions.content)
-                : undefined,
               updateById: ctx.sessionData.userId,
+              updatedAt: new Date(),
             })
             .where(eq(posts.id, input.id))
             .returning();
@@ -167,6 +163,18 @@ export const postsRoute = t.router({
             }
 
             updated = newlyUpdated;
+          }
+
+          if (newImage === null && existing.image) {
+            [updated] = await tx
+              .update(posts)
+              .set({
+                image: null,
+              })
+              .where(eq(posts.id, input.id))
+              .returning();
+
+            await library.delete(existing, existing.image);
           }
 
           await library.commit();

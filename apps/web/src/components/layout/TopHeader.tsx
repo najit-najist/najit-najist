@@ -9,7 +9,7 @@ import {
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
 import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
 import { User, UserRoles } from '@najit-najist/database/models';
-import { Menu, Transition } from '@najit-najist/ui';
+import { ErrorBoundary, Menu, Transition } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
@@ -256,7 +256,9 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                       <UserIcon className="w-4 h-4" />
                     </Link>
 
-                    <ShoppingBagButton />
+                    <ErrorBoundary fallback={null}>
+                      <ShoppingBagButton />
+                    </ErrorBoundary>
                   </>
                 ) : (
                   <>

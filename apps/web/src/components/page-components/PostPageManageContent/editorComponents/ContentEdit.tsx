@@ -1,48 +1,32 @@
 'use client';
 
-import { PostWithRelations } from '@custom-types';
-import { BlockEditorCode } from '@najit-najist/ui/editor';
-import { useEditorJSInstances } from 'contexts/editorJsInstancesContext';
+import { FormControlWrapper, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
-import { FC, useEffect, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { FC } from 'react';
+import { Controller, useWatch } from 'react-hook-form';
 
 const LazyEditor = dynamic(
   () =>
-    import('@najit-najist/ui/editor').then(({ BlockEditor }) => BlockEditor),
+    import('@najit-najist/ui/editor').then(({ QuillEditor }) => QuillEditor),
   {
     ssr: false,
     loading() {
-      return <div className="h-96"></div>;
+      return <Skeleton rounded className="h-50" />;
     },
   }
 );
 
 export const ContentEdit: FC = () => {
-  const { formState, watch } = useFormContext<PostWithRelations>();
-  const [instance, setInstance] = useState<BlockEditorCode>();
-  const editorInstances = useEditorJSInstances();
-  const fieldsAreDisabled = formState.isSubmitting;
-
-  const editorData = watch('content');
-
-  useEffect(() => {
-    if (instance) {
-      editorInstances.set('content', instance);
-    }
-
-    return () => {
-      editorInstances.delete('content');
-    };
-  }, [instance, editorInstances]);
+  console.log(useWatch({ name: 'content' }));
 
   return (
-    <LazyEditor
-      defaultValue={editorData ? JSON.parse(editorData) : undefined}
-      onInitialize={setInstance}
-      readOnly={fieldsAreDisabled}
-      minHeight={200}
-      error={formState.errors.content?.message}
+    <Controller
+      name="content"
+      render={({ field: { ref, ...field }, fieldState }) => (
+        <FormControlWrapper title="Obsah" error={fieldState.error}>
+          <LazyEditor placeholder="Obsah článku" {...field} />
+        </FormControlWrapper>
+      )}
     />
   );
 };

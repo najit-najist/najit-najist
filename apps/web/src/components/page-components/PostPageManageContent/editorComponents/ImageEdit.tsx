@@ -1,10 +1,12 @@
 'use client';
 
 import { ACCEPT_FILES_IMAGE } from '@constants';
+import { TrashIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { getFileUrl } from '@najit-najist/api';
 import { Post, posts } from '@najit-najist/database/models';
 import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/schemas';
+import { Button, Tooltip } from '@najit-najist/ui';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { ChangeEventHandler, FC, useMemo, useRef, useState } from 'react';
@@ -56,15 +58,31 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
   }, [value, postId]);
 
   const content = value ? (
-    <Image
-      alt="image"
-      src={imageUrl}
-      width={200}
-      height={200}
-      unoptimized={imageUrl.startsWith('data:')}
-      className="absolute top-0 left-0 w-full h-full object-center object-cover"
-      onClick={onChangeImageClick}
-    />
+    <>
+      <Image
+        alt="image"
+        src={imageUrl}
+        width={200}
+        height={200}
+        unoptimized={imageUrl.startsWith('data:')}
+        className="absolute top-0 left-0 w-full h-full object-center object-cover"
+        onClick={onChangeImageClick}
+      />
+      <Tooltip
+        trigger={
+          <Button
+            padding={'off'}
+            color="red"
+            className="absolute bottom-0 right-0 m-4 !px-4 pt-3"
+            onClick={() => setValue(FIELD_NAME, null)}
+          >
+            <TrashIcon width={30} height={30} />
+          </Button>
+        }
+      >
+        Vyzat obrázek
+      </Tooltip>
+    </>
   ) : (
     <div
       className="absolute w-full h-full flex items-center justify-center bg-white cursor-pointer"
@@ -76,7 +94,7 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
         ) : (
           <PhotoIcon className=" w-20 h-20 mx-auto" />
         )}
-        <p className="text-gray-400">Upravte kliknutím...</p>
+        <p className="text-gray-400">Nastavte kliknutím...</p>
       </div>
     </div>
   );

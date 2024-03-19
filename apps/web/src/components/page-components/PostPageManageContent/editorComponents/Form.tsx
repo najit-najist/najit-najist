@@ -7,6 +7,7 @@ import {
   postCreateInputSchema,
   postUpdateInputSchema,
 } from '@najit-najist/api';
+import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
@@ -23,10 +24,7 @@ export const Form: FC<
   const router = useRouter();
   const editorReferences = useEditorJSInstances();
   const formMethods = useForm<FormData>({
-    defaultValues: {
-      ...post,
-      content: post?.content ? JSON.parse(post.content) : null,
-    },
+    defaultValues: post,
     resolver: zodResolver(
       viewType === 'create' ? postCreateInputSchema : postUpdateInputSchema
     ),
@@ -40,20 +38,35 @@ export const Form: FC<
       const payload = {
         title: values.title,
         description: values.description,
-        content: await editorReferences.get('content')?.save(),
+        content: values.content,
         publishedAt: values.publishedAt,
         image: values.image,
       };
 
       if (viewType === 'create') {
-        const newData = await createPost(payload);
+        const action = createPost(payload);
 
+        toast.promise(action, {
+          loading: 'Vytvářím článek',
+          success: <>Článek vytvořen!</>,
+          error: (error) => <b>Nemohli jsme vytvořit článek {error.message}</b>,
+        });
+
+        const newData = await action;
         router.push(`/clanky/${newData.slug}`);
       } else if (viewType === 'edit') {
-        const newData = await updatePost({
+        const action = updatePost({
           id: post!.id,
           data: payload,
         });
+
+        toast.promise(action, {
+          loading: 'Ukládám článek',
+          success: <>Článek uložen!</>,
+          error: (error) => <b>Nemohli jsme uložit článek {error.message}</b>,
+        });
+
+        const newData = await action;
 
         router.push(`/clanky/${newData.slug}?editor=true`);
       }

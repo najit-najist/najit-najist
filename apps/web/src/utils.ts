@@ -58,7 +58,7 @@ export function getChangedValues<G extends Record<any, any>>(
   return Object.fromEntries(
     Object.keys(dirtyFields).map((key) => [
       key,
-      getChangedValues(allValues[key], dirtyFields[key] as any),
+      getChangedValues(allValues[key], (dirtyFields as any)[key]),
     ])
   ) as Partial<G>;
 }

@@ -15,6 +15,7 @@ export type BlockEditorCode = Parameters<
 >['0'];
 
 const BlockEditorInstance = createReactEditorJS();
+
 export const BlockEditor: FC<BlockEditorProps> = ({
   title,
   error,
@@ -24,7 +25,14 @@ export const BlockEditor: FC<BlockEditorProps> = ({
 
   return (
     <FormControlWrapper id={id} title={title} error={error}>
-      <BlockEditorInstance tools={EDITORJS_TOOLS} {...props} />
+      <BlockEditorInstance
+        tools={EDITORJS_TOOLS}
+        defaultBlock={'paragraph'}
+        placeholder="Let`s write an awesome story!"
+        minHeight={400}
+        onReady={console.log}
+        {...props}
+      />
     </FormControlWrapper>
   );
 };

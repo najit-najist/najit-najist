@@ -4,7 +4,7 @@ import { PostWithRelations } from '@custom-types';
 import { getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
 import { Breadcrumbs } from '@najit-najist/ui';
-import { BlockEditorRenderer } from '@najit-najist/ui/editor-renderer';
+import clsx from 'clsx';
 import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
@@ -28,6 +28,7 @@ export type PostPageManageContent = { isEditorHeaderShown?: boolean } & (
 );
 
 export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
+  const isImageShown = props.viewType !== 'view' || props.post.image;
   const content = (
     <>
       <div className="container mt-6 mb-3">
@@ -55,7 +56,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
       <div>
         <PageHeader className="container">
           {props.viewType == 'view' ? (
-            <div className="text-gray-500 text-xs md:text-inherit -mt-2 block relative">
+            <div className="text-gray-500 text-xs md:text-inherit block mb-8 relative">
               {props.post.publishedAt ? (
                 <time dateTime={String(props.post.publishedAt)} className="">
                   {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
@@ -74,49 +75,69 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           )}
         </PageHeader>
 
-        <div className="bg-[#388659] py-7 sm:py-10 my-7">
-          <div className="container flex items-start space-x-10">
-            {props.viewType !== 'view' || props.post.image ? (
-              <div className="w-full sm:w-1/2 aspect-[16/10] relative flex-none rounded-md overflow-hidden shadow-sm">
+        <div className="pt-4 pb-8 sm:pb-10">
+          <div
+            className={clsx(
+              'grid grid-cols-1',
+              isImageShown ? 'lg:grid-cols-2 gap-9 lg:gap-10' : 'lg:grid-cols-3'
+            )}
+          >
+            <div
+              className={clsx(
+                'bg-[#388659] h-full lg:rounded-r-lg shadow-lg p-4',
+                isImageShown ? '' : 'col-span-2'
+              )}
+            >
+              <div
+                className={clsx(
+                  'font-title sm:text-2xl mx-auto lg:ml-auto lg:mr-0 !leading-[2.5rem] tracking-wide w-full h-full max-w-[640px] md:max-w-3xl',
+                  isImageShown ? 'lg:max-w-2xl' : 'lg:max-w-[63rem]'
+                )}
+              >
                 {props.viewType === 'view' ? (
-                  <Image
-                    width={300}
-                    height={300}
-                    unoptimized
-                    src={getFileUrl(posts, props.post.id, props.post.image!)}
-                    alt=""
-                    className="absolute inset-0 h-full w-full rounded-lg bg-gray-50 object-cover shadow-md"
-                  />
+                  <div className="text-gray-100">
+                    {HTMLReactParser(props.post.description)}
+                  </div>
                 ) : (
-                  <ImageEdit
-                    postId={
-                      props.viewType == 'edit' ? props.post.id : undefined
-                    }
-                  />
+                  <DescriptionEdit />
                 )}
               </div>
-            ) : null}
-
-            <div className="font-title sm:text-xl leading-9 spacing max-w-4xl tracking-wide w-full">
-              {props.viewType === 'view' ? (
-                <div className="text-white">
-                  {HTMLReactParser(props.post.description)}
+            </div>
+            <div className="-order-1 lg:order-1 px-4 lg:px-0">
+              {isImageShown ? (
+                <div className="w-full aspect-[16/10] mx-auto lg:mr-auto lg:ml-0 max-w-[640px] md:max-w-3xl lg:max-w-[900px] relative flex-none rounded-md overflow-hidden shadow-sm">
+                  {props.viewType === 'view' ? (
+                    <Image
+                      width={300}
+                      height={300}
+                      unoptimized
+                      src={getFileUrl(posts, props.post.id, props.post.image!)}
+                      alt=""
+                      className="absolute inset-0 h-full w-full rounded-lg bg-gray-50 object-cover shadow-md"
+                    />
+                  ) : (
+                    <ImageEdit
+                      postId={
+                        props.viewType == 'edit' ? props.post.id : undefined
+                      }
+                    />
+                  )}
                 </div>
-              ) : (
-                <DescriptionEdit />
-              )}
+              ) : null}
             </div>
           </div>
         </div>
 
-        <div className="container sm:text-lg pb-10 post-page-content">
-          {props.viewType === 'view' ? (
-            props.post.content ? (
-              <BlockEditorRenderer data={JSON.parse(props.post.content)} />
-            ) : null
-          ) : (
-            <ContentEdit />
-          )}
+        <div className="container sm:text-lg pb-10 post-page-content font-title w-full">
+          <div className="prose lg:prose-xl max-w-none w-full">
+            {props.viewType === 'view' ? (
+              props.post.content ? (
+                HTMLReactParser(props.post.content ?? '')
+              ) : null
+            ) : (
+              <ContentEdit />
+            )}
+          </div>
         </div>
       </div>
       {props.isEditorHeaderShown ? (

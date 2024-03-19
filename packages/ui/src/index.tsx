@@ -60,3 +60,11 @@ export type { SkeletonProps } from './Skeleton.js';
 export * from './headlessUi.js';
 
 export { toast, Toaster } from './toast/index.js';
+export {
+  ErrorBoundary,
+  type ErrorBoundaryProps,
+  type FallbackProps,
+  type ErrorBoundaryPropsWithRender,
+  type ErrorBoundaryPropsWithFallback,
+  type ErrorBoundaryPropsWithComponent,
+} from './ErrorBoundary.js';

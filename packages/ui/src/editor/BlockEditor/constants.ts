@@ -1,6 +1,7 @@
 // @ts-ignore
 // @ts-ignore
 import DelimiterPlugin from '@editorjs/delimiter';
+import { ToolConstructable, ToolSettings } from '@editorjs/editorjs';
 // @ts-ignore
 import HeaderPlugin from '@editorjs/header';
 // @ts-ignore
@@ -18,7 +19,9 @@ import {
 } from '../DataRenderer/renderers/HeaderRenderer.js';
 import { Tool } from '../types.js';
 
-export const EDITORJS_TOOLS = {
+export const EDITORJS_TOOLS: {
+  [toolName: string]: ToolConstructable | ToolSettings;
+} = {
   paragraph: {
     class: ParagraphPlugin,
     inlineToolbar: true,
@@ -37,4 +40,4 @@ export const EDITORJS_TOOLS = {
   link: LinkPlugin as Tool,
   list: ListPlugin as Tool,
   underline: UnderlinePlugin as Tool,
-} as const;
+};

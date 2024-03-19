@@ -10,7 +10,7 @@ const LazyEditor = dynamic(
   {
     ssr: false,
     loading() {
-      return <Skeleton rounded className="h-20" />;
+      return <Skeleton rounded className="h-full min-h-60" />;
     },
   }
 );
@@ -21,7 +21,7 @@ export const DescriptionEdit = () => {
       name="description"
       render={({ field: { ref, ...field }, fieldState }) => (
         <LazyEditor
-          rootClassName="w-full min-h-full"
+          rootClassName="w-full min-h-full h-full"
           className="h-full"
           placeholder="Úvod článku..."
           error={fieldState.error}
