@@ -91,7 +91,7 @@ export const orderRoutes = t.router({
 
         const [items, [{ count }]] = await Promise.all([
           database.query.orders.findMany({
-            orderBy: (schema, { asc }) => [asc(schema.createdAt)],
+            orderBy: (schema, { desc }) => [desc(schema.createdAt)],
             where: and(...conditions),
             with: {
               orderedProducts: {
