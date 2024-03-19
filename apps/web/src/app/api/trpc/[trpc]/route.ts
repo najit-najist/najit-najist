@@ -11,6 +11,10 @@ function handler(request: NextRequest) {
     onError({ type, error, path, ctx }) {
       const { authContent } = ctx?.sessionData ?? {};
 
+      if (path === 'profile.me' && error.message === 'UNAUTHORIZED') {
+        return;
+      }
+
       logger.error(
         {
           type,
