@@ -88,7 +88,6 @@ COPY --from=builder /workspace-builder/packages/database/package.json \
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
                     /workspace-builder/packages/email-templates/dist/ \
-                    /workspace-builder/packages/email-templates/node_modules/ \
                     ./packages/email-templates/
 
 COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/package.json \
@@ -96,7 +95,6 @@ COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/pac
                     ./packages/najit-najist-tailwind-plugin/
 
 COPY --from=builder /workspace-builder/packages/schemas/package.json \
-                    /workspace-builder/packages/schemas/node_modules/ \
                     /workspace-builder/packages/schemas/dist/ \
                     ./packages/schemas/
 
