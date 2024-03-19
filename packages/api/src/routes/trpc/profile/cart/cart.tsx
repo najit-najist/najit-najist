@@ -295,7 +295,7 @@ export const userCartRoutes = t.router({
               paymentMethodId: input.paymentMethod.id,
               state: paymentMethod.paymentOnCheckout
                 ? OrderState.UNPAID
-                : OrderState.NEW,
+                : OrderState.UNCONFIRMED,
               userId: ctx.sessionData.userId,
               paymentMethodPrice: paymentMethod.price,
               deliveryMethodPrice: deliveryMethod.price,

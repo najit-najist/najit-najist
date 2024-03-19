@@ -15,7 +15,12 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
   const isOrderLocalPickup = isLocalPickup(order.deliveryMethod);
 
   const orderStateToButtons: Record<OrderState, ActiveButtonConfig[]> = {
-    new: [],
+    new: [
+      {
+        nextState: OrderState.CONFIRMED,
+        text: 'Označit jako potvrzeno',
+      },
+    ],
     unpaid: [
       {
         nextState: OrderState.UNCONFIRMED,
