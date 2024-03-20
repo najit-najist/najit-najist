@@ -71,7 +71,7 @@ COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     /workspace-builder/apps/web/next-env.d.ts \
                     /workspace-builder/apps/web/src/ \
                     ./apps/web/
-RUN mkdir -p ./apps/web/private
+RUN mkdir -p /workspace-builder/apps/web/private
 
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./apps/web/public
