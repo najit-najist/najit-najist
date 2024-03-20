@@ -1,10 +1,5 @@
 import { database } from '@najit-najist/database';
-import {
-  Post,
-  posts,
-  userLikedPosts,
-  users,
-} from '@najit-najist/database/models';
+import { Post, posts, userLikedPosts } from '@najit-najist/database/models';
 import { isFileBase64, slugSchema } from '@najit-najist/schemas';
 import { EntityLink, entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@trpc';
@@ -101,6 +96,7 @@ export const postsRoute = t.router({
               .set({
                 image: filename,
               })
+              .where(eq(posts.id, created.id))
               .returning();
           }
 
