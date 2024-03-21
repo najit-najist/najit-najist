@@ -48,7 +48,7 @@ export default async function RecipesPage({
 
   const [productsQueryResult, { items: categories }] = await Promise.all([
     trpc.products.get.many(search),
-    trpc.products.categories.get.many(),
+    trpc.products.categories.get.many({ perPage: 1000, omitEmpty: true }),
   ]);
 
   let selectedCategories: typeof categories = [];
