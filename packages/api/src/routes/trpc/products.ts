@@ -239,17 +239,13 @@ const getCategoriesRoutes = t.router({
           limit: input.perPage,
           where: cursor.where(input.page),
           orderBy: cursor.orderBy,
-          ...(input.omitEmpty
-            ? {
-                with: {
-                  products: {
-                    columns: {
-                      id: true,
-                    },
-                  },
-                },
-              }
-            : {}),
+          with: {
+            products: {
+              columns: {
+                id: true,
+              },
+            },
+          },
         }),
         database
           .select({
@@ -260,9 +256,9 @@ const getCategoriesRoutes = t.router({
 
       return {
         items: input.omitEmpty
-          ? (items as any)
-              .filter(({ products }: any) => products.length)
-              .map(({ products, ...rest }: any) => rest)
+          ? items
+              .filter(({ products }) => products.length)
+              .map(({ products, ...rest }) => rest)
           : items,
         nextToken:
           input.perPage === items.length
