@@ -9,7 +9,7 @@ import { Form } from './components/Form';
 import { Title } from './components/Title';
 
 export const metadata = {
-  title: 'Dokončení změny hesla',
+  title: 'Dokončení změny zapomenutého hesla',
 };
 
 export const revalidate = 0;

@@ -104,7 +104,7 @@ export const Content: FC = () => {
             heading="Požadavek zpracován"
           >
             Dokončete změnu Vašeho hesla přes odkaz, který Vám byl zaslán pokud
-            zegistrujeme účet pod zadanou emailovou adresou.
+            účet pod zadanou emailovou adresou existuje.
           </Alert>
         ) : null}
         {isPasswordResetSuccessfulCallback ? (
