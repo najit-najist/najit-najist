@@ -147,7 +147,7 @@ export const ProductPageManageContent: FC<
             ) : product ? (
               <Badge size="lg" color="green">
                 <TagIcon className="w-4 h-4" />
-                {product.category?.name}
+                {product.category?.name ?? 'Ostatní'}
               </Badge>
             ) : null}
             {isEditorEnabled ? (
