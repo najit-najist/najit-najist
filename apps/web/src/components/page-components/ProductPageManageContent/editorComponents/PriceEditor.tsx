@@ -26,6 +26,7 @@ export const PriceEditor: FC = () => {
           </div>
         }
         error={formState.errors.price?.value}
+        disabled={formState.isSubmitting}
         {...register('price.value', { valueAsNumber: true })}
       />
     </div>
