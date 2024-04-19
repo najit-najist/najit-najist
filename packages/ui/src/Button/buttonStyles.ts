@@ -26,6 +26,7 @@ export const buttonStyles = cva(
         subtleRed: 'hover:bg-red-50 text-red-600 border-0',
       },
       appearance: {
+        extraSmall: 'py-1 px-3 text-[12px]',
         small: 'py-2 px-4 text-sm',
         spaceless: '',
         normal: 'py-2 px-8',

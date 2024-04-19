@@ -4,7 +4,7 @@ import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { getFileUrl } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
-import { Button, Tooltip, toast } from '@najit-najist/ui';
+import { Button, Tooltip, buttonStyles, toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
 import Link from 'next/link';
@@ -24,7 +24,7 @@ const SuccessMessage: FC<
   Pick<AddToCartButtonProps, 'productId' | 'productMetadata'>
 > = ({ productId, productMetadata }) => {
   return (
-    <div className="flex items-center">
+    <div className="flex items-start">
       {productMetadata?.images.length ? (
         <div className="relative w-12 h-12 rounded-full mr-3 flex-none">
           <CustomImage
@@ -38,22 +38,33 @@ const SuccessMessage: FC<
           />
         </div>
       ) : null}
-      <p>
-        <b>
-          Přidali jste si{' '}
-          {productMetadata?.name ? (
-            <Link
-              href={`/produkty/${productMetadata.slug}`}
-              className="text-project-secondary hover:underline"
-            >
-              {productMetadata.name}
-            </Link>
-          ) : (
-            'produkt'
-          )}{' '}
-          do Vašeho košíku!
-        </b>
-      </p>
+      <div className="w-full">
+        <p className="block">
+          <b>
+            Přidali jste si{' '}
+            {productMetadata?.name ? (
+              <Link
+                href={`/produkty/${productMetadata.slug}`}
+                className="text-project-secondary hover:underline"
+              >
+                {productMetadata.name}
+              </Link>
+            ) : (
+              'produkt'
+            )}{' '}
+            do Vašeho košíku!
+          </b>
+        </p>
+        <Link
+          href="/muj-ucet/kosik/pokladna"
+          className={buttonStyles({
+            className: 'mt-3 inline-block',
+            appearance: 'extraSmall',
+          })}
+        >
+          Přejít do košíku
+        </Link>
+      </div>
     </div>
   );
 };
