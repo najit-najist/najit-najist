@@ -24,9 +24,9 @@ export const checkboxStyles = cva('h-4 w-4 rounded', {
   },
 });
 
-export type CheckboxProps = DetailedHTMLProps<
-  InputHTMLAttributes<HTMLInputElement>,
-  HTMLInputElement
+export type CheckboxProps = Omit<
+  DetailedHTMLProps<InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>,
+  'size'
 > &
   CheckboxVariantProps;
 
