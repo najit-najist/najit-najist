@@ -1,8 +1,9 @@
 import { AddToCartButton } from '@components/page-components/ProductPageManageContent/AddToCartButton';
 import { ProductWithRelationsLocal } from '@custom-types';
+import { TruckIcon } from '@heroicons/react/20/solid';
+import { stripHtml } from '@najit-najist/api';
 import { Badge, Price } from '@najit-najist/ui';
 import clsx from 'clsx';
-import HTMLReactParser from 'html-react-parser';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
 
@@ -21,8 +22,14 @@ export const Item: FC<
   publishedAt,
   stock,
   category,
+  onlyForDeliveryMethod,
 }) => {
   const linkHref = `/produkty/${slug}` as const;
+  let descriptionPreview = stripHtml(description ?? '').result;
+
+  if (descriptionPreview.length > 70) {
+    descriptionPreview = descriptionPreview.substring(0, 70) + '...';
+  }
 
   return (
     <article className="flex flex-col pt-5 first:pt-0 xs:pt-0">
@@ -43,6 +50,12 @@ export const Item: FC<
           {!publishedAt ? (
             <Badge className="whitespace-nowrap">Nepublikováno</Badge>
           ) : null}
+          {onlyForDeliveryMethod ? (
+            <Badge color="yellow">
+              <TruckIcon className="w-4 h-4" />
+              Pouze {onlyForDeliveryMethod.name.toLowerCase()}
+            </Badge>
+          ) : null}
         </div>
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-end gap-2">
           <Suspense>
@@ -62,9 +75,9 @@ export const Item: FC<
           </Link>
         </div>
 
-        <div className="mb-3 font-normal text-gray-700 dark:text-gray-400 line-clamp-3 tracking-wide">
-          {HTMLReactParser(description ?? '')}
-        </div>
+        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 tracking-wide">
+          {descriptionPreview}
+        </p>
 
         <div className="flex items-center justify-between">
           <Price value={price?.value ?? 0} />
