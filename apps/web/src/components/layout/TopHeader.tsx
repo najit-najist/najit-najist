@@ -210,7 +210,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
 
   return (
     <Menu>
-      {({ open: menuIsOpen }) => (
+      {({ open: menuIsOpen, close }) => (
         <div className="bg-transparent relative z-30">
           <div className="container flex items-center">
             <Link href="/" className="md:hidden flex-none">
@@ -304,12 +304,15 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
             className="bg-white w-full py-4 rounded-md h-full transition-all overflow-hidden"
           >
             <Menu.Items className="container" static>
-              <div className="flex gap-3 justify-end mb-3 flex-wrap">
+              <div
+                onClick={close}
+                className="flex gap-3 justify-end mb-3 flex-wrap"
+              >
                 {loggedInUser && loggedInUser.role === UserRoles.ADMIN ? (
                   <AdministrationPill />
                 ) : null}
                 <BonusPill loggedInUser={loggedInUser} />
-                <RegisterPill />
+                {loggedInUser ? null : <RegisterPill />}
               </div>
               <div className="flex flex-col sm:flex-row sm:divide-x-2 sm:space-x-4 justify-end text-right sm:text-left items-end gap-5">
                 <Column title="" className="block md:hidden">
