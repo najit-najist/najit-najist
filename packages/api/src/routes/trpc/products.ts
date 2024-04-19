@@ -155,6 +155,13 @@ const getRoutes = t.router({
           key: products.id.name,
           schema: products.id,
         },
+        cursors: [
+          {
+            order: 'ASC',
+            key: products.name.name,
+            schema: products.name,
+          },
+        ],
         // cursors: [
         //   {
         //     order: 'DESC',
