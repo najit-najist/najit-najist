@@ -1,4 +1,5 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
 import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
 import { OrderState, products } from '@najit-najist/database/models';
 import { Alert, Tooltip } from '@najit-najist/ui';
@@ -162,7 +163,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
             <dl className="grid grid-cols-2 gap-x-6 py-10 text-sm">
               <div>
                 <dt className="font-semibold text-project-secondary">
-                  Doručovací adresa
+                  Doručovací informace
                 </dt>
                 <dd className="mt-2 text-gray-700">
                   <address className="not-italic">
@@ -170,12 +171,34 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                       {order.firstName} {order.lastName}
                     </span>
                     <span className="block">
-                      {order.address?.streetName}, {order.address?.houseNumber}
+                      {order.address?.streetName?.trim()},{' '}
+                      {order.address?.houseNumber}
                     </span>
                     <span className="block">
                       {order.address?.city} {order.address?.postalCode}
                     </span>
                   </address>
+                </dd>
+                <dd className="mt-4 text-gray-700">
+                  <div>
+                    <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
+                    <span className="hover:underline">
+                      <a href={`mailto:${order.email}`}>{order.email}</a>
+                    </span>
+                  </div>
+                  <div className="mt-1">
+                    <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
+                    <span>
+                      <a
+                        className="hover:underline"
+                        href={`+${
+                          order.telephone.code
+                        }${order.telephone.telephone.replaceAll(' ', '')}`}
+                      >
+                        +{order.telephone.code} {order.telephone.telephone}
+                      </a>
+                    </span>
+                  </div>
                 </dd>
               </div>
               <div>
