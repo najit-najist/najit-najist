@@ -246,21 +246,21 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               </div>
             </dl>
 
-            {order.notes ? (
-              <>
-                <h4 className="sr-only">Další informace</h4>
-                <dl className="border-t border-gray-200 py-10 text-sm">
-                  <div>
-                    <dt className="font-semibold text-project-secondary">
-                      Poznámky k objednávce
-                    </dt>
-                    <dd className="mt-2 text-gray-700">
-                      <p>{order.notes}</p>
-                    </dd>
-                  </div>
-                </dl>
-              </>
-            ) : null}
+            <h4 className="sr-only">Další informace</h4>
+            <dl className="border-t border-gray-200 py-10 text-sm">
+              <div>
+                <dt className="font-semibold text-project-secondary">
+                  Poznámky k objednávce
+                </dt>
+                <dd className="mt-2 text-gray-700">
+                  <p>
+                    {order.notes || (
+                      <span className="opacity-50">Žádná poznámka</span>
+                    )}
+                  </p>
+                </dd>
+              </div>
+            </dl>
 
             <h3 className="sr-only">Přehled</h3>
             <dl className="space-y-6 border-t border-gray-200 pt-10 text-sm">
