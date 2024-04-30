@@ -1,20 +1,22 @@
 import { relations } from 'drizzle-orm';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 
-import { modelsBase } from '../internal/modelsBase';
+import { withDefaultFields } from '../internal/withDefaultFields';
 import { products } from './products';
 import { userCarts } from './userCarts';
 
-export const userCartProducts = pgTable('user_cart_products', {
-  ...modelsBase,
-  cartId: integer('cart_id')
-    .references(() => userCarts.id, { onDelete: 'cascade' })
-    .notNull(),
-  count: integer('count').default(1).notNull(),
-  productId: integer('product_id')
-    .references(() => products.id, { onDelete: 'cascade' })
-    .notNull(),
-});
+export const userCartProducts = pgTable(
+  'user_cart_products',
+  withDefaultFields({
+    cartId: integer('cart_id')
+      .references(() => userCarts.id, { onDelete: 'cascade' })
+      .notNull(),
+    count: integer('count').default(1).notNull(),
+    productId: integer('product_id')
+      .references(() => products.id, { onDelete: 'cascade' })
+      .notNull(),
+  })
+);
 
 export type UserCartProduct = typeof userCartProducts.$inferSelect;
 

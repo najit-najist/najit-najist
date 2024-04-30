@@ -1,17 +1,19 @@
 import { relations } from 'drizzle-orm';
 import { integer, pgTable } from 'drizzle-orm/pg-core';
 
-import { addressModelsBase } from '../internal/addressModelsBase';
+import { withAddressFields } from '../internal/withAddressFields';
 import { municipalities } from './municipalities';
 import { users } from './users';
 
-export const userAddresses = pgTable('user_addresses', {
-  ...addressModelsBase,
-  userId: integer('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .unique()
-    .notNull(),
-});
+export const userAddresses = pgTable(
+  'user_addresses',
+  withAddressFields({
+    userId: integer('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .unique()
+      .notNull(),
+  })
+);
 
 export const userAddressRelations = relations(userAddresses, ({ one }) => ({
   user: one(users, {

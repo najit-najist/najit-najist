@@ -8,14 +8,13 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { modelsBase } from '../internal/modelsBase';
+import { withDefaultFields } from '../internal/withDefaultFields';
 import { recipeResourceMetrics } from './recipeResourceMetrics';
 import { recipes } from './recipes';
 
 export const recipeResources = pgTable(
   'recipe_resources',
-  {
-    ...modelsBase,
+  withDefaultFields({
     recipeId: integer('recipe_id')
       .references(() => recipes.id, { onDelete: 'cascade' })
       .notNull(),
@@ -26,7 +25,7 @@ export const recipeResources = pgTable(
     title: varchar('title', { length: 256 }).notNull(),
     description: text('description').default(''),
     optional: boolean('optional').default(false),
-  },
+  }),
   (schema) => ({
     uniqueTitleForRecipe: unique('title_for_recipe').on(
       schema.recipeId,

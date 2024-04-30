@@ -8,9 +8,10 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { modelsBase } from '../internal/modelsBase';
+import { withDefaultFields } from '../internal/withDefaultFields';
 import { orderAddresses } from './orderAddresses';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
+import { orderLocalPickupTimes } from './orderLocalPickupDates';
 import { orderPaymentMethods } from './orderPaymentMethods';
 import { orderedProducts } from './orderedProducts';
 import { telephoneNumbers } from './telephoneNumbers';
@@ -36,31 +37,33 @@ export const userState = pgEnum('user_states', [
   OrderState.SHIPPED,
 ]);
 
-export const orders = pgTable('orders', {
-  ...modelsBase,
-  subtotal: real('subtotal').notNull(),
-  userId: integer('user_id')
-    .references(() => users.id, { onDelete: 'cascade' })
-    .notNull(),
-  email: varchar('email', { length: 256 }).notNull(),
-  telephoneId: integer('telephone_id')
-    .references(() => telephoneNumbers.id)
-    .notNull(),
-  firstName: varchar('firstname', { length: 256 }).notNull(),
-  lastName: varchar('lastname', { length: 256 }).notNull(),
-  paymentMethodId: integer('payment_method_id')
-    .references(() => orderPaymentMethods.id, { onDelete: 'restrict' })
-    .notNull(),
-  deliveryMethodId: integer('delivery_method_id')
-    .references(() => orderDeliveryMethods.id, { onDelete: 'restrict' })
-    .notNull(),
-  state: userState('state').default(OrderState.NEW).notNull(),
+export const orders = pgTable(
+  'orders',
+  withDefaultFields({
+    subtotal: real('subtotal').notNull(),
+    userId: integer('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    email: varchar('email', { length: 256 }).notNull(),
+    telephoneId: integer('telephone_id')
+      .references(() => telephoneNumbers.id)
+      .notNull(),
+    firstName: varchar('firstname', { length: 256 }).notNull(),
+    lastName: varchar('lastname', { length: 256 }).notNull(),
+    paymentMethodId: integer('payment_method_id')
+      .references(() => orderPaymentMethods.id, { onDelete: 'restrict' })
+      .notNull(),
+    deliveryMethodId: integer('delivery_method_id')
+      .references(() => orderDeliveryMethods.id, { onDelete: 'restrict' })
+      .notNull(),
+    state: userState('state').default(OrderState.NEW).notNull(),
 
-  notes: text('notes'),
+    notes: text('notes'),
 
-  deliveryMethodPrice: integer('delivery_method_price').default(0),
-  paymentMethodPrice: integer('payment_method_price').default(0),
-});
+    deliveryMethodPrice: integer('delivery_method_price').default(0),
+    paymentMethodPrice: integer('payment_method_price').default(0),
+  })
+);
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({
   telephone: one(telephoneNumbers, {
@@ -78,6 +81,7 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   address: one(orderAddresses),
   orderedProducts: many(orderedProducts),
   user: one(users, { fields: [orders.userId], references: [users.id] }),
+  pickupDate: one(orderLocalPickupTimes),
 }));
 
 export type Order = typeof orders.$inferSelect;

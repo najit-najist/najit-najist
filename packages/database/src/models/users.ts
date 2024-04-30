@@ -8,8 +8,8 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { modelsBase } from '../internal/modelsBase';
 import { fileFieldType } from '../internal/types/file';
+import { withDefaultFields } from '../internal/withDefaultFields';
 import { userNewsletters } from './newsletterSubscriptions';
 import { telephoneNumbers } from './telephoneNumbers';
 import { userAddresses } from './userAddresses';
@@ -54,8 +54,7 @@ export const userStateEnum = pgEnum('user_state', [
 
 export const users = pgTable(
   'users',
-  {
-    ...modelsBase,
+  withDefaultFields({
     email: varchar('email', { length: 256 }).unique().notNull(),
     firstName: varchar('firstname', { length: 256 }).notNull(),
     lastName: varchar('lastname', { length: 256 }).notNull(),
@@ -76,7 +75,7 @@ export const users = pgTable(
       length: 1064,
     }),
     _password: varchar('password', { length: 1064 }).notNull(),
-  },
+  }),
   (users) => {
     return {
       nameIndex: index('name_idx').on(users.firstName, users.lastName),

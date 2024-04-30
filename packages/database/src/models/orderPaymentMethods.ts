@@ -1,18 +1,20 @@
 import { relations } from 'drizzle-orm';
 import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
-import { modelsBase } from '../internal/modelsBase';
+import { withDefaultFields } from '../internal/withDefaultFields';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 
-export const orderPaymentMethods = pgTable('order_payment_methods', {
-  ...modelsBase,
-  name: varchar('name', { length: 256 }).notNull(),
-  description: text('description').notNull(),
-  price: integer('price').default(0),
-  slug: varchar('slug', { length: 256 }).notNull(),
-  notes: text('notes'),
-  paymentOnCheckout: boolean('payment_on_checkout').default(false),
-});
+export const orderPaymentMethods = pgTable(
+  'order_payment_methods',
+  withDefaultFields({
+    name: varchar('name', { length: 256 }).notNull(),
+    description: text('description').notNull(),
+    price: integer('price').default(0),
+    slug: varchar('slug', { length: 256 }).notNull(),
+    notes: text('notes'),
+    paymentOnCheckout: boolean('payment_on_checkout').default(false),
+  })
+);
 
 export type OrderPaymentMethod = typeof orderPaymentMethods.$inferSelect;
 
