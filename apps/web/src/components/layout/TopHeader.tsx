@@ -3,6 +3,7 @@
 import { Logo } from '@components/common/Logo';
 import {
   ShoppingBagIcon,
+  TruckIcon,
   UserIcon,
   XMarkIcon,
 } from '@heroicons/react/24/outline';
@@ -16,6 +17,7 @@ import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
+  AnchorHTMLAttributes,
   FC,
   forwardRef,
   PropsWithChildren,
@@ -39,20 +41,21 @@ const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
   </div>
 );
 
-const StyledLink = forwardRef<HTMLLinkElement, LinkProps<RouteType>>(
-  function StyledLink({ className, children, ...props }, ref) {
-    return (
-      <Link
-        // @ts-ignore
-        ref={ref}
-        className="hover:underline tracking-wider text-3xl text-right font-title hover:text-project-primary text-gray-800"
-        {...props}
-      >
-        {children}
-      </Link>
-    );
-  }
-);
+const StyledLink = forwardRef<
+  HTMLLinkElement,
+  LinkProps<RouteType> & AnchorHTMLAttributes<HTMLAnchorElement>
+>(function StyledLink({ className, children, ...props }, ref) {
+  return (
+    <Link
+      // @ts-ignore
+      ref={ref}
+      className="hover:underline tracking-wider text-3xl text-right font-title hover:text-project-primary text-gray-800"
+      {...props}
+    >
+      {children}
+    </Link>
+  );
+});
 
 export type TopHeaderProps = { loggedInUser?: Pick<User, 'role'> };
 
@@ -241,6 +244,20 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                       prefetch={false}
                     >
                       Odhlásit se
+                    </Link>
+
+                    <Link
+                      className={clsx([
+                        pillStyles,
+                        'flex justify-center !px-1.5 shadow shadow-gray-300',
+                        pathname === '/muj-ucet/objednavky'
+                          ? 'bg-project-primary text-white'
+                          : 'hover:bg-project-primary hover:text-white bg-white',
+                      ])}
+                      title="Moje objednávky"
+                      href="/muj-ucet/objednavky"
+                    >
+                      <TruckIcon className="w-4 h-4" />
                     </Link>
 
                     <Link

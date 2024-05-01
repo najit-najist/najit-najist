@@ -44,7 +44,7 @@ const SuccessMessage: FC<
             Přidali jste si{' '}
             {productMetadata?.name ? (
               <Link
-                href={`/produkty/${productMetadata.slug}`}
+                href={`/produkty/${encodeURIComponent(productMetadata.slug)}`}
                 className="text-project-secondary hover:underline"
               >
                 {productMetadata.name}

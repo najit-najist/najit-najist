@@ -8,6 +8,7 @@ import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
+import { useFormState } from 'react-hook-form';
 import { useDebounceCallback } from 'usehooks-ts';
 
 export const PriceInfo: FC<{
@@ -15,8 +16,11 @@ export const PriceInfo: FC<{
   countInCart: UserCartProduct['count'];
   productPrice: NonNullable<ProductWithRelationsLocal['price']>['value'];
 }> = ({ productId, productPrice, countInCart: initialCountInCart }) => {
-  const { startTransition, isActive: isDoingTransition } =
+  const formState = useFormState();
+  const { isSubmitting } = formState;
+  const { startTransition, isActive: isChangingRoutes } =
     useReactTransitionContext();
+  const disabled = isChangingRoutes || isSubmitting;
   const router = useRouter();
   const utils = trpc.useUtils();
 
@@ -51,7 +55,7 @@ export const PriceInfo: FC<{
     <>
       <Price
         value={productPrice * initialCountInCart}
-        className={clsx('mt-auto', isDoingTransition ? 'blur-sm' : '')}
+        className={clsx('mt-auto', disabled ? 'blur-sm' : '')}
       />
 
       <div className="lg:ml-4">
@@ -62,7 +66,7 @@ export const PriceInfo: FC<{
           step={1}
           min={1}
           max={99}
-          disabled={isDoingTransition}
+          disabled={disabled}
           defaultValue={initialCountInCart}
           onChange={handleCountChange}
         />

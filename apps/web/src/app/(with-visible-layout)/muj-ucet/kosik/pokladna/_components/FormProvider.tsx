@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
 import { logger } from '@logger';
 import { AppRouterInput } from '@najit-najist/api';
+import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
@@ -22,6 +23,7 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
+import { z } from 'zod';
 
 type FormValues = AppRouterInput['profile']['cart']['checkout'];
 type OptionalFormValues = Omit<
@@ -35,16 +37,37 @@ type OptionalFormValues = Omit<
 export const FormProvider: FC<
   PropsWithChildren<{
     defaultFormValues?: OptionalFormValues;
+    localPickupDeliveryMethodId: OrderDeliveryMethod['id'];
   }>
-> = ({ children, defaultFormValues }) => {
+> = ({ children, defaultFormValues, localPickupDeliveryMethodId }) => {
   const [isDoingTransition, doTransition] = useTransition();
   const trpcUtils = trpc.useUtils();
   const router = useRouter();
   const plausible = usePlausible();
   const { mutateAsync: doCheckout } = trpc.profile.cart.checkout.useMutation();
+
+  const resolver = useMemo(
+    () =>
+      zodResolver(
+        userCartCheckoutInputSchema.superRefine((value, ctx) => {
+          if (
+            value.deliveryMethod.id === localPickupDeliveryMethodId &&
+            !value.localPickupTime
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Dokončete výběr času pro vyzvednutí na prodejně',
+              fatal: true,
+              path: ['localPickupTime'],
+            });
+          }
+        })
+      ),
+    [localPickupDeliveryMethodId]
+  );
   const formMethods = useForm({
     defaultValues: defaultFormValues,
-    resolver: zodResolver(userCartCheckoutInputSchema),
+    resolver,
   });
   const { handleSubmit } = formMethods;
 

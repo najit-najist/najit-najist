@@ -36,5 +36,8 @@
     "js-base64": "^3.7.7",
     "dayjs": "^1.11.10",
     "drizzle-zod": "^0.5.1"
+  },
+  "devDependencies": {
+    "vitest": "^0.24.5"
   }
 }

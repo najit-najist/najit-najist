@@ -71,6 +71,13 @@
       "when": 1710700910988,
       "tag": "0009_handy_chimera",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "5",
+      "when": 1714444224641,
+      "tag": "0010_closed_hydra",
+      "breakpoints": true
     }
   ]
 }

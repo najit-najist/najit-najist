@@ -69,7 +69,7 @@ export const Form: FC<
 
         const result = await updateProductPromise;
 
-        router.push(`/produkty/${result.slug}?editor=true`);
+        router.push(`/produkty/${encodeURIComponent(result.slug)}?editor=true`);
       } else if (viewType === 'create') {
         const createProductPromise = createProduct({
           name: values.name,
@@ -90,7 +90,7 @@ export const Form: FC<
 
         const data = await createProductPromise;
 
-        router.push(`/produkty/${data.slug}`);
+        router.push(`/produkty/${encodeURIComponent(data.slug)}`);
       }
     },
     [createProduct, router, updateProduct, viewType, product]

@@ -71,7 +71,7 @@ export const RecipePageManageContent = async ({
                   },
 
                   {
-                    link: `/produkty/${recipe.slug}`,
+                    link: `/produkty/${encodeURIComponent(recipe.slug)}`,
                     text: recipe.title,
                     active: true,
                   },

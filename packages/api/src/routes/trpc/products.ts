@@ -402,7 +402,7 @@ export const productsRoutes = t.router({
 
       await database.delete(products).where(eq(products.id, input.id));
 
-      revalidatePath(`/produkty/${existing.slug}`);
+      revalidatePath(`/produkty/${encodeURIComponent(existing.slug)}`);
       revalidatePath(`/produkty`);
 
       return;
@@ -538,7 +538,7 @@ export const productsRoutes = t.router({
         });
 
         revalidatePath('/muj-ucet/kosik/pokladna');
-        revalidatePath(`/produkty/${updated.slug}`);
+        revalidatePath(`/produkty/${encodeURIComponent(updated.slug)}`);
         revalidatePath(`/produkty`);
 
         return updated;

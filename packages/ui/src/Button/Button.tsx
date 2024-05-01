@@ -46,11 +46,11 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           color,
           withoutRing,
           padding,
-          notAnimated: notAnimated ?? disabled,
+          notAnimated: notAnimated ?? isLoading ?? disabled,
           ...rest,
         })}
         type="button"
-        disabled={disabled}
+        disabled={isLoading ?? disabled}
         {...rest}
       >
         {isLoading ? (

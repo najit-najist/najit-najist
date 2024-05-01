@@ -1,6 +1,6 @@
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
-import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
+import { AppRouterOutput, dayjs, getFileUrl } from '@najit-najist/api';
 import { OrderState, products } from '@najit-najist/database/models';
 import { Alert, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
@@ -120,7 +120,11 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 <div className="flex flex-auto flex-col">
                   <div>
                     <h4 className="font-medium text-gray-900 font-title text-2xl">
-                      <Link href={`/produkty/${orderedProduct.product.slug}`}>
+                      <Link
+                        href={`/produkty/${encodeURIComponent(
+                          orderedProduct.product.slug
+                        )}`}
+                      >
                         {orderedProduct.product.name}
                       </Link>
                     </h4>
@@ -259,7 +263,18 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 <dd className="mt-2 text-gray-700">
                   {order.deliveryMethod ? (
                     <>
-                      <p>{order.deliveryMethod.name}</p>
+                      <p>
+                        {order.deliveryMethod.name}
+                        {order.pickupDate ? (
+                          <>
+                            {' '}
+                            v{' '}
+                            <strong>
+                              {dayjs(order.pickupDate.date).format('HH:mm')}
+                            </strong>
+                          </>
+                        ) : null}
+                      </p>
                       <p className="mt-1">{order.deliveryMethod.description}</p>
                     </>
                   ) : (

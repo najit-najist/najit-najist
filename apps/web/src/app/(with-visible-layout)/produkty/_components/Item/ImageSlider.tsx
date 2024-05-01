@@ -37,7 +37,7 @@ export const ImageSlider: FC<{
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(products, itemId, imageName)}
+                src={getFileUrl(products, itemId, imageName, { width: 300 })}
                 alt=""
                 className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg absolute top-0 left-0 w-full h-full object-center object-cover"
               />

@@ -7,17 +7,21 @@ import { Tooltip } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
+import { useFormState } from 'react-hook-form';
 
-export const DeleteButton: FC<{ productId: Product['id'] }> = ({
-  productId,
-}) => {
+export const DeleteButton: FC<{
+  productId: Product['id'];
+}> = ({ productId }) => {
   const utils = trpc.useUtils();
   const router = useRouter();
-  const { startTransition, isActive: isDoingTransition } =
+  const formState = useFormState();
+  const { isSubmitting } = formState;
+  const { startTransition, isActive: isChangingRoutes } =
     useReactTransitionContext();
 
   const { mutateAsync: removeItem, isLoading: isRemoving } =
     trpc.profile.cart.products.remove.useMutation();
+  const disabled = isChangingRoutes || isSubmitting;
 
   // todo revalidate items after morph
   const handleItemDelete = useCallback(async () => {
@@ -40,11 +44,12 @@ export const DeleteButton: FC<{ productId: Product['id'] }> = ({
 
   return (
     <Tooltip
+      disabled={disabled}
       trigger={
         <button
           type="button"
           className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-red-300 hover:text-red-500 flex-none"
-          disabled={isRemoving || isDoingTransition}
+          disabled={isRemoving || disabled}
           onClick={handleItemDelete}
         >
           <span className="sr-only">Odstranit</span>

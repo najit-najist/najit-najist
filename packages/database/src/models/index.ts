@@ -6,6 +6,7 @@ export * from './newsletterSubscriptions';
 export * from './orderAddresses';
 export * from './orderDeliveryMethods';
 export * from './orderedProducts';
+export * from './orderLocalPickupDates';
 export * from './orderPaymentMethods';
 export * from './orders';
 

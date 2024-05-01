@@ -1,4 +1,5 @@
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
+import { dayjs } from '@najit-najist/api';
 import { OrderState } from '@najit-najist/database/models';
 import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
@@ -70,12 +71,13 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
         )}
       >
         <Label>Změna stavu objednávky</Label>
+
         {orderIsFinished || orderIsDropped ? (
           <Alert
             className="mt-2"
             heading={
               <>
-                <InformationCircleIcon className=" w-4 h-4 inline mr-2" />
+                <InformationCircleIcon className="w-4 h-4 inline mr-2" />
                 {orderIsFinished
                   ? 'Objednávka byla dokončena'
                   : 'Objednávka byla zrušena'}
@@ -83,10 +85,25 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
             }
           ></Alert>
         ) : (
-          <EditOrderStateButtons
-            buttons={activeButtons}
-            order={{ id: order.id }}
-          />
+          <>
+            <EditOrderStateButtons
+              buttons={activeButtons}
+              order={{ id: order.id }}
+            />
+
+            {order.pickupDate ? (
+              <>
+                <hr className="border-none bg-gray-100 h-0.5 my-3" />
+                <Alert
+                  color="warning"
+                  icon={ClockIcon}
+                  heading={`Čas osobního odběru je v ${dayjs(
+                    order.pickupDate.date
+                  ).format('HH:mm')}`}
+                ></Alert>
+              </>
+            ) : null}
+          </>
         )}
       </div>
     </Paper>

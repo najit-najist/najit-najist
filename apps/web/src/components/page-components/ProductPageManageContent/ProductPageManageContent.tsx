@@ -81,7 +81,7 @@ export const ProductPageManageContent: FC<
                       }
                     : null,
                   {
-                    link: `/produkty/${product.slug}`,
+                    link: `/produkty/${encodeURIComponent(product.slug)}`,
                     text: product?.name,
                     active: true,
                   },

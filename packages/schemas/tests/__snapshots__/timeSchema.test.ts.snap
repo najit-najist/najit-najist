@@ -1,0 +1,89 @@
+// Vitest Snapshot v1
+
+exports[`timeSchema > it correctly throws on incorrect time 1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být maximálně do 00:00",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > it correctly throws on incorrect time 2`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být alespoň od 10:30",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  1`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  2`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  3`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  4`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  5`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;
+
+exports[`timeSchema > should fail on incorrect input  6`] = `
+[ZodError: [
+  {
+    "code": "custom",
+    "fatal": true,
+    "message": "Čas musí být vyplněn a ve formátu HH:MM",
+    "path": []
+  }
+]]
+`;

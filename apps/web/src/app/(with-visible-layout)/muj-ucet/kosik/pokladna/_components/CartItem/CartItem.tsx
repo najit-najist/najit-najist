@@ -60,7 +60,7 @@ export const CartItem: FC<
           <div className="min-w-0 flex-1">
             <h4 className="text-sm">
               <Link
-                href={`/produkty/${product.slug}`}
+                href={`/produkty/${encodeURIComponent(product.slug)}`}
                 className="font-medium text-gray-700 hover:text-gray-800 hover:underline"
               >
                 {product.name}

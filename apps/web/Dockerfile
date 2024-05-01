@@ -85,6 +85,7 @@ COPY --from=builder /workspace-builder/packages/api/package.json \
 
 COPY --from=builder /workspace-builder/packages/database/package.json \
                     /workspace-builder/packages/database/dist/ \
+                    /workspace-builder/packages/database/scripts/ \
                     /workspace-builder/packages/database/drizzle/ \
                     ./packages/security/
 
@@ -119,6 +120,6 @@ USER nextjs
 EXPOSE 4000
 ENV HOSTNAME "0.0.0.0"
 
-WORKDIR /app/apps/web
+WORKDIR /app
 
-CMD ["npm", "run", "start"]
+CMD ["npm", "run", "start-production"]

@@ -4,6 +4,7 @@ import { entityLinkSchema } from './entityLinkSchema';
 import { nonEmptyStringSchema } from './nonEmptyStringSchema';
 import { streetNameSchema } from './streetNameSchema';
 import { telephoneNumberInputSchema } from './telephoneNumberInputSchema';
+import { timeSchema } from './timeSchema';
 
 const MESSAGES = {
   requiredHouseNumber: 'Vyplňte číslo Vašeho baráku',
@@ -36,4 +37,5 @@ export const userCartCheckoutInputSchema = z.object({
   saveAddressToAccount: z.boolean().default(false),
   paymentMethod: entityLinkSchema,
   deliveryMethod: entityLinkSchema,
+  localPickupTime: timeSchema.optional(),
 });

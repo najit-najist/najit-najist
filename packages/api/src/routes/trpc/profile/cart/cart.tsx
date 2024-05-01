@@ -1,5 +1,7 @@
+import { dayjs } from '@dayjs';
 import { database } from '@najit-najist/database';
 import {
+  OrderDeliveryMethod,
   OrderState,
   comgatePayments,
   orderAddresses,
@@ -8,11 +10,11 @@ import {
   orderedProducts,
   orders,
   productStock,
-  products,
   telephoneNumbers,
   userAddresses,
   userCartProducts,
   userCarts,
+  orderLocalPickupTimes,
 } from '@najit-najist/database/models';
 import {
   renderAsync,
@@ -40,6 +42,10 @@ import { userCartUpdateInputSchema } from '../../../../schemas/userCartUpdateInp
 import { MailService, logger } from '../../../../server';
 
 type UserCartWithRelations = {};
+
+const isLocalPickup = (
+  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+) => delivery?.slug === 'local-pickup';
 
 export const getUserCart = async (link: EntityLink) => {
   let cart = await database.query.userCarts.findFirst({
@@ -232,6 +238,19 @@ export const userCartRoutes = t.router({
             path: ['deliveryMethod.id'],
           });
         }
+
+        if (
+          deliveryMethod &&
+          isLocalPickup(deliveryMethod) &&
+          !value.localPickupTime
+        ) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Dokončete výběr času pro vyzvednutí na prodejně',
+            fatal: true,
+            path: ['localPickupTime'],
+          });
+        }
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -304,14 +323,30 @@ export const userCartRoutes = t.router({
             .returning();
 
           const { municipality, ...addressPayload } = input.address;
-          await tx.insert(orderAddresses).values({
-            ...addressPayload,
-            orderId: order.id,
-            municipalityId: input.address.municipality.id,
-          });
 
           // Update stock values
-          const stockUpdatesAsPromises: Promise<any>[] = [];
+          const stockUpdatesAsPromises: Promise<any>[] = [
+            tx.insert(orderAddresses).values({
+              ...addressPayload,
+              orderId: order.id,
+              municipalityId: input.address.municipality.id,
+            }),
+          ];
+
+          if (input.localPickupTime) {
+            const [hours, minutes] = input.localPickupTime.split(':');
+
+            stockUpdatesAsPromises.push(
+              tx.insert(orderLocalPickupTimes).values({
+                orderId: order.id,
+                date: dayjs()
+                  .set('hours', +hours)
+                  .set('minutes', +minutes)
+                  .toDate(),
+              })
+            );
+          }
+
           for (const productInCart of cart.products) {
             if (!productInCart.product.stock) {
               continue;
@@ -350,7 +385,7 @@ export const userCartRoutes = t.router({
               )
             ),
             // Include stock updates in one promise
-            stockUpdatesAsPromises,
+            ...stockUpdatesAsPromises,
           ]);
 
           if (input.saveAddressToAccount) {
@@ -417,7 +452,7 @@ export const userCartRoutes = t.router({
       ]);
 
       // Is it really necessary to wait here?
-      await Promise.all([
+      Promise.all([
         MailService.send({
           to: input.email,
           subject: `Objednávka #${order.id} na najitnajist.cz`,

@@ -24,7 +24,7 @@ export const Item: FC<
   category,
   onlyForDeliveryMethod,
 }) => {
-  const linkHref = `/produkty/${slug}` as const;
+  const linkHref = `/produkty/${encodeURIComponent(slug)}`;
   let descriptionPreview = stripHtml(description ?? '').result;
 
   if (descriptionPreview.length > 70) {

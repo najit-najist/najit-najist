@@ -100,7 +100,7 @@ export default async function Page({ searchParams }: Params) {
         </Link>
       </div>
       <PageHeader className="container">
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-4">
           <PageTitle>{metadata.title}</PageTitle>
           <Link href="/administrace/uzivatele/novy" className="">
             <PlusIcon className="inline w-12" />

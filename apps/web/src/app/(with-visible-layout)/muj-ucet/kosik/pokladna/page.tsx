@@ -8,6 +8,7 @@ import {
   getCachedPaymentMethods,
   getCachedTrpcCaller,
 } from '@server-utils';
+import { isLocalPickup } from '@utils';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
@@ -124,6 +125,12 @@ export default async function Page() {
     0
   );
 
+  const localPickupDeliveryMethod = deliverMethodsAsArray.find(isLocalPickup);
+
+  if (!localPickupDeliveryMethod) {
+    throw new Error('No local pickup delivery method');
+  }
+
   return (
     <>
       <PageHeader className="container">
@@ -132,6 +139,7 @@ export default async function Page() {
         </div>
       </PageHeader>
       <FormProvider
+        localPickupDeliveryMethodId={localPickupDeliveryMethod.id}
         defaultFormValues={{
           deliveryMethod: { id: (defaultDeliveryMethod.id ?? null) as any },
           paymentMethod: { id: (defaultPaymentMethod?.id ?? null) as any },

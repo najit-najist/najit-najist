@@ -12,6 +12,7 @@
       "@schemas": ["./src/schemas"],
       "@middleware": ["./src/middleware"],
       "@errors": ["./src/errors"],
+      "@dayjs": ["./src/lib/day"],
       "@utils": ["./src/utils"],
       "@utils/*": ["./src/utils/*"],
       "@config": ["./src/config.js"],

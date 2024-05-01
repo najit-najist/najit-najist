@@ -88,7 +88,9 @@ const OrderProduct: FC<{
       <Column>
         <Link
           className="underline"
-          href={`https://najinajist.cz/produkty/${data.product.slug}`}
+          href={`https://najinajist.cz/produkty/${encodeURIComponent(
+            data.product.slug
+          )}`}
         >
           {data.count}x {data.product.name}
         </Link>

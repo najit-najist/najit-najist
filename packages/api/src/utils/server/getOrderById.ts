@@ -39,6 +39,7 @@ export const getOrderById = async (orderId: Order['id']) => {
           lastName: true,
         },
       },
+      pickupDate: true,
     },
   });
 

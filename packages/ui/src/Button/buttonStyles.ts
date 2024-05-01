@@ -1,4 +1,4 @@
-import { cva } from 'class-variance-authority';
+import { cva, cx } from 'class-variance-authority';
 
 export const buttonStyles = cva(
   'duration-100 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
@@ -55,7 +55,9 @@ export const buttonStyles = cva(
       },
       notAnimated: {
         true: '',
-        false: 'hover:scale-[1.02] active:scale-95',
+        false: cx(
+          '[&:not(disabled)]:hover:scale-[1.02] [&:not(disabled)]:active:scale-95'
+        ),
       },
       withoutRing: {
         true: '',

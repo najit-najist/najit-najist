@@ -10,8 +10,11 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from '@najit-najist/ui';
+import { isLocalPickup } from '@utils';
 import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
+
+import { LocalPickupDeliveryTimePicker } from './LocalPickupDeliveryTimePicker';
 
 export type DeliveryMethodFormPartProps = {
   deliveryMethods: (OrderDeliveryMethod & { disabled?: boolean })[];
@@ -28,6 +31,11 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   const controller = useController({
     name: 'deliveryMethod',
   });
+
+  const localPickupDeliveryMethod = useMemo(
+    () => deliveryMethods.find(isLocalPickup),
+    [deliveryMethods]
+  );
 
   // Setup for quick access
   const paymentMethodsForDeliveryId = useMemo(() => {
@@ -96,6 +104,10 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
       />
       {controller.fieldState.error?.message ? (
         <ErrorMessage>{controller.fieldState.error?.message}</ErrorMessage>
+      ) : null}
+      {localPickupDeliveryMethod &&
+      localPickupDeliveryMethod.id === controller.field.value?.id ? (
+        <LocalPickupDeliveryTimePicker />
       ) : null}
       {deliveryMethods.filter((d) => d.disabled).length ? (
         <Alert
