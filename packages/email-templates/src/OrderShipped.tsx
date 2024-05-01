@@ -60,8 +60,9 @@ export default function OrderShipped({
       <Section>
         <CenteredRow>
           <Text className="text-center" size="normal">
-            Vaši objednávku jsme zpracovali a objednané produkty jsme pro Vás
-            připravili na prodejně!
+            {isLocalPickup(order.deliveryMethod)
+              ? `Vaši objednávku jsme zpracovali a objednané produkty jsme pro Vás připravili na prodejně!`
+              : 'Vaši objednávku jsme zpracovali a objednané produkty jsme Vám odeslali! Již brzi vás bude kontaktovat doručovací společnost'}
           </Text>
         </CenteredRow>
         <Row>
