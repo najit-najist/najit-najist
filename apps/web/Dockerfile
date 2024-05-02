@@ -67,6 +67,9 @@ ENV NODE_ENV production
 
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
+COPY --from=builder /workspace-builder/package.json \
+                    ./
+
 COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
                     /workspace-builder/apps/web/package.json \
                     /workspace-builder/apps/web/next-env.d.ts \
