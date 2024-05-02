@@ -91,7 +91,7 @@ COPY --from=builder /workspace-builder/packages/database/package.json \
                     /workspace-builder/packages/database/dist/ \
                     /workspace-builder/packages/database/scripts/ \
                     /workspace-builder/packages/database/drizzle/ \
-                    ./packages/security/
+                    ./packages/database/
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
                     /workspace-builder/packages/email-templates/dist/ \
