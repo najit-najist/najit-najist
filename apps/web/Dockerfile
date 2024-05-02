@@ -87,11 +87,7 @@ COPY --from=builder /workspace-builder/packages/api/package.json \
                     /workspace-builder/packages/api/dist/ \
                     ./packages/api/
 
-COPY --from=builder /workspace-builder/packages/database/package.json \
-                    /workspace-builder/packages/database/dist/ \
-                    /workspace-builder/packages/database/scripts/ \
-                    /workspace-builder/packages/database/drizzle/ \
-                    ./packages/database/
+COPY --from=builder /workspace-builder/packages/database/ ./packages/database/
 
 COPY --from=builder /workspace-builder/packages/email-templates/package.json \
                     /workspace-builder/packages/email-templates/dist/ \
