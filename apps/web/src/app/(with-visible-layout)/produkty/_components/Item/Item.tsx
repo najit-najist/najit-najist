@@ -31,6 +31,8 @@ export const Item: FC<
     descriptionPreview = descriptionPreview.substring(0, 70) + '...';
   }
 
+  const outOfStock = typeof stock?.value === 'number' && !stock?.value;
+
   return (
     <article className="flex flex-col pt-5 first:pt-0 xs:pt-0">
       <div className={clsx('relative block w-full aspect-square flex-none')}>
@@ -38,6 +40,7 @@ export const Item: FC<
           imageUrls={images.slice(0, 4).map(({ file }) => file)}
           itemId={id}
           itemLink={linkHref}
+          outOfStrock={outOfStock}
         />
         {!publishedAt ? (
           <div
@@ -80,7 +83,10 @@ export const Item: FC<
         </p>
 
         <div className="flex items-center justify-between">
-          <Price value={price?.value ?? 0} />
+          <Price
+            value={price?.value ?? 0}
+            className={outOfStock ? 'line-through' : ''}
+          />
           <AddToCartButton
             productId={id}
             productMetadata={{
@@ -88,10 +94,7 @@ export const Item: FC<
               name,
               slug,
             }}
-            disabled={
-              (typeof stock?.value === 'number' && !stock?.value) ||
-              !publishedAt
-            }
+            disabled={outOfStock || !publishedAt}
             withIcon
             withoutText
           />

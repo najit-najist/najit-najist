@@ -24,6 +24,7 @@ import {
 import {
   EntityLink,
   entityLinkSchema,
+  pickupTimeSchema,
   userCartCheckoutInputSchema,
 } from '@najit-najist/schemas';
 import { t } from '@trpc';
@@ -239,17 +240,19 @@ export const userCartRoutes = t.router({
           });
         }
 
-        if (
-          deliveryMethod &&
-          isLocalPickup(deliveryMethod) &&
-          !value.localPickupTime
-        ) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Dokončete výběr času pro vyzvednutí na prodejně',
-            fatal: true,
-            path: ['localPickupTime'],
-          });
+        if (deliveryMethod && isLocalPickup(deliveryMethod)) {
+          const validatedPickupDate = pickupTimeSchema.safeParse(
+            value.localPickupTime
+          );
+
+          if (!validatedPickupDate.success) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: validatedPickupDate.error.format()._errors.join(', '),
+              fatal: true,
+              path: ['localPickupTime'],
+            });
+          }
         }
       })
     )
@@ -334,15 +337,10 @@ export const userCartRoutes = t.router({
           ];
 
           if (input.localPickupTime) {
-            const [hours, minutes] = input.localPickupTime.split(':');
-
             stockUpdatesAsPromises.push(
               tx.insert(orderLocalPickupTimes).values({
                 orderId: order.id,
-                date: dayjs()
-                  .set('hours', +hours)
-                  .set('minutes', +minutes)
-                  .toDate(),
+                date: input.localPickupTime,
               })
             );
           }

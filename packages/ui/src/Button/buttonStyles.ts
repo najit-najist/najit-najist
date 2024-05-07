@@ -24,6 +24,9 @@ export const buttonStyles = cva(
         softRed:
           'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
         subtleRed: 'hover:bg-red-50 text-red-600 border-0',
+
+        ghost:
+          'bg-white disabled:bg-gray-50 disabled:text-red-800 disabled:opacity-50 hover:bg-gray-100 aria-selected:bg-project-primary aria-selected:text-white',
       },
       appearance: {
         extraSmall: 'py-1 px-3 text-[12px]',

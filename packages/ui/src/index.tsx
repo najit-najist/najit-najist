@@ -61,6 +61,11 @@ export * from './headlessUi.js';
 
 export { toast, Toaster } from './toast/index.js';
 export {
+  Calendar,
+  type CalendarProps,
+  type SelectSingleEventHandler,
+} from './Calendar.js';
+export {
   ErrorBoundary,
   type ErrorBoundaryProps,
   type FallbackProps,

@@ -36,10 +36,10 @@ export type ItemBase = { id: string | number };
 
 export type SelectProps<T extends ItemBase> = {
   label?: string;
-  selected?: T;
+  selected?: T | null;
   items: T[];
   onChange?: (nextValue: T | null) => void;
-  formatter: (item: T) => string;
+  formatter: (item: T) => ReactNode;
   name?: string;
   disabled?: boolean;
   multiple?: boolean;

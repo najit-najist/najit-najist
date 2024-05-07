@@ -1,3 +1,4 @@
+import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { dayjs } from '@najit-najist/api';
 import { OrderState } from '@najit-najist/database/models';
@@ -59,6 +60,9 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
   const activeButtons = orderStateToButtons[order.state];
   const orderIsFinished = order.state === 'finished';
   const orderIsDropped = order.state === 'dropped';
+  const pickupDateAsDayjs = order.pickupDate?.date
+    ? dayjs(order.pickupDate?.date)
+    : null;
 
   return (
     <Paper className="px-3 py-2 divide-y-2">
@@ -91,15 +95,21 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
               order={{ id: order.id }}
             />
 
-            {order.pickupDate ? (
+            {pickupDateAsDayjs ? (
               <>
                 <hr className="border-none bg-gray-100 h-0.5 my-3" />
                 <Alert
                   color="warning"
                   icon={ClockIcon}
-                  heading={`Čas osobního odběru je v ${dayjs(
-                    order.pickupDate.date
-                  ).format('HH:mm')}`}
+                  heading={
+                    Math.min(1, pickupDateAsDayjs.diff(dayjs(), 'minutes')) < 1
+                      ? `Osobní odběr byl ${pickupDateAsDayjs.format(
+                          DEFAULT_DATE_FORMAT
+                        )}`
+                      : `Osobní odběr je ${pickupDateAsDayjs.format(
+                          DEFAULT_DATE_FORMAT
+                        )}`
+                  }
                 ></Alert>
               </>
             ) : null}

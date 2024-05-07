@@ -6,7 +6,10 @@ import { usePlausible } from '@hooks';
 import { logger } from '@logger';
 import { AppRouterInput } from '@najit-najist/api';
 import { OrderDeliveryMethod } from '@najit-najist/database/models';
-import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
+import {
+  pickupTimeSchema,
+  userCartCheckoutInputSchema,
+} from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { getTotalPrice } from '@utils';
@@ -50,16 +53,19 @@ export const FormProvider: FC<
     () =>
       zodResolver(
         userCartCheckoutInputSchema.superRefine((value, ctx) => {
-          if (
-            value.deliveryMethod.id === localPickupDeliveryMethodId &&
-            !value.localPickupTime
-          ) {
-            ctx.addIssue({
-              code: z.ZodIssueCode.custom,
-              message: 'Dokončete výběr času pro vyzvednutí na prodejně',
-              fatal: true,
-              path: ['localPickupTime'],
-            });
+          if (value.deliveryMethod.id === localPickupDeliveryMethodId) {
+            const validatedPickupDate = pickupTimeSchema.safeParse(
+              value.localPickupTime
+            );
+
+            if (!validatedPickupDate.success) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: validatedPickupDate.error.format()._errors.join(', '),
+                fatal: true,
+                path: ['localPickupTime'],
+              });
+            }
           }
         })
       ),

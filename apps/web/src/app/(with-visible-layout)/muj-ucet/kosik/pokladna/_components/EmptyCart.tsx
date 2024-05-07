@@ -9,7 +9,7 @@ export const EmptyCart: FC = () => {
   return (
     <div className="text-center flex flex-col items-center my-20 justify-center">
       <PageTitle>Zatím nic v košíku...</PageTitle>
-      <Link href="/produkty" className={buttonStyles()}>
+      <Link href="/produkty" className={buttonStyles({ className: 'mt-5' })}>
         Jít nakupovat!
       </Link>
     </div>

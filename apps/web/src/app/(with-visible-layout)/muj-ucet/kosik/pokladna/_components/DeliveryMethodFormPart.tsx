@@ -86,11 +86,6 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
     [deliveryMethods]
   );
 
-  // const mappedDeliveryMethods: RadioGroupItem[] = deliveryMethods.map((method) => ({
-  //   ...method,
-  //   description: metho
-  // }))
-
   return (
     <>
       <RadioGroup<OrderDeliveryMethod>

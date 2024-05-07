@@ -18,7 +18,8 @@ export const ImageSlider: FC<{
   imageUrls: string[];
   itemLink: string;
   itemId: number;
-}> = ({ imageUrls, itemLink, itemId }) => {
+  outOfStrock?: boolean;
+}> = ({ imageUrls, itemLink, itemId, outOfStrock }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     slides: { spacing: 10 },
@@ -30,7 +31,10 @@ export const ImageSlider: FC<{
       <Link href={itemLink as any}>
         <div
           ref={sliderRef}
-          className="keen-slider h-full rounded-lg overflow-hidden"
+          className={clsx(
+            'keen-slider h-full rounded-lg overflow-hidden',
+            outOfStrock && 'opacity-50'
+          )}
         >
           {imageUrls.map((imageName) => (
             <div key={imageName} className="keen-slider__slide min-w-full">
