@@ -18,6 +18,7 @@ import {
   Select,
   SelectSingleEventHandler,
 } from '@najit-najist/ui';
+import 'dayjs/plugin/timezone';
 import { FC, useMemo, useState } from 'react';
 import { useController, useFormState } from 'react-hook-form';
 
