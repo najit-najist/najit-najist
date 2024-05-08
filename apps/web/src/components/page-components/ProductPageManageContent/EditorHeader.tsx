@@ -3,10 +3,10 @@
 import { ProductWithRelationsLocal } from '@custom-types';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
+import { dayjs } from '@najit-najist/api';
 import { Button, Switch, buttonStyles } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';

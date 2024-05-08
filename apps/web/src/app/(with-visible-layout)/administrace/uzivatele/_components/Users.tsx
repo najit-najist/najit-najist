@@ -1,10 +1,9 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { UserWithRelations } from '@custom-types';
 import { UserIcon } from '@heroicons/react/24/outline';
-import { getFileUrl } from '@najit-najist/api';
+import { dayjs, getFileUrl } from '@najit-najist/api';
 import { users as usersModel } from '@najit-najist/database/models';
 import { getCachedLoggedInUser } from '@server-utils';
-import dayjs from 'dayjs';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';

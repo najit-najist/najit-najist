@@ -1,5 +1,6 @@
-import dayjs from 'dayjs';
 import { z } from 'zod';
+
+import { dayjs } from './internals/dates';
 
 export const pickupTimeSchema = z
   .date({ required_error: 'Vyplňte čas vyzvednutí' })

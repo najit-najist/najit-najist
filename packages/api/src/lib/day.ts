@@ -10,4 +10,6 @@ dayjsOriginal.extend(utc);
 
 dayjsOriginal.locale('cs');
 
+dayjsOriginal.tz.setDefault('Europe/Berlin');
+
 export const dayjs = dayjsOriginal;

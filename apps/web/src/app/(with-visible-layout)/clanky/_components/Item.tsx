@@ -1,8 +1,7 @@
 import { PostWithRelations } from '@custom-types';
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { getFileUrl } from '@najit-najist/api';
+import { dayjs, getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
-import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';

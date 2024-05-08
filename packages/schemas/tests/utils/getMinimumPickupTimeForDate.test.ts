@@ -1,6 +1,6 @@
-import dayjs from 'dayjs';
 import { describe, expect, it, vi } from 'vitest';
 
+import { dayjs } from '../../src/internals/dates';
 import { getMinimumPickupTimeForDate } from '../../src/utils/getMinimumPickupTimeForDate';
 
 vi.useFakeTimers();

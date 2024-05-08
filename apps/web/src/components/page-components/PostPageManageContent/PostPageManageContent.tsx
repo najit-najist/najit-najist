@@ -1,11 +1,10 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { PostWithRelations } from '@custom-types';
-import { getFileUrl } from '@najit-najist/api';
+import { dayjs, getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
 import { Breadcrumbs } from '@najit-najist/ui';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import { FC } from 'react';

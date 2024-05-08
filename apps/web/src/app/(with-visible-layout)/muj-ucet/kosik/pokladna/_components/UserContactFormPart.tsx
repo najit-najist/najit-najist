@@ -97,7 +97,12 @@ export const UserContactFormPart: FC = () => {
 
       <FormBreak className="mt-4 mb-2" />
 
-      <Textarea disabled={fieldsAreDisabled} label="Poznámky" rows={8} />
+      <Textarea
+        disabled={fieldsAreDisabled}
+        label="Poznámky"
+        rows={8}
+        {...register('notes')}
+      />
     </div>
   );
 };

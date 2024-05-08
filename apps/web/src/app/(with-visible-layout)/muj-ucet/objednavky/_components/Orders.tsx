@@ -1,8 +1,7 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { AppRouterOutput } from '@najit-najist/api';
+import { AppRouterOutput, dayjs } from '@najit-najist/api';
 import { OrderState } from '@najit-najist/database/models';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import { FC } from 'react';
 

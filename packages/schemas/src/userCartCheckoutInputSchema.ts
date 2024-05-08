@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { z } from 'zod';
 
 import { entityLinkSchema } from './entityLinkSchema';

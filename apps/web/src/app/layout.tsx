@@ -3,9 +3,6 @@ import { ContextProviders } from '@contexts';
 import { LayoutComponent } from '@custom-types';
 import { Toaster } from '@najit-najist/ui';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
-import relativeTime from 'dayjs/plugin/relativeTime';
-import timezone from 'dayjs/plugin/timezone';
 import 'keen-slider/keen-slider.min.css';
 import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
 import { headers } from 'next/headers';
@@ -13,13 +10,6 @@ import Script from 'next/script';
 import 'react-color-palette/lib/css/styles.css';
 
 import '../globals.css';
-
-dayjs.extend(timezone);
-dayjs.extend(relativeTime);
-
-// @ts-ignore
-import('dayjs/locale/cs');
-dayjs.locale('cs');
 
 const inter = Suez_One({
   weight: '400',

@@ -5,6 +5,7 @@ import {
   ClockIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline';
+import { dayjs } from '@najit-najist/api';
 import { getMinimumPickupTimeForDate } from '@najit-najist/schemas';
 import {
   Alert,
@@ -17,7 +18,7 @@ import {
   Select,
   SelectSingleEventHandler,
 } from '@najit-najist/ui';
-import dayjs, { Dayjs } from 'dayjs';
+import { Dayjs } from 'dayjs';
 import { FC, useMemo, useState } from 'react';
 import { useController, useFormState } from 'react-hook-form';
 

@@ -1,7 +1,7 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
-import { getFileUrl } from '@najit-najist/api';
+import { dayjs, getFileUrl } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
 import {
   Badge,
@@ -13,7 +13,6 @@ import {
 } from '@najit-najist/ui';
 import { getCachedDeliveryMethods, getCachedTrpcCaller } from '@server-utils';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
 import { FC, PropsWithChildren } from 'react';
 

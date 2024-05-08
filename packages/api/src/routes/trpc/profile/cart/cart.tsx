@@ -340,7 +340,7 @@ export const userCartRoutes = t.router({
             stockUpdatesAsPromises.push(
               tx.insert(orderLocalPickupTimes).values({
                 orderId: order.id,
-                date: input.localPickupTime,
+                date: dayjs.utc(input.localPickupTime).toDate(),
               })
             );
           }
@@ -449,42 +449,37 @@ export const userCartRoutes = t.router({
         ),
       ]);
 
-      // Is it really necessary to wait here?
-      Promise.all([
-        MailService.send({
-          to: input.email,
-          subject: `Objednávka #${order.id} na najitnajist.cz`,
-          body: userEmailContent,
-        }).catch((error) => {
-          logger.error(
-            { error, order },
-            `Order flow - could not notify user to its email with order information`
-          );
-        }),
-
-        MailService.send({
-          to: config.mail.baseEmail,
-          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-          body: adminEmailContent,
-        }).catch((error) => {
-          logger.error(
-            { error, order },
-            `Order flow - could not notify admin to its email with order information`
-          );
-        }),
-
-        MailService.send({
-          // TODO: move this to configuration
-          to: 'prodejnahk@najitnajist.cz',
-          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-          body: adminEmailContent,
-        }).catch((error) => {
-          logger.error(
-            { error, order },
-            `Order flow - could not notify admin to its email with order information`
-          );
-        }),
-      ]);
+      MailService.send({
+        to: input.email,
+        subject: `Objednávka #${order.id} na najitnajist.cz`,
+        body: userEmailContent,
+      }).catch((error) => {
+        logger.error(
+          { error, order },
+          `Order flow - could not notify user to its email with order information`
+        );
+      });
+      MailService.send({
+        to: config.mail.baseEmail,
+        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+        body: adminEmailContent,
+      }).catch((error) => {
+        logger.error(
+          { error, order },
+          `Order flow - could not notify admin to its email with order information`
+        );
+      });
+      MailService.send({
+        // TODO: move this to configuration
+        to: 'prodejnahk@najitnajist.cz',
+        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+        body: adminEmailContent,
+      }).catch((error) => {
+        logger.error(
+          { error, order },
+          `Order flow - could not notify admin to its email with order information`
+        );
+      });
 
       revalidatePath('/muj-ucet/kosik/pokladna');
       revalidatePath('/produkty');

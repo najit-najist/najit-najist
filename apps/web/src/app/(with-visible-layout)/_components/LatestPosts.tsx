@@ -1,8 +1,7 @@
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
+import { AppRouterOutput, dayjs, getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
 import { getCachedTrpcCaller } from '@server-utils';
-import dayjs from 'dayjs';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
