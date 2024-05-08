@@ -5,7 +5,7 @@ import {
   ClockIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline';
-import { dayjs } from '@najit-najist/api';
+import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
 import { getMinimumPickupTimeForDate } from '@najit-najist/schemas';
 import {
   Alert,
@@ -32,9 +32,6 @@ const STARTING_HOURS = 10;
 const ENDING_HOURS = 18;
 const TIME_PART_FROM_HOUR = 60 / HOUR_SLICED_TIMES;
 
-const unifyDate = (date: Date | Dayjs) =>
-  date instanceof Date ? dayjs(date) : date;
-
 const timeOptions = new Map(
   new Array((ENDING_HOURS - STARTING_HOURS) * HOUR_SLICED_TIMES + 1)
     .fill(null)
@@ -56,24 +53,35 @@ const timeOptions = new Map(
 
 const timeOptionsAsArray = [...timeOptions.values()];
 
+const fieldDateFormat = 'YYYY-MM-DDTHH:mm:00';
+const dayjsToFieldValue = (datetime: Dayjs) => datetime.format(fieldDateFormat);
+const fieldValueToDayjs = (datetime: string) =>
+  dayjs(datetime, fieldDateFormat).tz(DEFAULT_TIMEZONE, true);
+
 export const LocalPickupDeliveryTimePicker: FC = () => {
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
-  const { field, fieldState } = useController({
+  const { field, fieldState } = useController<{
+    localPickupTime: string | undefined;
+  }>({
     name: 'localPickupTime',
   });
 
   const [now, setNow] = useState(dayjs());
 
   const selectOptionForDate = useMemo((): TimeOption[] => {
-    if (field.value instanceof Date === false) {
+    if (!field.value) {
       return [];
     }
 
-    const minimumForDate = getMinimumPickupTimeForDate(field.value);
+    const minimumForDate = getMinimumPickupTimeForDate(
+      fieldValueToDayjs(field.value)
+    );
+
     if (!minimumForDate) {
       return [];
     }
+
     const minimumForDateAsDayjs = dayjs(minimumForDate);
     const minimumFormatted = minimumForDateAsDayjs.format('HH:mm');
     const skip = timeOptionsAsArray.findIndex(
@@ -100,15 +108,27 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
       return field.onChange(null);
     }
 
-    const nextValue = getMinimumPickupTimeForDate(newDate);
+    const incommingDateAsValue = [
+      [newDate.getFullYear(), newDate.getMonth() + 1, newDate.getDate()]
+        .map((val) => val.toString().padStart(2, '0'))
+        .join('-'),
+      [newDate.getHours(), newDate.getMinutes(), 0]
+        .map((val) => val.toString().padStart(2, '0'))
+        .join(':'),
+    ].join('T');
+
+    const nextValue = getMinimumPickupTimeForDate(
+      fieldValueToDayjs(incommingDateAsValue)
+    );
+
     if (!nextValue) {
       setNow(dayjs());
     }
 
     field.onChange(
-      dayjs(nextValue)
-        .add(nextValue ? 0 : 1, 'day')
-        .toDate()
+      nextValue
+        ? dayjsToFieldValue(nextValue.add(nextValue ? 0 : 1, 'day'))
+        : null
     );
   };
 
@@ -116,26 +136,32 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
     if (!value) {
       return;
     }
-
     const [hour, minute] = value.id.toString().split(':').map(Number);
 
     field.onChange(
-      dayjs(field.value).set('hour', hour).set('minute', minute).toDate()
+      dayjsToFieldValue(
+        dayjs(field.value).set('hour', hour).set('minute', minute)
+      )
     );
   };
 
-  const selectedDate = useMemo(() => {
-    if (field.value instanceof Date) {
-      return field.value;
+  const [selectedDateAsDate, selectedTime] = useMemo((): [
+    Date | undefined,
+    TimeOption | null
+  ] => {
+    if (!field.value) {
+      return [undefined, null];
     }
-  }, [field.value]);
+    const valueAsDayjs = fieldValueToDayjs(field.value);
 
-  const selectedTime = useMemo(() => {
-    if (field.value instanceof Date) {
-      return timeOptions.get(unifyDate(field.value).format('HH:mm')) ?? null;
+    if (!valueAsDayjs.isValid()) {
+      return [undefined, null];
     }
 
-    return null;
+    return [
+      valueAsDayjs.startOf('day').toDate(),
+      timeOptions.get(valueAsDayjs.format('HH:mm')) ?? null,
+    ];
   }, [field.value]);
 
   return (
@@ -161,9 +187,9 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
               disabled={formState.isSubmitting || isActive}
               className="flex justify-between items-center bg-white disabled:opacity-50 disabled:cursor-not-allowed w-full border-gray-300 focus:outline-none border py-[0.55rem] px-3 sm:text-sm placeholder-gray-300 rounded-l-md rounded-r-md shadow-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400 focus:border-green-400 "
             >
-              {selectedDate ? (
+              {field.value ? (
                 <>
-                  {dayjs(selectedDate).format(DEFAULT_DATE_FORMAT)}
+                  {fieldValueToDayjs(field.value).format(DEFAULT_DATE_FORMAT)}
                   <PencilIcon className="ml-4 -mt-0.5 inline w-5 h-5" />
                 </>
               ) : (
@@ -186,10 +212,11 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
                   <hr className="my-3 border-t border-gray-200 mt-3" />
                   <Calendar
                     mode="single"
+                    ISOWeek
                     fromDate={minimumDate}
                     disabled={formState.isSubmitting || isActive}
                     onSelect={onChange}
-                    selected={selectedDate}
+                    selected={selectedDateAsDate}
                     toMonth={now.add(2, 'month').toDate()}
                     toYear={now.get('year')}
                   />

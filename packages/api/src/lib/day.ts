@@ -7,9 +7,10 @@ import utc from 'dayjs/plugin/utc';
 dayjsOriginal.extend(timezone);
 dayjsOriginal.extend(relativeTime);
 dayjsOriginal.extend(utc);
-
 dayjsOriginal.locale('cs');
 
-dayjsOriginal.tz.setDefault('Europe/Berlin');
+const DEFAULT_TIMEZONE = 'Europe/Berlin';
+dayjsOriginal.tz.setDefault(DEFAULT_TIMEZONE);
+const dayjs = dayjsOriginal;
 
-export const dayjs = dayjsOriginal;
+export { DEFAULT_TIMEZONE, dayjs };

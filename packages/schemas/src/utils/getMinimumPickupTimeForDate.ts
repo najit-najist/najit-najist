@@ -1,12 +1,9 @@
 import { Dayjs } from 'dayjs';
 
-import { dayjs } from '../internals/dates';
+import { DEFAULT_TIMEZONE, dayjs } from '../internals/dates';
 
 const STARTING_HOURS = 10;
 const ENDING_HOURS = 18;
-
-const unifyDate = (date: Date | Dayjs) =>
-  date instanceof Date ? dayjs(date) : date;
 
 const clampMinutes = (minute: number) => {
   switch (true) {
@@ -23,19 +20,16 @@ const clampMinutes = (minute: number) => {
   }
 };
 
-export const getMinimumPickupTimeForDate = (
-  date: Date | Dayjs
-): Date | null => {
-  const dateAsDayJs = unifyDate(date);
-  const diffLength = dateAsDayJs
+export const getMinimumPickupTimeForDate = (date: Dayjs): Dayjs | null => {
+  const diffLength = date
     .clone()
     .startOf('day')
-    .diff(dayjs().startOf('day'), 'day');
+    .diff(dayjs().tz(DEFAULT_TIMEZONE).startOf('day'), 'day');
 
   if (diffLength < 0) {
     return null;
   } else if (diffLength === 0) {
-    const now = dayjs();
+    const now = dayjs().tz(DEFAULT_TIMEZONE);
     const minutesNow = now.get('minute');
     const hourNow = now.get('hour');
     const minimumAllowedHour = Math.min(
@@ -47,14 +41,13 @@ export const getMinimumPickupTimeForDate = (
       return null;
     }
 
-    return dateAsDayJs
+    return date
       .set('hour', minimumAllowedHour)
       .set(
         'minute',
         hourNow < STARTING_HOURS - 2 ? 0 : clampMinutes(minutesNow)
-      )
-      .toDate();
+      );
   } else {
-    return dateAsDayJs.set('hour', STARTING_HOURS).set('minute', 0).toDate();
+    return date.set('hour', STARTING_HOURS).set('minute', 0);
   }
 };

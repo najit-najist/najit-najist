@@ -1,4 +1,4 @@
-import { dayjs } from '@dayjs';
+import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
 import { database } from '@najit-najist/database';
 import {
   OrderDeliveryMethod,
@@ -344,7 +344,9 @@ export const userCartRoutes = t.router({
             stockUpdatesAsPromises.push(
               tx.insert(orderLocalPickupTimes).values({
                 orderId: order.id,
-                date: dayjs.utc(input.localPickupTime).toDate(),
+                date: dayjs(input.localPickupTime)
+                  .tz(DEFAULT_TIMEZONE, true)
+                  .toDate(),
               })
             );
           }
