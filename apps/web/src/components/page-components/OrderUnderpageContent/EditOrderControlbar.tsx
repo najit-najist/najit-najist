@@ -1,6 +1,6 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
-import { dayjs } from '@najit-najist/api';
+import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
 import { OrderState } from '@najit-najist/database/models';
 import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
@@ -61,7 +61,7 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
   const orderIsFinished = order.state === 'finished';
   const orderIsDropped = order.state === 'dropped';
   const pickupDateAsDayjs = order.pickupDate?.date
-    ? dayjs(order.pickupDate?.date)
+    ? dayjs(order.pickupDate?.date).tz(DEFAULT_TIMEZONE)
     : null;
 
   return (

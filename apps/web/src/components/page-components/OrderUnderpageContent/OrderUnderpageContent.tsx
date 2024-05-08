@@ -1,7 +1,12 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
-import { AppRouterOutput, dayjs, getFileUrl } from '@najit-najist/api';
+import {
+  AppRouterOutput,
+  DEFAULT_TIMEZONE,
+  dayjs,
+  getFileUrl,
+} from '@najit-najist/api';
 import { OrderState, products } from '@najit-najist/database/models';
 import { Alert, Tooltip } from '@najit-najist/ui';
 import NextImage from 'next/image';
@@ -271,9 +276,9 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                             {' '}
                             v{' '}
                             <strong>
-                              {dayjs(order.pickupDate.date).format(
-                                DEFAULT_DATE_FORMAT
-                              )}
+                              {dayjs(order.pickupDate.date)
+                                .tz(DEFAULT_TIMEZONE)
+                                .format(DEFAULT_DATE_FORMAT)}
                             </strong>
                           </>
                         ) : null}
