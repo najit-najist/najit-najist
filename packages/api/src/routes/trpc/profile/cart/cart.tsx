@@ -257,7 +257,10 @@ export const userCartRoutes = t.router({
       })
     )
     .mutation(async ({ ctx, input }) => {
+      const entireDuration = performance.now();
+      let getCartDuration = performance.now();
       const cart = await getUserCart({ id: ctx.sessionData.userId });
+      getCartDuration = performance.now() - getCartDuration;
 
       if (!cart.products.length) {
         throw new TRPCError({
@@ -288,6 +291,7 @@ export const userCartRoutes = t.router({
         );
       }
 
+      let createOrderDuration = performance.now();
       const { redirectTo, newOrderId } = await database.transaction(
         async (tx) => {
           let telephone = await tx.query.telephoneNumbers.findFirst({
@@ -415,74 +419,102 @@ export const userCartRoutes = t.router({
           return { redirectTo, newOrderId: order.id };
         }
       );
+      createOrderDuration = performance.now() - createOrderDuration;
 
+      let getOrderAfterCreateDuration = performance.now();
       const order = await getOrderById(newOrderId);
+      getOrderAfterCreateDuration =
+        performance.now() - getOrderAfterCreateDuration;
 
-      const [userEmailContent, adminEmailContent] = await Promise.all([
-        renderAsync(
-          ThankYouOrder({
-            needsPayment: false,
-            orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
-            order: {
-              ...order,
-              deliveryMethod,
-              paymentMethod,
-              address: order.address!,
-              orderedProducts: order.orderedProducts.map((product) => ({
-                ...product,
-                product: {
-                  ...product.product,
-                  images: product.product.images.map(({ file }) => file),
-                  price: product.product.price!,
-                },
-              })),
-            },
-            siteOrigin: config.app.origin,
-          })
-        ),
-        renderAsync(
-          ThankYouOrderAdmin({
-            orderLink: `${config.app.origin}/administrace/objednavky/${order.id}`,
-            order,
-            siteOrigin: config.app.origin,
-          })
-        ),
-      ]);
+      renderAsync(
+        ThankYouOrderAdmin({
+          orderLink: `${config.app.origin}/administrace/objednavky/${order.id}`,
+          order,
+          siteOrigin: config.app.origin,
+        })
+      )
+        .then((adminEmailContent) => {
+          MailService.send({
+            to: config.mail.baseEmail,
+            subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+            body: adminEmailContent,
+          }).catch((error) => {
+            logger.error(
+              { error, order },
+              `Order flow - could not notify admin to its email with order information`
+            );
+          });
+          MailService.send({
+            // TODO: move this to configuration
+            to: 'prodejnahk@najitnajist.cz',
+            subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+            body: adminEmailContent,
+          }).catch((error) => {
+            logger.error(
+              { error, order },
+              `Order flow - could not notify admin to its email with order information`
+            );
+          });
+        })
+        .catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify admin to its email with order information because render failed`
+          );
+        });
 
-      MailService.send({
-        to: input.email,
-        subject: `Objednávka #${order.id} na najitnajist.cz`,
-        body: userEmailContent,
-      }).catch((error) => {
-        logger.error(
-          { error, order },
-          `Order flow - could not notify user to its email with order information`
-        );
-      });
-      MailService.send({
-        to: config.mail.baseEmail,
-        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-        body: adminEmailContent,
-      }).catch((error) => {
-        logger.error(
-          { error, order },
-          `Order flow - could not notify admin to its email with order information`
-        );
-      });
-      MailService.send({
-        // TODO: move this to configuration
-        to: 'prodejnahk@najitnajist.cz',
-        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-        body: adminEmailContent,
-      }).catch((error) => {
-        logger.error(
-          { error, order },
-          `Order flow - could not notify admin to its email with order information`
-        );
-      });
+      renderAsync(
+        ThankYouOrder({
+          needsPayment: false,
+          orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
+          order: {
+            ...order,
+            deliveryMethod,
+            paymentMethod,
+            address: order.address!,
+            orderedProducts: order.orderedProducts.map((product) => ({
+              ...product,
+              product: {
+                ...product.product,
+                images: product.product.images.map(({ file }) => file),
+                price: product.product.price!,
+              },
+            })),
+          },
+          siteOrigin: config.app.origin,
+        })
+      )
+        .then((userEmailContent) => {
+          MailService.send({
+            to: input.email,
+            subject: `Objednávka #${order.id} na najitnajist.cz`,
+            body: userEmailContent,
+          }).catch((error) => {
+            logger.error(
+              { error, order },
+              `Order flow - could not notify user to its email with order information`
+            );
+          });
+        })
+        .catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify user to its email with order information because render failed`
+          );
+        });
 
       revalidatePath('/muj-ucet/kosik/pokladna');
       revalidatePath('/produkty');
+
+      logger.warn(
+        {
+          getCartDuration,
+          createOrderDuration,
+          getOrderAfterCreateDuration,
+          entireDuration: performance.now() - entireDuration,
+        },
+        'Order duration'
+      );
 
       return {
         order,

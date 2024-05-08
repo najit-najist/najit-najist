@@ -38,7 +38,7 @@ export class MailService {
         {
           rejected: result?.rejected,
           response: result?.response,
-          payload: { body, subject, to },
+          payload: { bodyLength: body.length, subject, to },
         },
         `MailService - success`
       );
