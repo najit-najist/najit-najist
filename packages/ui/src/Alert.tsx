@@ -89,7 +89,7 @@ export const Alert: FC<AlertProps> = ({
             />
           </div>
         ) : null}
-        <div className="ml-3">
+        <div className="ml-3 w-full">
           <h3 className={titleStyles({ color })}>{heading}</h3>
           {children ? (
             <div className={contentStyles({ color })}>{children}</div>

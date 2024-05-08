@@ -1,6 +1,4 @@
-import { Dayjs } from 'dayjs';
-
-import { DEFAULT_TIMEZONE, dayjs } from '../internals/dates';
+import { DEFAULT_TIMEZONE, dayjs, Dayjs } from '../internals/dates';
 
 const STARTING_HOURS = 10;
 const ENDING_HOURS = 18;

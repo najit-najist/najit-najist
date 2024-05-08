@@ -1,4 +1,4 @@
-import { default as dayjsOriginal } from 'dayjs';
+import { default as dayjsOriginal, Dayjs } from 'dayjs';
 import 'dayjs/locale/cs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
@@ -13,4 +13,4 @@ const DEFAULT_TIMEZONE = 'Europe/Berlin';
 dayjsOriginal.tz.setDefault(DEFAULT_TIMEZONE);
 const dayjs = dayjsOriginal;
 
-export { DEFAULT_TIMEZONE, dayjs };
+export { DEFAULT_TIMEZONE, dayjs, type Dayjs };
