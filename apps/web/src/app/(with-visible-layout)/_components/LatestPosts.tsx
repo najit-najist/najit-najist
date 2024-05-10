@@ -49,9 +49,9 @@ const Item: FC<PostWithRelations> = ({
             dateTime={String(publishedAt) ?? createdAt}
             className="text-gray-500 mt-1"
           >
-            {dayjs(publishedAt ? publishedAt : createdAt).format(
-              'DD. MM. YYYY @ HH:mm'
-            )}
+            {dayjs
+              .tz(publishedAt ? publishedAt : createdAt)
+              .format('DD. MM. YYYY @ HH:mm')}
           </time>
           <div className="flex space-x-3">
             {categories.map(({ category }) => (

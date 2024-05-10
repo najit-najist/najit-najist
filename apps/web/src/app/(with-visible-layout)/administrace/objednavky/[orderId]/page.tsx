@@ -1,9 +1,13 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
+import { OrderUnderpageContentLoading } from '@components/page-components/OrderUnderpageContent/OrderUnderpageContentLoading';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { logger } from '@najit-najist/api/server';
-import { getCachedOrder } from '@server-utils';
+import { getLoggedInUserId, logger } from '@najit-najist/api/server';
+import { database } from '@najit-najist/database';
+import { orders } from '@najit-najist/database/models';
+import { and, eq, sql } from 'drizzle-orm';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 type PageProps = {
   params: {
@@ -19,12 +23,26 @@ export const metadata = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const order = await getCachedOrder({ id: Number(params.orderId) }).catch(
-    (error) => {
-      logger.error({ error }, 'Failed to get order');
-      notFound();
-    }
+  const userId = await getLoggedInUserId();
+  const orderId = Number(params.orderId);
+
+  const selectQuery = database
+    .select({ n: sql`1` })
+    .from(orders)
+    .where(
+      and(eq(orders.id, Number(params.orderId)), eq(orders.userId, userId))
+    );
+
+  const {
+    rows: [{ exists }],
+  } = await database.execute<{ exists: boolean }>(
+    sql`select exists(${selectQuery}) as exists`
   );
+
+  if (!exists) {
+    logger.error({}, 'Failed to get order');
+    return notFound();
+  }
 
   return (
     <>
@@ -40,7 +58,9 @@ export default async function Page({ params }: PageProps) {
           Zpět na výpis objednávek
         </Link>
       </div>
-      <OrderUnderpageContent order={order} viewType="update" />
+      <Suspense fallback={<OrderUnderpageContentLoading />}>
+        <OrderUnderpageContent orderId={orderId} viewType="update" />
+      </Suspense>
     </>
   );
 }

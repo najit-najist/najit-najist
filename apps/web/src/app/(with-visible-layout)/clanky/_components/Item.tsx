@@ -37,9 +37,9 @@ export const Item: FC<PostWithRelations> = (post) => {
             dateTime={String(post.publishedAt) ?? post.createdAt}
             className="text-gray-500"
           >
-            {dayjs(post.publishedAt ? post.publishedAt : post.createdAt).format(
-              'DD. MM. YYYY @ HH:mm'
-            )}
+            {dayjs
+              .tz(post.publishedAt ? post.publishedAt : post.createdAt)
+              .format('DD. MM. YYYY @ HH:mm')}
             {!post.publishedAt ? (
               <span className="text-red-400"> - Nepublikováno</span>
             ) : null}

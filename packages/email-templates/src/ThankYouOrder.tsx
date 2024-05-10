@@ -132,9 +132,9 @@ export default function ThankYouOrder({
                       <Row>
                         <Column>Datum objednávky:</Column>
                         <Column className="text-right">
-                          {dayjs(order.createdAt).format(
-                            'DD. MM. YYYY v HH:mm'
-                          )}
+                          {dayjs
+                            .tz(order.createdAt)
+                            .format('DD. MM. YYYY v HH:mm')}
                         </Column>
                       </Row>
                       <Spacing size="sm" />

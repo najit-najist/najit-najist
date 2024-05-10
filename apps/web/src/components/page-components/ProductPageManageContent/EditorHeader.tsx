@@ -28,7 +28,7 @@ const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
 
   const onSaveClick = () => {
     if (changePublishedAtTo !== null) {
-      const willBe = changePublishedAtTo ? dayjs().toDate() : null;
+      const willBe = changePublishedAtTo ? dayjs.tz().toDate() : null;
 
       field.onChange(willBe);
     }

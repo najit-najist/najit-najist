@@ -242,9 +242,9 @@ export const ProductPageManageContent: FC<
                     {product?.createdAt ? (
                       <Input
                         label="Vytvořeno"
-                        value={dayjs(product.createdAt).format(
-                          DEFAULT_DATE_FORMAT
-                        )}
+                        value={dayjs
+                          .tz(product.createdAt)
+                          .format(DEFAULT_DATE_FORMAT)}
                         disabled
                       />
                     ) : null}
@@ -252,9 +252,9 @@ export const ProductPageManageContent: FC<
                     {product?.updatedAt ? (
                       <Input
                         label="Upraveno"
-                        value={dayjs(product.updatedAt).format(
-                          DEFAULT_DATE_FORMAT
-                        )}
+                        value={dayjs
+                          .tz(product.updatedAt)
+                          .format(DEFAULT_DATE_FORMAT)}
                         disabled
                       />
                     ) : null}
@@ -262,9 +262,9 @@ export const ProductPageManageContent: FC<
                     {product?.publishedAt ? (
                       <Input
                         label="Publikováno"
-                        value={dayjs(product.publishedAt).format(
-                          DEFAULT_DATE_FORMAT
-                        )}
+                        value={dayjs
+                          .tz(product.publishedAt)
+                          .format(DEFAULT_DATE_FORMAT)}
                         disabled
                       />
                     ) : null}

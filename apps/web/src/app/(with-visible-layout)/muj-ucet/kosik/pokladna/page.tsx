@@ -2,7 +2,6 @@ import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
 import { logger } from '@najit-najist/api/server';
-import { database } from '@najit-najist/database';
 import {
   getCachedDeliveryMethods,
   getCachedLoggedInUser,

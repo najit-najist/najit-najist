@@ -63,7 +63,7 @@ export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               {person.createdAt
-                ? dayjs(person.createdAt).format(DEFAULT_DATE_FORMAT)
+                ? dayjs.tz(person.createdAt).format(DEFAULT_DATE_FORMAT)
                 : 'Neznámo kdy'}
             </td>
             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">

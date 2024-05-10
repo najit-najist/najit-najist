@@ -1,8 +1,8 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
+import { OrderUnderpageContentLoading } from '@components/page-components/OrderUnderpageContent/OrderUnderpageContentLoading';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { getCachedOrder } from '@server-utils';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 type PageProps = {
   params: {
@@ -17,14 +17,7 @@ export const metadata = {
   title: 'Detail vytvořené objednávky',
 };
 
-export default async function Page({ params }: PageProps) {
-  const order = await getCachedOrder({ id: Number(params.orderId) }).catch(
-    (error) => {
-      console.log({ error });
-      notFound();
-    }
-  );
-
+export default function Page({ params }: PageProps) {
   return (
     <>
       <div className="container mt-5 -mb-5">
@@ -39,7 +32,12 @@ export default async function Page({ params }: PageProps) {
           Zpět na výpis objednávek
         </Link>
       </div>
-      <OrderUnderpageContent order={order} viewType="view" />
+      <Suspense fallback={<OrderUnderpageContentLoading />}>
+        <OrderUnderpageContent
+          orderId={Number(params.orderId)}
+          viewType="view"
+        />
+      </Suspense>
     </>
   );
 }

@@ -2,6 +2,7 @@ export * from './createRequestPocketbaseRequestOptions';
 export * from './createVideoRequestHandler';
 export * from './findUserById';
 export * from './getLoggedInUser';
+export * from './getLoggedInUserId';
 export * from './getTrpcCaller';
 export * from './rateLimit';
 export * from './setupCors';

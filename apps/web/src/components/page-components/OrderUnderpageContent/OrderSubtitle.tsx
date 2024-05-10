@@ -1,20 +1,27 @@
-import { OrderState } from '@najit-najist/database/models';
-import { isLocalPickup } from '@utils';
+import { Order, OrderState } from '@najit-najist/database/models';
+import { isLocalPickup as isLocalPickupCheck } from '@utils';
 import { FC, ReactNode } from 'react';
 
 import { OrderUnderpageProps } from './OrderUnderpageContent';
+import { getCachedDeliveryMethod } from './getCachedDeliveryMethod';
 
 type MessagesDictionary = Record<OrderState, ReactNode>;
 
-export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
+export const OrderSubtitle: FC<
+  OrderUnderpageProps & { order: Order }
+> = async ({ order, viewType }) => {
   let contents: ReactNode = '';
+  const deliveryMethod = await getCachedDeliveryMethod(order.deliveryMethodId);
+  const isLocalPickup = deliveryMethod
+    ? isLocalPickupCheck(deliveryMethod)
+    : false;
 
   if (viewType === 'update') {
     const orderStateToSubtitle: MessagesDictionary = {
       confirmed: (
         <>
           Tato objednávka <b>#{order.id}</b> je potvrzená!{' '}
-          {isLocalPickup(order.deliveryMethod) ? (
+          {isLocalPickup ? (
             <>
               Uživatel si vybral vyzvednutí na prodejně. Když bude vše hotové
               tak přepněte stav na <b>&apos;Připraveno v vyzvednutí&apos;</b>
@@ -38,7 +45,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
           objednávku přepněte do stavu <b>&apos;Potvrzeno&apos;</b>
         </>
       ),
-      shipped: isLocalPickup(order.deliveryMethod) ? (
+      shipped: isLocalPickup ? (
         <>
           Objednávka byla připravena na prodejně. Čekáme až si pro ni uživatel
           dorazí.
@@ -66,7 +73,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
       confirmed: (
         <>
           Vaše objednávka <b>#{order.id}</b> je potvrzená!{' '}
-          {isLocalPickup(order.deliveryMethod) ? (
+          {isLocalPickup ? (
             <>Již brzy dostanete info pro vyzvednutí!</>
           ) : (
             <>Nyní Vaši objednávku zabalíme a odešleme.</>
@@ -75,7 +82,7 @@ export const OrderSubtitle: FC<OrderUnderpageProps> = ({ order, viewType }) => {
       ),
       shipped: (
         <>
-          {isLocalPickup(order.deliveryMethod) ? (
+          {isLocalPickup ? (
             <>
               Vaše objednávka na Vás čeká na naší prodejně. Přijďte si pro ni!
             </>

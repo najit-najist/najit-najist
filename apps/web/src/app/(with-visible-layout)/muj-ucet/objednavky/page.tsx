@@ -64,7 +64,7 @@ const List: FC = async () => {
   );
 };
 
-export default async function Page() {
+export default function Page() {
   return (
     <>
       <div className="container mt-5 -mb-5">
@@ -100,7 +100,7 @@ export default async function Page() {
                 <>
                   <Skeleton className="w-full h-9" />
                   {new Array(8).fill(true).map((_, index) => (
-                    <Skeleton className="w-full h-10 mt-1" />
+                    <Skeleton key={index} className="w-full h-12 mt-2" />
                   ))}
                   <div className="flex justify-between gap-2 mt-1">
                     <Skeleton className="h-9 w-full max-w-24" />

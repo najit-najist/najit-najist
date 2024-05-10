@@ -25,14 +25,14 @@ export const PublishedAtEdit: FC = () => {
             value={
               !field.value
                 ? ''
-                : dayjs(field.value).format(DATETIME_LOCAL_INPUT_FORMAT)
+                : dayjs.tz(field.value).format(DATETIME_LOCAL_INPUT_FORMAT)
             }
             onBlur={field.onBlur}
             onChange={
               ((event) => {
                 const value = event.target.valueAsDate ?? event.target.value;
 
-                field.onChange(dayjs(value).toDate());
+                field.onChange(dayjs.tz(value).toDate());
               }) satisfies ChangeEventHandler<HTMLInputElement>
             }
           />

@@ -2,6 +2,8 @@ import { AppRouterInput } from '@najit-najist/api';
 import { getLoggedInUser, getTrpcCaller } from '@najit-najist/api/server';
 import { cache } from 'react';
 
+export const getCachedAuthenticatedUser = cache(getLoggedInUser);
+
 export const getCachedLoggedInUser = cache(() =>
   getLoggedInUser().catch(() => undefined)
 );

@@ -58,7 +58,9 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
             <div className="text-gray-500 text-xs md:text-inherit block mb-8 relative">
               {props.post.publishedAt ? (
                 <time dateTime={String(props.post.publishedAt)} className="">
-                  {dayjs(props.post.publishedAt).format('DD. MM. YYYY @ HH:mm')}
+                  {dayjs
+                    .tz(props.post.publishedAt)
+                    .format('DD. MM. YYYY @ HH:mm')}
                 </time>
               ) : (
                 <p className="text-red-500">Nepublikováno</p>

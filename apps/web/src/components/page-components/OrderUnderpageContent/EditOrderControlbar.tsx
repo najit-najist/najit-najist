@@ -1,7 +1,7 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
-import { OrderState } from '@najit-najist/database/models';
+import { Order, OrderState } from '@najit-najist/database/models';
 import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import clsx from 'clsx';
@@ -12,9 +12,19 @@ import {
   EditOrderStateButtons,
 } from './EditOrderStateButtons';
 import { OrderUnderpageProps } from './OrderUnderpageContent';
+import { getCachedDeliveryMethod } from './getCachedDeliveryMethod';
+import { getCachedLocalPickupDate } from './getCachedLocalPickupDate';
 
-export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
-  const isOrderLocalPickup = isLocalPickup(order.deliveryMethod);
+export const EditOrderControllbar: FC<
+  OrderUnderpageProps & { order: Order }
+> = async ({ order }) => {
+  const [deliveryMethod, localPickupDate] = await Promise.all([
+    getCachedDeliveryMethod(order.deliveryMethodId),
+    getCachedLocalPickupDate(order.id),
+  ]);
+  const isOrderLocalPickup = deliveryMethod
+    ? isLocalPickup(deliveryMethod)
+    : false;
 
   const orderStateToButtons: Record<OrderState, ActiveButtonConfig[]> = {
     new: [
@@ -60,8 +70,8 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
   const activeButtons = orderStateToButtons[order.state];
   const orderIsFinished = order.state === 'finished';
   const orderIsDropped = order.state === 'dropped';
-  const pickupDateAsDayjs = order.pickupDate?.date
-    ? dayjs(order.pickupDate?.date).tz(DEFAULT_TIMEZONE)
+  const pickupDateAsDayjs = localPickupDate?.date
+    ? dayjs.tz(localPickupDate?.date)
     : null;
 
   return (
@@ -102,7 +112,8 @@ export const EditOrderControllbar: FC<OrderUnderpageProps> = ({ order }) => {
                   color="warning"
                   icon={ClockIcon}
                   heading={
-                    Math.min(1, pickupDateAsDayjs.diff(dayjs(), 'minutes')) < 1
+                    Math.min(1, pickupDateAsDayjs.diff(dayjs.tz(), 'minutes')) <
+                    1
                       ? `Osobní odběr byl ${pickupDateAsDayjs.format(
                           DEFAULT_DATE_FORMAT
                         )}`

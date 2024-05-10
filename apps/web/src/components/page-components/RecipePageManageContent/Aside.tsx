@@ -16,7 +16,7 @@ export const Aside: FC<Partial<Pick<Recipe, 'createdAt' | 'updatedAt'>>> = ({
         {createdAt ? (
           <Input
             label="Vytvořeno"
-            value={dayjs(createdAt).format(DEFAULT_DATE_FORMAT)}
+            value={dayjs.tz(createdAt).format(DEFAULT_DATE_FORMAT)}
             disabled
           />
         ) : null}
@@ -24,7 +24,7 @@ export const Aside: FC<Partial<Pick<Recipe, 'createdAt' | 'updatedAt'>>> = ({
         {updatedAt ? (
           <Input
             label="Upraveno"
-            value={dayjs(updatedAt).format(DEFAULT_DATE_FORMAT)}
+            value={dayjs.tz(updatedAt).format(DEFAULT_DATE_FORMAT)}
             disabled
           />
         ) : null}
