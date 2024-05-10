@@ -65,11 +65,17 @@ export async function middleware(request: NextRequest) {
     requestUrl.pathname
   );
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
+    const headers = new Headers();
+    const parentCookie = request.headers.get('cookie');
+    if (parentCookie) {
+      headers.set('cookie', parentCookie);
+    }
+
     const currentUserResponse = await fetch(
       `http://localhost:${
         process.env.NODE_ENV === 'development' ? 3000 : 4000
       }/api/muj-ucet/profil`,
-      { headers: request.headers }
+      { headers }
     );
     const currentUser = (await currentUserResponse.json()) as User;
 
