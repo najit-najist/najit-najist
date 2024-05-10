@@ -20,6 +20,9 @@ export default function Error({
     logger?.error('Fatal error on web', {
       error,
     });
+    if (!logger) {
+      console.error({ error });
+    }
   }, [error]);
 
   return (

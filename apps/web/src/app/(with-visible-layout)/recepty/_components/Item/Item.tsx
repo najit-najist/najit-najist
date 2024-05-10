@@ -4,17 +4,28 @@ import {
   AcademicCapIcon,
   ArchiveBoxIcon,
   ClockIcon,
+  PencilIcon,
 } from '@heroicons/react/24/outline';
-import { extractTimeFromSteps, stripHtml } from '@najit-najist/api';
-import { Badge, Skeleton } from '@najit-najist/ui';
+import {
+  UserActions,
+  canUser,
+  extractTimeFromSteps,
+  stripHtml,
+} from '@najit-najist/api';
+import { UserWithRelations } from '@najit-najist/api/server';
+import { recipes } from '@najit-najist/database/models';
+import { Badge, Skeleton, buttonStyles } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
 
-import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
-import { ItemLink } from './ItemLink';
 
-export const Item: FC<RecipeWithRelations & { showEditLink?: boolean }> = ({
+export const Item: FC<
+  RecipeWithRelations & {
+    showEditLink?: boolean;
+    loggedInUser?: UserWithRelations;
+  }
+> = ({
   images,
   slug,
   title,
@@ -23,6 +34,7 @@ export const Item: FC<RecipeWithRelations & { showEditLink?: boolean }> = ({
   steps,
   difficulty,
   category,
+  loggedInUser,
 }) => {
   const linkHref = `/recepty/${slug}` as const;
 
@@ -72,10 +84,44 @@ export const Item: FC<RecipeWithRelations & { showEditLink?: boolean }> = ({
           </p>
         </div>
         <div className="flex justify-between mt-auto">
-          {/* @ts-ignore */}
-          <ItemLink href={linkHref} />
-          {/* @ts-ignore */}
-          <EditLink href={linkHref} />
+          <Link
+            href={linkHref}
+            className={buttonStyles({
+              appearance: 'small',
+              className: 'inline-flex',
+            })}
+          >
+            Zobrazit
+            <svg
+              aria-hidden="true"
+              className="w-4 h-4 ml-2 -mr-1"
+              fill="currentColor"
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                clipRule="evenodd"
+              ></path>
+            </svg>
+          </Link>
+          {loggedInUser &&
+          canUser(loggedInUser, {
+            action: UserActions.UPDATE,
+            onModel: recipes,
+          }) ? (
+            <Link
+              href={`${linkHref}?editor=true`}
+              className={buttonStyles({
+                appearance: 'spaceless',
+                color: 'blue',
+                className: 'px-2 py-1 h-9 w-9',
+              })}
+            >
+              <PencilIcon className="w-5 h-5 mt-0.5" />
+            </Link>
+          ) : null}
         </div>
       </div>
     </div>

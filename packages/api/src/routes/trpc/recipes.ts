@@ -2,6 +2,11 @@ import { ErrorCodes } from '@custom-types';
 import { database } from '@najit-najist/database';
 import {
   Recipe,
+  RecipeCategory,
+  RecipeDifficulty,
+  RecipeResource,
+  RecipeResourceMetric,
+  RecipeStep,
   recipeCategories,
   recipeDifficulties,
   recipeImages,
@@ -366,67 +371,114 @@ export const recipesRouter = t.router({
         })
         .default({})
     )
-    .query(async ({ ctx, input }) => {
-      const { difficultySlug, search, typeSlug } = input ?? {};
+    .query(
+      async ({
+        ctx,
+        input,
+      }): Promise<{
+        items: Array<
+          Recipe & {
+            difficulty: RecipeDifficulty;
+            category: RecipeCategory;
+            images: (typeof recipeImages.$inferSelect)[];
+            resources: Array<RecipeResource & { metric: RecipeResourceMetric }>;
+            steps: RecipeStep[];
+          }
+        >;
+        total: number;
+        nextToken: string | null;
+      }> => {
+        const { difficultySlug, search, typeSlug: categorySlug } = input ?? {};
+        const conditions: SQL[] = [];
+        const conditionsPromises: Promise<any>[] = [];
 
-      const conditions: SQL[] = [];
+        if (difficultySlug) {
+          conditionsPromises.push(
+            database.query.recipeDifficulties
+              .findFirst({
+                where: (s, { eq }) => eq(s.slug, difficultySlug),
+              })
+              .then((difficulty) => {
+                if (!difficulty) {
+                  return null;
+                }
 
-      if (difficultySlug) {
-        conditions.push(eq(recipeDifficulties.slug, difficultySlug));
-      }
+                return conditions.push(eq(recipes.difficultyId, difficulty.id));
+              })
+          );
+        }
 
-      if (typeSlug) {
-        conditions.push(eq(recipeCategories.slug, typeSlug));
-      }
+        if (categorySlug) {
+          conditionsPromises.push(
+            database.query.recipeCategories
+              .findFirst({
+                where: (s, { eq }) => eq(s.slug, categorySlug),
+              })
+              .then((category) => {
+                if (!category) {
+                  return null;
+                }
 
-      if (search) {
-        conditions.push(
-          or(
-            ilike(recipes.title, `%${search}%`),
-            ilike(recipes.slug, `%${search}%`)
-          )!
-        );
-      }
+                return conditions.push(eq(recipes.categoryId, category.id));
+              })
+          );
+        }
 
-      const cursor = generateCursor({
-        primaryCursor: {
-          order: 'ASC',
-          key: recipes.id.name,
-          schema: recipes.id,
-        },
-        cursors: [
-          {
-            order: 'DESC',
-            key: recipes.createdAt.name,
-            schema: recipes.createdAt,
+        await Promise.all(conditionsPromises);
+
+        if (conditions.find((value) => !value)) {
+          return { items: [], total: 0, nextToken: null };
+        }
+
+        if (search) {
+          conditions.push(
+            or(
+              ilike(recipes.title, `%${search}%`),
+              ilike(recipes.slug, `%${search}%`)
+            )!
+          );
+        }
+
+        const cursor = generateCursor({
+          primaryCursor: {
+            order: 'ASC',
+            key: recipes.id.name,
+            schema: recipes.id,
           },
-        ],
-      });
+          cursors: [
+            {
+              order: 'DESC',
+              key: recipes.createdAt.name,
+              schema: recipes.createdAt,
+            },
+          ],
+        });
 
-      const [items, [{ count }]] = await Promise.all([
-        database.query.recipes.findMany({
-          with: includeWith,
-          orderBy: cursor.orderBy,
-          limit: input.perPage,
-          where: and(...conditions, cursor.where(input.page)),
-        }),
-        database
-          .select({
-            count: sql`count(*)`.mapWith(Number).as('count'),
-          })
-          .from(recipeDifficulties)
-          .where(and(...conditions)),
-      ]);
+        const [items, [{ count }]] = await Promise.all([
+          database.query.recipes.findMany({
+            with: includeWith,
+            orderBy: cursor.orderBy,
+            limit: input.perPage,
+            where: and(...conditions, cursor.where(input.page)),
+          }),
+          database
+            .select({
+              count: sql`count(*)`.mapWith(Number).as('count'),
+            })
+            .from(recipes)
+            .where(and(...conditions)),
+        ]);
 
-      return {
-        items,
-        nextToken:
-          input.perPage === items.length
-            ? cursor.serialize(items.at(-1))
-            : null,
-        total: count,
-      };
-    }),
+        return {
+          items,
+          nextToken:
+            input.perPage === items.length
+              ? cursor.serialize(items.at(-1))
+              : null,
+          total: count,
+        };
+      }
+    ),
 
   getOne: protectedProcedure
     .input(
