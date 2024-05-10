@@ -3,8 +3,6 @@
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { logger } from '@logger';
-import { AppRouterInput, dayjs } from '@najit-najist/api';
 import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import {
   pickupTimeSchema,
@@ -12,7 +10,6 @@ import {
 } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
-import { getTotalPrice } from '@utils';
 import { useRouter } from 'next/navigation';
 import {
   FC,
@@ -20,7 +17,6 @@ import {
   useCallback,
   useMemo,
   useTransition,
-  useActionState,
 } from 'react';
 import {
   FormProvider as ReactHookFormProvider,
@@ -50,7 +46,6 @@ export const FormProvider: FC<
   const trpcUtils = trpc.useUtils();
   const router = useRouter();
   const plausible = usePlausible();
-  const { mutateAsync: doCheckout } = trpc.profile.cart.checkout.useMutation();
 
   const resolver = useMemo(
     () =>
@@ -78,64 +73,32 @@ export const FormProvider: FC<
     defaultValues: defaultFormValues,
     resolver,
   });
-  const { handleSubmit } = formMethods;
+  const { handleSubmit, setError } = formMethods;
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (formValues) => {
-      const s = await doCheckoutAction(formValues);
+      const newOrderAsPromise = doCheckoutAction(formValues);
 
-      console.log({ s });
+      toast.promise(newOrderAsPromise, {
+        loading: 'Vytvářím objednávku...',
+        success: 'Objednávka vytvořena, děkujeme!',
+        error(error) {
+          return `Stala se chyba při vytváření objednávky: ${error.message}`;
+        },
+      });
 
-      // const newOrderPromise = doCheckout(formValues).catch((error) => {
-      //   logger?.error(`Failed to create order because, ${error.message}`, {
-      //     error,
-      //   });
+      const { errors } = (await newOrderAsPromise) ?? {};
 
-      //   throw error;
-      // });
-
-      // toast.promise(newOrderPromise, {
-      //   loading: 'Vytvářím objednávku...',
-      //   success: 'Objednávka vytvořena, děkujeme!',
-      //   error(error) {
-      //     return `Stala se chyba při vytváření objednávky: ${error.message}`;
-      //   },
-      // });
-
-      // const { order: newOrder, redirectTo } = await newOrderPromise;
-
-      // plausible.trackEvent('User order', {
-      //   props: {
-      //     // TODO: print names instead
-      //     municipality: formValues.address.municipality.id.toString(),
-      //     'delivery method': formValues.deliveryMethod.id.toString(),
-      //     'payment method': formValues.paymentMethod.id.toString(),
-      //   },
-      //   revenue: {
-      //     amount: getTotalPrice(newOrder),
-      //     currency: 'CZK',
-      //   },
-      // });
-
-      // // for (const productInCart of newOrder.products) {
-      // //   plausible.trackEvent('Product ordered', {
-      // //     props: {
-      // //       name: productInCart.product.name,
-      // //       count: String(productInCart.count),
-      // //     },
-      // //   });
-      // // }
-
-      // if (redirectTo.startsWith('http')) {
-      //   window.location.replace(redirectTo);
-      // } else {
-      //   doTransition(() => {
-      //     router.push(redirectTo as any);
-      //   });
-      //   await trpcUtils.profile.cart.products.get.many.invalidate();
-      // }
+      if (!errors) {
+        await trpcUtils.profile.cart.products.get.many.invalidate();
+      } else {
+        const errorsAsArray = Object.entries(errors);
+        for (const [key, value] of errorsAsArray) {
+          setError(key as any, value);
+        }
+      }
     },
-    [doCheckout, router, plausible]
+    [router, plausible]
   );
 
   return (

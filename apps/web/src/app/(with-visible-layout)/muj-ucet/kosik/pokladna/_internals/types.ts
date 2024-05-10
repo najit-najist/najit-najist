@@ -1,3 +1,4 @@
-import type { AppRouterInput } from '@najit-najist/api';
+import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
+import { z } from 'zod';
 
-export type FormValues = AppRouterInput['profile']['cart']['checkout'];
+export type FormValues = z.input<typeof userCartCheckoutInputSchema>;
