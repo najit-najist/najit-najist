@@ -67,10 +67,25 @@ export const isLocalPickup = (
   delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
 ) => delivery?.slug === 'local-pickup';
 
-export const getTotalPrice = (order: Order) => {
+export const isPacketaDeveliveryMethod = (
+  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+) => delivery.slug === 'send';
+
+export const getTotalPrice = (
+  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>
+) => {
   return (
     order.subtotal +
     (order.deliveryMethodPrice ?? 0) +
     (order.paymentMethodPrice ?? 0)
   );
 };
+
+const currencyFormat = new Intl.NumberFormat('cs-CZ', {
+  style: 'currency',
+  currency: 'CZK',
+  maximumFractionDigits: 0,
+});
+
+export const formatPrice = (value: number) =>
+  value ? currencyFormat.format(value) : 'Zdarma';

@@ -1,15 +1,39 @@
 'use client';
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
+import {
+  OrderDeliveryMethod,
+  OrderPaymentMethod,
+} from '@najit-najist/database/models';
+import { formatPrice, getTotalPrice } from '@utils';
 import clsx from 'clsx';
 import { FC } from 'react';
+import { useWatch } from 'react-hook-form';
 
-export const PriceList: FC<{ price: { total: number } }> = ({ price }) => {
+export const PriceList: FC<{
+  subtotal: number;
+  deliveryMethodsPrices: Record<number, number>;
+  paymentMethodsPrices: Record<number, number>;
+}> = ({ subtotal, paymentMethodsPrices, deliveryMethodsPrices }) => {
   const { isActive: transitionIsHappening } = useReactTransitionContext();
+  const [deliveryMethod, paymentMethod] = useWatch<
+    {
+      deliveryMethod: OrderDeliveryMethod;
+      paymentMethod: OrderPaymentMethod;
+    },
+    ['deliveryMethod', 'paymentMethod']
+  >({
+    name: ['deliveryMethod', 'paymentMethod'],
+  });
+
+  const selectedDeliveryMethodPrice: number | undefined =
+    deliveryMethodsPrices[deliveryMethod.id];
+  const selectedPaymentMethodPrice: number | undefined =
+    paymentMethodsPrices[paymentMethod.id];
 
   return (
     <div className="px-4 text-gray-500">
-      <div className={'flex items-center justify-between py-5'}>
+      <div className="flex items-center justify-between py-5">
         <span>Mezisoučet</span>
         <span
           className={clsx(
@@ -17,14 +41,52 @@ export const PriceList: FC<{ price: { total: number } }> = ({ price }) => {
             transitionIsHappening ? 'blur-sm' : ''
           )}
         >
-          {price.total} Kč
+          {formatPrice(subtotal)}
         </span>
       </div>
+      {selectedDeliveryMethodPrice !== undefined ? (
+        <>
+          <hr />
+          <div className="flex items-center justify-between py-5">
+            <span>Doprava</span>
+            <span
+              className={clsx(
+                'text-gray-900',
+                transitionIsHappening ? 'blur-sm' : ''
+              )}
+            >
+              {formatPrice(selectedDeliveryMethodPrice)}
+            </span>
+          </div>
+        </>
+      ) : null}
+      {selectedPaymentMethodPrice !== undefined ? (
+        <>
+          <hr />
+          <div className="flex items-center justify-between py-5">
+            <span>Platební metoda</span>
+            <span
+              className={clsx(
+                'text-gray-900',
+                transitionIsHappening ? 'blur-sm' : ''
+              )}
+            >
+              {formatPrice(selectedPaymentMethodPrice)}
+            </span>
+          </div>
+        </>
+      ) : null}
       <hr />
       <div className="flex items-center justify-between py-5 font-semibold text-gray-900">
         <span>Celkově</span>
         <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
-          {price.total} Kč
+          {formatPrice(
+            getTotalPrice({
+              deliveryMethodPrice: selectedDeliveryMethodPrice,
+              paymentMethodPrice: selectedPaymentMethodPrice,
+              subtotal,
+            })
+          )}
         </span>
       </div>
     </div>

@@ -1,6 +1,7 @@
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
 import { Skeleton, Tooltip } from '@najit-najist/ui';
+import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
 
@@ -198,10 +199,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
                 <dd className="text-project-secondary">
-                  {order.subtotal +
-                    (order.deliveryMethodPrice ?? 0) +
-                    (order.paymentMethodPrice ?? 0)}{' '}
-                  Kč
+                  {formatPrice(getTotalPrice(order))}
                 </dd>
               </div>
             </dl>

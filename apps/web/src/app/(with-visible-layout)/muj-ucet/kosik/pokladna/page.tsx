@@ -123,15 +123,23 @@ export default async function Page() {
   const packetaDeliveryMethod = deliverMethodsAsArray.find(
     isPacketaDeveliveryMethod
   );
-  const priceTotal = productsInCart.reduce(
+
+  if (!localPickupDeliveryMethod) {
+    throw new Error('No local pickup delivery method');
+  }
+
+  const subtotal = productsInCart.reduce(
     (priceTotalPredicate, cartItem) =>
       priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
     0
   );
 
-  if (!localPickupDeliveryMethod) {
-    throw new Error('No local pickup delivery method');
-  }
+  const paymentMethodPrices = Object.fromEntries(
+    paymentMethods.map(({ id, price }) => [id, price ?? 0])
+  );
+  const deliveryMethodsPrices = Object.fromEntries(
+    deliverMethodsAsArray.map(({ id, price }) => [id, price ?? 0])
+  );
 
   return (
     <>
@@ -160,7 +168,6 @@ export default async function Page() {
           saveAddressToAccount: false,
         }}
       >
-        {/* TODO This form should take default values from user */}
         <div className="container flex flex-col lg:flex-row gap-10">
           <div className="w-full">
             <SectionTitle>Kontaktní adresa</SectionTitle>
@@ -189,7 +196,11 @@ export default async function Page() {
                   />
                 ))}
               </ul>
-              <PriceList price={{ total: priceTotal }} />
+              <PriceList
+                paymentMethodsPrices={paymentMethodPrices}
+                deliveryMethodsPrices={deliveryMethodsPrices}
+                subtotal={subtotal}
+              />
               <hr className="!mt-0" />
               <CheckoutButton />
             </Section>

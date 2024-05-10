@@ -1,6 +1,7 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput, dayjs } from '@najit-najist/api';
+import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -41,7 +42,7 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {order.subtotal + (order.deliveryMethodPrice ?? 0)} Kč
+                {formatPrice(getTotalPrice(order))}
               </div>
             </td>
 
