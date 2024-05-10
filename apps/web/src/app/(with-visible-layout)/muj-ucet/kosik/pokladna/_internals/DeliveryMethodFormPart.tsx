@@ -10,11 +10,12 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from '@najit-najist/ui';
-import { isLocalPickup } from '@utils';
+import { isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
 import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
 
 import { LocalPickupDeliveryTimePicker } from './LocalPickupDeliveryTimePicker';
+import { PacketaPickupDelivery } from './PacketaPickupDelivery';
 
 export type DeliveryMethodFormPartProps = {
   deliveryMethods: (OrderDeliveryMethod & { disabled?: boolean })[];
@@ -34,6 +35,11 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
 
   const localPickupDeliveryMethod = useMemo(
     () => deliveryMethods.find(isLocalPickup),
+    [deliveryMethods]
+  );
+
+  const packetaDeliveryMethod = useMemo(
+    () => deliveryMethods.find(isPacketaDeveliveryMethod),
     [deliveryMethods]
   );
 
@@ -103,6 +109,10 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
       {localPickupDeliveryMethod &&
       localPickupDeliveryMethod.id === controller.field.value?.id ? (
         <LocalPickupDeliveryTimePicker />
+      ) : null}
+      {packetaDeliveryMethod &&
+      packetaDeliveryMethod.id === controller.field.value?.id ? (
+        <PacketaPickupDelivery />
       ) : null}
       {deliveryMethods.filter((d) => d.disabled).length ? (
         <Alert

@@ -1,6 +1,6 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { getCachedLoggedInUser, getCachedOrder } from '@server-utils';
+import { getCachedOrder } from '@server-utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

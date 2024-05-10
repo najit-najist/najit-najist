@@ -20,6 +20,7 @@ import {
   useCallback,
   useMemo,
   useTransition,
+  useActionState,
 } from 'react';
 import {
   FormProvider as ReactHookFormProvider,
@@ -28,7 +29,9 @@ import {
 } from 'react-hook-form';
 import { z } from 'zod';
 
-type FormValues = AppRouterInput['profile']['cart']['checkout'];
+import { doCheckoutAction } from '../actions';
+import { FormValues } from './types';
+
 type OptionalFormValues = Omit<
   FormValues,
   'paymentMethod' | 'deliveryMethod'
@@ -79,54 +82,58 @@ export const FormProvider: FC<
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (formValues) => {
-      const newOrderPromise = doCheckout(formValues).catch((error) => {
-        logger?.error(`Failed to create order because, ${error.message}`, {
-          error,
-        });
+      const s = await doCheckoutAction(formValues);
 
-        throw error;
-      });
+      console.log({ s });
 
-      toast.promise(newOrderPromise, {
-        loading: 'Vytvářím objednávku...',
-        success: 'Objednávka vytvořena, děkujeme!',
-        error(error) {
-          return `Stala se chyba při vytváření objednávky: ${error.message}`;
-        },
-      });
-
-      const { order: newOrder, redirectTo } = await newOrderPromise;
-
-      plausible.trackEvent('User order', {
-        props: {
-          // TODO: print names instead
-          municipality: formValues.address.municipality.id.toString(),
-          'delivery method': formValues.deliveryMethod.id.toString(),
-          'payment method': formValues.paymentMethod.id.toString(),
-        },
-        revenue: {
-          amount: getTotalPrice(newOrder),
-          currency: 'CZK',
-        },
-      });
-
-      // for (const productInCart of newOrder.products) {
-      //   plausible.trackEvent('Product ordered', {
-      //     props: {
-      //       name: productInCart.product.name,
-      //       count: String(productInCart.count),
-      //     },
+      // const newOrderPromise = doCheckout(formValues).catch((error) => {
+      //   logger?.error(`Failed to create order because, ${error.message}`, {
+      //     error,
       //   });
-      // }
 
-      if (redirectTo.startsWith('http')) {
-        window.location.replace(redirectTo);
-      } else {
-        doTransition(() => {
-          router.push(redirectTo as any);
-        });
-        await trpcUtils.profile.cart.products.get.many.invalidate();
-      }
+      //   throw error;
+      // });
+
+      // toast.promise(newOrderPromise, {
+      //   loading: 'Vytvářím objednávku...',
+      //   success: 'Objednávka vytvořena, děkujeme!',
+      //   error(error) {
+      //     return `Stala se chyba při vytváření objednávky: ${error.message}`;
+      //   },
+      // });
+
+      // const { order: newOrder, redirectTo } = await newOrderPromise;
+
+      // plausible.trackEvent('User order', {
+      //   props: {
+      //     // TODO: print names instead
+      //     municipality: formValues.address.municipality.id.toString(),
+      //     'delivery method': formValues.deliveryMethod.id.toString(),
+      //     'payment method': formValues.paymentMethod.id.toString(),
+      //   },
+      //   revenue: {
+      //     amount: getTotalPrice(newOrder),
+      //     currency: 'CZK',
+      //   },
+      // });
+
+      // // for (const productInCart of newOrder.products) {
+      // //   plausible.trackEvent('Product ordered', {
+      // //     props: {
+      // //       name: productInCart.product.name,
+      // //       count: String(productInCart.count),
+      // //     },
+      // //   });
+      // // }
+
+      // if (redirectTo.startsWith('http')) {
+      //   window.location.replace(redirectTo);
+      // } else {
+      //   doTransition(() => {
+      //     router.push(redirectTo as any);
+      //   });
+      //   await trpcUtils.profile.cart.products.get.many.invalidate();
+      // }
     },
     [doCheckout, router, plausible]
   );

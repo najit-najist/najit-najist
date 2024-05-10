@@ -2,27 +2,28 @@ import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
 import { logger } from '@najit-najist/api/server';
+import { database } from '@najit-najist/database';
 import {
   getCachedDeliveryMethods,
   getCachedLoggedInUser,
   getCachedPaymentMethods,
   getCachedTrpcCaller,
 } from '@server-utils';
-import { isLocalPickup } from '@utils';
+import { isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
-import { CartItem } from './_components/CartItem/CartItem';
-import { CheckoutButton } from './_components/CheckoutButton';
+import { CartItem } from './_internals/CartItem/CartItem';
+import { CheckoutButton } from './_internals/CheckoutButton';
 import {
   DeliveryMethodFormPart,
   DeliveryMethodFormPartProps,
-} from './_components/DeliveryMethodFormPart';
-import { EmptyCart } from './_components/EmptyCart';
-import { FormProvider } from './_components/FormProvider';
-import { PaymentMethodFormPart } from './_components/PaymentMethodFormPart';
-import { PriceList } from './_components/PriceList';
-import { UserContactFormPart } from './_components/UserContactFormPart';
+} from './_internals/DeliveryMethodFormPart';
+import { EmptyCart } from './_internals/EmptyCart';
+import { FormProvider } from './_internals/FormProvider';
+import { PaymentMethodFormPart } from './_internals/PaymentMethodFormPart';
+import { PriceList } from './_internals/PriceList';
+import { UserContactFormPart } from './_internals/UserContactFormPart';
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
@@ -119,13 +120,15 @@ export default async function Page() {
         .includes(defaultDeliveryMethod.id ?? '')
   );
 
+  const localPickupDeliveryMethod = deliverMethodsAsArray.find(isLocalPickup);
+  const packetaDeliveryMethod = deliverMethodsAsArray.find(
+    isPacketaDeveliveryMethod
+  );
   const priceTotal = productsInCart.reduce(
     (priceTotalPredicate, cartItem) =>
       priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
     0
   );
-
-  const localPickupDeliveryMethod = deliverMethodsAsArray.find(isLocalPickup);
 
   if (!localPickupDeliveryMethod) {
     throw new Error('No local pickup delivery method');
