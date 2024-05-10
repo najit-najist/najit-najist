@@ -8,7 +8,7 @@ import {
   getCachedPaymentMethods,
   getCachedTrpcCaller,
 } from '@server-utils';
-import { isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
+import { formatPrice, isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
@@ -57,8 +57,23 @@ export default async function Page() {
       getCachedDeliveryMethods() as Promise<
         DeliveryMethodFormPartProps['deliveryMethods']
       >
-    ).then((methods) => new Map(methods.map((d) => [d.id, d]))),
-    getCachedPaymentMethods(),
+    ).then(
+      (methods) =>
+        new Map(
+          methods.map((d) => {
+            d.name = `${d.name} (${formatPrice(d.price ?? 0)})`;
+
+            return [d.id, d];
+          })
+        )
+    ),
+    getCachedPaymentMethods().then((methods) =>
+      methods.map((d) => {
+        d.name = `${d.name} (${formatPrice(d.price ?? 0)})`;
+
+        return d;
+      })
+    ),
   ]);
 
   // Sometimes user can have product in cart which limits their choices of delivery methods
