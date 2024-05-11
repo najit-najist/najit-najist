@@ -7,8 +7,9 @@ dotenv.config({ path: path.join(__dirname, '../../.env') });
 export default {
   schema: './src/models/**/*',
   out: './drizzle',
-  driver: 'pg',
+  dialect: 'postgresql',
+  // driver: 'aws-data-api',
   dbCredentials: {
-    connectionString: process.env.DATABASE_URL as string,
+    url: process.env.DATABASE_URL as string,
   },
 } satisfies Config;

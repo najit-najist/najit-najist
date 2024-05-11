@@ -31,7 +31,7 @@
     "build:package": "swc ./src -d dist",
     "build:types": "tsc",
     "build:types:aliases": "tsc-alias",
-    "migration:create": "drizzle-kit generate:pg",
+    "migration:create": "drizzle-kit generate",
     "migration:migrate": "node ./scripts/migrate.js",
     "migrate": "pnpm run migration:create && pnpm run migration:migrate",
     "test": "vitest",
@@ -39,13 +39,13 @@
   },
   "dependencies": {
     "@najit-najist/packeta": "*",
-    "drizzle-orm": "^0.29.4",
+    "drizzle-orm": "^0.30.10",
     "better-sqlite3": "^9.4.3",
     "pg": "^8.11.3"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "*",
-    "drizzle-kit": "^0.20.14",
+    "drizzle-kit": "^0.21.1",
     "@types/pg": "^8.11.2",
     "@types/better-sqlite3": "^7.6.9",
     "@types/node": "^18.11.3"

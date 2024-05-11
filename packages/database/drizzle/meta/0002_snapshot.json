@@ -1,10 +1,8 @@
 {
-  "id": "6499f630-38e4-4e39-acfc-eda7152e673b",
-  "prevId": "3f63df52-d994-486c-abd3-dc5721b83a36",
-  "version": "5",
-  "dialect": "pg",
+  "version": "6",
+  "dialect": "postgresql",
   "tables": {
-    "comgate_payments": {
+    "public.comgate_payments": {
       "name": "comgate_payments",
       "schema": "",
       "columns": {
@@ -45,21 +43,21 @@
         "comgate_payments_order_id_orders_id_fk": {
           "name": "comgate_payments_order_id_orders_id_fk",
           "tableFrom": "comgate_payments",
-          "tableTo": "orders",
           "columnsFrom": [
             "order_id"
           ],
+          "tableTo": "orders",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "contact_form_replies": {
+    "public.contact_form_replies": {
       "name": "contact_form_replies",
       "schema": "",
       "columns": {
@@ -118,29 +116,29 @@
         "contact_form_replies_user_id_users_id_fk": {
           "name": "contact_form_replies_user_id_users_id_fk",
           "tableFrom": "contact_form_replies",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "contact_form_replies_email_unique": {
           "name": "contact_form_replies_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "municipalities": {
+    "public.municipalities": {
       "name": "municipalities",
       "schema": "",
       "columns": {
@@ -184,7 +182,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user_newsletters": {
+    "public.user_newsletters": {
       "name": "user_newsletters",
       "schema": "",
       "columns": {
@@ -215,14 +213,14 @@
       "uniqueConstraints": {
         "user_newsletters_email_unique": {
           "name": "user_newsletters_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "order_addresses": {
+    "public.order_addresses": {
       "name": "order_addresses",
       "schema": "",
       "columns": {
@@ -281,34 +279,34 @@
         "order_addresses_municipality_id_municipalities_id_fk": {
           "name": "order_addresses_municipality_id_municipalities_id_fk",
           "tableFrom": "order_addresses",
-          "tableTo": "municipalities",
           "columnsFrom": [
             "municipality_id"
           ],
+          "tableTo": "municipalities",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "order_addresses_order_id_orders_id_fk": {
           "name": "order_addresses_order_id_orders_id_fk",
           "tableFrom": "order_addresses",
-          "tableTo": "orders",
           "columnsFrom": [
             "order_id"
           ],
+          "tableTo": "orders",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "order_delivery_methods": {
+    "public.order_delivery_methods": {
       "name": "order_delivery_methods",
       "schema": "",
       "columns": {
@@ -362,7 +360,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "ordered_products": {
+    "public.ordered_products": {
       "name": "ordered_products",
       "schema": "",
       "columns": {
@@ -415,34 +413,34 @@
         "ordered_products_order_id_orders_id_fk": {
           "name": "ordered_products_order_id_orders_id_fk",
           "tableFrom": "ordered_products",
-          "tableTo": "orders",
           "columnsFrom": [
             "order_id"
           ],
+          "tableTo": "orders",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "ordered_products_product_id_products_id_fk": {
           "name": "ordered_products_product_id_products_id_fk",
           "tableFrom": "ordered_products",
-          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
+          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "order_payment_methods_except_delivery_methods": {
+    "public.order_payment_methods_except_delivery_methods": {
       "name": "order_payment_methods_except_delivery_methods",
       "schema": "",
       "columns": {
@@ -464,34 +462,34 @@
         "order_payment_methods_except_delivery_methods_payment_method_id_order_payment_methods_id_fk": {
           "name": "order_payment_methods_except_delivery_methods_payment_method_id_order_payment_methods_id_fk",
           "tableFrom": "order_payment_methods_except_delivery_methods",
-          "tableTo": "order_payment_methods",
           "columnsFrom": [
             "payment_method_id"
           ],
+          "tableTo": "order_payment_methods",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "order_payment_methods_except_delivery_methods_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "order_payment_methods_except_delivery_methods_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "order_payment_methods_except_delivery_methods",
-          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "delivery_method_id"
           ],
+          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "order_payment_methods": {
+    "public.order_payment_methods": {
       "name": "order_payment_methods",
       "schema": "",
       "columns": {
@@ -552,7 +550,7 @@
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "orders": {
+    "public.orders": {
       "name": "orders",
       "schema": "",
       "columns": {
@@ -650,60 +648,60 @@
         "orders_user_id_users_id_fk": {
           "name": "orders_user_id_users_id_fk",
           "tableFrom": "orders",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "orders_telephone_id_telephone_numbers_id_fk": {
           "name": "orders_telephone_id_telephone_numbers_id_fk",
           "tableFrom": "orders",
-          "tableTo": "telephone_numbers",
           "columnsFrom": [
             "telephone_id"
           ],
+          "tableTo": "telephone_numbers",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "orders_payment_method_id_order_payment_methods_id_fk": {
           "name": "orders_payment_method_id_order_payment_methods_id_fk",
           "tableFrom": "orders",
-          "tableTo": "order_payment_methods",
           "columnsFrom": [
             "payment_method_id"
           ],
+          "tableTo": "order_payment_methods",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "orders_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "orders_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "orders",
-          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "delivery_method_id"
           ],
+          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "post_categories": {
+    "public.post_categories": {
       "name": "post_categories",
       "schema": "",
       "columns": {
@@ -745,21 +743,21 @@
       "uniqueConstraints": {
         "post_categories_title_unique": {
           "name": "post_categories_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "post_categories_slug_unique": {
           "name": "post_categories_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "posts": {
+    "public.posts": {
       "name": "posts",
       "schema": "",
       "columns": {
@@ -836,49 +834,49 @@
         "posts_created_by_users_id_fk": {
           "name": "posts_created_by_users_id_fk",
           "tableFrom": "posts",
-          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "posts_updated_by_users_id_fk": {
           "name": "posts_updated_by_users_id_fk",
           "tableFrom": "posts",
-          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "posts_title_unique": {
           "name": "posts_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "posts_slug_unique": {
           "name": "posts_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "posts_to_post_categories": {
+    "public.posts_to_post_categories": {
       "name": "posts_to_post_categories",
       "schema": "",
       "columns": {
@@ -900,34 +898,34 @@
         "posts_to_post_categories_post_id_posts_id_fk": {
           "name": "posts_to_post_categories_post_id_posts_id_fk",
           "tableFrom": "posts_to_post_categories",
-          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "posts_to_post_categories_category_id_post_categories_id_fk": {
           "name": "posts_to_post_categories_category_id_post_categories_id_fk",
           "tableFrom": "posts_to_post_categories",
-          "tableTo": "post_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "post_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "preview_subscriber_tokens": {
+    "public.preview_subscriber_tokens": {
       "name": "preview_subscriber_tokens",
       "schema": "",
       "columns": {
@@ -968,21 +966,21 @@
         "preview_subscriber_tokens_for_user_id_users_id_fk": {
           "name": "preview_subscriber_tokens_for_user_id_users_id_fk",
           "tableFrom": "preview_subscriber_tokens",
-          "tableTo": "users",
           "columnsFrom": [
             "for_user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "product_categories": {
+    "public.product_categories": {
       "name": "product_categories",
       "schema": "",
       "columns": {
@@ -1024,21 +1022,21 @@
       "uniqueConstraints": {
         "product_categories_title_unique": {
           "name": "product_categories_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "product_categories_slug_unique": {
           "name": "product_categories_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "product_images": {
+    "public.product_images": {
       "name": "product_images",
       "schema": "",
       "columns": {
@@ -1079,21 +1077,21 @@
         "product_images_product_id_products_id_fk": {
           "name": "product_images_product_id_products_id_fk",
           "tableFrom": "product_images",
-          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
+          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "product_prices": {
+    "public.product_prices": {
       "name": "product_prices",
       "schema": "",
       "columns": {
@@ -1140,21 +1138,21 @@
         "product_prices_product_id_products_id_fk": {
           "name": "product_prices_product_id_products_id_fk",
           "tableFrom": "product_prices",
-          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
+          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "products": {
+    "public.products": {
       "name": "products",
       "schema": "",
       "columns": {
@@ -1231,75 +1229,75 @@
         "products_created_by_users_id_fk": {
           "name": "products_created_by_users_id_fk",
           "tableFrom": "products",
-          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "products_updated_by_users_id_fk": {
           "name": "products_updated_by_users_id_fk",
           "tableFrom": "products",
-          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "products_category_id_product_categories_id_fk": {
           "name": "products_category_id_product_categories_id_fk",
           "tableFrom": "products",
-          "tableTo": "product_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "product_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "products_only_for_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "products_only_for_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "products",
-          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "only_for_delivery_method_id"
           ],
+          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "products_name_unique": {
           "name": "products_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "products_slug_unique": {
           "name": "products_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "product_stock": {
+    "public.product_stock": {
       "name": "product_stock",
       "schema": "",
       "columns": {
@@ -1340,21 +1338,21 @@
         "product_stock_product_id_products_id_fk": {
           "name": "product_stock_product_id_products_id_fk",
           "tableFrom": "product_stock",
-          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
+          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "recipe_categories": {
+    "public.recipe_categories": {
       "name": "recipe_categories",
       "schema": "",
       "columns": {
@@ -1396,21 +1394,21 @@
       "uniqueConstraints": {
         "recipe_categories_title_unique": {
           "name": "recipe_categories_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "recipe_categories_slug_unique": {
           "name": "recipe_categories_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "recipe_difficulties": {
+    "public.recipe_difficulties": {
       "name": "recipe_difficulties",
       "schema": "",
       "columns": {
@@ -1458,21 +1456,21 @@
       "uniqueConstraints": {
         "recipe_difficulties_name_unique": {
           "name": "recipe_difficulties_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "recipe_difficulties_slug_unique": {
           "name": "recipe_difficulties_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "recipe_images": {
+    "public.recipe_images": {
       "name": "recipe_images",
       "schema": "",
       "columns": {
@@ -1513,21 +1511,21 @@
         "recipe_images_recipe_id_recipes_id_fk": {
           "name": "recipe_images_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_images",
-          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
+          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "recipe_resource_metrics": {
+    "public.recipe_resource_metrics": {
       "name": "recipe_resource_metrics",
       "schema": "",
       "columns": {
@@ -1563,14 +1561,14 @@
       "uniqueConstraints": {
         "recipe_resource_metrics_name_unique": {
           "name": "recipe_resource_metrics_name_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "recipe_resources": {
+    "public.recipe_resources": {
       "name": "recipe_resources",
       "schema": "",
       "columns": {
@@ -1637,42 +1635,42 @@
         "recipe_resources_recipe_id_recipes_id_fk": {
           "name": "recipe_resources_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_resources",
-          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
+          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "recipe_resources_metric_id_recipe_resource_metrics_id_fk": {
           "name": "recipe_resources_metric_id_recipe_resource_metrics_id_fk",
           "tableFrom": "recipe_resources",
-          "tableTo": "recipe_resource_metrics",
           "columnsFrom": [
             "metric_id"
           ],
+          "tableTo": "recipe_resource_metrics",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "recipe_resources_title_unique": {
           "name": "recipe_resources_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "recipes": {
+    "public.recipes": {
       "name": "recipes",
       "schema": "",
       "columns": {
@@ -1750,75 +1748,75 @@
         "recipes_created_by_users_id_fk": {
           "name": "recipes_created_by_users_id_fk",
           "tableFrom": "recipes",
-          "tableTo": "users",
           "columnsFrom": [
             "created_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "recipes_updated_by_users_id_fk": {
           "name": "recipes_updated_by_users_id_fk",
           "tableFrom": "recipes",
-          "tableTo": "users",
           "columnsFrom": [
             "updated_by"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "recipes_category_id_recipe_categories_id_fk": {
           "name": "recipes_category_id_recipe_categories_id_fk",
           "tableFrom": "recipes",
-          "tableTo": "recipe_categories",
           "columnsFrom": [
             "category_id"
           ],
+          "tableTo": "recipe_categories",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "recipes_difficulty_id_recipe_difficulties_id_fk": {
           "name": "recipes_difficulty_id_recipe_difficulties_id_fk",
           "tableFrom": "recipes",
-          "tableTo": "recipe_difficulties",
           "columnsFrom": [
             "difficulty_id"
           ],
+          "tableTo": "recipe_difficulties",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "recipes_title_unique": {
           "name": "recipes_title_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ]
+          ],
+          "nullsNotDistinct": false
         },
         "recipes_slug_unique": {
           "name": "recipes_slug_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "recipe_steps": {
+    "public.recipe_steps": {
       "name": "recipe_steps",
       "schema": "",
       "columns": {
@@ -1866,21 +1864,21 @@
         "recipe_steps_recipe_id_recipes_id_fk": {
           "name": "recipe_steps_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_steps",
-          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
+          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "telephone_number_codes": {
+    "public.telephone_number_codes": {
       "name": "telephone_number_codes",
       "schema": "",
       "columns": {
@@ -1903,14 +1901,14 @@
       "uniqueConstraints": {
         "telephone_number_codes_code_unique": {
           "name": "telephone_number_codes_code_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "code"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "telephone_numbers": {
+    "public.telephone_numbers": {
       "name": "telephone_numbers",
       "schema": "",
       "columns": {
@@ -1960,21 +1958,21 @@
         "telephone_numbers_code_telephone_number_codes_code_fk": {
           "name": "telephone_numbers_code_telephone_number_codes_code_fk",
           "tableFrom": "telephone_numbers",
-          "tableTo": "telephone_number_codes",
           "columnsFrom": [
             "code"
           ],
+          "tableTo": "telephone_number_codes",
           "columnsTo": [
             "code"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user_addresses": {
+    "public.user_addresses": {
       "name": "user_addresses",
       "schema": "",
       "columns": {
@@ -2033,42 +2031,42 @@
         "user_addresses_municipality_id_municipalities_id_fk": {
           "name": "user_addresses_municipality_id_municipalities_id_fk",
           "tableFrom": "user_addresses",
-          "tableTo": "municipalities",
           "columnsFrom": [
             "municipality_id"
           ],
+          "tableTo": "municipalities",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "user_addresses_user_id_users_id_fk": {
           "name": "user_addresses_user_id_users_id_fk",
           "tableFrom": "user_addresses",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "user_addresses_user_id_unique": {
           "name": "user_addresses_user_id_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     },
-    "user_cart_products": {
+    "public.user_cart_products": {
       "name": "user_cart_products",
       "schema": "",
       "columns": {
@@ -2115,34 +2113,34 @@
         "user_cart_products_cart_id_user_carts_id_fk": {
           "name": "user_cart_products_cart_id_user_carts_id_fk",
           "tableFrom": "user_cart_products",
-          "tableTo": "user_carts",
           "columnsFrom": [
             "cart_id"
           ],
+          "tableTo": "user_carts",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "user_cart_products_product_id_products_id_fk": {
           "name": "user_cart_products_product_id_products_id_fk",
           "tableFrom": "user_cart_products",
-          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
+          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user_carts": {
+    "public.user_carts": {
       "name": "user_carts",
       "schema": "",
       "columns": {
@@ -2177,21 +2175,21 @@
         "user_carts_user_id_users_id_fk": {
           "name": "user_carts_user_id_users_id_fk",
           "tableFrom": "user_carts",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user_liked_posts": {
+    "public.user_liked_posts": {
       "name": "user_liked_posts",
       "schema": "",
       "columns": {
@@ -2232,34 +2230,34 @@
         "user_liked_posts_user_id_users_id_fk": {
           "name": "user_liked_posts_user_id_users_id_fk",
           "tableFrom": "user_liked_posts",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "user_liked_posts_post_id_posts_id_fk": {
           "name": "user_liked_posts_post_id_posts_id_fk",
           "tableFrom": "user_liked_posts",
-          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
+          "tableTo": "posts",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "user_liked_recipes": {
+    "public.user_liked_recipes": {
       "name": "user_liked_recipes",
       "schema": "",
       "columns": {
@@ -2300,34 +2298,34 @@
         "user_liked_recipes_user_id_users_id_fk": {
           "name": "user_liked_recipes_user_id_users_id_fk",
           "tableFrom": "user_liked_recipes",
-          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
+          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         },
         "user_liked_recipes_recipe_id_recipes_id_fk": {
           "name": "user_liked_recipes_recipe_id_recipes_id_fk",
           "tableFrom": "user_liked_recipes",
-          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
+          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
     },
-    "users": {
+    "public.users": {
       "name": "users",
       "schema": "",
       "columns": {
@@ -2434,68 +2432,73 @@
         "users_telephone_id_telephone_numbers_id_fk": {
           "name": "users_telephone_id_telephone_numbers_id_fk",
           "tableFrom": "users",
-          "tableTo": "telephone_numbers",
           "columnsFrom": [
             "telephone_id"
           ],
+          "tableTo": "telephone_numbers",
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
+          "onUpdate": "no action",
+          "onDelete": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "users_email_unique": {
           "name": "users_email_unique",
-          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
+          ],
+          "nullsNotDistinct": false
         }
       }
     }
   },
   "enums": {
-    "user_states": {
+    "public.user_states": {
       "name": "user_states",
-      "values": {
-        "new": "new",
-        "unpaid": "unpaid",
-        "unconfirmed": "unconfirmed",
-        "confirmed": "confirmed",
-        "finished": "finished",
-        "dropped": "dropped",
-        "shipped": "shipped"
-      }
+      "schema": "public",
+      "values": [
+        "new",
+        "unpaid",
+        "unconfirmed",
+        "confirmed",
+        "finished",
+        "dropped",
+        "shipped"
+      ]
     },
-    "user_role": {
+    "public.user_role": {
       "name": "user_role",
-      "values": {
-        "admin": "admin",
-        "normal": "normal",
-        "premium": "premium",
-        "basic": "basic"
-      }
+      "schema": "public",
+      "values": [
+        "admin",
+        "normal",
+        "premium",
+        "basic"
+      ]
     },
-    "user_state": {
+    "public.user_state": {
       "name": "user_state",
-      "values": {
-        "active": "active",
-        "invited": "invited",
-        "password_reset": "password_reset",
-        "deactivated": "deactivated",
-        "deleted": "deleted",
-        "banned": "banned",
-        "subscribed": "subscribed"
-      }
+      "schema": "public",
+      "values": [
+        "active",
+        "invited",
+        "password_reset",
+        "deactivated",
+        "deleted",
+        "banned",
+        "subscribed"
+      ]
     }
   },
   "schemas": {},
   "_meta": {
-    "columns": {},
     "schemas": {},
-    "tables": {}
-  }
+    "tables": {},
+    "columns": {}
+  },
+  "id": "6499f630-38e4-4e39-acfc-eda7152e673b",
+  "prevId": "3f63df52-d994-486c-abd3-dc5721b83a36"
 }
