@@ -77,8 +77,8 @@
     "string-strip-html": "^13.2.3",
     "superjson": "^1.13.1",
     "vitest": "^0.24.5",
-    "zod": "^3.19.1",
-    "zod-to-json-schema": "^3.18.1"
+    "zod": "^3.22.4",
+    "zod-to-json-schema": "^3.23.0"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "*",

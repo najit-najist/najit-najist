@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "next build",
+    "build:analyze": "ANALYZE=true next build",
     "dev": "next dev -p 3000",
     "lint": "next lint",
     "start": "next start -p 4000"
@@ -33,15 +34,16 @@
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "next": "^14.2.3",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "18.2",
+    "react-dom": "18.2",
     "react-color-palette": "^6.2.0",
     "react-cookie": "^6.1.1",
     "react-hook-form": "^7.37.0",
     "sharp": "^0.32.6",
     "superjson": "^1.13.1",
     "usehooks-ts": "^2.9.1",
-    "zod": "^3.19.1",
+    "zod": "^3.22.4",
+    "@next/bundle-analyzer": "^14.2.3",
     "zustand": "^4.4.7"
   },
   "devDependencies": {
