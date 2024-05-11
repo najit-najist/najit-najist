@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.0.12",
-    "@hookform/resolvers": "^2.9.10",
-    "@logtail/browser": "^0.4.7",
+    "@hookform/resolvers": "^3.3.4",
+    "@logtail/browser": "^0.4.21",
     "@najit-najist/api": "*",
     "@najit-najist/schemas": "*",
     "@najit-najist/ui": "*",

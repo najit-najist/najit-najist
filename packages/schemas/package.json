@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "@najit-najist/database": "*",
+    "@najit-najist/packeta": "*",
     "zod": "^3.22.4",
     "js-base64": "^3.7.7",
     "dayjs": "^1.11.10",

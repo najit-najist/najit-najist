@@ -38,6 +38,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
+    "@najit-najist/packeta": "*",
     "drizzle-orm": "^0.29.4",
     "better-sqlite3": "^9.4.3",
     "pg": "^8.11.3"
