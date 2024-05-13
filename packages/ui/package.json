@@ -27,10 +27,10 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
-    "dev:package": "npm run build:package -- --watch",
-    "dev:package:types": "npm run build:types -- --watch",
+    "dev:package": "pnpm build:package -- --watch",
+    "dev:package:types": "pnpm build:types -- --watch",
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
-    "build": "npm run build:package && npm run build:types",
+    "build": "pnpm build:package && pnpm build:types",
     "build:package": "swc ./src -d dist",
     "build:types": "tsc",
     "lint": "eslint *.ts*"

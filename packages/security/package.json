@@ -19,19 +19,21 @@
   ],
   "scripts": {
     "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\" \"npm:dev:package:types:aliases\"",
-    "dev:package": "npm run build:package -- --watch",
-    "dev:package:types": "npm run build:types -- --watch",
-    "dev:package:types:aliases": "npm run build:types:aliases -- --watch",
+    "dev:package": "pnpm build:package -- --watch",
+    "dev:package:types": "pnpm build:types -- --watch",
+    "dev:package:types:aliases": "pnpm build:types:aliases -- --watch",
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
-    "build": "npm run build:package && npm run build:types && npm run build:types:aliases",
+    "build": "pnpm build:package && pnpm build:types && pnpm build:types:aliases",
     "build:package": "swc ./src -d dist",
     "build:types": "tsc",
     "build:types:aliases": "tsc-alias"
   },
   "dependencies": {
-    "zxcvbn": "^4.4.2"
+    "zxcvbn": "^4.4.2",
+    "zod": "^3.22.4"
   },
   "devDependencies": {
+    "@najit-najist/tsconfig": "*",
     "@swc/core": "^1.3.96",
     "@types/node": "^18.11.3",
     "@types/zxcvbn": "^4.4.1",

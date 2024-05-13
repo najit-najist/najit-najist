@@ -13,8 +13,8 @@
     "dev": "turbo run dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "lint": "turbo run lint",
-    "start-production": "npm run migration:migrate -w=@najit-najist/database && npm run start -w=@najit-najist/web",
-    "reinstall": "npm run uninstall && npm install",
+    "start-production": "pnpm migration:migrate -w=@najit-najist/database && pnpm start -w=@najit-najist/web",
+    "reinstall": "pnpm uninstall && pnpm install",
     "test": "turbo run test --no-daemon",
     "uninstall": "rm -rf ./**/node_modules ./package-lock.json"
   },
@@ -31,9 +31,9 @@
     "turbo": "latest",
     "typescript": "^5.2.2"
   },
-  "packageManager": "npm@8.19.2",
+  "packageManager": "pnpm@8.15.2",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=20.0.0"
   },
   "overrides": {
     "drizzle-orm": "^0.30.10"

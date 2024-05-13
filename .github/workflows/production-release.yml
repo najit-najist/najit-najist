@@ -20,7 +20,7 @@ jobs:
           workflow: production-release.yml
 
       - name: 🚙 Checkout 
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.5
         with:
           fetch-depth: 0
   
@@ -49,29 +49,41 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
-        # https://github.com/actions/checkout
+      # https://github.com/actions/checkout
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.5
         with:
-            fetch-depth: 2
-
-      - uses: actions/cache@v3
-        name: Cache
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-modules-${{ hashFiles('**/package-lock.json') }}
-
+          fetch-depth: 2
+      
       - name: Setup node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
+          node-version: 20
+      
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
+        with:
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store
 
       - name: 🐞 Install Dependencies
-        run: npm ci
+        run: pnpm install
 
       - name: 🏗️ Build
-        run: npm run build
+        run: pnpm build
         env:
           DATABASE_URL: 'just-a-placeholder'
 

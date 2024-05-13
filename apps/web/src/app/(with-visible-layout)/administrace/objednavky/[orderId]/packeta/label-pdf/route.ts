@@ -1,5 +1,5 @@
 import { database } from '@najit-najist/database';
-import { PacketaSoapClient } from '@najit-najist/packeta/soap';
+import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { notFound } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 

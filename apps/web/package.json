@@ -19,6 +19,7 @@
     "@najit-najist/schemas": "*",
     "@najit-najist/ui": "*",
     "@najit-najist/database": "*",
+    "@najit-najist/email-templates": "*",
     "@najit-najist/security": "*",
     "@svgr/webpack": "^6.5.1",
     "@tanstack/react-query": "^4.26.0",

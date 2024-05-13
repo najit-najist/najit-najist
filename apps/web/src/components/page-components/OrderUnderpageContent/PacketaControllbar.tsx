@@ -1,11 +1,10 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { database } from '@najit-najist/database';
 import { Order } from '@najit-najist/database/models';
-import { PacketaSoapClient } from '@najit-najist/packeta/soap';
+import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { Paper } from '@najit-najist/ui';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
-import Link from 'next/link';
 import { FC } from 'react';
 
 export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {

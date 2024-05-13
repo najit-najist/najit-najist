@@ -1,5 +1,5 @@
 # Global variables
-ARG NODE_VERSION=18
+ARG NODE_VERSION=20
 ARG ALPINE_VERSION=3.18
 ARG DATABASE_URL
 ARG TURBO_TEAM
@@ -26,7 +26,8 @@ RUN --mount=type=bind,target=/docker-context \
           --include='*/' --exclude='*' \
           /docker-context/ /workspace-install/;
 
-RUN npm install
+RUN npm install -g pnpm
+RUN pnpm install
 
 
 ###################################################################
@@ -53,7 +54,7 @@ RUN mkdir -p /workspace-builder/apps/web/private
 COPY . .
 COPY --from=deps /workspace-install ./
 
-RUN npm run build:web
+RUN pnpm run build:web
 
 ###################################################################
 # Stage 3: Extract a minimal image from the build                 #
