@@ -4,13 +4,28 @@ import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 import { withDefaultFields } from '../internal/withDefaultFields';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 
+export enum OrderPaymentMethodsSlugs {
+  LOCAL_PAYMENT = 'local_payment',
+  WIRE = 'wire_transfer',
+  COD = 'cod',
+  BY_CARD = 'comgate',
+}
+
 export const orderPaymentMethods = pgTable(
   'order_payment_methods',
   withDefaultFields({
     name: varchar('name', { length: 256 }).notNull(),
     description: text('description').notNull(),
     price: integer('price').default(0),
-    slug: varchar('slug', { length: 256 }).notNull(),
+    slug: varchar('slug', {
+      length: 256,
+      enum: [
+        OrderPaymentMethodsSlugs.LOCAL_PAYMENT,
+        OrderPaymentMethodsSlugs.WIRE,
+        OrderPaymentMethodsSlugs.COD,
+        OrderPaymentMethodsSlugs.BY_CARD,
+      ],
+    }).notNull(),
     notes: text('notes'),
     paymentOnCheckout: boolean('payment_on_checkout').default(false),
   })

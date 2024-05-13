@@ -32,7 +32,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
   itemWrapperClassName,
   disabled,
   ...rest
-}: RadioGroupProps<RadioGroupItem>) {
+}: RadioGroupProps<ItemType>) {
   return (
     <HeadlessRadioGroup
       as="div"

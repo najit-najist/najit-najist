@@ -7,7 +7,7 @@ import { userCreateInputSchema } from './userCreateInputSchema';
 export const userRegisterInputSchema = userCreateInputSchema
   .omit({
     role: true,
-    status: true,
+    // status: true,
   })
   .extend({
     address: z.object({

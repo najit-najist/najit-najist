@@ -6,6 +6,7 @@
   "scripts": {
     "build": "next build",
     "build:analyze": "ANALYZE=true next build",
+    "build:standalone": "STANDALONE=true next build",
     "dev": "next dev -p 3000",
     "lint": "next lint",
     "start": "next start -p 4000"
@@ -33,7 +34,7 @@
     "@najit-najist/packeta": "*",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "next": "^14.2.3",
+    "next": "14.1",
     "react": "18.2",
     "react-dom": "18.2",
     "react-color-palette": "^6.2.0",

@@ -12,6 +12,8 @@ import {
 import { database } from '@najit-najist/database';
 import {
   Order,
+  OrderDeliveryMethodsSlug,
+  OrderPaymentMethodsSlugs,
   OrderState,
   comgatePayments,
   orderAddresses,
@@ -20,6 +22,7 @@ import {
   orderPaymentMethods,
   orderedProducts,
   orders,
+  packetaParcels,
   productStock,
   telephoneNumbers,
   userAddresses,
@@ -30,105 +33,25 @@ import {
   ThankYouOrderAdmin,
   renderAsync,
 } from '@najit-najist/email-templates';
+import { PacketaValidatedVendor, validatePoint } from '@najit-najist/packeta';
+import { PacketaSoapClient } from '@najit-najist/packeta/soap';
 import {
+  packetaMetadataSchema,
   pickupTimeSchema,
   userCartCheckoutInputSchema,
 } from '@najit-najist/schemas';
+import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
 import { getTotalPrice, isLocalPickup } from '@utils';
 import { getPerfTracker } from '@utils/getPerfTracker';
 import { getUserCart } from '@utils/getUserCart';
 import { zodErrorToFormErrors } from '@utils/zodErrorToFormErrors';
-import { eq, inArray } from 'drizzle-orm';
+import { eq, inArray, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
-import { z } from 'zod';
 
+import { getPaymentAndDelivery } from './_internals/getPaymentAndDelivery.server';
 import { FormValues } from './_internals/types';
-
-const getPaymentAndDelivery = async ({
-  deliveryMethod: pickedDeliveryMethod,
-  paymentMethod: pickedPaymentMethod,
-}: Pick<Partial<FormValues>, 'paymentMethod' | 'deliveryMethod'>) => {
-  if (!pickedDeliveryMethod?.id || !pickedPaymentMethod?.id) {
-    return {};
-  }
-
-  const [paymentMethod, deliveryMethod] = await Promise.all([
-    database.query.orderPaymentMethods.findFirst({
-      where: eq(orderPaymentMethods.id, pickedPaymentMethod.id),
-      with: {
-        exceptDeliveryMethods: {
-          with: {
-            deliveryMethod: true,
-          },
-        },
-      },
-    }),
-    database.query.orderDeliveryMethods.findFirst({
-      where: eq(orderDeliveryMethods.id, pickedDeliveryMethod.id),
-    }),
-  ]);
-
-  return { paymentMethod, deliveryMethod };
-};
-
-type GetPaymentAndDeliveryReturn = Awaited<
-  ReturnType<typeof getPaymentAndDelivery>
->;
-
-enum PaymentMethodsSlug {
-  BY_CARD = 'comgate',
-  BY_WIRE = 'wire',
-  PREPAY_BY_WIRE = 'prepay_wire',
-  ON_PLACE = 'on_place',
-}
-
-const validateInput = (formData: unknown, meta: GetPaymentAndDeliveryReturn) =>
-  userCartCheckoutInputSchema
-    .superRefine(async (value, ctx) => {
-      const { deliveryMethod, paymentMethod } = meta;
-
-      // We dont need to check delivery method now, we attach payment method only to order
-      if (!paymentMethod) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Vybraný způsob platby neznáme, vyberte jiný',
-          fatal: true,
-          path: ['paymentMethod.id'],
-        });
-      } else if (
-        !deliveryMethod ||
-        paymentMethod.exceptDeliveryMethods
-          .map(
-            ({ deliveryMethod: exceptDeliveryMethod }) =>
-              exceptDeliveryMethod.id
-          )
-          .includes(value.deliveryMethod.id)
-      ) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Vybraný způsob dopravy neznáme, vyberte jinou',
-          fatal: true,
-          path: ['deliveryMethod.id'],
-        });
-      }
-
-      if (deliveryMethod && isLocalPickup(deliveryMethod)) {
-        const validatedPickupDate = pickupTimeSchema.safeParse(
-          value.localPickupTime
-        );
-
-        if (!validatedPickupDate.success) {
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: validatedPickupDate.error.format()._errors.join(', '),
-            fatal: true,
-            path: ['localPickupTime'],
-          });
-        }
-      }
-    })
-    .safeParseAsync(formData);
+import { validateForm } from './_internals/validateForm.server';
 
 const sendEmails = (orderId: Order['id']) => {
   const perf = getPerfTracker();
@@ -212,24 +135,6 @@ const sendEmails = (orderId: Order['id']) => {
   });
 };
 
-const sendPlausibleEvent = (
-  eventName: string,
-  payload: { props?: object; revenue?: object }
-) =>
-  fetch('https://plausible.io/api/event', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      domain: 'najitnajist.cz',
-      name: eventName,
-      referrer: 'https://najitnajist.cz/muj-ucet/kosik/pokladna',
-      url: 'https://najitnajist.cz/muj-ucet/kosik/pokladna',
-      ...payload,
-    }),
-  });
-
 const trackEvent = async (orderId: Order['id']) => {
   const perf = getPerfTracker();
   try {
@@ -301,7 +206,7 @@ export async function doCheckoutAction(
 
     const validationPerf = perf.track('validation');
     const paymentAndDeliveryMethod = await getPaymentAndDelivery(formValues);
-    const validatedInput = await validateInput(
+    const validatedInput = await validateForm(
       formValues,
       paymentAndDeliveryMethod
     );
@@ -345,13 +250,13 @@ export async function doCheckoutAction(
       const [order] = await tx
         .insert(orders)
         .values({
-          deliveryMethodId: input.deliveryMethod.id,
+          deliveryMethodId: deliveryMethod.id,
           email: input.email,
           telephoneId: telephone.id,
           firstName: input.firstName,
           lastName: input.lastName,
           notes: input.notes,
-          paymentMethodId: input.paymentMethod.id,
+          paymentMethodId: paymentMethod.id,
           state: paymentMethod.paymentOnCheckout
             ? OrderState.UNPAID
             : OrderState.UNCONFIRMED,
@@ -365,64 +270,24 @@ export async function doCheckoutAction(
       const { municipality, ...addressPayload } = input.address;
 
       // Update stock values
-      const stockUpdatesAsPromises: Promise<any>[] = [
-        tx.insert(orderAddresses).values({
-          ...addressPayload,
-          orderId: order.id,
-          municipalityId: input.address.municipality.id,
-        }),
-      ];
-
-      if (input.localPickupTime) {
-        stockUpdatesAsPromises.push(
-          tx.insert(orderLocalPickupTimes).values({
-            orderId: order.id,
-            date: dayjs(input.localPickupTime)
-              .tz(DEFAULT_TIMEZONE, true)
-              .toDate(),
-          })
-        );
-      }
+      await tx.insert(orderAddresses).values({
+        ...addressPayload,
+        orderId: order.id,
+        municipalityId: input.address.municipality.id,
+      });
 
       for (const productInCart of cart.products) {
         if (!productInCart.product.stock) {
           continue;
         }
 
-        // TODO: doing this way will be imperfect if there will be more requests
-        stockUpdatesAsPromises.push(
-          database
-            .update(productStock)
-            .set({
-              value: Math.max(
-                0,
-                productInCart.product.stock.value - productInCart.count
-              ),
-            })
-            .where(eq(productStock.id, productInCart.product.stock.id))
-        );
+        await database
+          .update(productStock)
+          .set({
+            value: sql<number>`GREATEST(${productStock.value} - ${productInCart.count}, 0)`,
+          })
+          .where(eq(productStock.id, productInCart.product.stock.id));
       }
-
-      await Promise.all([
-        // Paste products from cart to order
-        tx.insert(orderedProducts).values(
-          cart.products.map((productInCart) => ({
-            count: productInCart.count,
-            productId: productInCart.product.id,
-            orderId: order.id,
-            totalPrice:
-              productInCart.count * (productInCart.product.price?.value ?? 0),
-          }))
-        ),
-        tx.delete(userCartProducts).where(
-          inArray(
-            userCartProducts.id,
-            cart.products.map(({ id }) => id)
-          )
-        ),
-        // Include stock updates in one promise
-        ...stockUpdatesAsPromises,
-      ]);
 
       if (input.saveAddressToAccount) {
         await tx
@@ -434,20 +299,81 @@ export async function doCheckoutAction(
           .where(eq(userAddresses.userId, userId));
       }
 
+      await tx.insert(orderedProducts).values(
+        cart.products.map((productInCart) => ({
+          count: productInCart.count,
+          productId: productInCart.product.id,
+          orderId: order.id,
+          totalPrice:
+            productInCart.count * (productInCart.product.price?.value ?? 0),
+        }))
+      );
+
+      await tx.delete(userCartProducts).where(
+        inArray(
+          userCartProducts.id,
+          cart.products.map(({ id }) => id)
+        )
+      );
+
       let redirectTo = `/muj-ucet/objednavky/${order.id}`;
 
       // Handle comgate payment as last thing
-      if (paymentMethod.slug === PaymentMethodsSlug.BY_CARD) {
+      if (paymentMethod.slug === OrderPaymentMethodsSlugs.BY_CARD) {
+        const comgatePerf = perf.track('contact-comgate');
         const comgatePayment = await Comgate.createPayment({
           order,
         });
+        comgatePerf.stop();
 
         await tx.insert(comgatePayments).values({
+          redirectUrl: comgatePayment.data.redirect,
           transactionId: comgatePayment.data.transId!,
           orderId: order.id,
         });
 
         redirectTo = comgatePayment.data.redirect ?? redirectTo;
+      }
+
+      if (input.deliveryMethod.slug === OrderDeliveryMethodsSlug.PACKETA) {
+        const packetaMeta = input.deliveryMethod.meta;
+        const packetaPerf = perf.track('contact-packeta');
+
+        const packet = await PacketaSoapClient.createPacket({
+          number: String(order.id),
+          name: input.firstName,
+          surname: input.lastName,
+          email: input.email,
+          phone: `+${telephone.code}${telephone.telephone}`,
+          addressId: packetaMeta.id,
+          // TODO: this should be calculated from items
+          weight: 1,
+          value: order.subtotal,
+          ...(input.paymentMethod.slug === OrderPaymentMethodsSlugs.COD
+            ? {
+                cod: getTotalPrice(order),
+              }
+            : {}),
+        });
+        packetaPerf.stop();
+
+        await tx.insert(packetaParcels).values({
+          addressId: packetaMeta.id,
+          addressType: packetaMeta.pickupPointType,
+          packetBarcodePretty: packet.barcodeText,
+          packetBarcodeRaw: packet.barcode,
+          packetId: Number(packet.id),
+          orderId: order.id,
+        });
+      } else if (
+        input.deliveryMethod.slug === OrderDeliveryMethodsSlug.LOCAL_PICKUP
+      ) {
+        await tx.insert(orderLocalPickupTimes).values({
+          orderId: order.id,
+          date: dayjs(input.deliveryMethod.meta)
+            .tz(DEFAULT_TIMEZONE, true)
+            .toDate(),
+        });
       }
 
       orderRedirectTo = redirectTo;
@@ -476,4 +402,5 @@ export async function doCheckoutAction(
   }
 
   redirect(orderRedirectTo);
+  return undefined;
 }

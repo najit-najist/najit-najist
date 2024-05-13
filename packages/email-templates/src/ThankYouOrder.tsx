@@ -9,7 +9,6 @@ import {
   Link,
   Section,
 } from '@react-email/components';
-import dayjs from 'dayjs';
 import { FC, PropsWithChildren } from 'react';
 
 import { CenteredRow } from './_components/CenteredRow';
@@ -21,6 +20,7 @@ import { PaperColumn } from './_components/PaperColumn';
 import { Spacing } from './_components/Spacing';
 import { Text } from './_components/Text';
 import { testOrder } from './constants';
+import { dayjs } from './day';
 import { getFileUrl } from './getFileUrl';
 import { OrderWithRelations } from './types';
 

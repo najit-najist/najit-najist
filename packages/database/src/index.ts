@@ -3,7 +3,15 @@ import pg from 'pg';
 
 import * as schema from './models';
 
-const { OrderState, UserRoles, UserStates, ...actualSchema } = schema;
+const {
+  OrderState,
+  UserRoles,
+  UserStates,
+  DEFAULT_BRANDED_SHOP,
+  OrderDeliveryMethodsSlug,
+  OrderPaymentMethodsSlugs,
+  ...actualSchema
+} = schema;
 
 const databaseUrl = process.env.DATABASE_URL;
 

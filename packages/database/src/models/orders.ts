@@ -9,11 +9,13 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
+import { comgatePayments } from './comgatePayments';
 import { orderAddresses } from './orderAddresses';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 import { orderLocalPickupTimes } from './orderLocalPickupDates';
 import { orderPaymentMethods } from './orderPaymentMethods';
 import { orderedProducts } from './orderedProducts';
+import { packetaParcels } from './packetaParcels';
 import { telephoneNumbers } from './telephoneNumbers';
 import { users } from './users';
 
@@ -82,6 +84,8 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   orderedProducts: many(orderedProducts),
   user: one(users, { fields: [orders.userId], references: [users.id] }),
   pickupDate: one(orderLocalPickupTimes),
+  comgatePayment: one(comgatePayments),
+  packetaShipment: one(packetaParcels),
 }));
 
 export type Order = typeof orders.$inferSelect;

@@ -3,11 +3,7 @@
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { OrderDeliveryMethod } from '@najit-najist/database/models';
-import {
-  pickupTimeSchema,
-  userCartCheckoutInputSchema,
-} from '@najit-najist/schemas';
+import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
@@ -23,7 +19,6 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
-import { z } from 'zod';
 
 import { doCheckoutAction } from '../actions';
 import { FormValues } from './types';
@@ -32,71 +27,52 @@ type OptionalFormValues = Omit<
   FormValues,
   'paymentMethod' | 'deliveryMethod'
 > & {
-  paymentMethod: { id: null | string };
-  deliveryMethod: { id: null | string };
+  paymentMethod: { slug: null | string };
+  deliveryMethod: { slug: null | string };
 };
 
 export const FormProvider: FC<
   PropsWithChildren<{
     defaultFormValues?: OptionalFormValues;
-    localPickupDeliveryMethodId: OrderDeliveryMethod['id'];
   }>
-> = ({ children, defaultFormValues, localPickupDeliveryMethodId }) => {
+> = ({ children, defaultFormValues }) => {
   const [isDoingTransition, doTransition] = useTransition();
   const trpcUtils = trpc.useUtils();
   const router = useRouter();
   const plausible = usePlausible();
-
-  const resolver = useMemo(
-    () =>
-      zodResolver(
-        userCartCheckoutInputSchema.superRefine((value, ctx) => {
-          if (value.deliveryMethod.id === localPickupDeliveryMethodId) {
-            const validatedPickupDate = pickupTimeSchema.safeParse(
-              value.localPickupTime
-            );
-
-            if (!validatedPickupDate.success) {
-              ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: validatedPickupDate.error.format()._errors.join(', '),
-                fatal: true,
-                path: ['localPickupTime'],
-              });
-            }
-          }
-        })
-      ),
-    [localPickupDeliveryMethodId]
-  );
   const formMethods = useForm({
     defaultValues: defaultFormValues,
-    resolver,
+    resolver: zodResolver(userCartCheckoutInputSchema),
   });
   const { handleSubmit, setError } = formMethods;
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (formValues) => {
-      const newOrderAsPromise = doCheckoutAction(formValues);
+      const newOrderAsPromise = doCheckoutAction(formValues).then(
+        async (response) => {
+          if (response?.errors) {
+            console.log(response);
+            const errorsAsArray = Object.entries(response.errors);
+            for (const [key, value] of errorsAsArray) {
+              setError(key as any, value);
+            }
+
+            throw new Error('Opravte si hodnoty ve formuláři');
+          }
+        }
+      );
 
       toast.promise(newOrderAsPromise, {
         loading: 'Vytvářím objednávku...',
-        success: 'Objednávka vytvořena, děkujeme!',
+        success:
+          'Objednávka vytvořena, děkujeme! Nyní Vás přesměrujeme dále, vyčkejte strpení...',
         error(error) {
           return `Stala se chyba při vytváření objednávky: ${error.message}`;
         },
       });
 
-      const { errors } = (await newOrderAsPromise) ?? {};
-
-      if (!errors) {
-        await trpcUtils.profile.cart.products.get.many.invalidate();
-      } else {
-        const errorsAsArray = Object.entries(errors);
-        for (const [key, value] of errorsAsArray) {
-          setError(key as any, value);
-        }
-      }
+      await newOrderAsPromise;
+      await trpcUtils.profile.cart.products.get.many.invalidate();
     },
     [router, plausible]
   );

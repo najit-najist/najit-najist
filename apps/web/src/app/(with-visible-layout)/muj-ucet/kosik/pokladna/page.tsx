@@ -8,7 +8,7 @@ import {
   getCachedPaymentMethods,
   getCachedTrpcCaller,
 } from '@server-utils';
-import { formatPrice, isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
+import { formatPrice } from '@utils';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
@@ -134,15 +134,6 @@ export default async function Page() {
         .includes(defaultDeliveryMethod.id ?? '')
   );
 
-  const localPickupDeliveryMethod = deliverMethodsAsArray.find(isLocalPickup);
-  const packetaDeliveryMethod = deliverMethodsAsArray.find(
-    isPacketaDeveliveryMethod
-  );
-
-  if (!localPickupDeliveryMethod) {
-    throw new Error('No local pickup delivery method');
-  }
-
   const subtotal = productsInCart.reduce(
     (priceTotalPredicate, cartItem) =>
       priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
@@ -150,10 +141,10 @@ export default async function Page() {
   );
 
   const paymentMethodPrices = Object.fromEntries(
-    paymentMethods.map(({ id, price }) => [id, price ?? 0])
+    paymentMethods.map(({ slug, price }) => [slug, price ?? 0])
   );
   const deliveryMethodsPrices = Object.fromEntries(
-    deliverMethodsAsArray.map(({ id, price }) => [id, price ?? 0])
+    deliverMethodsAsArray.map(({ slug, price }) => [slug, price ?? 0])
   );
 
   return (
@@ -164,10 +155,9 @@ export default async function Page() {
         </div>
       </PageHeader>
       <FormProvider
-        localPickupDeliveryMethodId={localPickupDeliveryMethod.id}
         defaultFormValues={{
-          deliveryMethod: { id: (defaultDeliveryMethod.id ?? null) as any },
-          paymentMethod: { id: (defaultPaymentMethod?.id ?? null) as any },
+          deliveryMethod: { slug: defaultDeliveryMethod.slug ?? null },
+          paymentMethod: { slug: defaultPaymentMethod?.slug ?? null },
           address: {
             municipality: { id: null as any },
             ...user?.address,

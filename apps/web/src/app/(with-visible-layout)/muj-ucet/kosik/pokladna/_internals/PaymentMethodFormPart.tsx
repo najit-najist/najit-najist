@@ -2,6 +2,10 @@
 
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { OrderPaymentMethodWithRelations } from '@custom-types';
+import {
+  OrderDeliveryMethod,
+  OrderPaymentMethodsSlugs,
+} from '@najit-najist/database/models';
 import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
@@ -12,60 +16,66 @@ export const PaymentMethodFormPart: FC<{
 }> = ({ paymentMethods }) => {
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
-  const selectedDeliveryId = useWatch({
-    name: 'deliveryMethod.id',
+  const selectedDeliverySlug = useWatch<
+    { deliveryMethod: OrderDeliveryMethod },
+    'deliveryMethod.slug'
+  >({
+    name: 'deliveryMethod.slug',
   });
 
   const controller = useController({
     name: 'paymentMethod',
   });
 
-  const filteredPaymentMethods = useMemo(
+  const mappedPaymentMethods = useMemo(
     () =>
-      paymentMethods
-        .filter(
-          (item) =>
-            !item.exceptDeliveryMethods
-              .map(({ id }) => id)
-              .includes(selectedDeliveryId)
-        )
-        .map((item) => ({
-          ...item,
-          ...(item.slug === 'comgate'
-            ? {
-                description: (
-                  <>
-                    <p>{item.description}</p>
+      paymentMethods.map((item) => {
+        if (item.slug === OrderPaymentMethodsSlugs.BY_CARD) {
+          item.description = (
+            <>
+              <p>{item.description}</p>
 
-                    <a
-                      href="https://www.comgate.cz/"
-                      className="mt-3 inline-block p-1.5 bg-white rounded-lg shadow-lg border border-gray-100"
-                      title="Zprostředkovatel plateb je comgate.cz"
-                      target="_blank"
-                    >
-                      <Image
-                        alt="Comgate logo"
-                        width={100}
-                        height={24}
-                        src="https://www.comgate.cz/files/logo-web-280.png"
-                      />
-                    </a>
-                  </>
-                ),
-              }
-            : {}),
-        })),
-    [paymentMethods, selectedDeliveryId]
+              <a
+                href="https://www.comgate.cz/"
+                className="mt-3 inline-block p-1.5 bg-white rounded-lg shadow-lg border border-gray-100"
+                title="Zprostředkovatel plateb je comgate.cz"
+                target="_blank"
+              >
+                <Image
+                  alt="Comgate logo"
+                  width={100}
+                  height={24}
+                  src="https://www.comgate.cz/files/logo-web-280.png"
+                />
+              </a>
+            </>
+          ) as unknown as string;
+        }
+
+        return item;
+      }),
+    [paymentMethods]
   );
 
-  if (!paymentMethods.length) {
+  const filteredPaymentMethods = useMemo(
+    () =>
+      mappedPaymentMethods.filter(
+        (item) =>
+          !item.exceptDeliveryMethods
+            .map(({ slug }) => slug)
+            .includes(selectedDeliverySlug)
+      ),
+    [selectedDeliverySlug, mappedPaymentMethods]
+  );
+
+  if (!filteredPaymentMethods.length) {
     return null;
   }
 
   return (
     <>
-      <RadioGroup
-        by="id"
+      <RadioGroup<OrderDeliveryMethod>
+        by="slug"
         value={controller.field.value}
         onChange={controller.field.onChange}
         onBlur={controller.field.onBlur}

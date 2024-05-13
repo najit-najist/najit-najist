@@ -1,4 +1,9 @@
-import { OrderState, Product } from '@najit-najist/database/models';
+import {
+  OrderDeliveryMethodsSlug,
+  OrderPaymentMethodsSlugs,
+  OrderState,
+  Product,
+} from '@najit-najist/database/models';
 
 import { OrderWithRelations } from './types';
 
@@ -40,7 +45,7 @@ export const testOrder: OrderWithRelations = {
     description: 'sdfds',
     name: 'Převodem na účet',
     paymentOnCheckout: false,
-    slug: 'cod',
+    slug: OrderPaymentMethodsSlugs.BY_CARD,
     price: 200,
     notes: 'asdfaodsjfoadsjfoasdj',
   },
@@ -100,7 +105,7 @@ export const testOrder: OrderWithRelations = {
     description: '',
     name: 'Poštou',
     price: 200,
-    slug: '/sdfsdf/',
+    slug: OrderDeliveryMethodsSlug.BALIKOVNA,
     notes: '',
   },
 };

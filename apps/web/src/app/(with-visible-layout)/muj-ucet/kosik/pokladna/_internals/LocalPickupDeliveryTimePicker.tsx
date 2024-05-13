@@ -6,6 +6,7 @@ import {
   PencilIcon,
 } from '@heroicons/react/24/outline';
 import { DEFAULT_TIMEZONE, dayjs, Dayjs } from '@najit-najist/api';
+import { Order } from '@najit-najist/database/models';
 import { getMinimumPickupTimeForDate } from '@najit-najist/schemas';
 import {
   Alert,
@@ -21,6 +22,8 @@ import {
 import 'dayjs/plugin/timezone';
 import { FC, useMemo, useState } from 'react';
 import { useController, useFormState } from 'react-hook-form';
+
+import { FormValues } from './types';
 
 type TimeOption = ItemBase & {
   label: string;
@@ -61,16 +64,19 @@ const fieldValueToDayjs = (datetime: string) =>
 export const LocalPickupDeliveryTimePicker: FC = () => {
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
-  const { field, fieldState } = useController<{
-    localPickupTime: string | undefined;
-  }>({
-    name: 'localPickupTime',
+  const { field, fieldState } = useController<
+    Pick<FormValues, 'deliveryMethod'>
+  >({
+    name: 'deliveryMethod.meta',
   });
 
   const [now, setNow] = useState(dayjs());
 
   const selectOptionForDate = useMemo((): TimeOption[] => {
-    if (!field.value) {
+    if (
+      !field.value ||
+      (typeof field.value === 'object' && field.value !== null)
+    ) {
       return [];
     }
 
@@ -140,7 +146,7 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
 
     field.onChange(
       dayjsToFieldValue(
-        dayjs(field.value).set('hour', hour).set('minute', minute)
+        dayjs(String(field.value)).set('hour', hour).set('minute', minute)
       )
     );
   };
@@ -149,10 +155,13 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
     Date | undefined,
     TimeOption | null
   ] => {
-    if (!field.value) {
+    if (
+      !field.value ||
+      (typeof field.value === 'object' && field.value !== null)
+    ) {
       return [undefined, null];
     }
-    const valueAsDayjs = fieldValueToDayjs(field.value);
+    const valueAsDayjs = fieldValueToDayjs(String(field.value));
 
     if (!valueAsDayjs.isValid()) {
       return [undefined, null];
@@ -189,7 +198,9 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
             >
               {field.value ? (
                 <>
-                  {fieldValueToDayjs(field.value).format(DEFAULT_DATE_FORMAT)}
+                  {fieldValueToDayjs(String(field.value)).format(
+                    DEFAULT_DATE_FORMAT
+                  )}
                   <PencilIcon className="ml-4 -mt-0.5 inline w-5 h-5" />
                 </>
               ) : (

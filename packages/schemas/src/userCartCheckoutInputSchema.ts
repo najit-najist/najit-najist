@@ -1,7 +1,12 @@
+import {
+  OrderDeliveryMethod,
+  OrderDeliveryMethodsSlug,
+} from '@najit-najist/database/models';
 import { z } from 'zod';
 
 import { entityLinkSchema } from './entityLinkSchema';
 import { nonEmptyStringSchema } from './nonEmptyStringSchema';
+import { packetaMetadataSchema } from './packetaMetadataSchema';
 import { pickupTimeSchema } from './pickupTimeSchema';
 import { streetNameSchema } from './streetNameSchema';
 import { telephoneNumberInputSchema } from './telephoneNumberInputSchema';
@@ -35,7 +40,18 @@ export const userCartCheckoutInputSchema = z.object({
       .min(1, MESSAGES.requiredPostalCode),
   }),
   saveAddressToAccount: z.boolean().default(false),
-  paymentMethod: entityLinkSchema,
-  deliveryMethod: entityLinkSchema,
-  localPickupTime: pickupTimeSchema.optional(),
+  paymentMethod: z.object({ slug: z.string() }),
+  deliveryMethod: z.discriminatedUnion('slug', [
+    z.object({
+      slug: z.literal(OrderDeliveryMethodsSlug.PACKETA),
+      meta: packetaMetadataSchema,
+    }),
+    z.object({
+      slug: z.literal(OrderDeliveryMethodsSlug.LOCAL_PICKUP),
+      meta: pickupTimeSchema,
+    }),
+    z.object({
+      slug: z.literal(OrderDeliveryMethodsSlug.BALIKOVNA),
+    }),
+  ]),
 });

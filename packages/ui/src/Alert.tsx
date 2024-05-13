@@ -28,7 +28,7 @@ const alertRootStyles = cva('rounded-md p-4', {
   },
 });
 
-const iconStyles = cva('h-5 w-5', {
+const iconStyles = cva('h-5 w-5 -mt-[1px]', {
   variants: {
     color: {
       default: 'text-blue-400',

@@ -6,23 +6,26 @@ import {
 import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
 import { OrderDeliveryMethod, products } from '@najit-najist/database/models';
 import { Badge, Tooltip } from '@najit-najist/ui';
+import { importStaticImage } from '@server/utils/importStaticImage';
 import NextImage from 'next/image';
 import Link from 'next/link';
+import path from 'path';
 import { FC } from 'react';
 
 import { DeleteButton } from './DeleteButton';
 import { PriceInfo } from './PriceInfo';
 
+const filepath = path.join(process.cwd());
+
 export const CartItem: FC<
   AppRouterOutput['profile']['cart']['products']['get']['many'][number] & {
     deliveryMethods: Map<OrderDeliveryMethod['id'], OrderDeliveryMethod>;
   }
-> = ({ product, count: countInCart, id }) => {
-  let mainImage = product.images.at(0)?.file;
-
-  if (mainImage) {
-    mainImage = getFileUrl(products, product.id, mainImage);
-  }
+> = async ({ product, count: countInCart, id }) => {
+  const mainImageAsString = product.images.at(0)?.file;
+  const mainImage = mainImageAsString
+    ? await importStaticImage(products, product.id, mainImageAsString)
+    : undefined;
 
   return (
     <li key={id} className="flex px-4 py-6 sm:px-6">

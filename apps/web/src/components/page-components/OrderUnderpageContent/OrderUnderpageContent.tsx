@@ -8,6 +8,7 @@ import { FC, Suspense } from 'react';
 import { EditOrderControllbar } from './EditOrderControlbar';
 import { OrderSubtitle } from './OrderSubtitle';
 import { OrderSubtitleSkeleton } from './OrderSubtitleSkeleton';
+import { PacketaControlbar } from './PacketaControllbar';
 import { ProductSkeleton } from './ProductSkeleton';
 import { SectionAddress } from './SectionAddress';
 import { SectionProducts } from './SectionProducts';
@@ -92,6 +93,9 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <Suspense fallback={<Skeleton className="w-full h-72" />}>
                 <EditOrderControllbar {...props} order={order} />
               </Suspense>
+              <Suspense>
+                <PacketaControlbar order={order} />
+              </Suspense>
             </aside>
           ) : null}
         </div>
@@ -146,7 +150,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 </div>
               }
             >
-              <SectionShipmentPayment order={order} />
+              <SectionShipmentPayment viewType={viewType} order={order} />
             </Suspense>
 
             <h4 className="sr-only">Další informace</h4>

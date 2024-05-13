@@ -10,6 +10,7 @@ export * from './orderedProducts';
 export * from './orderLocalPickupDates';
 export * from './orderPaymentMethods';
 export * from './orders';
+export * from './packetaParcels';
 
 export * from './postCategories';
 export * from './posts';

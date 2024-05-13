@@ -1,6 +1,7 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
+import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
 import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';

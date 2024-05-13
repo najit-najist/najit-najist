@@ -6,6 +6,7 @@ export * from './utils/splitBase64Url';
 export * from './encodedImageSchema';
 export * from './entityLinkSchema';
 export * from './nonEmptyStringSchema';
+export * from './packetaMetadataSchema';
 export * from './pickupTimeSchema';
 export * from './slugSchema';
 export * from './streetNameSchema';

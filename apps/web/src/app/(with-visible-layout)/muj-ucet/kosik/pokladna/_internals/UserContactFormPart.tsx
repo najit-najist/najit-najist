@@ -14,10 +14,11 @@ import {
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { FormValues } from './types';
+
 export const UserContactFormPart: FC = () => {
   const { isActive } = useReactTransitionContext();
-  const { formState, register } =
-    useFormContext<AppRouterInput['profile']['cart']['checkout']>();
+  const { formState, register } = useFormContext<FormValues>();
   const fieldsAreDisabled = formState.isSubmitting || isActive;
 
   return (

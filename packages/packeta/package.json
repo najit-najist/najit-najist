@@ -1,0 +1,44 @@
+{
+  "name": "@najit-najist/packeta",
+  "version": "0.0.0",
+  "private": true,
+  "author": "ondrej-langr <langr.ondrej.work@gmail.com>",
+  "type": "module",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts",
+      "require": "./dist/cjs/index.js"
+    },
+    "./soap": {
+      "import": "./dist/soap-client.js",
+      "types": "./dist/soap-client.d.ts",
+      "require": "./dist/cjs/soap-client.js"
+    }
+  },
+  "main": "dist/cjs/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:cjs\" \"npm:dev:package:types\"",
+    "dev:package": "npm run build:package -- --watch",
+    "dev:package:cjs": "npm run build:package:cjs -- --watch",
+    "dev:package:types": "npm run build:types -- --watch",
+    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
+    "build": "npm run build:package && npm run build:package:cjs && npm run build:types",
+    "build:package": "swc ./src -d dist ",
+    "build:package:cjs": "swc ./src -d dist/cjs --config-file commonjs.swcrc",
+    "build:types": "tsc"
+  },
+  "dependencies": {
+    "soap": "^1.0.2"
+  },
+  "devDependencies": {
+    "@swc/core": "^1.3.96",
+    "@types/node": "^18.11.3",
+    "typescript": "^5.2.2"
+  }
+}

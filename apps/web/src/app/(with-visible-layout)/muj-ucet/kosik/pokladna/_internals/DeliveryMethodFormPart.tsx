@@ -3,7 +3,10 @@
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { OrderPaymentMethodWithRelations } from '@custom-types';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { OrderDeliveryMethod } from '@najit-najist/database/models';
+import {
+  OrderDeliveryMethod,
+  OrderDeliveryMethodsSlug,
+} from '@najit-najist/database/models';
 import {
   Alert,
   ErrorMessage,
@@ -29,19 +32,12 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   const { isActive } = useReactTransitionContext();
   const formState = useFormState();
   const { setValue, getValues } = useFormContext();
-  const controller = useController({
+  const controller = useController<
+    { deliveryMethod: OrderDeliveryMethod },
+    'deliveryMethod'
+  >({
     name: 'deliveryMethod',
   });
-
-  const localPickupDeliveryMethod = useMemo(
-    () => deliveryMethods.find(isLocalPickup),
-    [deliveryMethods]
-  );
-
-  const packetaDeliveryMethod = useMemo(
-    () => deliveryMethods.find(isPacketaDeveliveryMethod),
-    [deliveryMethods]
-  );
 
   // Setup for quick access
   const paymentMethodsForDeliveryId = useMemo(() => {
@@ -68,7 +64,10 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
     (nextItem) => {
       const { onChange } = controller.field;
 
-      onChange(nextItem);
+      onChange({
+        ...nextItem,
+        meta: null,
+      });
 
       const values = getValues();
 
@@ -91,27 +90,26 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
     () => deliveryMethods.filter((d) => !d.disabled),
     [deliveryMethods]
   );
+  const fieldValue = controller.field.value;
 
   return (
     <>
       <RadioGroup<OrderDeliveryMethod>
+        by="slug"
         disabled={formState.isSubmitting || isActive}
-        value={controller.field.value}
+        value={fieldValue}
         onChange={handleChange}
         onBlur={controller.field.onBlur}
-        by="id"
         items={deliveryMethods}
         itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3"
       />
       {controller.fieldState.error?.message ? (
         <ErrorMessage>{controller.fieldState.error?.message}</ErrorMessage>
       ) : null}
-      {localPickupDeliveryMethod &&
-      localPickupDeliveryMethod.id === controller.field.value?.id ? (
+      {fieldValue.slug === OrderDeliveryMethodsSlug.LOCAL_PICKUP ? (
         <LocalPickupDeliveryTimePicker />
       ) : null}
-      {packetaDeliveryMethod &&
-      packetaDeliveryMethod.id === controller.field.value?.id ? (
+      {fieldValue.slug === OrderDeliveryMethodsSlug.PACKETA ? (
         <PacketaPickupDelivery />
       ) : null}
       {deliveryMethods.filter((d) => d.disabled).length ? (

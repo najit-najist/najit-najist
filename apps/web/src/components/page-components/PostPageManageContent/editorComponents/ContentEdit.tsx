@@ -17,8 +17,6 @@ const LazyEditor = dynamic(
 );
 
 export const ContentEdit: FC = () => {
-  console.log(useWatch({ name: 'content' }));
-
   return (
     <Controller
       name="content"

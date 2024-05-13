@@ -1,17 +1,19 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
+import { dayjs } from '@najit-najist/api';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
 import { Alert } from '@najit-najist/ui';
 import { FC } from 'react';
 
+import type { OrderUnderpageViewType } from './OrderUnderpageContent';
 import { getCachedDeliveryMethod } from './getCachedDeliveryMethod';
 import { getCachedLocalPickupDate } from './getCachedLocalPickupDate';
 
-export const SectionShipmentPayment: FC<{ order: Order }> = async ({
-  order,
-}) => {
+export const SectionShipmentPayment: FC<{
+  order: Order;
+  viewType: OrderUnderpageViewType;
+}> = async ({ order }) => {
   const [paymentMethod, deliveryMethod, localPickupDate] = await Promise.all([
     database.query.orderPaymentMethods.findFirst({
       where: (s, { eq }) => eq(s.id, order.paymentMethodId),

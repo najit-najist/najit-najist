@@ -1,6 +1,9 @@
+import withBundleAnalyzer from '@next/bundle-analyzer';
+
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+let nextConfig = {
   // reactStrictMode: true,
+  output: process.env.STANDALONE === 'true' ? 'standalone' : undefined,
   swcMinify: true,
   images: {
     remotePatterns: [
@@ -65,5 +68,9 @@ const nextConfig = {
     ];
   },
 };
+
+if (process.env.ANALYZE === 'true') {
+  nextConfig = withBundleAnalyzer(nextConfig);
+}
 
 export default nextConfig;
