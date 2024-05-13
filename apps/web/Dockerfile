@@ -57,6 +57,7 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /workspace-builder
 RUN mkdir -p /workspace-builder/apps/web/private
+RUN mkdir -p /workspace-builder/apps/web/private/uploads
 
 COPY . .
 COPY --from=deps /workspace-install ./
