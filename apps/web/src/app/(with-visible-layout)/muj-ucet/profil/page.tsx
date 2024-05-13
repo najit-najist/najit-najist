@@ -1,6 +1,7 @@
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { Tooltip } from '@najit-najist/ui';
-import { getCachedLoggedInUser, getCachedOrders } from '@server-utils';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedOrders } from '@server/utils/getCachedOrders';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

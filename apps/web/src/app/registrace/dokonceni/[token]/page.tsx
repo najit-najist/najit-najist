@@ -1,5 +1,5 @@
 import { Logo } from '@components/common/Logo';
-import { getTrpcCaller } from '@najit-najist/api/server';
+import { getTrpcCaller } from '@server/utils/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

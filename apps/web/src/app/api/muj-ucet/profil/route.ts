@@ -1,4 +1,4 @@
-import { getLoggedInUser } from '@najit-najist/api/server';
+import { getLoggedInUser } from '@server/utils/server/getLoggedInUser';
 import { NextResponse } from 'next/server';
 
 export const GET = async (): Promise<NextResponse> => {

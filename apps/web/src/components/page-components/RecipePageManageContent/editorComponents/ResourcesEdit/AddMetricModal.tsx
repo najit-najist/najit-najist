@@ -1,8 +1,9 @@
+import { trpc } from '@client/trpc';
+import { ErrorCodes } from '@custom-types/ErrorCodes';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ErrorCodes, recipeResourceCreateInputSchema } from '@najit-najist/api';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, Input, Modal, ModalProps } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { recipeResourceCreateInputSchema } from '@server/schemas/recipeResourceCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';

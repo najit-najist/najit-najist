@@ -1,6 +1,6 @@
+import { trpc } from '@client/trpc';
 import { Municipality } from '@najit-najist/database/models';
 import { Combobox, ComboboxProps } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import { FC, useState } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebounce } from 'usehooks-ts';

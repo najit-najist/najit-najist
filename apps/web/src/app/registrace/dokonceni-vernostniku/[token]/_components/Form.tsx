@@ -1,11 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { loginPageCallbacks } from '@constants';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { verifyRegistrationFromPreviewInputSchema } from '@najit-najist/api';
 import { Button, ErrorMessage, FormBreak } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { verifyRegistrationFromPreviewInputSchema } from '@server/schemas/verifyRegistrationFromPreviewInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

@@ -1,14 +1,12 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
 import { PostWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import {
-  postCreateInputSchema,
-  postUpdateInputSchema,
-} from '@najit-najist/api';
 import { toast } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { postCreateInputSchema } from '@server/schemas/postCreateInputSchema';
+import { postUpdateInputSchema } from '@server/schemas/postUpdateInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

@@ -1,5 +1,5 @@
+import { getTableName } from '@najit-najist/database/drizzle';
 import { EntityLink } from '@najit-najist/schemas';
-import { getTableName } from 'drizzle-orm';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { StaticImageData } from 'next/image';
 

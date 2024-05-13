@@ -1,6 +1,7 @@
 import { Logo } from '@components/common/Logo';
-import { EntityNotFoundError } from '@najit-najist/api';
-import { ProfileService, logger } from '@najit-najist/api/server';
+import { EntityNotFoundError } from '@server/errors';
+import { logger } from '@server/logger';
+import { ProfileService } from '@server/services/Profile.service';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

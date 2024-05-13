@@ -1,12 +1,12 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userRegisterInputSchema } from '@najit-najist/api';
 import { Button, PasswordInput } from '@najit-najist/ui';
+import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
-import { trpc } from 'trpc';
 import { z } from 'zod';
 
 import { BottomLinks } from './_components/BottomLinks';

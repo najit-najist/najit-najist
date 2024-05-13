@@ -1,26 +1,31 @@
 import { PostWithRelations } from '@custom-types';
+import { dayjs } from '@dayjs';
 import { PhotoIcon } from '@heroicons/react/24/outline';
-import { dayjs, getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
+import { importStaticImage } from '@server/utils/importStaticImage';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
-export const Item: FC<PostWithRelations> = (post) => {
+export const Item: FC<PostWithRelations> = async (post) => {
   const link: any = `/clanky/${post.slug}`;
+  const importedImage = post.image
+    ? await importStaticImage(posts, post.id, post.image)
+    : null;
+
   return (
     <article className="relative isolate flex flex-col gap-6 lg:flex-row">
       <Link
         href={link}
         className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0 block"
       >
-        {post.image ? (
+        {importedImage ? (
           <Image
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl(posts, post.id, post.image)}
+            src={importedImage}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />

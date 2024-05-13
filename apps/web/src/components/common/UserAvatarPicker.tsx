@@ -1,13 +1,13 @@
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon, UserIcon } from '@heroicons/react/24/outline';
 import { CameraIcon } from '@heroicons/react/24/solid';
-import { getFileUrl } from '@najit-najist/api';
 import { users } from '@najit-najist/database/models';
 import {
   EntityLink,
   IMAGE_FILE_REGEX,
   isFileBase64,
 } from '@najit-najist/schemas';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { useRef, ChangeEventHandler, FC, useMemo, useState } from 'react';

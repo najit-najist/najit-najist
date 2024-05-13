@@ -1,30 +1,45 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { UserWithRelations } from '@custom-types';
+import { dayjs } from '@dayjs';
 import { UserIcon } from '@heroicons/react/24/outline';
-import { dayjs, getFileUrl } from '@najit-najist/api';
 import { users as usersModel } from '@najit-najist/database/models';
-import { getCachedLoggedInUser } from '@server-utils';
-import Image from 'next/image';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { importStaticImage } from '@server/utils/importStaticImage';
+import Image, { StaticImageData } from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
 export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
   const { id } = (await getCachedLoggedInUser()) ?? {};
 
+  const mutatedUsers: Array<
+    (typeof users)[number] & { staticAvatar?: StaticImageData }
+  > = users;
+
+  for (const user of mutatedUsers) {
+    if (user.avatar) {
+      user.staticAvatar = await importStaticImage(
+        usersModel,
+        user.id,
+        user.avatar
+      );
+    }
+  }
+
   return (
     <>
-      {users.length ? (
-        users.map((person) => (
+      {mutatedUsers.length ? (
+        mutatedUsers.map((person) => (
           <tr key={person.email}>
             <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-0">
               <div className="flex items-center">
                 <div className="h-10 w-10 flex-shrink-0">
-                  {person.avatar ? (
+                  {person.staticAvatar ? (
                     <Image
                       className="h-10 w-10 rounded-full bg-gray-100"
                       width={40}
                       height={40}
-                      src={getFileUrl(usersModel, person.id, person.avatar)}
+                      src={person.staticAvatar}
                       alt=""
                     />
                   ) : (

@@ -1,8 +1,8 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { UserWithRelations } from '@custom-types';
-import { trpc } from '@trpc';
 import { getChangedValues } from '@utils';
 import { FC, useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';

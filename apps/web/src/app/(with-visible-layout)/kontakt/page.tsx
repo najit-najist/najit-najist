@@ -1,5 +1,5 @@
-import { getLoggedInUser } from '@najit-najist/api/server';
 import { brandedShops } from '@najit-najist/database/models';
+import { getLoggedInUser } from '@server/utils/server';
 import { StaticImageData } from 'next/image';
 import { FC } from 'react';
 

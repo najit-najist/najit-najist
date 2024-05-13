@@ -1,15 +1,9 @@
 'use server';
 
-import { DEFAULT_TIMEZONE, dayjs } from '@najit-najist/api';
-import {
-  Comgate,
-  MailService,
-  config,
-  getLoggedInUserId,
-  getOrderById,
-  logger,
-} from '@najit-najist/api/server';
+import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
+import { ComgateClient } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
+import { eq, inArray, sql } from '@najit-najist/database/drizzle';
 import {
   Order,
   OrderDeliveryMethodsSlug,
@@ -32,12 +26,15 @@ import {
   renderAsync,
 } from '@najit-najist/email-templates';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
+import { config } from '@server/config';
+import { logger } from '@server/logger';
+import { MailService } from '@server/services/Mail.service';
 import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
+import { getLoggedInUserId, getOrderById } from '@server/utils/server';
 import { getTotalPrice } from '@utils';
 import { getPerfTracker } from '@utils/getPerfTracker';
 import { getUserCart } from '@utils/getUserCart';
 import { zodErrorToFormErrors } from '@utils/zodErrorToFormErrors';
-import { eq, inArray, sql } from 'drizzle-orm';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -313,7 +310,7 @@ export async function doCheckoutAction(
       // Handle comgate payment as last thing
       if (paymentMethod.slug === OrderPaymentMethodsSlugs.BY_CARD) {
         const comgatePerf = perf.track('contact-comgate');
-        const comgatePayment = await Comgate.createPayment({
+        const comgatePayment = await ComgateClient.createPayment({
           order,
         });
         comgatePerf.stop();

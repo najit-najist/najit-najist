@@ -2,13 +2,14 @@ import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { PlusIcon } from '@heroicons/react/24/outline';
-import { UserActions, canUser } from '@najit-najist/api';
 import {
   ProductCategory,
   products as productsModel,
 } from '@najit-najist/database/models';
 import { Tooltip } from '@najit-najist/ui';
-import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import Link from 'next/link';
 
 import { AsideFilters } from './_components/AsideFilters';

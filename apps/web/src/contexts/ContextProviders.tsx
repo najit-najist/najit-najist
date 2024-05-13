@@ -1,12 +1,13 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { customTrpcLink } from '@constants';
-import { getSuperJson, serverPort } from '@najit-najist/api';
+import { serverPort } from '@server/constants';
+import { getSuperJson } from '@server/utils/getSuperJson';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { FC, PropsWithChildren, useState } from 'react';
 
-import { trpc } from '../trpc';
 import { EditorJsInstancesProvider } from './editorJsInstancesContext';
 
 // import { usePathname } from 'next/navigation';

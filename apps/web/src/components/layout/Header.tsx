@@ -1,9 +1,10 @@
-import { FC } from 'react';
 import { Logo } from '@components/common/Logo';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import Link from 'next/link';
-import { TopHeader } from './TopHeader';
-import { getCachedLoggedInUser } from '@server-utils';
+import { FC } from 'react';
+
 import { DesktopMenuItem } from './DesktopMenuItem';
+import { TopHeader } from './TopHeader';
 
 const navLinks = [
   { text: 'Úvod', href: '/' },

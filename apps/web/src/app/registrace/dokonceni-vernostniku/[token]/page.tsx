@@ -1,7 +1,7 @@
 import { Logo } from '@components/common/Logo';
-import { logger } from '@najit-najist/api/server';
 import { UserStates } from '@najit-najist/database/models';
-import { getCachedTrpcCaller } from '@server-utils';
+import { logger } from '@server/logger';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 

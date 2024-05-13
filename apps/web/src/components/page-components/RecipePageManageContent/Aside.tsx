@@ -1,7 +1,7 @@
 'use client';
 
 import { DEFAULT_DATE_FORMAT } from '@constants';
-import { dayjs } from '@najit-najist/api';
+import { dayjs } from '@dayjs';
 import { Recipe } from '@najit-najist/database/models';
 import { Input, Paper } from '@najit-najist/ui';
 import { FC } from 'react';

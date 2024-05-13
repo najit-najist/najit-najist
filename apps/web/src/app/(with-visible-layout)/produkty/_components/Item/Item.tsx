@@ -1,11 +1,11 @@
 import { AddToCartButton } from '@components/page-components/ProductPageManageContent/AddToCartButton';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { TruckIcon } from '@heroicons/react/20/solid';
-import { stripHtml } from '@najit-najist/api';
 import { Badge, Price } from '@najit-najist/ui';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
+import { stripHtml } from 'string-strip-html';
 
 import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';

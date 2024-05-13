@@ -1,5 +1,6 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import {
   loginPageCallbacks,
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
@@ -7,15 +8,14 @@ import {
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { userProfileLogInInputSchema } from '@najit-najist/api';
 import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
 import { Alert } from '@najit-najist/ui';
+import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import type { TRPCError } from '@trpc/server';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { trpc } from 'trpc';
 import { z } from 'zod';
 
 import { BottomLinks } from './_components/BottomLInks';

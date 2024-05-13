@@ -1,11 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { usePlausible } from '@hooks';
 import { Recipe } from '@najit-najist/database/models';
 import { Button, ButtonProps } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { FC } from 'react';
 

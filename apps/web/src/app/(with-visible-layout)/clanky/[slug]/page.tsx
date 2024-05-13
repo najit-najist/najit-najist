@@ -1,8 +1,9 @@
 import { PostPageManageContent } from '@components/page-components/PostPageManageContent';
 import { PostWithRelations } from '@custom-types';
-import { canUser, UserActions } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
-import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 

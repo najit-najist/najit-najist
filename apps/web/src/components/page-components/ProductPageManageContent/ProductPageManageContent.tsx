@@ -1,7 +1,7 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ProductWithRelationsLocal } from '@custom-types';
+import { dayjs } from '@dayjs';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
-import { dayjs, getFileUrl } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
 import {
   Badge,
@@ -11,7 +11,9 @@ import {
   Paper,
   Price,
 } from '@najit-najist/ui';
-import { getCachedDeliveryMethods, getCachedTrpcCaller } from '@server-utils';
+import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
 import { FC, PropsWithChildren } from 'react';

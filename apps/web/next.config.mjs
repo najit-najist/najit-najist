@@ -15,7 +15,6 @@ let nextConfig = {
   },
   transpilePackages: [
     '@najit-najist/ui',
-    '@najit-najist/api',
     '@najit-najist/database',
     '@najit-najist/schemas',
     '@najit-najist/email-templates',

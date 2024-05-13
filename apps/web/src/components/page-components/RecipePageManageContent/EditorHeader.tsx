@@ -1,10 +1,10 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { Recipe } from '@najit-najist/database/models';
 import { Button, buttonStyles } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC } from 'react';

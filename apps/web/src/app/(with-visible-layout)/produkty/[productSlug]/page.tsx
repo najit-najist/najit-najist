@@ -1,7 +1,8 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
-import { UserActions, canUser } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
-import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 120;

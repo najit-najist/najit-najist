@@ -1,4 +1,4 @@
-import { trpc } from '../trpc';
+import { trpc } from '@client/trpc';
 
 export type UseUserListOptions = Parameters<
   typeof trpc.users.getMany.useQuery

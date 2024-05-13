@@ -1,5 +1,4 @@
 import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
-import { getEdgeSession, canUser, UserActions } from '@najit-najist/api/edge';
 import {
   User,
   UserRoles,
@@ -8,6 +7,8 @@ import {
   recipes,
   users,
 } from '@najit-najist/database/models';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { getEdgeSession } from '@server/utils/edge';
 import type { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { NextRequest, NextResponse } from 'next/server';
 

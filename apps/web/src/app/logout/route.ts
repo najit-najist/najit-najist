@@ -1,10 +1,10 @@
-import { logoutUser } from '@najit-najist/api/server';
+import { logoutUser } from '@server/utils/logoutUser';
 import { NextRequest } from 'next/server';
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
   const headersList = new Headers();
 
   console.log('Logout executed' + String(request.nextUrl));

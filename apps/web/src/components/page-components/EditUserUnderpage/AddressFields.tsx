@@ -1,6 +1,6 @@
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { AppRouterInput } from '@najit-najist/api';
+import { AppRouterInput } from '@custom-types/AppRouter';
 import { Input } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';

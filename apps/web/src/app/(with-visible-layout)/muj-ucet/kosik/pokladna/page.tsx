@@ -1,13 +1,11 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
-import { logger } from '@najit-najist/api/server';
-import {
-  getCachedDeliveryMethods,
-  getCachedLoggedInUser,
-  getCachedPaymentMethods,
-  getCachedTrpcCaller,
-} from '@server-utils';
+import { logger } from '@server/logger';
+import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { formatPrice } from '@utils';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';

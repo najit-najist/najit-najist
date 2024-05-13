@@ -9,10 +9,10 @@ import {
   TrashIcon,
 } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { getFileUrl } from '@najit-najist/api';
 import { Product, products } from '@najit-najist/database/models';
 import { IMAGE_FILE_REGEX } from '@najit-najist/schemas';
 import { Alert, Badge, Button, Skeleton } from '@najit-najist/ui';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import { readFile } from '@utils';
 import clsx from 'clsx';
 import {

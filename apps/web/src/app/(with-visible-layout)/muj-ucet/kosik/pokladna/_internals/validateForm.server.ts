@@ -1,7 +1,7 @@
-import { logger } from '@najit-najist/api/server';
 import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import { validatePoint } from '@najit-najist/packeta';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
+import { logger } from '@server/logger';
 import { z } from 'zod';
 
 import { getPaymentAndDelivery } from './getPaymentAndDelivery.server';

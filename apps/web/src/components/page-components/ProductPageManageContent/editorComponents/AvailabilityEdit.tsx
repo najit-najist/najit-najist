@@ -1,7 +1,6 @@
 'use client';
 
-import { ProductWithRelationsLocal } from '@custom-types';
-import { AppRouterOutput } from '@najit-najist/api';
+import { AppRouterOutput, ProductWithRelationsLocal } from '@custom-types';
 import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import { Checkbox, CheckboxProps, CheckboxWrapper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';

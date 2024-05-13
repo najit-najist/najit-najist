@@ -1,4 +1,6 @@
-import { appRouter, createContext, logger } from '@najit-najist/api/server';
+import { logger } from '@server/logger';
+import { appRouter } from '@server/trpc';
+import { createContext } from '@server/trpc/context';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
 import { NextRequest } from 'next/server';
 

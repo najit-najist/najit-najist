@@ -1,16 +1,16 @@
 import {
-  Comgate,
+  ComgateClient,
   ComgateOrderState,
   isComgateStatusSuccessfulRequest,
-  logger,
-} from '@najit-najist/api/server';
+} from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
+import { eq } from '@najit-najist/database/drizzle';
 import {
   OrderState,
   comgatePayments,
   orders,
 } from '@najit-najist/database/models';
-import { eq } from 'drizzle-orm';
+import { logger } from '@server/logger';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { notFound } from 'next/navigation';
@@ -27,7 +27,7 @@ export const GET = async (
   });
 
   if (!comgatePayment) {
-    logger?.error(
+    logger.error(
       { params },
       'User tried to hit paid redirect on order that does not exist'
     );
@@ -35,7 +35,7 @@ export const GET = async (
     notFound();
   }
 
-  const { data: stateFromComgate } = await Comgate.getStatus({
+  const { data: stateFromComgate } = await ComgateClient.getStatus({
     transId: comgatePayment?.transactionId!,
   });
 

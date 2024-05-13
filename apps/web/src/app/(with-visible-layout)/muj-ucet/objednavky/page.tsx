@@ -3,11 +3,8 @@ import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { Skeleton } from '@najit-najist/ui';
-import {
-  getCachedAuthenticatedUser,
-  getCachedLoggedInUser,
-  getCachedOrders,
-} from '@server-utils';
+import { getCachedAuthenticatedUser } from '@server/utils/getCachedAuthenticatedUser';
+import { getCachedOrders } from '@server/utils/getCachedOrders';
 import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 

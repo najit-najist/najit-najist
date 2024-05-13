@@ -1,4 +1,4 @@
-import { userRegisterInputSchema } from '@najit-najist/api';
+import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
 import { z } from 'zod';
 
 export type FormValues = z.infer<typeof userRegisterInputSchema> & {

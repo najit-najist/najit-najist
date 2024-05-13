@@ -1,9 +1,9 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { userRegisterInputSchema } from '@najit-najist/api';
 import {
   Button,
   Input,
@@ -12,11 +12,11 @@ import {
 } from '@najit-najist/ui';
 import { CheckboxWrapper } from '@najit-najist/ui';
 import { Checkbox } from '@najit-najist/ui';
+import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { trpc } from 'trpc';
 import { z } from 'zod';
 
 import { FormValues } from '../_types/FormValues';

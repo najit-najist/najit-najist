@@ -1,11 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import {
   FC,

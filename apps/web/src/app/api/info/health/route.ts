@@ -1,4 +1,4 @@
-import { config } from '@najit-najist/api/dist/config';
+import { config } from '@server/config';
 import { NextResponse } from 'next/server';
 
 export const revalidate = 0;

@@ -1,10 +1,10 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { UserCartProduct } from '@najit-najist/database/models';
 import { NumberInput, Price } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';

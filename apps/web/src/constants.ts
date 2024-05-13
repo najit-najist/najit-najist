@@ -1,4 +1,4 @@
-import { AppRouter } from '@najit-najist/api';
+import { AppRouter } from '@custom-types';
 import { TRPCLink } from '@trpc/client';
 import { observable } from '@trpc/server/observable';
 

@@ -1,8 +1,9 @@
 import { RecipeWithRelations } from '@custom-types';
-import { extractTimeFromSteps, getFileUrl } from '@najit-najist/api';
 import { recipes } from '@najit-najist/database/models';
 import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
-import { getCachedTrpcCaller } from '@server-utils';
+import { extractTimeFromSteps } from '@server/utils/extractTimeFromSteps';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import HTMLReactParser from 'html-react-parser';
 import { FC, PropsWithChildren, ReactElement, Suspense } from 'react';
 

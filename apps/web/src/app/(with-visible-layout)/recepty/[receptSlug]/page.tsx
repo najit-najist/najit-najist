@@ -1,7 +1,8 @@
 import { RecipePageManageContent } from '@components/page-components/RecipePageManageContent';
-import { canUser, UserActions } from '@najit-najist/api';
 import { recipes } from '@najit-najist/database/models';
-import { getCachedLoggedInUser, getCachedTrpcCaller } from '@server-utils';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 120;

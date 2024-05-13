@@ -1,6 +1,6 @@
-import { getFileUrl } from '@najit-najist/api';
 import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC, Fragment } from 'react';

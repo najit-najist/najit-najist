@@ -1,21 +1,18 @@
+import { AppRouterOutput } from '@custom-types/AppRouter';
 import {
   ExclamationTriangleIcon,
   TagIcon,
   TruckIcon,
 } from '@heroicons/react/24/outline';
-import { AppRouterOutput, getFileUrl } from '@najit-najist/api';
 import { OrderDeliveryMethod, products } from '@najit-najist/database/models';
 import { Badge, Tooltip } from '@najit-najist/ui';
 import { importStaticImage } from '@server/utils/importStaticImage';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import path from 'path';
 import { FC } from 'react';
 
 import { DeleteButton } from './DeleteButton';
 import { PriceInfo } from './PriceInfo';
-
-const filepath = path.join(process.cwd());
 
 export const CartItem: FC<
   AppRouterOutput['profile']['cart']['products']['get']['many'][number] & {

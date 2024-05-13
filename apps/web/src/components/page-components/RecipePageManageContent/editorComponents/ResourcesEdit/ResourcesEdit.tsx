@@ -1,10 +1,10 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, ErrorMessage, Input, Select } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 

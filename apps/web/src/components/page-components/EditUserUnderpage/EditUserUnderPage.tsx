@@ -2,7 +2,6 @@
 
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { Section } from '@components/portal';
-import { userProfileUpdateInputSchema } from '@najit-najist/api';
 import { User } from '@najit-najist/database/models';
 import {
   Button,
@@ -11,6 +10,7 @@ import {
   FormBreak,
   Input,
 } from '@najit-najist/ui';
+import { userProfileUpdateInputSchema } from '@server/schemas/userProfileUpdateInputSchema';
 import { FC, ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';

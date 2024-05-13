@@ -1,11 +1,11 @@
 import { Pagination } from '@app-components/Pagination';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { AppRouterOutput } from '@custom-types/AppRouter';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { AppRouterOutput } from '@najit-najist/api';
-import { getTrpcCaller } from '@najit-najist/api/server';
-import { getCachedUsers } from '@server-utils';
+import { getCachedUsers } from '@server/utils/getCachedUsers';
+import { getTrpcCaller } from '@server/utils/server';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 import { z } from 'zod';

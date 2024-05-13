@@ -2,9 +2,8 @@ import {
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
   X_REQUEST_PATH_HEADER_NAME,
 } from '@constants';
-import { UserWithRelations } from '@custom-types';
-import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
-import { getCachedLoggedInUser } from '@server-utils';
+import { SpecialSections, UserActions, canUser } from '@server/utils/canUser';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { headers } from 'next/headers';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';

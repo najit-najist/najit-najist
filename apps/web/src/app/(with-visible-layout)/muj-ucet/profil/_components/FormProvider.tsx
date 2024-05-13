@@ -1,8 +1,8 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userProfileUpdateInputSchema } from '@najit-najist/api';
-import { trpc } from '@trpc';
+import { userProfileUpdateInputSchema } from '@server/schemas/userProfileUpdateInputSchema';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import {
   FormState,

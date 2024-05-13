@@ -1,8 +1,8 @@
 'use client';
 
-import { AppRouterInput, AppRouterOutput } from '@najit-najist/api';
+import { trpc } from '@client/trpc';
+import { AppRouterInput, AppRouterOutput } from '@custom-types/AppRouter';
 import { Button } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import { FC, Fragment, useEffect } from 'react';
 
 import { Item } from './Item';

@@ -1,6 +1,5 @@
-import { AppRouterOutput } from '@najit-najist/api';
-
-import { trpc } from '../trpc';
+import { trpc } from '@client/trpc';
+import { AppRouterOutput } from '@custom-types/AppRouter';
 
 export type UseCurrentUserOptions = Parameters<
   typeof trpc.profile.me.useQuery<AppRouterOutput['profile']['me']>

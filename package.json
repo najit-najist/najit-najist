@@ -7,9 +7,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "turbo run build",
-    "build:packages": "turbo run build --filter=./packages/*",
-    "build:web": "turbo run build --filter=@najit-najist/web",
+    "build": "npx turbo run build",
+    "build:packages": "npx turbo run build --filter=./packages/*",
+    "build:web": "npx turbo run build --filter=@najit-najist/web",
     "dev": "turbo run dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,md,json}\"",
     "lint": "turbo run lint",
@@ -35,7 +35,9 @@
   "engines": {
     "node": ">=20.0.0"
   },
-  "overrides": {
-    "drizzle-orm": "^0.30.10"
+  "pnpm": {
+    "overrides": {
+      "drizzle-orm": "^0.30.10"
+    }
   }
 }

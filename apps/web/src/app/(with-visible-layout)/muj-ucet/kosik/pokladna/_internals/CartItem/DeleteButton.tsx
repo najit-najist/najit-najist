@@ -1,10 +1,10 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Product } from '@najit-najist/database/models';
 import { Tooltip } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { useFormState } from 'react-hook-form';

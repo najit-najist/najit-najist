@@ -2,7 +2,6 @@
 
 import { AddressFields } from '@components/page-components/EditUserUnderpage/AddressFields';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { AppRouterInput } from '@najit-najist/api';
 import {
   Checkbox,
   CheckboxWrapper,

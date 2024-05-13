@@ -1,6 +1,7 @@
-import { createVideoRequestHandler } from '@najit-najist/api/dist/utils/server/createVideoRequestHandler';
+import { createVideoRequestHandler } from '@server/utils/server/createVideoRequestHandler';
 import { NextApiHandler } from 'next';
 import path from 'path';
+
 import { SHARED_STATIC_FILES_DIRECTORY_PATH } from '../../../../app/videos/_constants';
 
 const handler: NextApiHandler = (request, response) => {

@@ -1,5 +1,5 @@
 import { UserWithRelations } from '@custom-types';
-import { getCachedTrpcCaller } from '@server-utils';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { notFound } from 'next/navigation';
 
 import { Content } from './_components/Content';

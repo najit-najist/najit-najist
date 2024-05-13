@@ -1,11 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
-import { getFileUrl } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
 import { Button, Tooltip, buttonStyles, toast } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, ReactElement, ReactNode } from 'react';

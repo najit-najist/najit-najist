@@ -1,5 +1,6 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { Logo } from '@components/common/Logo';
 import {
   ShoppingBagIcon,
@@ -8,10 +9,9 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
-import { canUser, SpecialSections, UserActions } from '@najit-najist/api';
 import { User, UserRoles } from '@najit-najist/database/models';
 import { ErrorBoundary, Menu, Transition } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { SpecialSections, UserActions, canUser } from '@server/utils/canUser';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';

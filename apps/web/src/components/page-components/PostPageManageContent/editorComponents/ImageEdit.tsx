@@ -3,10 +3,10 @@
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { getFileUrl } from '@najit-najist/api';
 import { Post, posts } from '@najit-najist/database/models';
 import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/schemas';
 import { Button, Tooltip } from '@najit-najist/ui';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import { readFile } from '@utils';
 import Image from 'next/image';
 import { ChangeEventHandler, FC, useMemo, useRef, useState } from 'react';

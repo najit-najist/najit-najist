@@ -1,6 +1,6 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
+import { dayjs } from '@dayjs';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
-import { dayjs } from '@najit-najist/api';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
 import { Alert } from '@najit-najist/ui';

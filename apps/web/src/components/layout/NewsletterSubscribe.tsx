@@ -1,10 +1,10 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCurrentUser, usePlausible } from '@hooks';
 import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import { Button, buttonStyles, Input } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';

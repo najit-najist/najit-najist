@@ -1,8 +1,8 @@
 'use client';
 
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-import { getFileUrl } from '@najit-najist/api';
 import { products } from '@najit-najist/database/models';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import clsx from 'clsx';
 import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';

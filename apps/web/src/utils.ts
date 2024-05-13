@@ -1,8 +1,6 @@
-import {
-  getMediaTypeFromBase64Url,
-  setFileNameToBase64,
-} from '@najit-najist/api';
 import { Order, OrderDeliveryMethod } from '@najit-najist/database/models';
+import { getMediaTypeFromBase64Url } from '@server/utils/getMediaTypeFromBase64Url';
+import { setFileNameToBase64 } from '@server/utils/setFileNameToBase64';
 import Compressor from 'compressorjs';
 import { FormState } from 'react-hook-form';
 

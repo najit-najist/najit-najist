@@ -10,10 +10,9 @@
     "incremental": true,
     "strictNullChecks": true,
     "paths": {
+      "@custom-types/*": ["./types/*"],
       "@custom-types": ["./types"],
       "@utils": ["./utils"],
-      "@server-utils": ["./server-utils"],
-      "@logger": ["./logger"],
       "@hooks": ["./hooks"],
       "@utils/*": ["./utils/*"],
       "@constants": ["./constants"],
@@ -21,8 +20,9 @@
       "@contexts/*": ["./contexts/*"],
       "@components/*": ["./components/*"],
       "@server/*": ["./server/*"],
-      "@app-components/*": ["./app/(with-visible-layout)/_components/*"],
-      "@trpc": ["./trpc"]
+      "@client/*": ["./client/*"],
+      "@dayjs": ["./day"],
+      "@app-components/*": ["./app/(with-visible-layout)/_components/*"]
     },
     "plugins": [
       {
@@ -39,9 +39,6 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["out", "build", "node_modules"],
   "references": [
-    {
-      "path": "../../packages/api",
-    },
     {
       "path": "../../packages/ui",
     },

@@ -1,5 +1,15 @@
-import type { AppRouterOutput } from '@najit-najist/api';
 import { ReactNode } from 'react';
+
+import type { AppRouterOutput } from './AppRouter';
+
+declare module 'iron-session' {
+  interface IronSessionData {
+    authContent?: {
+      userId: number;
+    };
+    previewAuthorized?: boolean;
+  }
+}
 
 export type PLAUSIBLE_EVENTS =
   | 'New user registration'
@@ -31,3 +41,9 @@ export type ProductWithRelationsLocal =
 
 export type OrderPaymentMethodWithRelations =
   AppRouterOutput['orders']['paymentMethods']['get']['many'][number];
+
+export * from './ApplicationMode';
+export * from './AppRouter';
+export * from './ErrorCodes';
+export * from './ErrorMessages';
+export * from './UserTokenData';

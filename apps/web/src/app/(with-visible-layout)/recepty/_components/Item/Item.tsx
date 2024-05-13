@@ -1,22 +1,18 @@
 import { LazyUserListActions } from '@components/page-components/RecipePageManageContent/LazyUserListActions';
-import { RecipeWithRelations } from '@custom-types';
+import { RecipeWithRelations, UserWithRelations } from '@custom-types';
 import {
   AcademicCapIcon,
   ArchiveBoxIcon,
   ClockIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline';
-import {
-  UserActions,
-  canUser,
-  extractTimeFromSteps,
-  stripHtml,
-} from '@najit-najist/api';
-import { UserWithRelations } from '@najit-najist/api/server';
 import { recipes } from '@najit-najist/database/models';
 import { Badge, Skeleton, buttonStyles } from '@najit-najist/ui';
+import { UserActions, canUser } from '@server/utils/canUser';
+import { extractTimeFromSteps } from '@server/utils/extractTimeFromSteps';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
+import { stripHtml } from 'string-strip-html';
 
 import { ImageSlider } from './ImageSlider';
 

@@ -1,7 +1,9 @@
+import { AppRouterOutput } from '@custom-types';
+import { dayjs } from '@dayjs';
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
-import { AppRouterOutput, dayjs, getFileUrl } from '@najit-najist/api';
 import { posts } from '@najit-najist/database/models';
-import { getCachedTrpcCaller } from '@server-utils';
+import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { importStaticImage } from '@server/utils/importStaticImage';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -9,7 +11,7 @@ import { FC } from 'react';
 
 type PostWithRelations = AppRouterOutput['posts']['getMany']['items'][number];
 
-const Item: FC<PostWithRelations> = ({
+const Item: FC<PostWithRelations> = async ({
   image,
   id,
   publishedAt,
@@ -20,6 +22,9 @@ const Item: FC<PostWithRelations> = ({
   slug,
 }) => {
   const link: any = `/clanky/${slug}`;
+  const importedImage = image
+    ? await importStaticImage(posts, id, image)
+    : null;
 
   return (
     <article className="relative isolate w-full">
@@ -27,12 +32,12 @@ const Item: FC<PostWithRelations> = ({
         href={link}
         className="relative aspect-square w-full lg:shrink-0 block"
       >
-        {image ? (
+        {importedImage ? (
           <Image
             width={300}
             height={300}
             unoptimized
-            src={getFileUrl(posts, id, image)}
+            src={importedImage}
             alt=""
             className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
           />

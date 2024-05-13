@@ -1,14 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import '@najit-najist/api';
-import {
-  recipeCreateInputSchema,
-  recipeUpdateInputSchema,
-} from '@najit-najist/api';
 import { toast } from '@najit-najist/ui';
-import { trpc } from '@trpc';
+import { recipeCreateInputSchema } from '@server/schemas/recipeCreateInputSchema';
+import { recipeUpdateInputSchema } from '@server/schemas/recipeUpdateInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

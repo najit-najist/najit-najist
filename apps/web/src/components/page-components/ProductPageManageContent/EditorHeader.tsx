@@ -1,11 +1,11 @@
 'use client';
 
+import { trpc } from '@client/trpc';
 import { ProductWithRelationsLocal } from '@custom-types';
+import { dayjs } from '@dayjs';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { dayjs } from '@najit-najist/api';
 import { Button, Switch, buttonStyles } from '@najit-najist/ui';
-import { trpc } from '@trpc';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';

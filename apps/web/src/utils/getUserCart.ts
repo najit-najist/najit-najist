@@ -1,7 +1,7 @@
 import { database } from '@najit-najist/database';
+import { asc } from '@najit-najist/database/drizzle';
 import { orderedProducts, userCarts } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
-import { asc } from 'drizzle-orm';
 
 export const getUserCart = async (link: EntityLink) => {
   let cart = await database.query.userCarts.findFirst({

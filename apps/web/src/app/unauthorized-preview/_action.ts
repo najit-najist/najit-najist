@@ -1,9 +1,7 @@
 'use server';
 
-import {
-  getSessionFromCookies,
-  setSessionToCookies,
-} from '@najit-najist/api/server';
+import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
+import { setSessionToCookies } from '@server/utils/setSessionToCookies';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
