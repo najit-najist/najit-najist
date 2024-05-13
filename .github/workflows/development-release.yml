@@ -78,6 +78,11 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store
 
+      - name: NodeLinker
+        shell: bash
+        run: |
+          pnpm config set node-linker hoisted
+
       - name: 🐞 Install Dependencies
         run: pnpm install
 
