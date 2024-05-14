@@ -8,6 +8,8 @@ export const importStaticImage = <M extends PgTableWithColumns<any>>(
   ownerId: EntityLink['id'],
   filename: string
 ): Promise<StaticImageData> =>
-  import(`/private/uploads/${getTableName(model)}/${ownerId}/${filename}`).then(
-    (value) => value.default
-  );
+  import(
+    /* webpackIgnore: true */ `/private/uploads/${getTableName(
+      model
+    )}/${ownerId}/${filename}`
+  ).then((value) => value.default);

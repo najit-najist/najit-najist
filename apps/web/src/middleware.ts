@@ -73,9 +73,7 @@ export async function middleware(request: NextRequest) {
     }
 
     const currentUserResponse = await fetch(
-      `http://localhost:${
-        process.env.NODE_ENV === 'development' ? 3000 : 4000
-      }/api/muj-ucet/profil`,
+      `http://localhost:${process.env.PORT}/api/muj-ucet/profil`,
       { headers }
     );
     const currentUser = (await currentUserResponse.json()) as User;
