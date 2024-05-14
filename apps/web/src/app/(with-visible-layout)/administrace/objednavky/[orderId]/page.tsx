@@ -1,13 +1,7 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
 import { OrderUnderpageContentLoading } from '@components/page-components/OrderUnderpageContent/OrderUnderpageContentLoading';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { database } from '@najit-najist/database';
-import { and, eq, sql } from '@najit-najist/database/drizzle';
-import { orders } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
-import { getLoggedInUserId } from '@server/utils/server';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 type PageProps = {
@@ -24,26 +18,7 @@ export const metadata = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const userId = await getLoggedInUserId();
   const orderId = Number(params.orderId);
-
-  const selectQuery = database
-    .select({ n: sql`1` })
-    .from(orders)
-    .where(
-      and(eq(orders.id, Number(params.orderId)), eq(orders.userId, userId))
-    );
-
-  const {
-    rows: [{ exists }],
-  } = await database.execute<{ exists: boolean }>(
-    sql`select exists(${selectQuery}) as exists`
-  );
-
-  if (!exists) {
-    logger.error({}, 'Failed to get order');
-    return notFound();
-  }
 
   return (
     <>

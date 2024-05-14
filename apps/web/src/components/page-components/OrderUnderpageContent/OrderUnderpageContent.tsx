@@ -3,6 +3,7 @@ import { Order, OrderState } from '@najit-najist/database/models';
 import { Skeleton, Tooltip } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
 
 import { EditOrderControllbar } from './EditOrderControlbar';
@@ -44,7 +45,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
   });
 
   if (!order) {
-    throw new Error(`No order under orderId ${orderId}`);
+    notFound();
   }
 
   return (
