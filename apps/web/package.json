@@ -52,7 +52,6 @@
     "@logtail/pino": "^0.4.21",
     "chalk": "5.2.0",
     "pino": "^8.0.0",
-    "concurrently": "^7.5.0",
     "cross-fetch": "^3.1.5",
     "dotenv": "^16.0.3",
     "fs-extra": "^10.1.0",

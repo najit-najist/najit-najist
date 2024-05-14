@@ -26,9 +26,9 @@
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:types\"",
-    "dev:package": "pnpm build:package -- --watch",
-    "dev:package:types": "pnpm build:types -- --watch",
+    "dev": "pnpm run --filter=@najit-najist/ui \"/^dev:.*/\"",
+    "dev:package": "pnpm build:package --watch",
+    "dev:package:types": "pnpm build:types --watch",
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
     "build": "pnpm build:package && pnpm build:types",
     "build:package": "swc ./src -d dist",

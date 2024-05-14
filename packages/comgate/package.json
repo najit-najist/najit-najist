@@ -18,10 +18,10 @@
     "dist"
   ],
   "scripts": {
-    "dev": "concurrently \"npm:dev:package\" \"npm:dev:package:cjs\" \"npm:dev:package:types\"",
-    "dev:package": "pnpm build:package -- --watch",
-    "dev:package:cjs": "pnpm build:package:cjs -- --watch",
-    "dev:package:types": "pnpm build:types -- --watch",
+    "dev": "pnpm run --filter=@najit-najist/comgate \"/^dev:.*/\"",
+    "dev:package": "pnpm build:package --watch",
+    "dev:package:cjs": "pnpm build:package:cjs --watch",
+    "dev:package:types": "pnpm build:types --watch",
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
     "build": "pnpm build:package && pnpm build:package:cjs && pnpm build:types",
     "build:package": "swc ./src -d dist ",
