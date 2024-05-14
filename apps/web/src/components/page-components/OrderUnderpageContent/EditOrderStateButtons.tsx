@@ -1,9 +1,10 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Order } from '@najit-najist/database/models';
 import { Button, toast } from '@najit-najist/ui';
+import { useMutation } from '@tanstack/react-query';
+import { updateOrderAction } from 'app/(with-visible-layout)/administrace/objednavky/[orderId]/updateAction';
 import { useRouter } from 'next/navigation';
 import { FC, MouseEventHandler, useCallback, useTransition } from 'react';
 
@@ -20,21 +21,24 @@ export type EditOrderStateButtonsProps = {
   order: Pick<Order, 'id'>;
 };
 
+const useUpdate = () =>
+  useMutation({
+    mutationFn: updateOrderAction,
+  });
+
 export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
   buttons,
   order,
 }) => {
   const [isDoingTransition, setIsDoingTransition] = useTransition();
-  const { mutateAsync: updateOrder, isLoading: isUpdatingOrder } =
-    trpc.orders.update.useMutation();
+  const { mutateAsync: doUpdate, isLoading } = useUpdate();
   const router = useRouter();
-
-  const buttonsAreDisabled = isDoingTransition || isUpdatingOrder;
+  const buttonsAreDisabled = isDoingTransition || isLoading;
 
   const onButtonClickHandler = useCallback<
     MouseEventHandler<HTMLButtonElement>
   >(
-    (event) => {
+    async (event) => {
       const dataset = event.currentTarget.dataset;
       if (!confirm(dataset.message ?? 'Opravdu změnit stav?')) {
         return null;
@@ -46,26 +50,26 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
         throw new Error('Button does not have data-next-state property');
       }
 
-      setIsDoingTransition(async () => {
-        const updateOrderPromise = updateOrder({
-          id: order.id,
-          payload: {
-            state: selectedNextState,
-          },
-        });
+      const updatePromise = doUpdate({
+        id: order.id,
+        payload: {
+          state: selectedNextState,
+        },
+      });
 
-        toast.promise(updateOrderPromise, {
-          error: (error) => `Nemůžeme upravit objednávku: ${error.message}`,
-          loading: 'Ukládám změny',
-          success: 'Objednávka uložena',
-        });
+      toast.promise(updatePromise, {
+        error: (error) => `Nemůžeme upravit objednávku: ${error.message}`,
+        loading: 'Ukládám změny',
+        success: 'Objednávka uložena, získávám aktuální data...',
+      });
 
-        await updateOrderPromise;
+      await updatePromise;
 
+      setIsDoingTransition(() => {
         router.refresh();
       });
     },
-    [order.id, router, updateOrder]
+    [order.id, router, doUpdate]
   );
 
   return (
@@ -89,7 +93,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
         className="w-full"
         color="red"
         icon={<TrashIcon className="w-4 h-4 inline -mt-1 mr-2" />}
-        data-next-state={'dropped'}
+        data-next-state="dropped"
         data-message="Opravdu zrušit objednávku?"
         disabled={buttonsAreDisabled}
         onClick={onButtonClickHandler}

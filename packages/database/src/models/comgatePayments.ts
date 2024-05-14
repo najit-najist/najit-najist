@@ -15,6 +15,8 @@ export const comgatePayments = pgTable(
   })
 );
 
+export type ComgatePayment = typeof comgatePayments.$inferSelect;
+
 export const comgatePaymentsRelations = relations(
   comgatePayments,
   ({ one }) => ({

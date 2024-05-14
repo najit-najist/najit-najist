@@ -1,15 +1,20 @@
-import { Order } from '@najit-najist/database/models';
+import { ComgatePayment, Order } from '@najit-najist/database/models';
 import queryString from 'query-string';
 
 import { ComgateGetStatusSuccessResponse } from './ComgateGetStatusSuccessResponse';
 import { ComgateRequestError } from './ComgateRequestError';
 import { ComgateResponseCode } from './ComgateResponseCode';
+import { TransactionId } from './TransactionId';
 
 export type CreatePaymentOptions = {
   order: Pick<
     Order,
     'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'email' | 'id'
   >;
+};
+
+export type CancelPaymentOptions = {
+  order: Pick<Order, 'id'>;
 };
 
 export const getTotalPrice = (
@@ -24,10 +29,6 @@ export const getTotalPrice = (
 
 export type ComgateLikeResponse<T extends Record<string, any>> = T & {
   code: ComgateResponseCode;
-};
-
-type GetStatusOptions = {
-  transId: string;
 };
 
 export class ComgateClient {
@@ -46,6 +47,10 @@ export class ComgateClient {
     if (options?.body instanceof URLSearchParams) {
       options.body.set('merchant', this.merchantId);
       options.body.set('secret', this.secret);
+
+      if (process.env.NODE_ENV === 'development') {
+        options.body.set('test', 'true');
+      }
     }
 
     options ??= {};
@@ -79,7 +84,7 @@ export class ComgateClient {
     };
   }
 
-  public static async getStatus(options: GetStatusOptions) {
+  public static async getStatus(options: { transId: TransactionId }) {
     const transId = String(options.transId);
 
     return await this.doRequest<
@@ -96,12 +101,46 @@ export class ComgateClient {
     });
   }
 
+  public static async cancelPayment(transactionId: TransactionId) {
+    return await this.doRequest<{
+      code: ComgateResponseCode.OK | ComgateResponseCode.INVALID_REQUEST;
+      message: string;
+    }>('/cancel', {
+      method: 'POST',
+      body: new URLSearchParams({
+        transId: transactionId,
+      }),
+    });
+  }
+
+  public static async refundPaymentForOrder(
+    order: Order & { comgatePayment: ComgatePayment }
+  ) {
+    return await this.doRequest<{
+      code:
+        | ComgateResponseCode.OK
+        | ComgateResponseCode.UNKNOWN_ERROR
+        | ComgateResponseCode.DB_ERROR
+        | ComgateResponseCode.INVALID_REQUEST
+        | ComgateResponseCode.PAYMENT_ALREADY_CANCELED
+        | ComgateResponseCode.REFUND_TOO_LARGE
+        | ComgateResponseCode.UNKNOWN_ERROR;
+      message: string;
+    }>('/refund', {
+      method: 'POST',
+      body: new URLSearchParams({
+        transId: order.comgatePayment.transactionId,
+        amount: String(getTotalPrice(order) * 100),
+      }),
+    });
+  }
+
   public static async createPayment(options: CreatePaymentOptions) {
     const refId = String(options.order.id);
 
     return await this.doRequest<{
       message: string;
-      transId?: string;
+      transId?: TransactionId;
       /**
        * Redirect url that should be sent back to client
        */
@@ -109,7 +148,6 @@ export class ComgateClient {
     }>('/create', {
       method: 'POST',
       body: new URLSearchParams({
-        test: String(process.env.NODE_ENV !== 'production'),
         country: 'CZ',
         curr: 'CZK',
         price: String(getTotalPrice(options.order) * 100),

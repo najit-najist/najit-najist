@@ -20,5 +20,7 @@ export enum ComgateResponseCode {
   BANK_ERROR = 1319, // nelze založit platbu, problém na straně banky
   INVALID_RESPONSE_FROM_DB = 1399, // neočekávaný výsledek z databáze
   INVALID_REQUEST = 1400, // chybný dotaz
+  PAYMENT_ALREADY_CANCELED = 1401, // refundovaná platba je v stave CANCELLED
+  REFUND_TOO_LARGE = 1402, // čiastka prevyšuje povolenú výšku
   SERVER_ERROR = 1500, // 1500 neočekávaná chyba
 }

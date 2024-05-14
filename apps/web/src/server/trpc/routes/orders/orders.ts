@@ -7,27 +7,14 @@ import {
   inArray,
   sql,
 } from '@najit-najist/database/drizzle';
-import {
-  OrderDeliveryMethod,
-  OrderState,
-  orders,
-} from '@najit-najist/database/models';
-import {
-  OrderConfirmed,
-  OrderShipped,
-  renderAsync,
-} from '@najit-najist/email-templates';
+import { OrderDeliveryMethod, orders } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { MailService } from '@server/services/Mail.service';
 import { t } from '@server/trpc/instance';
-import { onlyAdminProcedure } from '@server/trpc/procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@server/trpc/procedures/protectedProcedure';
 import { getOrderById } from '@server/utils/server';
 import { z } from 'zod';
 
-import { config } from '../../../config';
 import { EntityNotFoundError } from '../../../errors/EntityNotFoundError';
-import { logger } from '../../../logger';
 import { defaultGetManyPagedSchema } from '../../../schemas/base.get-many.schema';
 import { UserActions, canUser } from '../../../utils/canUser';
 
@@ -161,77 +148,6 @@ export const orderRoutes = t.router({
         };
       }),
   }),
-
-  update: onlyAdminProcedure
-    .input(
-      entityLinkSchema.extend({
-        payload: z.object({ state: z.nativeEnum(OrderState) }),
-      })
-    )
-    .mutation(async ({ input, ctx }) => {
-      const order = await getOrderById(input.id);
-
-      await database
-        .update(orders)
-        .set(input.payload)
-        .where(eq(orders.id, order.id));
-
-      if (input.payload.state) {
-        switch (input.payload.state) {
-          case 'confirmed':
-            await MailService.send({
-              to: order.email,
-              subject: `Objednávka #${order.id} potvrzena`,
-              body: await renderAsync(
-                OrderConfirmed({
-                  orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
-                  order,
-                  siteOrigin: config.app.origin,
-                })
-              ),
-            }).catch((error) => {
-              logger.error(
-                { error, order },
-                `Order flow confirmation - could not notify user to its email with order information`
-              );
-            });
-            break;
-          case 'shipped':
-            await MailService.send({
-              to: order.email,
-              subject: `Objednávka #${order.id} ${
-                isLocalPickup(order.deliveryMethod) ? 'připravena' : 'odeslána'
-              }`,
-              body: await renderAsync(
-                OrderShipped({
-                  orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
-                  order: {
-                    ...order,
-                    deliveryMethod: order.deliveryMethod!,
-                    paymentMethod: order.paymentMethod!,
-                    address: order.address!,
-                    orderedProducts: order.orderedProducts.map((product) => ({
-                      ...product,
-                      product: {
-                        ...product.product,
-                        images: product.product.images.map(({ file }) => file),
-                        price: product.product.price!,
-                      },
-                    })),
-                  },
-                  siteOrigin: config.app.origin,
-                })
-              ),
-            }).catch((error) => {
-              logger.error(
-                { error, order },
-                `Order flow confirmation - could not notify user to its email with order information`
-              );
-            });
-            break;
-        }
-      }
-    }),
 
   paymentMethods: paymentMethodRoutes,
   deliveryMethods: deliveryMethodRoutes,

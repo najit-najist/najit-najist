@@ -1,10 +1,12 @@
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { database } from '@najit-najist/database';
 import { Order } from '@najit-najist/database/models';
+import { PacketaPacketStatusCode } from '@najit-najist/packeta';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
-import { Paper } from '@najit-najist/ui';
+import { Paper, Tooltip, buttonStyles } from '@najit-najist/ui';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
+import Link from 'next/link';
 import { FC } from 'react';
 
 export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
@@ -16,14 +18,17 @@ export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
     return null;
   }
 
-  const result = await PacketaSoapClient.getTracking(parcel.packetId);
+  const [lastStatus, result] = await Promise.all([
+    PacketaSoapClient.getPacketStatus(parcel.packetId),
+    PacketaSoapClient.getTracking(parcel.packetId),
+  ]);
 
   return (
     <Paper className="mt-2 px-3 py-2 divide-y-2">
       <p className="font-title text-lg pb-2">Info ze Zásilkovny</p>
-      <ul role="list" className="space-y-6 pt-3">
+      <ul role="list" className="space-y-6 pt-3 pb-3">
         {result.map((value, index, allItems) => (
-          <li key={value.dateTime} className="relative flex gap-x-4">
+          <li key={index} className="relative flex gap-x-4">
             <div
               className={clsx(
                 index === allItems.length - 1 ? 'h-6' : '-bottom-6',
@@ -49,9 +54,26 @@ export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
           </li>
         ))}
       </ul>
-      {/* <Link>
-        Vytisknout
-      </Link> */}
+      {lastStatus.statusCode !== PacketaPacketStatusCode.cancelled ? (
+        <div className="pt-3 pb-2">
+          <Tooltip
+            trigger={
+              <Link
+                className={buttonStyles({ appearance: 'small' })}
+                href={`/administrace/objednavky/${order.id}/packeta/label-pdf`}
+                target="_blank"
+              >
+                Tisknout štítek
+              </Link>
+            }
+          >
+            <p className="max-w-72 p-1">
+              Zobrazí PDF se štítkem, který obsahuje veškeré informace potřebné
+              na podání zásilky (odesílatele, příjemce, atp...)
+            </p>
+          </Tooltip>
+        </div>
+      ) : null}
     </Paper>
   );
 };

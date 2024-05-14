@@ -43,6 +43,15 @@
       "path": "../../packages/ui",
     },
     {
+      "path": "../../packages/comgate",
+    },
+    {
+      "path": "../../packages/email-templates",
+    },
+    {
+      "path": "../../packages/packeta",
+    },
+    {
       "path": "../../packages/schemas",
     },
     {

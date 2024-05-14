@@ -1,5 +1,6 @@
 import soap from 'soap';
 
+import { PacketaCurrentStatusRecord } from './PacketaCurrentStatusRecord';
 import { PacketaPacketAttributes } from './PacketaPacketAttributes';
 import { PacketaPacketPDFLabelFormat } from './PacketaPacketPDFLabelFormat';
 import { PacketaStatusRecord } from './PacketaStatusRecord';
@@ -17,6 +18,8 @@ export type CreatePacketOptions = Pick<
   | 'cod'
 > &
   Partial<Pick<PacketaPacketAttributes, 'eshop'>>;
+
+export type CancelPacketOptions = {};
 
 const apiKey = process.env.PACKETA_SECRET;
 
@@ -47,6 +50,24 @@ export class PacketaSoapClient {
     };
   }
 
+  static async cancelPacket(packetId: string | number) {
+    const client = await this.getClient();
+    await client.cancelPacketAsync({
+      apiPassword: apiKey,
+      packetId,
+    });
+  }
+
+  static async getPacketStatus(packetId: string | number) {
+    const client = await this.getClient();
+    const result = await client.packetStatusAsync({
+      apiPassword: apiKey,
+      packetId,
+    });
+
+    return result[0]['packetStatusResult'] as PacketaCurrentStatusRecord;
+  }
+
   static async getTracking(packetId: string | number) {
     const client = await this.getClient();
     const result = await client.packetTrackingAsync({
@@ -54,13 +75,11 @@ export class PacketaSoapClient {
       packetId,
     });
 
-    const trackingResult = result[0]['packetTrackingResult'] as
-      | PacketaStatusRecord[]
-      | { record: PacketaStatusRecord };
+    const { record } = result[0]['packetTrackingResult'] as {
+      record: PacketaStatusRecord | PacketaStatusRecord[];
+    };
 
-    return Array.isArray(trackingResult)
-      ? trackingResult
-      : [trackingResult.record];
+    return Array.isArray(record) ? record : [record];
   }
 
   static async getPacketLabelPdfBinary(
