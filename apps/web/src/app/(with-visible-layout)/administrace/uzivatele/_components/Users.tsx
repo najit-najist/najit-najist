@@ -4,8 +4,8 @@ import { dayjs } from '@dayjs';
 import { UserIcon } from '@heroicons/react/24/outline';
 import { users as usersModel } from '@najit-najist/database/models';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
-import { importStaticImage } from '@server/utils/importStaticImage';
-import Image, { StaticImageData } from 'next/image';
+import { getFileUrl } from '@server/utils/getFileUrl';
+import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -13,16 +13,12 @@ export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
   const { id } = (await getCachedLoggedInUser()) ?? {};
 
   const mutatedUsers: Array<
-    (typeof users)[number] & { staticAvatar?: StaticImageData }
+    (typeof users)[number] & { staticAvatar?: string }
   > = users;
 
   for (const user of mutatedUsers) {
     if (user.avatar) {
-      user.staticAvatar = await importStaticImage(
-        usersModel,
-        user.id,
-        user.avatar
-      );
+      user.staticAvatar = getFileUrl(usersModel, user.id, user.avatar);
     }
   }
 

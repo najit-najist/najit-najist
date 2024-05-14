@@ -2,7 +2,7 @@ import { PostWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { PhotoIcon } from '@heroicons/react/24/outline';
 import { posts } from '@najit-najist/database/models';
-import { importStaticImage } from '@server/utils/importStaticImage';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -11,7 +11,7 @@ import { FC } from 'react';
 export const Item: FC<PostWithRelations> = async (post) => {
   const link: any = `/clanky/${post.slug}`;
   const importedImage = post.image
-    ? await importStaticImage(posts, post.id, post.image)
+    ? getFileUrl(posts, post.id, post.image)
     : null;
 
   return (

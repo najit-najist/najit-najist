@@ -3,7 +3,7 @@ import { dayjs } from '@dayjs';
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
 import { posts } from '@najit-najist/database/models';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
-import { importStaticImage } from '@server/utils/importStaticImage';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,9 +22,7 @@ const Item: FC<PostWithRelations> = async ({
   slug,
 }) => {
   const link: any = `/clanky/${slug}`;
-  const importedImage = image
-    ? await importStaticImage(posts, id, image)
-    : null;
+  const importedImage = image ? getFileUrl(posts, id, image) : null;
 
   return (
     <article className="relative isolate w-full">

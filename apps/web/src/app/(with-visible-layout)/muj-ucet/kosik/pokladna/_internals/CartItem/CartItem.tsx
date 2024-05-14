@@ -6,7 +6,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { OrderDeliveryMethod, products } from '@najit-najist/database/models';
 import { Badge, Tooltip } from '@najit-najist/ui';
-import { importStaticImage } from '@server/utils/importStaticImage';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -21,7 +21,7 @@ export const CartItem: FC<
 > = async ({ product, count: countInCart, id }) => {
   const mainImageAsString = product.images.at(0)?.file;
   const mainImage = mainImageAsString
-    ? await importStaticImage(products, product.id, mainImageAsString)
+    ? getFileUrl(products, product.id, mainImageAsString)
     : undefined;
 
   return (
