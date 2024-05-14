@@ -4,6 +4,10 @@ on:
   pull_request:
     branches: [ "main", "develop" ]
 
+concurrency: 
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   validate-pr-title:
     name: Validate PR title
@@ -34,11 +38,6 @@ jobs:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
-      - uses: n1hility/cancel-previous-runs@v3
-        with: 
-          token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: check-pr.yml
-
       # https://github.com/actions/checkout
       - name: Checkout Repo
         uses: actions/checkout@v4.1.5

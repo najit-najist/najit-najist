@@ -6,6 +6,10 @@ on:
     branches:
       - develop
 
+concurrency: 
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref }}
+
 jobs:
   prepare:
     name: "Prepare"
@@ -14,18 +18,13 @@ jobs:
       repo: ${{ steps.filter.outputs.repo }}
       web: ${{ steps.filter.outputs.web }}
     steps:
-      - uses: n1hility/cancel-previous-runs@v3
-        with: 
-          token: ${{ secrets.GITHUB_TOKEN }}
-          workflow: development-release.yml
-
       - name: 🚙 Checkout 
         uses: actions/checkout@v4.1.5
         with:
           fetch-depth: 0
   
       - name: 📍 Prepare filter
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v3.0.2
         id: filter
         with:
           filters: |
