@@ -1,3 +1,5 @@
+import { dayjs } from '@dayjs';
+import { SESSION_LENGTH_IN_SECONDS } from '@server/constants';
 import { IronSessionData, sealData } from 'iron-session';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { headers } from 'next/headers';
@@ -17,13 +19,13 @@ export const setSessionToCookies = async (
     config.server.session.cookieName,
     await sealData(session, {
       password: passwordsAsMap,
-      ttl: config.server.session.cookieOptions.maxAge,
+      ttl: SESSION_LENGTH_IN_SECONDS,
     }),
     {
       secure: true,
       httpOnly: true,
       path: '/',
-      maxAge: config.server.session.cookieOptions.maxAge,
+      expires: dayjs().add(SESSION_LENGTH_IN_SECONDS, 'seconds').toDate(),
       sameSite: true,
     }
   );

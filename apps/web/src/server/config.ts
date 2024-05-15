@@ -13,8 +13,6 @@ const sessionSecret =
 const jwtSecret =
   process.env.JWT_SECRET_VALUE ?? 'supersecretconstantthatyoucannotbreak';
 
-const sessionLength = 84000;
-
 // Email
 const mailUser = String(process.env.MAIL_USERNAME);
 const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
@@ -35,13 +33,6 @@ export const config = {
       return {
         cookieName: SESSION_NAME,
         password: this.secrets.session,
-        cookieOptions: {
-          domain: isDev ? undefined : baseDomain,
-          httpOnly: true,
-          maxAge: sessionLength,
-          secure: !isDev,
-          sameSite: !isDev ? 'strict' : 'lax',
-        },
       } as const;
     },
     secrets: {

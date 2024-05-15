@@ -1,3 +1,4 @@
+import { SESSION_LENGTH_IN_SECONDS } from '@server/constants';
 import { IronSessionData, unsealData } from 'iron-session';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { cookies as getCookies } from 'next/headers';
@@ -24,7 +25,7 @@ export const getSessionFromCookies = async ({
       ? {}
       : await unsealData<IronSessionData>(sealFromCookies?.value, {
           password: passwordsAsMap,
-          ttl: config.server.session.cookieOptions.maxAge,
+          ttl: SESSION_LENGTH_IN_SECONDS,
         });
 
   return session;
