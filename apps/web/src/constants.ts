@@ -28,8 +28,6 @@ export const customTrpcLink: TRPCLink<AppRouter> = () => {
         error(err) {
           if (err.message === 'UNAUTHORIZED') {
             console.log('User is not authenticated - path: ' + err.data?.path);
-
-            window.location.reload();
           } else {
             console.error(err);
           }

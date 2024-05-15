@@ -8,6 +8,7 @@ export type UseCurrentUserOptions = Parameters<
 export const useCurrentUser = (options?: UseCurrentUserOptions) =>
   trpc.profile.me.useQuery(undefined, {
     ...options,
+    enabled: typeof window !== 'undefined',
     onError() {},
     refetchInterval: 0,
     refetchOnMount: false,
