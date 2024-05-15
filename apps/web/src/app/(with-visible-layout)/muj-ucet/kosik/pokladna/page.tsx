@@ -3,10 +3,10 @@ import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
 import { logger } from '@server/logger';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
-import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
-import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { formatPrice } from '@utils';
+import { getUserCart } from '@utils/getUserCart';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
@@ -41,12 +41,13 @@ const SectionTitle: FC<
 );
 
 export default async function Page() {
-  // User should be logged in already
-  const user = await getCachedLoggedInUser();
-  const productsInCart =
-    await getCachedTrpcCaller().profile.cart.products.get.many();
+  const userId = await getLoggedInUserId();
+  const [user, cart] = await Promise.all([
+    await getLoggedInUser(),
+    await getUserCart({ id: userId }),
+  ]);
 
-  if (!productsInCart.length) {
+  if (!cart.products.length) {
     return <EmptyCart />;
   }
 
@@ -78,7 +79,7 @@ export default async function Page() {
   let productsInCartLimitDeliveryMethods = false;
 
   // Create new set for delivery method
-  for (const productInCart of productsInCart) {
+  for (const productInCart of cart.products) {
     if (productInCart.product.onlyForDeliveryMethod) {
       const deliveryMethod = deliveryMethods.get(
         productInCart.product.onlyForDeliveryMethod.id
@@ -109,9 +110,9 @@ export default async function Page() {
     logger.error(
       {
         user: {
-          id: user?.id,
+          id: userId,
         },
-        products: productsInCart.map((p) => ({
+        products: cart.products.map((p) => ({
           id: p.product,
           onlyForDeliveryMethod: p.product.onlyForDeliveryMethod,
         })),
@@ -132,7 +133,7 @@ export default async function Page() {
         .includes(defaultDeliveryMethod.id ?? '')
   );
 
-  const subtotal = productsInCart.reduce(
+  const subtotal = cart.products.reduce(
     (priceTotalPredicate, cartItem) =>
       priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
     0
@@ -158,16 +159,16 @@ export default async function Page() {
           paymentMethod: { slug: defaultPaymentMethod?.slug ?? null },
           address: {
             municipality: { id: null as any },
-            ...user?.address,
-            city: user?.address?.city ?? '',
-            houseNumber: user?.address?.houseNumber ?? '',
-            postalCode: user?.address?.postalCode ?? '',
-            streetName: user?.address?.streetName ?? '',
+            ...user.address,
+            city: user.address?.city ?? '',
+            houseNumber: user.address?.houseNumber ?? '',
+            postalCode: user.address?.postalCode ?? '',
+            streetName: user.address?.streetName ?? '',
           },
-          email: user?.email ?? '',
-          firstName: user?.firstName ?? '',
-          lastName: user?.lastName ?? '',
-          telephoneNumber: user?.telephone?.telephone ?? '',
+          email: user.email ?? '',
+          firstName: user.firstName ?? '',
+          lastName: user.lastName ?? '',
+          telephoneNumber: user.telephone?.telephone ?? '',
           saveAddressToAccount: false,
         }}
       >
@@ -191,7 +192,7 @@ export default async function Page() {
             <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>
             <Section rootClassName="lg:sticky top-28">
               <ul role="list" className="divide-y divide-gray-200">
-                {productsInCart.map((cartItem) => (
+                {cart.products.map((cartItem) => (
                   <CartItem
                     key={cartItem.id}
                     deliveryMethods={deliveryMethods}

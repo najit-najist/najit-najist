@@ -3,9 +3,11 @@
 import { trpc } from '@client/trpc';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { products } from '@najit-najist/database/models';
 import { Button, Tooltip, buttonStyles, toast } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, ReactElement, ReactNode } from 'react';
@@ -76,7 +78,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   withIcon,
   productMetadata,
 }) => {
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const { mutateAsync: addToCart, isLoading } =
     trpc.profile.cart.products.add.useMutation();
   let buttonText: ReactNode = null;
@@ -85,7 +87,11 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   const handleAddToCartClick = async () => {
     // add to cart and refetch newest cart for client
     const addToCartPromise = addToCart({ product: { id: productId } }).then(
-      () => utils.profile.cart.products.get.many.invalidate()
+      async () => {
+        await queryClient.invalidateQueries({
+          queryKey: useUserCartQueryKey,
+        });
+      }
     );
 
     toast.promise(addToCartPromise, {

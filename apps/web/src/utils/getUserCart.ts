@@ -3,9 +3,9 @@ import { asc } from '@najit-najist/database/drizzle';
 import { orderedProducts, userCarts } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
 
-export const getUserCart = async (link: EntityLink) => {
+export const getUserCart = async (user: EntityLink) => {
   let cart = await database.query.userCarts.findFirst({
-    where: (schema, { eq }) => eq(schema.userId, link.id),
+    where: (schema, { eq }) => eq(schema.userId, user.id),
     with: {
       products: {
         orderBy: [asc(orderedProducts.createdAt)],
@@ -27,7 +27,7 @@ export const getUserCart = async (link: EntityLink) => {
   if (!cart) {
     const [createdCart] = await database
       .insert(userCarts)
-      .values({ userId: link.id })
+      .values({ userId: user.id })
       .returning();
 
     cart = {

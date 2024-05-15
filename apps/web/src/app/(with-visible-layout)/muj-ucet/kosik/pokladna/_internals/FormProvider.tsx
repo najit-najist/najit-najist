@@ -1,11 +1,12 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
+import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import {
   FC,
@@ -37,7 +38,7 @@ export const FormProvider: FC<
   }>
 > = ({ children, defaultFormValues }) => {
   const [isDoingTransition, doTransition] = useTransition();
-  const trpcUtils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const plausible = usePlausible();
   const formMethods = useForm({
@@ -72,9 +73,9 @@ export const FormProvider: FC<
       });
 
       await newOrderAsPromise;
-      await trpcUtils.profile.cart.products.get.many.invalidate();
+      await queryClient.invalidateQueries({ queryKey: useUserCartQueryKey });
     },
-    [router, plausible]
+    [router, plausible, queryClient]
   );
 
   return (

@@ -4,6 +4,6 @@ export const metadata = {
   title: 'Přihlášení',
 };
 
-export default async function LoginPage() {
+export default function LoginPage() {
   return <Content />;
 }

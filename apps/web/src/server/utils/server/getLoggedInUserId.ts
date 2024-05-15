@@ -1,3 +1,4 @@
+import { UserNotAuthorizedError } from '@server/errors/UserNotAuthorizedError';
 import { RequestCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 
 import { getSessionFromCookies } from '../getSessionFromCookies';
@@ -9,7 +10,7 @@ export const getLoggedInUserId = async (options?: {
   const { userId } = session.authContent ?? {};
 
   if (!userId) {
-    throw new Error('User needs to be logged in first');
+    throw new UserNotAuthorizedError();
   }
 
   return userId;

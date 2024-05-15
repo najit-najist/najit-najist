@@ -35,6 +35,15 @@ export type UpdateOrderActionOption = z.input<typeof inputValidation>;
 type OrderWithRelations = Awaited<ReturnType<typeof getOrderById>>;
 type OrderStateListener = (order: OrderWithRelations) => Promise<void>;
 
+class FailedRefundError extends Error {
+  readonly meta: object;
+  constructor(meta: object) {
+    super('Failed to do a refund, please do it manually!');
+    this.name = 'FailedRefundError';
+    this.meta = meta;
+  }
+}
+
 const onOrderConfirmed: OrderStateListener = async (
   order: OrderWithRelations
 ) => {
@@ -120,11 +129,9 @@ const onOrderDropped: OrderStateListener = async (order) => {
         );
 
         if (paymentRefundResponse.data.code !== ComgateResponseCode.OK) {
-          throw new Error('Failed to do a refund, please do it manually!', {
-            cause: {
-              order,
-              resp: paymentRefundResponse.data,
-            },
+          throw new FailedRefundError({
+            order,
+            resp: paymentRefundResponse.data,
           });
         }
       }

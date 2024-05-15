@@ -9,6 +9,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
+import { useUserCart } from '@hooks/useUserCart';
 import { User, UserRoles } from '@najit-najist/database/models';
 import { ErrorBoundary, Menu, Transition } from '@najit-najist/ui';
 import { SpecialSections, UserActions, canUser } from '@server/utils/canUser';
@@ -140,8 +141,7 @@ const ShoppingBagButton: FC = () => {
   const [indicatorState, setIndicatorState] = useState<
     'hide' | 'bounce' | 'stationary'
   >('hide');
-  const { data: productsInCart, isLoading } =
-    trpc.profile.cart.products.get.many.useQuery(undefined);
+  const { data: productsInCart, isLoading } = useUserCart();
   const pathname = usePathname();
 
   const cartQuantity = useMemo(() => {

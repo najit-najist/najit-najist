@@ -7,6 +7,7 @@ import {
 import { OrderDeliveryMethod, products } from '@najit-najist/database/models';
 import { Badge, Tooltip } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
+import { getUserCart } from '@utils/getUserCart';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -15,7 +16,7 @@ import { DeleteButton } from './DeleteButton';
 import { PriceInfo } from './PriceInfo';
 
 export const CartItem: FC<
-  AppRouterOutput['profile']['cart']['products']['get']['many'][number] & {
+  Awaited<ReturnType<typeof getUserCart>>['products'][number] & {
     deliveryMethods: Map<OrderDeliveryMethod['id'], OrderDeliveryMethod>;
   }
 > = async ({ product, count: countInCart, id }) => {

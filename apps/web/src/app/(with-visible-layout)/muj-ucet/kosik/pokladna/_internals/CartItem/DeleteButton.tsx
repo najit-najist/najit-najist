@@ -3,8 +3,10 @@
 import { trpc } from '@client/trpc';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
+import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { Product } from '@najit-najist/database/models';
 import { Tooltip } from '@najit-najist/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
 import { useFormState } from 'react-hook-form';
@@ -12,7 +14,7 @@ import { useFormState } from 'react-hook-form';
 export const DeleteButton: FC<{
   productId: Product['id'];
 }> = ({ productId }) => {
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
   const router = useRouter();
   const formState = useFormState();
   const { isSubmitting } = formState;
@@ -36,11 +38,13 @@ export const DeleteButton: FC<{
         },
       });
 
-      await utils.profile.cart.products.get.many.invalidate();
+      await queryClient.invalidateQueries({
+        queryKey: useUserCartQueryKey,
+      });
 
       router.refresh();
     });
-  }, [productId, removeItem, router, startTransition, utils]);
+  }, [productId, queryClient, removeItem, router, startTransition]);
 
   return (
     <Tooltip

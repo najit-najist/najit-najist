@@ -287,11 +287,15 @@ export class UserService {
     return new UserService(user);
   }
 
-  static async forUser(link: EntityLink | UserWithRelations) {
+  static async forUser(
+    link: EntityLink | Pick<UserWithRelations, 'email'> | UserWithRelations
+  ) {
     return new UserService(
-      Object.keys(link).length > 1 && link.id
+      Object.keys(link).length > 1 && 'id' in link
         ? (link as UserWithRelations)
-        : await this.getOneBy('id', link.id)
+        : 'id' in link
+        ? await this.getOneBy('id', link.id)
+        : await this.getOneBy('email', link.email)
     );
   }
 }

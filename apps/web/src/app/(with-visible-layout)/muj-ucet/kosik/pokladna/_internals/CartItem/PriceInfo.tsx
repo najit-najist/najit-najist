@@ -3,8 +3,10 @@
 import { trpc } from '@client/trpc';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ProductWithRelationsLocal } from '@custom-types';
+import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { UserCartProduct } from '@najit-najist/database/models';
 import { NumberInput, Price } from '@najit-najist/ui';
+import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
@@ -22,7 +24,7 @@ export const PriceInfo: FC<{
     useReactTransitionContext();
   const disabled = isChangingRoutes || isSubmitting;
   const router = useRouter();
-  const utils = trpc.useUtils();
+  const queryClient = useQueryClient();
 
   const { mutateAsync: updateItem } =
     trpc.profile.cart.products.update.useMutation();
@@ -34,7 +36,9 @@ export const PriceInfo: FC<{
           product: { id: productId },
           count: Number(nextQuantity),
         });
-        await utils.profile.cart.products.get.many.invalidate();
+        await queryClient.invalidateQueries({
+          queryKey: useUserCartQueryKey,
+        });
 
         router.refresh();
       });

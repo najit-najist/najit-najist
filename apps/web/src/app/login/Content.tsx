@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import {
   loginPageCallbacks,
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
@@ -11,7 +10,6 @@ import { usePlausible } from '@hooks';
 import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
 import { Alert } from '@najit-najist/ui';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
-import type { TRPCError } from '@trpc/server';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { FC, useCallback } from 'react';
@@ -20,16 +18,15 @@ import { z } from 'zod';
 
 import { BottomLinks } from './_components/BottomLInks';
 import { Title } from './_components/Title';
+import { loginAction } from './loginAction';
 
 type FormValues = z.infer<typeof userProfileLogInInputSchema> & {
   errorPot: string;
 };
 
 export const Content: FC = () => {
-  const { mutateAsync: doLogin } = trpc.profile.login.useMutation();
   const { trackEvent } = usePlausible();
   const searchParams = useSearchParams();
-  const utils = trpc.useContext();
   const formMethods = useForm<FormValues>({
     resolver: zodResolver(userProfileLogInInputSchema),
   });
@@ -54,41 +51,30 @@ export const Content: FC = () => {
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
     async (values) => {
-      try {
-        await doLogin(values);
-        await utils.profile.me.refetch();
+      await loginAction(values).then(async (response) => {
+        if (response?.errors) {
+          console.log(response);
+          const errorsAsArray = Object.entries(response.errors);
+          for (const [key, value] of errorsAsArray) {
+            setError(key as any, value);
+          }
 
-        trackEvent('User logged in');
-
-        const redirectTo =
-          searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
-          '/muj-ucet/profil';
-
-        // TODO: this is for reloading cache on client
-        window.location.href = new URL(
-          redirectTo,
-          window.location.origin
-        ).toString();
-      } catch (error) {
-        const message = (error as TRPCError).message;
-
-        // TODO: Unify error code
-        if (message == 'Invalid credentials') {
-          trackEvent('User login invalid credentials');
-          setError('email', { message: 'Nesprávné přihlašovací údaje' });
-          setError('password', { message: 'Nesprávné přihlašovací údaje' });
-        } else if ((error as TRPCError).code === 'FORBIDDEN') {
-          setError('errorPot', {
-            message,
-          });
-        } else {
-          setError('errorPot', {
-            message: `Nečekaná chyba: ${message}`,
-          });
+          throw new Error('Opravte si hodnoty ve formuláři');
         }
-      }
+      });
+      trackEvent('User logged in');
+
+      const redirectTo =
+        searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
+        '/muj-ucet/profil';
+
+      // TODO: this is for reloading cache on client
+      window.location.href = new URL(
+        redirectTo,
+        window.location.origin
+      ).toString();
     },
-    [doLogin, utils.profile.me, trackEvent, searchParams, setError]
+    [trackEvent, searchParams, setError]
   );
 
   return (
@@ -231,9 +217,9 @@ export const Content: FC = () => {
                   : 'Přihlásit se'}
               </Button>
             </div>
-            {errors.errorPot?.message ? (
+            {errors.root?.message ? (
               <ErrorMessage className="!mt-1.5 font-semibold block text-center">
-                {errors.errorPot?.message}
+                {errors.root?.message}
               </ErrorMessage>
             ) : null}
           </form>

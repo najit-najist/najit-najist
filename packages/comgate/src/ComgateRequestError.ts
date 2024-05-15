@@ -4,6 +4,7 @@ export type ComgateRequestErrorType = 'http-failed' | 'payload-not-ok';
 
 export class ComgateRequestError extends Error {
   readonly type: ComgateRequestErrorType;
+  readonly meta: object;
 
   constructor(type: 'http-failed', path: string, response: Response);
   constructor(
@@ -21,7 +22,7 @@ export class ComgateRequestError extends Error {
     super('Failed to do request to comgate');
 
     this.type = type;
-    this.cause = {
+    this.meta = {
       path,
       response,
       body,

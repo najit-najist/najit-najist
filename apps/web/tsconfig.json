@@ -14,6 +14,7 @@
       "@custom-types": ["./types"],
       "@utils": ["./utils"],
       "@hooks": ["./hooks"],
+      "@hooks/*": ["./hooks/*"],
       "@utils/*": ["./utils/*"],
       "@constants": ["./constants"],
       "@contexts": ["./contexts"],
