@@ -187,12 +187,17 @@ export class ProfileService {
     const secret = user.getFor()._registerSecret;
 
     if (!secret) {
-      throw new Error('User has no register secret', {
-        cause: {
-          id: user.getFor().id,
-          email: user.getFor().email,
-        },
-      });
+      throw new Error(
+        `User has no register secret ${user.getFor().id} ${
+          user.getFor().email
+        }`,
+        {
+          cause: {
+            id: user.getFor().id,
+            email: user.getFor().email,
+          },
+        }
+      );
     }
 
     await new Promise((resolve, reject) =>
