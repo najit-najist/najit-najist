@@ -75,17 +75,18 @@ const getRoutes = t.router({
     .input(entityLinkSchema.or(z.object({ slug: nonEmptyStringSchema })))
     .query(async ({ input, ctx }) => {
       const by = 'id' in input ? 'id' : 'slug';
-      const loggedInUser = ctx.sessionData.user;
+      const loggedInUser = ctx.sessionData?.user;
 
       try {
         const product = await getOneProductBy(by, (input as any)[by]);
 
         if (
-          !canUser(loggedInUser, {
+          !loggedInUser ||
+          (!canUser(loggedInUser, {
             action: UserActions.UPDATE,
             onModel: products,
           }) &&
-          !product.publishedAt
+            !product.publishedAt)
         ) {
           throw new EntityNotFoundError({ entityName: getTableName(products) });
         }
@@ -117,7 +118,7 @@ const getRoutes = t.router({
     .query(async ({ input, ctx }) => {
       const { search, categorySlug } = input ?? {};
       const conditions: SQL[] = [];
-      const loggedInUser = ctx.sessionData.user;
+      const loggedInUser = ctx.sessionData?.user;
 
       if (categorySlug?.length) {
         const categories = await database.query.productCategories.findMany({
@@ -142,6 +143,7 @@ const getRoutes = t.router({
       }
 
       if (
+        !loggedInUser ||
         !canUser(loggedInUser, {
           action: UserActions.UPDATE,
           onModel: products,
