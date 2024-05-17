@@ -114,7 +114,7 @@ export const profileRouter = t.router({
         logger.info(
           {
             user: omit(user, ['_password']),
-            input: omit(input, ['_password']),
+            input: omit(input, ['password']),
           },
           'Registering user - user created'
         );
