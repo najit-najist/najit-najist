@@ -3,6 +3,8 @@ import { asc } from '@najit-najist/database/drizzle';
 import { orderedProducts, userCarts } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
 
+import { getCartItemPrice } from './getCartItemPrice';
+
 export const getUserCart = async (user: EntityLink) => {
   let cart = await database.query.userCarts.findFirst({
     where: (schema, { eq }) => eq(schema.userId, user.id),
@@ -21,6 +23,16 @@ export const getUserCart = async (user: EntityLink) => {
           },
         },
       },
+      coupon: {
+        with: {
+          patches: {
+            limit: 1,
+            orderBy: (schema, { desc }) => desc(schema.createdAt),
+          },
+          onlyForProductCategories: true,
+          onlyForProducts: true,
+        },
+      },
     },
   });
 
@@ -33,17 +45,35 @@ export const getUserCart = async (user: EntityLink) => {
     cart = {
       ...createdCart,
       products: [],
+      coupon: null,
+      couponId: null,
     };
   }
 
   let subtotal = 0;
+  const discountPatch = cart.coupon?.patches[0];
+  let totalDiscount = discountPatch?.reductionPrice ?? 0;
 
-  for (const productInCart of cart.products) {
-    const { count, product } = productInCart;
+  for (const cartItem of cart.products) {
+    const { discount: discountForItem, value: priceForItem } = getCartItemPrice(
+      cartItem,
+      cart.coupon ?? undefined
+    );
 
-    subtotal += count * (product.price?.value ?? 0);
+    subtotal += priceForItem;
+    totalDiscount += discountForItem;
+  }
+
+  if (
+    !cart.coupon?.onlyForProductCategories.length &&
+    !cart.coupon?.onlyForProducts.length &&
+    discountPatch?.reductionPercentage
+  ) {
+    totalDiscount += Math.round(
+      (subtotal / 100) * discountPatch?.reductionPercentage
+    );
   }
 
   // TODO: deselect items from cart if user is not eligible
-  return { ...cart, subtotal };
+  return { ...cart, subtotal, discount: totalDiscount };
 };

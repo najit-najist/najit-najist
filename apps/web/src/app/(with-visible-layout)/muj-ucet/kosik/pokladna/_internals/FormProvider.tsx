@@ -21,7 +21,7 @@ import {
   useForm,
 } from 'react-hook-form';
 
-import { doCheckoutAction } from '../actions';
+import { doCheckoutAction } from '../doCheckoutAction';
 import { FormValues } from './types';
 
 type OptionalFormValues = Omit<

@@ -1,6 +1,6 @@
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { products } from '@najit-najist/database/models';
-import { buttonStyles, Alert, Price } from '@najit-najist/ui';
+import { buttonStyles, Alert, Price, Badge } from '@najit-najist/ui';
 import {
   Column,
   Img,
@@ -97,7 +97,29 @@ const OrderProduct: FC<{
       </Column>
       <Column className="w-4" />
       <Column className="text-right whitespace-nowrap text-gray-400">
-        <Price size={'sm'} value={data.totalPrice} />
+        <Section>
+          <Row>
+            {data.discount ? (
+              <Column>
+                <s>
+                  <Price
+                    key="discount"
+                    size="xs"
+                    className="mr-5 line-through"
+                    value={data.totalPrice}
+                  />
+                </s>
+              </Column>
+            ) : null}
+            <Column>
+              <Price
+                key="totalPrice"
+                size="sm"
+                value={data.totalPrice - data.discount}
+              />
+            </Column>
+          </Row>
+        </Section>
       </Column>
     </ItemListItem>
   );
@@ -106,7 +128,7 @@ const OrderProduct: FC<{
 export default function ThankYouOrder({
   order = testOrder,
   needsPayment = false,
-  siteOrigin,
+  siteOrigin = 'https://najitnajist.cz',
   orderLink = 'test',
 }: ThankYouOrderProps) {
   const title = `Objednávka #${order.id} na najitnajist.cz`;
@@ -152,6 +174,19 @@ export default function ThankYouOrder({
                         </Column>
                       </Row>
                       <Spacing size="sm" />
+                      {order.couponPatchId ? (
+                        <>
+                          <Row>
+                            <Column>Kupón:</Column>
+                            <Column className="text-right">
+                              <Badge color="blue">
+                                {order.couponPatch?.coupon.name}
+                              </Badge>
+                            </Column>
+                          </Row>
+                          <Spacing size="sm" />
+                        </>
+                      ) : null}
                       <Row className="text-project-secondary">
                         <Column>Cena celkem:</Column>
                         <Column className="text-right">
@@ -213,14 +248,32 @@ export default function ThankYouOrder({
         ))}
         {/* footer */}
         <hr className="border-none bg-gray-200 w-full mt-5 h-0.5 mb-0" />
-        <ItemListItem className="text-gray-700">
+        <ItemListItem key="subtotal" className="text-gray-700">
+          <Column>Mezisoučet</Column>
+          <Column className="text-right">
+            <Price size={'sm'} value={order.subtotal} />
+          </Column>
+        </ItemListItem>
+        {order.discount ? (
+          <ItemListItem key="discount" className="text-gray-700">
+            <Column>Sleva</Column>
+            <Column className="text-right">
+              <Price size={'sm'} value={order.discount * -1} />
+            </Column>
+          </ItemListItem>
+        ) : null}
+        <ItemListItem key="deliveryMethodPrice" className="text-gray-700">
           <Column>{order.deliveryMethod.name}</Column>
           <Column className="text-right">
             <Price size={'sm'} value={order.deliveryMethodPrice ?? 0} />
           </Column>
         </ItemListItem>
         {order.deliveryMethod.notes ? (
-          <ItemListItem skipSpacing className="text-gray-700">
+          <ItemListItem
+            key="deliveryMethodNotes"
+            skipSpacing
+            className="text-gray-700"
+          >
             <Column colSpan={2}>
               <Alert
                 heading={
@@ -275,7 +328,8 @@ export default function ThankYouOrder({
               value={
                 order.subtotal +
                 (order.paymentMethodPrice ?? 0) +
-                (order.deliveryMethodPrice ?? 0)
+                (order.deliveryMethodPrice ?? 0) -
+                order.discount
               }
             />
           </Column>

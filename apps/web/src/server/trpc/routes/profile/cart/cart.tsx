@@ -1,5 +1,5 @@
 import { database } from '@najit-najist/database';
-import { and, asc, eq } from '@najit-najist/database/drizzle';
+import { and, eq } from '@najit-najist/database/drizzle';
 import { userCartProducts } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@server/trpc/instance';

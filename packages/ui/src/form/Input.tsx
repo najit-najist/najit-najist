@@ -131,6 +131,13 @@ export const inputPrefixSuffixStyles = cva(
         prefix: 'rounded-l-md border-r-0',
         suffix: 'rounded-r-md border-l-0',
       },
+      centerContent: {
+        true: 'flex items-center justify-center',
+        false: '',
+      },
+    },
+    defaultVariants: {
+      centerContent: false,
     },
   }
 );
@@ -153,6 +160,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     wrapperClassName,
     required,
     readOnly,
+    id: idOverride,
     // leftIcon,
     // rightIcon,
     ...rest
@@ -164,7 +172,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   return (
     <div className={rootClassName}>
       {label ? (
-        <Label htmlFor={id} type={hideLabel ? 'invisible' : null}>
+        <Label htmlFor={idOverride ?? id} type={hideLabel ? 'invisible' : null}>
           {label}{' '}
           {required ? <span className="text-bold text-red-600">*</span> : ''}
         </Label>
@@ -191,7 +199,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
             readOnly,
           })}
           type={type}
-          id={id}
+          id={idOverride ?? id}
           disabled={disabled ?? false}
           required={required}
           readOnly={readOnly}

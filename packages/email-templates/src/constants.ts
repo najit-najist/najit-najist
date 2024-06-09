@@ -25,6 +25,7 @@ export const testOrder: OrderWithRelations = {
   paymentMethodId: 2,
   telephoneId: 1,
   updatedAt: null,
+  discount: 40,
   address: {
     city: 'City',
     houseNumber: '12',
@@ -41,6 +42,24 @@ export const testOrder: OrderWithRelations = {
   lastName: 'Shimada',
   deliveryMethodPrice: 200,
   paymentMethodPrice: 0,
+  couponPatchId: 1,
+  couponPatch: {
+    reductionPercentage: 0,
+    reductionPrice: 40,
+    couponId: 1,
+    createdAt: new Date(),
+    id: 1,
+    updatedAt: null,
+    coupon: {
+      enabled: true,
+      createdAt: new Date(),
+      id: 1,
+      name: 'This is sleva',
+      updatedAt: null,
+      validFrom: new Date(),
+      validTo: null,
+    },
+  },
   paymentMethod: {
     description: 'sdfds',
     name: 'Převodem na účet',
@@ -58,6 +77,7 @@ export const testOrder: OrderWithRelations = {
       productId: 4,
       updatedAt: null,
       totalPrice: 400,
+      discount: 0,
       product: {
         ...productBase,
         id: 2,
@@ -80,6 +100,7 @@ export const testOrder: OrderWithRelations = {
       productId: 4,
       updatedAt: null,
       totalPrice: 400,
+      discount: 40,
       product: {
         ...productBase,
         id: 4,
@@ -96,7 +117,7 @@ export const testOrder: OrderWithRelations = {
     },
   ],
   state: OrderState.UNPAID,
-  subtotal: 0,
+  subtotal: 800,
   telephoneNumber: {
     telephone: '12323434',
     code: '420',

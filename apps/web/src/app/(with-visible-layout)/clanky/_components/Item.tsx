@@ -44,7 +44,7 @@ export const Item: FC<PostWithRelations> = async (post) => {
           >
             {dayjs
               .tz(post.publishedAt ? post.publishedAt : post.createdAt)
-              .format('DD. MM. YYYY @ HH:mm')}
+              .format('DD. MM. YYYY v HH:mm')}
             {!post.publishedAt ? (
               <span className="text-red-400"> - Nepublikováno</span>
             ) : null}

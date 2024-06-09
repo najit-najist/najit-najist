@@ -17,6 +17,20 @@ const MESSAGES = {
   requiredPostalCode: 'Vyplňte PSČ',
 };
 
+export const deliveryMethodSchema = z.discriminatedUnion('slug', [
+  z.object({
+    slug: z.literal(OrderDeliveryMethodsSlug.PACKETA),
+    meta: packetaMetadataSchema,
+  }),
+  z.object({
+    slug: z.literal(OrderDeliveryMethodsSlug.LOCAL_PICKUP),
+    meta: pickupTimeSchema,
+  }),
+  z.object({
+    slug: z.literal(OrderDeliveryMethodsSlug.BALIKOVNA),
+  }),
+]);
+
 export const userCartCheckoutInputSchema = z.object({
   email: z.string().email(),
   firstName: nonEmptyStringSchema,
@@ -41,17 +55,5 @@ export const userCartCheckoutInputSchema = z.object({
   }),
   saveAddressToAccount: z.boolean().default(false),
   paymentMethod: z.object({ slug: z.string() }),
-  deliveryMethod: z.discriminatedUnion('slug', [
-    z.object({
-      slug: z.literal(OrderDeliveryMethodsSlug.PACKETA),
-      meta: packetaMetadataSchema,
-    }),
-    z.object({
-      slug: z.literal(OrderDeliveryMethodsSlug.LOCAL_PICKUP),
-      meta: pickupTimeSchema,
-    }),
-    z.object({
-      slug: z.literal(OrderDeliveryMethodsSlug.BALIKOVNA),
-    }),
-  ]),
+  deliveryMethod: deliveryMethodSchema,
 });

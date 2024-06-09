@@ -1,5 +1,12 @@
+import { XMarkIcon } from '@heroicons/react/24/outline';
 import { cva, VariantProps } from 'class-variance-authority';
-import { FC, PropsWithChildren } from 'react';
+import {
+  DetailedHTMLProps,
+  FC,
+  HTMLAttributes,
+  MouseEventHandler,
+  PropsWithChildren,
+} from 'react';
 
 export const badgeStyles = cva(
   'inline-flex gap-x-1.5 items-center rounded-md font-medium',
@@ -53,11 +60,15 @@ const notificationStyles = cva('rounded-full block', {
   },
 });
 
-export type BadgeProps = PropsWithChildren<
-  VariantProps<typeof badgeStyles> & { className?: string }
->;
+export type BadgeProps = DetailedHTMLProps<
+  HTMLAttributes<HTMLSpanElement>,
+  HTMLSpanElement
+> &
+  VariantProps<typeof badgeStyles> & {
+    className?: string;
+  };
 
-export const Badge: FC<BadgeProps> = ({
+export const Badge: FC<PropsWithChildren<BadgeProps>> = ({
   children,
   color,
   size,

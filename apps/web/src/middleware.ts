@@ -2,6 +2,7 @@ import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
 import {
   User,
   UserRoles,
+  coupons,
   posts,
   products,
   recipes,
@@ -27,6 +28,7 @@ const routesToModels: [RegExp, PgTableWithColumns<any>][] = [
   [/\/recepty/, recipes],
   [/\/produkty/, products],
   [/\/clanky/, posts],
+  [/\/kupony/, coupons],
 ];
 
 export async function middleware(request: NextRequest) {

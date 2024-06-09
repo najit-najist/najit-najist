@@ -1,5 +1,6 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { DEFAULT_DATE_FORMAT } from '@constants';
 import { PostWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { posts } from '@najit-najist/database/models';
@@ -59,9 +60,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
             <div className="text-gray-500 text-xs md:text-inherit block mb-8 relative">
               {props.post.publishedAt ? (
                 <time dateTime={String(props.post.publishedAt)} className="">
-                  {dayjs
-                    .tz(props.post.publishedAt)
-                    .format('DD. MM. YYYY @ HH:mm')}
+                  {dayjs.tz(props.post.publishedAt).format(DEFAULT_DATE_FORMAT)}
                 </time>
               ) : (
                 <p className="text-red-500">Nepublikováno</p>

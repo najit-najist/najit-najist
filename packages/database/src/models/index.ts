@@ -1,6 +1,10 @@
 export * from './brandedShops';
 export * from './comgatePayments';
 export * from './contactFormReplies';
+export * from './couponPatches';
+export * from './coupons';
+export * from './couponsForProductCategories';
+export * from './couponsForProducts';
 export * from './municipalities';
 export * from './newsletterSubscriptions';
 

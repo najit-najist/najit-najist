@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, pgTable } from 'drizzle-orm/pg-core';
+import { integer, pgTable, real } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
 import { orders } from './orders';
@@ -16,6 +16,7 @@ export const orderedProducts = pgTable(
       .notNull(),
     count: integer('count').notNull(),
     totalPrice: integer('total_price').notNull(),
+    discount: real('discount').notNull().default(0),
   })
 );
 

@@ -10,6 +10,7 @@ import {
 
 import { withDefaultFields } from '../internal/withDefaultFields';
 import { comgatePayments } from './comgatePayments';
+import { couponPatches } from './couponPatches';
 import { orderAddresses } from './orderAddresses';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 import { orderLocalPickupTimes } from './orderLocalPickupDates';
@@ -43,6 +44,7 @@ export const orders = pgTable(
   'orders',
   withDefaultFields({
     subtotal: real('subtotal').notNull(),
+    discount: real('discount').notNull().default(0),
     userId: integer('user_id')
       .references(() => users.id, { onDelete: 'cascade' })
       .notNull(),
@@ -61,9 +63,15 @@ export const orders = pgTable(
     state: userState('state').default(OrderState.NEW).notNull(),
 
     notes: text('notes'),
-
     deliveryMethodPrice: integer('delivery_method_price').default(0),
     paymentMethodPrice: integer('payment_method_price').default(0),
+
+    couponPatchId: integer('coupon_patch_id').references(
+      () => couponPatches.id,
+      {
+        onDelete: 'restrict',
+      }
+    ),
   })
 );
 
@@ -79,6 +87,10 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
   deliveryMethod: one(orderDeliveryMethods, {
     fields: [orders.deliveryMethodId],
     references: [orderDeliveryMethods.id],
+  }),
+  couponPatch: one(couponPatches, {
+    fields: [orders.couponPatchId],
+    references: [couponPatches.id],
   }),
   address: one(orderAddresses),
   orderedProducts: many(orderedProducts),

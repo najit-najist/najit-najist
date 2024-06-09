@@ -5,19 +5,17 @@ import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { UserCartProduct } from '@najit-najist/database/models';
-import { NumberInput, Price } from '@najit-najist/ui';
+import { NumberInput } from '@najit-najist/ui';
 import { useQueryClient } from '@tanstack/react-query';
-import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
 import { useFormState } from 'react-hook-form';
 import { useDebounceCallback } from 'usehooks-ts';
 
-export const PriceInfo: FC<{
+export const CountInput: FC<{
   productId: ProductWithRelationsLocal['id'];
   countInCart: UserCartProduct['count'];
-  productPrice: NonNullable<ProductWithRelationsLocal['price']>['value'];
-}> = ({ productId, productPrice, countInCart: initialCountInCart }) => {
+}> = ({ productId, countInCart: initialCountInCart }) => {
   const formState = useFormState();
   const { isSubmitting } = formState;
   const { startTransition, isActive: isChangingRoutes } =
@@ -56,25 +54,16 @@ export const PriceInfo: FC<{
   );
 
   return (
-    <>
-      <Price
-        value={productPrice * initialCountInCart}
-        className={clsx('mt-auto', disabled ? 'blur-sm' : '')}
-      />
-
-      <div className="lg:ml-4">
-        <NumberInput
-          label="Počet"
-          hideLabel
-          className="max-w-[4rem]"
-          step={1}
-          min={1}
-          max={99}
-          disabled={disabled}
-          defaultValue={initialCountInCart}
-          onChange={handleCountChange}
-        />
-      </div>
-    </>
+    <NumberInput
+      label="Počet"
+      hideLabel
+      className="max-w-[4rem]"
+      step={1}
+      min={1}
+      max={99}
+      disabled={disabled}
+      defaultValue={initialCountInCart}
+      onChange={handleCountChange}
+    />
   );
 };

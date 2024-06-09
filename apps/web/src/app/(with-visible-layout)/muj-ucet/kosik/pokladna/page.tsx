@@ -6,12 +6,14 @@ import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
 import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { formatPrice } from '@utils';
+import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { getUserCart } from '@utils/getUserCart';
 import clsx from 'clsx';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
 import { CartItem } from './_internals/CartItem/CartItem';
 import { CheckoutButton } from './_internals/CheckoutButton';
+import { CouponInfo } from './_internals/CouponInfo';
 import {
   DeliveryMethodFormPart,
   DeliveryMethodFormPartProps,
@@ -133,12 +135,6 @@ export default async function Page() {
         .includes(defaultDeliveryMethod.id ?? '')
   );
 
-  const subtotal = cart.products.reduce(
-    (priceTotalPredicate, cartItem) =>
-      priceTotalPredicate + cartItem.product.price!.value * cartItem.count,
-    0
-  );
-
   const paymentMethodPrices = Object.fromEntries(
     paymentMethods.map(({ slug, price }) => [slug, price ?? 0])
   );
@@ -190,20 +186,22 @@ export default async function Page() {
           </div>
           <div className="w-full lg:max-w-md">
             <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>
-            <Section rootClassName="lg:sticky top-28">
+            <Section>
               <ul role="list" className="divide-y divide-gray-200">
                 {cart.products.map((cartItem) => (
                   <CartItem
                     key={cartItem.id}
-                    deliveryMethods={deliveryMethods}
-                    {...cartItem}
+                    data={cartItem}
+                    coupon={cart.coupon ?? undefined}
                   />
                 ))}
               </ul>
+              <CouponInfo cartCupon={cart.coupon} />
               <PriceList
                 paymentMethodsPrices={paymentMethodPrices}
                 deliveryMethodsPrices={deliveryMethodsPrices}
-                subtotal={subtotal}
+                subtotal={cart.subtotal}
+                totalDiscount={cart.discount}
               />
               <hr className="!mt-0" />
               <CheckoutButton />

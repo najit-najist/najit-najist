@@ -12,6 +12,7 @@ export interface AlertProps
     AlertRootVariantProps {
   heading: ReactNode;
   icon?: typeof HandRaisedIcon;
+  iconClassName?: string;
 }
 
 const alertRootStyles = cva('rounded-md p-4', {
@@ -76,6 +77,7 @@ export const Alert: FC<AlertProps> = ({
   className,
   color,
   children,
+  iconClassName,
   ...rest
 }) => {
   return (
@@ -84,7 +86,7 @@ export const Alert: FC<AlertProps> = ({
         {IconComponent ? (
           <div className="flex-shrink-0">
             <IconComponent
-              className={iconStyles({ color })}
+              className={iconStyles({ color, className: iconClassName })}
               aria-hidden="true"
             />
           </div>

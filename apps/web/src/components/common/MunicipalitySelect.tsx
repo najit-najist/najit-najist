@@ -27,8 +27,8 @@ export const MunicipalitySelect: FC<
   return (
     <Combobox<Municipality>
       placeholder="Začněte psát pro vyhledání"
-      displayValue={({ name }) => name}
-      itemLabelFormatter={({ name }) => name}
+      displayValue={(item) => item?.name}
+      itemLabelFormatter={(item) => item?.name}
       items={data ?? []}
       onInputValueChange={(event) => setQuery(event.currentTarget.value)}
       onSelectedValueChange={(nextValue) => {

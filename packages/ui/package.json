@@ -11,6 +11,11 @@
       "require": "./dist/index.js",
       "types": "./dist/index.d.ts"
     },
+    "./headless": {
+      "import": "./dist/headless.js",
+      "require": "./dist/headless.js",
+      "types": "./dist/headless.d.ts"
+    },
     "./editor": {
       "import": "./dist/editor/index.js",
       "require": "./dist/editor/index.js",
@@ -40,7 +45,7 @@
     "@editorjs/paragraph": "^2.11.3",
     "@floating-ui/react": "^0.26.3",
     "@najit-najist/schemas": "*",
-    "@headlessui/react": "^1.7.13",
+    "@headlessui/react": "^2.0.4",
     "drizzle-orm": "^0.30.10",
     "react-error-boundary": "^4.0.13",
     "@heroicons/react": "^2.0.12",

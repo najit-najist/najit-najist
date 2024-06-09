@@ -1,6 +1,6 @@
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { Skeleton, Tooltip } from '@najit-najist/ui';
+import { Badge, Skeleton, Tooltip } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -41,6 +41,11 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
     where: (s, { eq }) => eq(s.id, orderId),
     with: {
       user: true,
+      couponPatch: {
+        with: {
+          coupon: true,
+        },
+      },
     },
   });
 
@@ -174,37 +179,48 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
             <dl className="space-y-6 border-t border-gray-200 pt-10 text-sm">
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Mezisoučet</dt>
-                <dd className="text-gray-700">{order.subtotal} Kč</dd>
+                <dd className="text-gray-700">{formatPrice(order.subtotal)}</dd>
               </div>
-              {/* <div className="flex justify-between">
-                <dt className="flex font-medium text-gray-900">
-                  Sleva
-                  <span className="ml-2 rounded-full bg-gray-200 px-2 py-0.5 text-xs text-gray-600">
-                    STUDENT50
-                  </span>
-                </dt>
-                <dd className="text-gray-700">-$18.00 (50%)</dd>
-              </div> */}
+              {order.discount ? (
+                <div className="flex justify-between">
+                  <dt className="flex font-medium text-gray-900">
+                    Sleva
+                    <Badge color="blue">
+                      {order.couponPatch?.coupon.name ?? 'Neznámý kupón'}
+                    </Badge>
+                  </dt>
+                  <dd className="text-gray-700">
+                    - {formatPrice(order.discount)} (
+                    {[
+                      order.couponPatch?.reductionPercentage
+                        ? `${order.couponPatch.reductionPercentage}%`
+                        : undefined,
+                      order.couponPatch?.reductionPrice
+                        ? formatPrice(order.couponPatch.reductionPrice)
+                        : undefined,
+                    ]
+                      .filter(Boolean)
+                      .join(' + ')}
+                    )
+                  </dd>
+                </div>
+              ) : null}
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Doprava</dt>
                 <dd className="text-gray-700">
-                  {order.deliveryMethodPrice
-                    ? `${order.deliveryMethodPrice} Kč`
-                    : 'Zdarma'}
+                  {formatPrice(order.deliveryMethodPrice ?? 0)}
                 </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="font-medium text-gray-900">Platební metoda</dt>
                 <dd className="text-gray-700">
-                  {order.paymentMethodPrice
-                    ? `${order.paymentMethodPrice} Kč`
-                    : 'Zdarma'}
+                  {formatPrice(order.paymentMethodPrice ?? 0)}
                 </dd>
               </div>
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
                 <dd className="text-project-secondary">
-                  {formatPrice(getTotalPrice(order))}
+                  {formatPrice(getTotalPrice(order) - order.discount)}
                 </dd>
               </div>
             </dl>

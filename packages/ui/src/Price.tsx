@@ -23,7 +23,7 @@ export const priceRootStyles = cva<SharedValues>(
     variants: {
       size: {
         sm: '',
-        xs: '',
+        xs: 'text-sm',
         default: 'text-3xl',
         md: 'text-5xl',
         lg: 'text-6xl',
@@ -40,8 +40,8 @@ export const priceCurrencyStyles = cva<SharedValues>(
   {
     variants: {
       size: {
-        sm: 'ml-0.5',
-        xs: 'ml-0.5',
+        sm: 'ml-0.5 -translate-y-[0.2rem] text-[12px]',
+        xs: 'ml-0.5 -translate-y-[0.2rem] text-[12px]',
         default: 'tracking-[-0.1rem] text-lg ml-1 -translate-y-[0.5rem]',
         md: 'tracking-[-0.1rem] text-2xl ml-1 -translate-y-[1rem]',
         lg: 'tracking-[-0.1rem] text-3xl ml-1 -translate-y-[1.3rem]',
@@ -58,6 +58,7 @@ export const Price: FC<
     value: string | number;
     currencyCode?: CurrencyCodes;
     className?: string;
+    discount?: number;
   } & VariantProps<typeof priceRootStyles>
 > = ({ value, currencyCode = CurrencyCodes.CZK, className, size }) => {
   return (

@@ -247,7 +247,12 @@ const getCategoriesRoutes = t.router({
       const [items, [{ count }]] = await Promise.all([
         database.query.productCategories.findMany({
           limit: input.perPage,
-          where: cursor.where(input.page),
+          where: and(
+            cursor.where(input.page),
+            input.search
+              ? ilike(productCategories.name, `%${input.search}%`)
+              : undefined
+          ),
           orderBy: cursor.orderBy,
           with: {
             products: {

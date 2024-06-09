@@ -311,6 +311,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
             </div>
           </div>
           <Transition
+            as="div"
             show={menuIsOpen}
             enter="transition duration-200 ease-out"
             enterFrom="transform max-h-0 opacity-0"

@@ -13,6 +13,11 @@ export const getOrderById = async (orderId: Order['id']) => {
           municipality: true,
         },
       },
+      couponPatch: {
+        with: {
+          coupon: true,
+        },
+      },
       deliveryMethod: true,
       orderedProducts: {
         with: {

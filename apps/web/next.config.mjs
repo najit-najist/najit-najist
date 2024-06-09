@@ -2,6 +2,8 @@ import withBundleAnalyzer from '@next/bundle-analyzer';
 
 const isProduction = process.env.NODE_ENV === 'production';
 
+process.title = 'najit-najist.cz';
+
 /** @type {import('next').NextConfig} */
 let nextConfig = {
   // reactStrictMode: true,

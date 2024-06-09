@@ -48,12 +48,14 @@ const RootLayout: LayoutComponent = ({ children }) => {
   return (
     <html lang="cs">
       <head>
-        <Script
-          defer
-          key="plausible"
-          data-domain="najitnajist.cz"
-          src="https://plausible.io/js/script.js"
-        />
+        {process.env.NODE_ENV === 'production' ? (
+          <Script
+            defer
+            key="plausible"
+            data-domain="najitnajist.cz"
+            src="https://plausible.io/js/script.js"
+          />
+        ) : null}
       </head>
       <body
         className={clsx(

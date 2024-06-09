@@ -1,4 +1,6 @@
 import {
+  Coupon,
+  CouponPatch,
   Municipality,
   Order,
   OrderDeliveryMethod,
@@ -64,4 +66,9 @@ export type OrderWithRelations = Order & {
     municipality: Pick<Municipality, 'name' | 'slug'>;
   };
   telephoneNumber?: UnsignedModel<TelephoneNumber> | null;
+  couponPatch:
+    | (CouponPatch & {
+        coupon: Coupon;
+      })
+    | null;
 };

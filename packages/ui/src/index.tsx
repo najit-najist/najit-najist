@@ -41,7 +41,7 @@ export { Alert } from './Alert.js';
 export { Badge, badgeStyles, type BadgeProps } from './Badge.js';
 export { Button } from './Button/Button.js';
 export { buttonStyles } from './Button/buttonStyles.js';
-export { Paper, paperStyles } from './Paper.js';
+export { Paper, PaperHeader, paperStyles } from './Paper.js';
 export { Modal, type ModalProps } from './Modal.js';
 export { Skeleton } from './Skeleton.js';
 export { CurrencyCodes, Price } from './Price.js';

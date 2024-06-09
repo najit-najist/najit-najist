@@ -113,6 +113,7 @@ export const orderRoutes = t.router({
           database.query.orders.findMany({
             orderBy: (schema, { desc }) => [desc(schema.createdAt)],
             where: and(...conditions),
+            limit: perPage,
             with: {
               orderedProducts: {
                 with: {

@@ -12,9 +12,15 @@ import { useWatch } from 'react-hook-form';
 
 export const PriceList: FC<{
   subtotal: number;
+  totalDiscount: number;
   deliveryMethodsPrices: Record<string, number>;
   paymentMethodsPrices: Record<string, number>;
-}> = ({ subtotal, paymentMethodsPrices, deliveryMethodsPrices }) => {
+}> = ({
+  subtotal,
+  totalDiscount,
+  paymentMethodsPrices,
+  deliveryMethodsPrices,
+}) => {
   const { isActive: transitionIsHappening } = useReactTransitionContext();
   const [deliveryMethod, paymentMethod] = useWatch<
     {
@@ -44,6 +50,22 @@ export const PriceList: FC<{
           {formatPrice(subtotal)}
         </span>
       </div>
+      {!!totalDiscount ? (
+        <>
+          <hr />
+          <div className="flex items-center justify-between py-5">
+            <span>Sleva</span>
+            <span
+              className={clsx(
+                'text-project-primary',
+                transitionIsHappening ? 'blur-sm' : ''
+              )}
+            >
+              - {formatPrice(totalDiscount)}
+            </span>
+          </div>
+        </>
+      ) : null}
       {selectedDeliveryMethodPrice !== undefined ? (
         <>
           <hr />
@@ -84,7 +106,7 @@ export const PriceList: FC<{
             getTotalPrice({
               deliveryMethodPrice: selectedDeliveryMethodPrice,
               paymentMethodPrice: selectedPaymentMethodPrice,
-              subtotal,
+              subtotal: subtotal - totalDiscount,
             })
           )}
         </span>

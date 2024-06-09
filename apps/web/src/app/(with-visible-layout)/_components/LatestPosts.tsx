@@ -54,7 +54,7 @@ const Item: FC<PostWithRelations> = async ({
           >
             {dayjs
               .tz(publishedAt ? publishedAt : createdAt)
-              .format('DD. MM. YYYY @ HH:mm')}
+              .format('DD. MM. YYYY v HH:mm')}
           </time>
           <div className="flex space-x-3">
             {categories.map(({ category }) => (
