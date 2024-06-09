@@ -29,12 +29,9 @@ const schema = z
     })
   )
   .refine(
-    (coupon): coupon is NonNullable<typeof coupon> => !!coupon,
-    'Kupón pod tímto názvem neznáme'
-  )
-  .refine(
-    (coupon) => !isCouponExpired(coupon) && coupon.enabled,
-    'Kupón je již expirován'
+    (coupon): coupon is NonNullable<typeof coupon> =>
+      !!coupon && !isCouponExpired(coupon) && !!coupon.enabled,
+    'Kupón byl již expirován nebo ho již nevedeme'
   );
 
 export const toggleCouponAction = async (input: { name?: string }) => {

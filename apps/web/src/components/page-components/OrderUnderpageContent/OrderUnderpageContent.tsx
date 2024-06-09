@@ -185,7 +185,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                 <div className="flex justify-between">
                   <dt className="flex font-medium text-gray-900">
                     Sleva
-                    <Badge color="blue">
+                    <Badge color="blue" className="ml-2">
                       {order.couponPatch?.coupon.name ?? 'Neznámý kupón'}
                     </Badge>
                   </dt>

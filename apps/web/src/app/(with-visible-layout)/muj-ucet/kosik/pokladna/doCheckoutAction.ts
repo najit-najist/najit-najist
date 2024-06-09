@@ -19,6 +19,7 @@ import {
   telephoneNumbers,
   userAddresses,
   userCartProducts,
+  userCarts,
 } from '@najit-najist/database/models';
 import {
   ThankYouOrder,
@@ -306,12 +307,7 @@ export const doCheckoutAction = createActionWithValidation(
           })
         );
 
-        await tx.delete(userCartProducts).where(
-          inArray(
-            userCartProducts.id,
-            cart.products.map(({ id }) => id)
-          )
-        );
+        await tx.delete(userCarts).where(eq(userCarts.id, cart.id));
 
         let redirectTo = `/muj-ucet/objednavky/${order.id}`;
 

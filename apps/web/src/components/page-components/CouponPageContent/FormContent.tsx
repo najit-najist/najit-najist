@@ -1,26 +1,40 @@
 'use client';
 
-import { ArrowPathIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Coupon } from '@najit-najist/database/models';
 import {
   Alert,
   Button,
   Input,
+  Tooltip,
   inputPrefixSuffixStyles,
 } from '@najit-najist/ui';
+import { useMutation } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { FormValues } from './FormProvider';
+import { deleteCouponAction } from './actions/deleteCouponAction';
 
 export function FormContent({
   coupon,
+  couldBeDeleted,
 }: {
   coupon?: { id: Coupon['id'] };
+  couldBeDeleted: boolean;
 }): ReactNode {
   const { formState, register } = useFormContext<FormValues>();
   const isRedirectingAfterCreate = !coupon?.id && formState.isSubmitSuccessful;
-  const fieldsAreDisabled = formState.isSubmitting || isRedirectingAfterCreate;
+  const {
+    mutate: deleteCoupon,
+    isLoading: isDeleting,
+    data,
+  } = useMutation({
+    mutationFn: deleteCouponAction,
+  });
+
+  const fieldsAreDisabled =
+    formState.isSubmitting || isRedirectingAfterCreate || isDeleting;
 
   return (
     <>
@@ -103,7 +117,7 @@ export function FormContent({
           />
         </div>
       </div>
-      <div className="px-3 ">
+      <div className="px-3">
         {isRedirectingAfterCreate ? (
           <Alert
             className="mt-3"
@@ -112,9 +126,30 @@ export function FormContent({
             heading="Kupón vytvořen. Přecházím na stránku kupónu..."
           />
         ) : null}
-        <Button type="submit" className="mt-3" isLoading={fieldsAreDisabled}>
-          Uložit
-        </Button>
+        <div className="flex flex-wrap mt-3">
+          <Button type="submit" isLoading={fieldsAreDisabled}>
+            Uložit
+          </Button>
+          {coupon ? (
+            <Tooltip
+              disabled={couldBeDeleted}
+              trigger={
+                <Button
+                  appearance="spaceless"
+                  color="red"
+                  className="px-2 py-1 ml-auto"
+                  disabled={!couldBeDeleted}
+                  onClick={() => deleteCoupon(coupon)}
+                  isLoading={isDeleting || data !== undefined}
+                >
+                  <TrashIcon className="w-6 h-6 top-0.5 relative" />
+                </Button>
+              }
+            >
+              Nelze odstranit, jelikož byl kupón již využit
+            </Tooltip>
+          ) : null}
+        </div>
       </div>
     </>
   );

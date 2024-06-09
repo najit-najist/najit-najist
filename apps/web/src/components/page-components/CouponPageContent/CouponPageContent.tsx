@@ -81,6 +81,11 @@ export function CouponPageContent({
                 </PaperHeader>
                 <FormContent
                   coupon={initialCoupon ? { id: initialCoupon.id } : undefined}
+                  couldBeDeleted={
+                    !initialCoupon?.patches.some(
+                      ({ orders }) => orders.length
+                    ) ?? true
+                  }
                 />
               </Section>
             </Form>

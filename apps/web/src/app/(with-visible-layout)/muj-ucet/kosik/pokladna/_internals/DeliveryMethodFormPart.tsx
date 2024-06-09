@@ -13,7 +13,6 @@ import {
   RadioGroup,
   RadioGroupProps,
 } from '@najit-najist/ui';
-import { isLocalPickup, isPacketaDeveliveryMethod } from '@utils';
 import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
 

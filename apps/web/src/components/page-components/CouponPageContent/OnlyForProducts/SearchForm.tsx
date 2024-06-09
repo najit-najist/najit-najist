@@ -78,7 +78,7 @@ export const SearchForm: FC = () => {
     <>
       <div className="mb-3 flex gap-2 flex-wrap duration">
         {value.map((item, index) => (
-          <Paper key={item.id} className="px-3 py-2 flex items-start">
+          <Paper key={item.id} className="px-3 py-2 flex items-start max-h-96">
             <div className="flex">
               <div className="relative aspect-square rounded-full flex-none w-12 h-12">
                 {item.images.length ? (

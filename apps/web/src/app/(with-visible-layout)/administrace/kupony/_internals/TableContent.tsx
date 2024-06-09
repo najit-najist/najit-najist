@@ -23,7 +23,7 @@ export async function TableContent() {
         <>
           {items.length ? (
             items.map((item) => {
-              const patch = item.patches.at(-1);
+              const patch = item.patches[0];
               const reductions: string[] = [];
               const validity: string[] = [];
 

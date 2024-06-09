@@ -1,6 +1,7 @@
 import {
   Coupon,
   CouponPatch,
+  Order,
   Product,
   ProductCategory,
 } from '@najit-najist/database/models';
@@ -8,7 +9,7 @@ import {
 import type { ProductWithRelationsLocal } from '.';
 
 export type CouponWithRelations = Coupon & {
-  patches: CouponPatch[];
+  patches: (CouponPatch & { orders: Order[] })[];
   onlyForProductCategories: {
     id: number;
     categoryId: ProductCategory['id'];

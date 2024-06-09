@@ -10,7 +10,9 @@ export default async function Page({ params }: Params) {
     with: {
       patches: {
         orderBy: (s, { desc }) => desc(s.createdAt),
-        limit: 1,
+        with: {
+          orders: true,
+        },
       },
       onlyForProductCategories: {
         with: {
