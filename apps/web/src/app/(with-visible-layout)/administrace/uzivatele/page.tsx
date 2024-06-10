@@ -123,7 +123,7 @@ export default async function Page({ searchParams }: Params) {
                 <tr>
                   <Th>Jméno</Th>
                   <Th>Telefon</Th>
-                  <Th>Email</Th>
+                  <Th>Stav</Th>
                   <Th>Role</Th>
                   <Th>Obec</Th>
                   <Th>Datum registrace</Th>

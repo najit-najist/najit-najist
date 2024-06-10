@@ -3,6 +3,7 @@ import { UserWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { UserIcon } from '@heroicons/react/24/outline';
 import { users as usersModel } from '@najit-najist/database/models';
+import { Badge } from '@najit-najist/ui';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import Image from 'next/image';
@@ -62,9 +63,7 @@ export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
               <div className="text-gray-500">{person.telephone?.telephone}</div>
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-              <span className="inline-flex rounded-full bg-green-100 px-2 text-xs font-semibold leading-5 text-green-800">
-                Active
-              </span>
+              {person.status ? <Badge>{person.status}</Badge> : null}
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               {person.role}
