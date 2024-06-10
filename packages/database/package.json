@@ -38,6 +38,7 @@
     "migration:migrate": "node ./scripts/migrate.js",
     "migrate": "pnpm run migration:create && pnpm run migration:migrate",
     "test": "vitest",
+    "start:studio": "drizzle-kit studio",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {

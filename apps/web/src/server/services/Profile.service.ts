@@ -44,6 +44,12 @@ export class ProfileService {
   }
 
   async resetPassword() {
+    if (this.forUser.status === UserStates.SUBSCRIBED) {
+      throw new Error(
+        'Patříte mezi prvotní uživatele, kteří se přihlásili na našem prvním webu. Dokončete registraci kliknutím na link, který vám přišel s pozvánkou na náš nový web.'
+      );
+    }
+
     if (
       this.forUser.status !== UserStates.ACTIVE &&
       this.forUser.status !== UserStates.PASSWORD_RESET
