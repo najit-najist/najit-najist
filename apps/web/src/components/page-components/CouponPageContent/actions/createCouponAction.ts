@@ -55,7 +55,7 @@ export const createCouponAction = createActionWithValidation(
         if (input.onlyForProducts?.length) {
           await sql.insert(couponsForProducts).values(
             input.onlyForProducts.map((selectedProduct) => ({
-              couponId: createdId,
+              couponId: created.id,
               productId: selectedProduct.id,
             }))
           );
