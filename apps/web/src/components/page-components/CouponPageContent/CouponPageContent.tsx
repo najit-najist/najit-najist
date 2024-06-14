@@ -63,6 +63,7 @@ export function CouponPageContent({
                   : null,
                 onlyForCategories,
                 onlyForProducts,
+                minimalProductCount: initialCoupon.minimalProductCount ?? 0,
               }
             : undefined
         }

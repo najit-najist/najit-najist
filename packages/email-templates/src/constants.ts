@@ -58,6 +58,7 @@ export const testOrder: OrderWithRelations = {
       updatedAt: null,
       validFrom: new Date(),
       validTo: null,
+      minimalProductCount: 0,
     },
   },
   paymentMethod: {

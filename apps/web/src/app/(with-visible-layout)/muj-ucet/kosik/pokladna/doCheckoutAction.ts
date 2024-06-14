@@ -254,7 +254,8 @@ export const doCheckoutAction = createActionWithValidation(
             deliveryMethodPrice: deliveryMethod.price,
             subtotal: cart.subtotal,
             discount: cart.discount,
-            couponPatchId: cart.coupon?.patches[0].id,
+            // Only assign discount when user is actually eligible
+            couponPatchId: cart.discount ? cart.coupon?.patches[0].id : null,
           })
           .returning();
 

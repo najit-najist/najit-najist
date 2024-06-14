@@ -7,8 +7,7 @@ import { products } from '@najit-najist/database/models';
 import { Badge, FormBreak, Price, Tooltip } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { getCartItemPrice } from '@utils/getCartItemPrice';
-import { getUserCart } from '@utils/getUserCart';
-import clsx from 'clsx';
+import { ProductFromCart } from '@utils/getUserCart';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -17,14 +16,12 @@ import { CountInput } from './CountInput';
 import { DeleteButton } from './DeleteButton';
 
 export const CartItem: FC<{
-  data: Awaited<ReturnType<typeof getUserCart>>['products'][number];
-  coupon?: Parameters<typeof getCartItemPrice>[1];
-}> = async ({ data: { product, count: countInCart, id }, data, coupon }) => {
+  data: ProductFromCart;
+}> = async ({ data: { product, count: countInCart, id, price, discount } }) => {
   const mainImageAsString = product.images.at(0)?.file;
   const mainImage = mainImageAsString
     ? getFileUrl(products, product.id, mainImageAsString)
     : undefined;
-  const price = getCartItemPrice(data, coupon);
 
   return (
     <li key={id} className="flex px-4 py-6 sm:px-6">
@@ -89,10 +86,10 @@ export const CartItem: FC<{
 
         <div className="mt-4">
           <div className="flex justify-end items-end gap-5">
-            {price.discount ? (
-              <Price className="line-through" size="sm" value={price.value} />
+            {discount ? (
+              <Price className="line-through" size="sm" value={price} />
             ) : null}
-            <Price value={price.value - price.discount} />
+            <Price value={price - discount} />
           </div>
           <FormBreak className="w-full mt-1 mb-3" />
           <div>

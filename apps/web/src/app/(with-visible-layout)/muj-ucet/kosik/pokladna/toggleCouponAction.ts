@@ -68,7 +68,7 @@ export const toggleCouponAction = async (input: { name?: string }) => {
 
     revalidatePath('/muj-ucet/kosik/pokladna');
 
-    return validated.data;
+    return null;
   } else {
     await database
       .update(userCarts)

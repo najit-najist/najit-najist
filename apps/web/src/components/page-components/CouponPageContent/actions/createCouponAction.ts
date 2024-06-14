@@ -34,6 +34,7 @@ export const createCouponAction = createActionWithValidation(
               ? dayjs.tz(input.validTo, DEFAULT_TIMEZONE).toDate()
               : null,
             enabled: input.enabled ?? true,
+            minimalProductCount: input.minimalProductCount ?? 0,
           })
           .returning();
 

@@ -5,6 +5,7 @@ import {
   boolean,
   index,
   timestamp,
+  integer,
 } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
@@ -20,6 +21,7 @@ export const coupons = pgTable(
     enabled: boolean('enabled').default(true),
     validFrom: timestamp('valid_from', { mode: 'date' }),
     validTo: timestamp('valid_to', { mode: 'date' }),
+    minimalProductCount: integer('minimal_product_count').default(0).notNull(),
   }),
   (coupons) => {
     return {

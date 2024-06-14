@@ -189,11 +189,7 @@ export default async function Page() {
             <Section>
               <ul role="list" className="divide-y divide-gray-200">
                 {cart.products.map((cartItem) => (
-                  <CartItem
-                    key={cartItem.id}
-                    data={cartItem}
-                    coupon={cart.coupon ?? undefined}
-                  />
+                  <CartItem key={cartItem.id} data={cartItem} />
                 ))}
               </ul>
               <CouponInfo cartCupon={cart.coupon} />

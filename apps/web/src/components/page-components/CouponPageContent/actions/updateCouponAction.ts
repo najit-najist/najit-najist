@@ -49,6 +49,10 @@ export const updateCouponAction = createActionWithValidation(
                 : undefined,
             enabled: values.enabled,
             updatedAt: new Date(),
+            minimalProductCount:
+              values.minimalProductCount === null
+                ? 0
+                : values.minimalProductCount,
           })
           .where(eq(coupons.id, id));
 

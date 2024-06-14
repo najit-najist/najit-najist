@@ -1,0 +1,1 @@
+ALTER TABLE "coupons" ADD COLUMN "minimal_product_count" integer DEFAULT 0 NOT NULL;

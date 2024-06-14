@@ -49,6 +49,16 @@ export function FormContent({
           disabled={fieldsAreDisabled || !!coupon?.id}
           {...register('name')}
         />
+        <Input
+          required
+          label="Minimální počet produktů"
+          id="minimalProductCount"
+          type="number"
+          autoComplete="off"
+          error={formState.errors.minimalProductCount}
+          disabled={fieldsAreDisabled}
+          {...register('minimalProductCount', { valueAsNumber: true })}
+        />
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Input
             required

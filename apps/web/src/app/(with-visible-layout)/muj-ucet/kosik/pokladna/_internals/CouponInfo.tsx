@@ -1,8 +1,7 @@
 'use client';
 
-import { InformationCircleIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { Alert, Button, Input } from '@najit-najist/ui';
-import { useMutation } from '@tanstack/react-query';
 import { getUserCart } from '@utils/getUserCart';
 import { useRouter } from 'next/navigation';
 import {
@@ -12,7 +11,7 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { FieldError, useFormContext } from 'react-hook-form';
 
 import { toggleCouponAction } from '../toggleCouponAction';
 
@@ -27,36 +26,30 @@ const isEnterKeyEvent = (
 export function CouponInfo({
   cartCupon: selectedCoupon,
 }: CouponInfoProps): ReactNode {
-  const { formState } = useFormContext();
+  const { formState, setError, clearErrors } = useFormContext();
   const [isReloading, startReloading] = useTransition();
   const [inputValue, setInputValue] = useState('');
-  const {
-    mutate: toggleCoupon,
-    data,
-    isLoading,
-  } = useMutation({
-    mutationFn: toggleCouponAction,
-  });
 
   const router = useRouter();
   const patch = selectedCoupon?.patches[0];
 
   const tryToggleCoupon = () => {
-    toggleCoupon(
-      {
-        name: inputValue,
-      },
-      {
-        onSuccess(result) {
-          if ('errors' in (result ?? {}) === false) {
-            startReloading(() => {
-              router.refresh();
-              setInputValue('');
-            });
-          }
-        },
+    clearErrors();
+    startReloading(async () => {
+      const result: { errors?: Record<string, FieldError> } =
+        (await toggleCouponAction({
+          name: inputValue,
+        })) || {};
+
+      if ('errors' in result) {
+        for (const key in result.errors) {
+          setError(key, result.errors[key]);
+        }
+      } else {
+        router.refresh();
+        setInputValue('');
       }
-    );
+    });
   };
 
   const handleKeyDown: KeyboardEventHandler<HTMLInputElement> = (event) => {
@@ -82,6 +75,8 @@ export function CouponInfo({
     !!selectedCoupon?.onlyForProductCategories.length ||
     !!selectedCoupon?.onlyForProducts.length;
 
+  const minimalProductCount = selectedCoupon?.minimalProductCount;
+
   return (
     <div className="px-4">
       <div className="pt-3 flex gap-2">
@@ -98,13 +93,14 @@ export function CouponInfo({
           }
           placeholder="Zde zadejte kupón a aktivujte"
           rootClassName="w-full"
-          disabled={isLoading || isReloading || !!selectedCoupon}
+          disabled={isReloading || !!selectedCoupon}
           error={
-            (data && 'errors' in data) || formState.errors.couponId
+            Object.keys(formState.errors).length
               ? {
                   message:
-                    (data as any)?.errors?.root?.message ??
-                    (data as any)?.errors?.name?.message ??
+                    formState.errors.root?.message ??
+                    (formState.errors.name as FieldError | undefined)
+                      ?.message ??
                     formState.errors.couponId?.message?.toString() ??
                     'Stala se neočekávaná chyba',
                   type: 'value',
@@ -116,22 +112,29 @@ export function CouponInfo({
           <Button
             className="h-10 !px-4"
             color={selectedCoupon ? 'red' : undefined}
-            isLoading={isLoading || isReloading}
+            isLoading={isReloading}
             onClick={tryToggleCoupon}
           >
             {selectedCoupon ? 'Deaktivovat' : 'Aktivovat'}
           </Button>
         </div>
       </div>
-      {shouldBeGrouped ? (
+      {shouldBeGrouped || !!minimalProductCount ? (
         <Alert
           color="warning"
-          icon={InformationCircleIcon}
-          heading="Vybraný kupón je platný pouze na vybrané produkty"
+          icon={ExclamationTriangleIcon}
+          heading={'Vybraný kupón má omezení'}
           className="mt-2"
         >
-          Pokud nemáte potřebné produkty v košíku tak Vám nemusíme slevu
-          uplatnit.
+          Vybraný kupón je uplatnitelný pouze pokud máte{' '}
+          {[
+            shouldBeGrouped && 'potřebné produkty',
+            minimalProductCount &&
+              `dostatečný počet potřebných produktů (min. ${minimalProductCount} ks)`,
+          ]
+            .filter(Boolean)
+            .join(' a ')}{' '}
+          v košíku.
         </Alert>
       ) : null}
     </div>
