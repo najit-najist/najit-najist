@@ -8,11 +8,15 @@ import { useFormContext } from 'react-hook-form';
 /**
  * Set of fields that are specific to user address
  */
-export const AddressFields: FC<{ required?: boolean }> = ({ required }) => {
+export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
+  required,
+  disabled,
+}) => {
   const { isActive } = useReactTransitionContext();
   const { formState, register } =
     useFormContext<AppRouterInput['profile']['update']>();
-  const fieldsAreDisabled = formState.isSubmitting || isActive;
+  const fieldsAreDisabled =
+    disabled === undefined ? formState.isSubmitting || isActive : disabled;
 
   return (
     <>

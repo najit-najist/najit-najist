@@ -6,6 +6,7 @@ import {
   TelephoneNumber,
   User,
   UserAddress,
+  UserNewsletter,
   telephoneNumbers,
   userAddresses,
   userNewsletters,
@@ -20,7 +21,7 @@ import { PasswordService } from './Password.service';
 export type UserWithRelations = User & {
   telephone?: TelephoneNumber | null;
   address?: (UserAddress & { municipality: Municipality }) | null;
-  newsletter: boolean;
+  newsletter: UserNewsletter | null;
 };
 
 type Address = Omit<ToCreateSchema<UserAddress>, 'userId'>;
@@ -256,12 +257,15 @@ export class UserService {
     }
   }
 
-  static async getOneBy<V extends keyof User>(
-    by: V,
-    value: User[V]
-  ): Promise<UserWithRelations> {
-    const item = await database.query.users.findFirst({
-      where: (schema, { eq }) => eq(schema[by], value as any),
+  static async queryOneBy<
+    T extends NonNullable<
+      NonNullable<
+        Parameters<typeof database.query.users.findFirst>['0']
+      >['where']
+    >
+  >(where: T): Promise<UserWithRelations | undefined> {
+    return await database.query.users.findFirst({
+      where,
       with: {
         telephone: true,
         address: {
@@ -270,6 +274,15 @@ export class UserService {
         newsletter: true,
       },
     });
+  }
+
+  static async getOneBy<V extends keyof User>(
+    by: V,
+    value: User[V]
+  ): Promise<UserWithRelations> {
+    const item = await this.queryOneBy((schema, { eq }) =>
+      eq(schema[by], value as any)
+    );
 
     if (!item) {
       throw new EntityNotFoundError({
@@ -277,10 +290,7 @@ export class UserService {
       });
     }
 
-    return {
-      ...item,
-      newsletter: !!item.newsletter?.enabled,
-    } as UserWithRelations;
+    return item;
   }
 
   static forUserSync(user: UserWithRelations) {

@@ -12,6 +12,8 @@ export const userNewsletters = pgTable('user_newsletters', {
   email: varchar('email', { length: 256 }).unique().notNull(),
 });
 
+export type UserNewsletter = typeof userNewsletters.$inferSelect;
+
 export const userNewslettersRelations = relations(
   userNewsletters,
   ({ one }) => ({

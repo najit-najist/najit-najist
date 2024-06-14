@@ -75,6 +75,7 @@ export default async function Page() {
     <FormProvider
       initialData={{
         ...user,
+        newsletter: !!user.newsletter?.enabled,
         address: user.address ?? undefined,
       }}
     >

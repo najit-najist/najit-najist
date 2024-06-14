@@ -69,7 +69,11 @@ const Items: FC<Params> = async ({ searchParams }) => {
 
   return recipes.length ? (
     recipes.map((props) => (
-      <Item key={props.id} loggedInUser={currentUser} {...props} />
+      <Item
+        key={props.id}
+        loggedInUser={currentUser ? { role: currentUser.role } : undefined}
+        {...props}
+      />
     ))
   ) : (
     <div className="sm:col-span-2 md:col-span-3 lg:col-span-4">

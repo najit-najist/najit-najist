@@ -44,21 +44,6 @@ export class ProfileService {
   }
 
   async resetPassword() {
-    if (this.forUser.status === UserStates.SUBSCRIBED) {
-      throw new Error(
-        'Patříte mezi prvotní uživatele, kteří se přihlásili na našem prvním webu. Dokončete registraci kliknutím na link, který vám přišel s pozvánkou na náš nový web.'
-      );
-    }
-
-    if (
-      this.forUser.status !== UserStates.ACTIVE &&
-      this.forUser.status !== UserStates.PASSWORD_RESET
-    ) {
-      throw new Error(
-        'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován'
-      );
-    }
-
     const tokenSecret = crypto.randomBytes(10).toString('hex') + Date.now();
     const token = jwt.sign(
       {

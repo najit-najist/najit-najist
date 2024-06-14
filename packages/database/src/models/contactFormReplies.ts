@@ -11,6 +11,8 @@ export const contactFormReplies = pgTable(
     lastName: varchar('lastname', { length: 256 }).notNull(),
     message: varchar('message').notNull(),
     telephone: varchar('telephone_number', { length: 256 }),
-    userId: integer('user_id').references(() => users.id),
+    userId: integer('user_id').references(() => users.id, {
+      onDelete: 'cascade',
+    }),
   })
 );

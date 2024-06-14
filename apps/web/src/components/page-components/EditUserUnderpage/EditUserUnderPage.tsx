@@ -11,6 +11,7 @@ import {
   Input,
 } from '@najit-najist/ui';
 import { userProfileUpdateInputSchema } from '@server/schemas/userProfileUpdateInputSchema';
+import { PasswordInputs } from 'app/registrace/_components/PasswordInputs';
 import { FC, ReactNode } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 import { z } from 'zod';
@@ -33,11 +34,14 @@ export const EditUserUnderPage: FC<{
   viewType: ViewType;
   afterProfileImageSlot?: ReactNode;
 }> = ({ userId, viewType, afterProfileImageSlot }) => {
-  const { register, formState } =
-    useFormContext<z.infer<typeof userProfileUpdateInputSchema>>();
+  const { register, formState } = useFormContext<
+    z.infer<typeof userProfileUpdateInputSchema> & { email: string }
+  >();
   const email = useWatch({ name: 'email' });
 
-  const fieldsAreDisabled = formState.isSubmitting;
+  const fieldsAreDisabled =
+    formState.isSubmitting ||
+    (formState.isSubmitSuccessful && viewType === 'create');
   const buttonText = viewTypeToButtonText[viewType];
 
   return (
@@ -84,22 +88,37 @@ export const EditUserUnderPage: FC<{
                   {...register('lastName')}
                 />
               </div>
-              <Input
-                wrapperClassName="w-full"
-                label="Email"
-                placeholder="tomas.bezlepek@ukazka.cz"
-                required
-                disabled={true}
-                title="Prozatím nemůžete změnit svůj email"
-                value={email}
-              />
+              {viewType === 'create' ? (
+                <>
+                  <Input
+                    wrapperClassName="w-full"
+                    label="Email"
+                    placeholder="tomas.bezlepek@ukazka.cz"
+                    required
+                    disabled={fieldsAreDisabled}
+                    error={formState.errors.email}
+                    {...register('email')}
+                  />
+                  <PasswordInputs disabled={fieldsAreDisabled} />
+                </>
+              ) : (
+                <Input
+                  wrapperClassName="w-full"
+                  label="Email"
+                  placeholder="tomas.bezlepek@ukazka.cz"
+                  required
+                  disabled={true}
+                  title="Prozatím nemůžete změnit svůj email"
+                  value={email}
+                />
+              )}
             </div>
             <div className="mt-5" />
 
             <FormBreak label="Adresa" />
 
             <div className="grid gap-4 grid-cols-1 mt-5">
-              <AddressFields />
+              <AddressFields disabled={fieldsAreDisabled} />
             </div>
 
             <div className="mt-5" />

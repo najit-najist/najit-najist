@@ -6,7 +6,7 @@ import {
   ClockIcon,
   PencilIcon,
 } from '@heroicons/react/24/outline';
-import { recipes } from '@najit-najist/database/models';
+import { User, recipes } from '@najit-najist/database/models';
 import { Badge, Skeleton, buttonStyles } from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { extractTimeFromSteps } from '@server/utils/extractTimeFromSteps';
@@ -19,7 +19,7 @@ import { ImageSlider } from './ImageSlider';
 export const Item: FC<
   RecipeWithRelations & {
     showEditLink?: boolean;
-    loggedInUser?: UserWithRelations;
+    loggedInUser?: Pick<User, 'role'>;
   }
 > = ({
   images,

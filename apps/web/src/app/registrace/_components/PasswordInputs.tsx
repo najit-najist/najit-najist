@@ -5,11 +5,13 @@ import { useFormContext } from 'react-hook-form';
 
 import { FormValues } from '../_types/FormValues';
 
-export const PasswordInputs: FC = () => {
+export const PasswordInputs: FC<{ disabled?: boolean }> = ({ disabled }) => {
   const { formState, register } = useFormContext<FormValues>();
 
   const fieldsAreDisabled =
-    formState.isSubmitting || formState.isSubmitSuccessful;
+    disabled === undefined
+      ? formState.isSubmitting || formState.isSubmitSuccessful
+      : disabled;
 
   return (
     <>

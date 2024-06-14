@@ -6,6 +6,7 @@ import { Skeleton, paperStyles } from '@najit-najist/ui';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getCachedUsers } from '@server/utils/getCachedUsers';
+import { getLoggedInUserId } from '@server/utils/server';
 import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 
@@ -109,6 +110,7 @@ async function UserGroup() {
   const { items } = await getCachedUsers({
     perPage: 4,
   });
+  const loggedInUserId = await getLoggedInUserId();
 
   return (
     <GroupRoot
@@ -126,8 +128,16 @@ async function UserGroup() {
         <Item
           key={item.id}
           createdAt={item.createdAt}
-          href={`/administrace/uzivatele/${item.id}`}
-          title={`${item.firstName} ${item.lastName}`}
+          href={
+            loggedInUserId === item.id
+              ? '/muj-ucet/profil'
+              : `/administrace/uzivatele/${item.id}`
+          }
+          title={
+            loggedInUserId === item.id
+              ? 'Já'
+              : `${item.firstName} ${item.lastName}`
+          }
         />
       ))}
     </GroupRoot>

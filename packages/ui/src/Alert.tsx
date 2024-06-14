@@ -1,4 +1,4 @@
-import { HandRaisedIcon } from '@heroicons/react/24/outline';
+import { HandRaisedIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import { cva, VariantProps } from 'class-variance-authority';
 import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from 'react';
 
@@ -13,6 +13,7 @@ export interface AlertProps
   heading: ReactNode;
   icon?: typeof HandRaisedIcon;
   iconClassName?: string;
+  onDismissClick?: () => void;
 }
 
 const alertRootStyles = cva('rounded-md p-4', {
@@ -78,6 +79,7 @@ export const Alert: FC<AlertProps> = ({
   color,
   children,
   iconClassName,
+  onDismissClick,
   ...rest
 }) => {
   return (
@@ -92,7 +94,17 @@ export const Alert: FC<AlertProps> = ({
           </div>
         ) : null}
         <div className="ml-3 w-full">
-          <h3 className={titleStyles({ color })}>{heading}</h3>
+          <div className="flex justify-between items-start">
+            <h3 className={titleStyles({ color })}>{heading}</h3>
+            {onDismissClick ? (
+              <button
+                className="text-red-500 hover:rotate-90 duration-200 flex-none"
+                onClick={onDismissClick}
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </button>
+            ) : null}
+          </div>
           {children ? (
             <div className={contentStyles({ color })}>{children}</div>
           ) : null}

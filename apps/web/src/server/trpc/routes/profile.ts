@@ -6,16 +6,13 @@ import { PasswordService } from '@server/services/Password.service';
 import { ProfileService } from '@server/services/Profile.service';
 import { UserService, UserWithRelations } from '@server/services/UserService';
 import { t } from '@server/trpc';
-import { setSessionToCookies } from '@server/utils/setSessionToCookies';
+import { passwordResetRequest } from '@server/utils/passwordResetRequest';
 import { TRPCError } from '@trpc/server';
 import omit from 'lodash/omit';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 
-import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import { privateUserOutputSchema } from '../../schemas/privateUserOutputSchema';
-import { userProfileLogInInputSchema } from '../../schemas/userProfileLogInInputSchema';
 import {
   finalizeResetPasswordSchema,
   resetPasswordSchema,
@@ -36,23 +33,42 @@ const passwordResetRoutes = t.router({
   do: t.procedure
     .input(resetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
+      let forUser: UserWithRelations;
+
       try {
-        const user = await UserService.getOneBy('email', input.email);
-
-        await ProfileService.forUser(user).resetPassword();
+        forUser = await UserService.getOneBy('email', input.email);
       } catch (error) {
-        logger.error({ input, error }, 'Request user password reset failed');
+        logger.error(
+          { input, error },
+          'User tried to reset password but no user has been found under email'
+        );
 
-        if (error instanceof EntityNotFoundError) {
-          return null;
-        }
-
-        throw error;
+        return null;
       }
 
-      logger.info(input, 'Request user password reset done');
+      if (forUser.status === UserStates.SUBSCRIBED) {
+        logger.error({ input }, 'Subscribed user cannot reset password');
+        throw new Error(
+          'Patříte mezi prvotní uživatele, kteří se přihlásili na našem prvním webu. Dokončete registraci kliknutím na link, který vám přišel s pozvánkou na náš nový web.'
+        );
+      }
 
-      return null;
+      if (
+        forUser.status !== UserStates.ACTIVE &&
+        forUser.status !== UserStates.PASSWORD_RESET
+      ) {
+        logger.error(
+          { input },
+          'User tried to reset password but its not active or in password reset mode'
+        );
+        throw new Error(
+          'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován'
+        );
+      }
+
+      const result = await passwordResetRequest(forUser);
+
+      return result;
     }),
   finalize: t.procedure
     .input(finalizeResetPasswordSchema)
@@ -91,13 +107,9 @@ export const profileRouter = t.router({
     .query(async ({ ctx }) => {
       const user = await UserService.getOneBy('id', ctx.sessionData.userId);
 
-      const newsletter = await database.query.userNewsletters.findFirst({
-        where: (schema, { eq }) => eq(schema.email, user.email),
-      });
-
       return {
         ...user,
-        newsletter: !!newsletter?.enabled,
+        newsletter: !!user.newsletter?.enabled,
       };
     }),
 
