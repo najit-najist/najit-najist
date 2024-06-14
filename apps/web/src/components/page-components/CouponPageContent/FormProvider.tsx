@@ -15,6 +15,7 @@ const defaultFormValues: FormValues = {
   reductionPrice: 0,
   name: '',
   enabled: true,
+  minimalProductCount: 0,
 };
 
 export type FormValues = z.input<typeof createCouponSchema>;
