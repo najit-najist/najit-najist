@@ -24,11 +24,6 @@ import { protectedProcedure } from '../procedures/protectedProcedure';
 import { userCartRoutes } from './profile/cart/cart';
 import { userLikedRoutes } from './profile/liked';
 
-const INVALID_CREDENTIALS_ERROR = new TRPCError({
-  code: 'BAD_REQUEST',
-  message: 'Invalid credentials',
-});
-
 const passwordResetRoutes = t.router({
   do: t.procedure
     .input(resetPasswordSchema)
@@ -46,16 +41,10 @@ const passwordResetRoutes = t.router({
         return null;
       }
 
-      if (forUser.status === UserStates.SUBSCRIBED) {
-        logger.error({ input }, 'Subscribed user cannot reset password');
-        throw new Error(
-          'Patříte mezi prvotní uživatele, kteří se přihlásili na našem prvním webu. Dokončete registraci kliknutím na link, který vám přišel s pozvánkou na náš nový web.'
-        );
-      }
-
       if (
         forUser.status !== UserStates.ACTIVE &&
-        forUser.status !== UserStates.PASSWORD_RESET
+        forUser.status !== UserStates.PASSWORD_RESET &&
+        forUser.status !== UserStates.SUBSCRIBED
       ) {
         logger.error(
           { input },
@@ -64,6 +53,10 @@ const passwordResetRoutes = t.router({
         throw new Error(
           'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován'
         );
+      }
+
+      if (forUser.status === UserStates.SUBSCRIBED) {
+        logger.warn({ input }, 'Subscribed user reset their password');
       }
 
       const result = await passwordResetRequest(forUser);

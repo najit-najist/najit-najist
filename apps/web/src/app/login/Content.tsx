@@ -7,7 +7,7 @@ import {
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { Button, ErrorMessage, Input, PasswordInput } from '@najit-najist/ui';
+import { Button, Input, PasswordInput } from '@najit-najist/ui';
 import { Alert } from '@najit-najist/ui';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import Link from 'next/link';
@@ -218,9 +218,9 @@ export const Content: FC = () => {
               </Button>
             </div>
             {errors.root?.message ? (
-              <ErrorMessage className="!mt-1.5 font-semibold block text-center">
+              <Alert color="error" heading="Chyba" className="!mt-1.5 ">
                 {errors.root?.message}
-              </ErrorMessage>
+              </Alert>
             ) : null}
           </form>
 

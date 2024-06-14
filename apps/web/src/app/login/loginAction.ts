@@ -20,6 +20,23 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
       ? await PasswordService.validate(userForInput._password, input.password)
       : false;
 
+    if (userForInput?.status === UserStates.SUBSCRIBED) {
+      ctx.addIssue({
+        code: 'custom',
+        fatal: true,
+        message:
+          'Děkujeme za Váš zájem na našem prvním webu! Při spuštění nového webu jsme Vám zaslali pozvánku na které byl odkaz pro dokončení registrace. Pokud email již nenaleznete tak otevřete odkaz "Zapomenuté heslo?" na této stránce a pokračujte dále podle instrukcí',
+        path: ['root'],
+      });
+
+      logger.warn(
+        { email: input.email },
+        'Subscribed user tried to login, but we showed message'
+      );
+
+      return;
+    }
+
     if (!userForInput || !validPassword) {
       ctx.addIssue({
         code: 'custom',
