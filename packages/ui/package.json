@@ -51,7 +51,7 @@
     "@heroicons/react": "^2.0.12",
     "class-variance-authority": "^0.7.0",
     "clsx": "^1.2.1",
-    "react-color-palette": "^7.1.0",
+    "react-color-palette": "^7.1.1",
     "html-react-parser": "^3.0.16",
     "react-day-picker": "^8.10.1",
     "date-fns": "^3.6.0",

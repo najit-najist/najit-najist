@@ -7,7 +7,7 @@ import 'keen-slider/keen-slider.min.css';
 import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
 import { headers } from 'next/headers';
 import Script from 'next/script';
-import 'react-color-palette/lib/css/styles.css';
+import 'react-color-palette/dist/css/rcp.css';
 
 import '../globals.css';
 

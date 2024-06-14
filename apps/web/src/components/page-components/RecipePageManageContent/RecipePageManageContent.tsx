@@ -135,7 +135,7 @@ export const RecipePageManageContent = async ({
           ) : (
             <TitleEdit />
           )}
-          <div className="flex grid-cols-2 gap-1">
+          <div className="flex grid-cols-2 gap-2 mt-2">
             {isEditorEnabled ? (
               <>
                 <TypeEdit types={types} />

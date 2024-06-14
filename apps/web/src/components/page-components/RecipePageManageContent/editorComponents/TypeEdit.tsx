@@ -82,7 +82,7 @@ export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
             formatter={({ title }) => title}
             items={types.items}
             disabled={formState.isSubmitting}
-            onChange={(item) => field.onChange(item?.id)}
+            onChange={(item) => field.onChange(item)}
             error={fieldState.error}
             className="min-w-[150px]"
             onAddNewItem={openModal}

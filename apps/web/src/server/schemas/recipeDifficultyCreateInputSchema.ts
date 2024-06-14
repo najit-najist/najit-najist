@@ -4,5 +4,4 @@ import { z } from 'zod';
 export const recipeDifficultyCreateInputSchema = z.object({
   name: nonEmptyStringSchema,
   color: nonEmptyStringSchema,
-  slug: slugSchema,
 });

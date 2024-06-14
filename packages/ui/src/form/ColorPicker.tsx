@@ -1,8 +1,11 @@
 'use client';
 
-import { FC } from 'react';
-import { ColorPicker as BaseColorPicker } from 'react-color-palette';
-import { Controller } from 'react-hook-form';
+import { FC, useMemo, ComponentProps, useCallback } from 'react';
+import {
+  ColorPicker as BaseColorPicker,
+  ColorService,
+} from 'react-color-palette';
+import { Controller, useController } from 'react-hook-form';
 
 import {
   FormControlWrapper,
@@ -18,6 +21,8 @@ export type ColorPickerProps = Omit<
   wrapperClassName?: string;
 };
 
+type PickerProps = ComponentProps<typeof BaseColorPicker>;
+
 export const ColorPicker: FC<ColorPickerProps> = ({
   title,
   description,
@@ -26,28 +31,36 @@ export const ColorPicker: FC<ColorPickerProps> = ({
   name,
   wrapperClassName,
 }) => {
+  const { field } = useController({
+    name,
+  });
+
+  const value = useMemo(
+    () => ColorService.convert('hex', field.value ?? '#121212'),
+    [field.value]
+  );
+  const onChange = useCallback<PickerProps['onChange']>(
+    (nextColor) => field.onChange(nextColor.hex),
+    []
+  );
+
   return (
-    <Controller
-      name={name}
-      render={({ field }) => (
-        <FormControlWrapper
-          title={title}
-          description={description}
-          error={error}
-          required={required}
-          className={wrapperClassName}
-        >
-          <div className="z-10 mt-3 w-full bg-white rounded-md">
-            <BaseColorPicker
-              height={200}
-              color={field.value ?? '#121212'}
-              onChange={(nextValue) => {
-                field.onChange(nextValue.hex);
-              }}
-            />
-          </div>
-        </FormControlWrapper>
-      )}
-    />
+    <FormControlWrapper
+      title={title}
+      description={description}
+      error={error}
+      required={required}
+      className={wrapperClassName}
+    >
+      <div className="z-10 mt-3 w-full bg-white rounded-md">
+        <BaseColorPicker
+          hideAlpha
+          hideInput
+          height={200}
+          color={value}
+          onChange={onChange}
+        />
+      </div>
+    </FormControlWrapper>
   );
 };
