@@ -3,7 +3,6 @@ import { pgTable, integer, unique } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
 import { coupons } from './coupons';
-import { productCategories } from './productCategories';
 import { products } from './products';
 
 export const couponsForProducts = pgTable(
@@ -13,7 +12,7 @@ export const couponsForProducts = pgTable(
       .references(() => coupons.id, { onDelete: 'cascade' })
       .notNull(),
     productId: integer('product_id')
-      .references(() => productCategories.id, { onDelete: 'cascade' })
+      .references(() => products.id, { onDelete: 'cascade' })
       .notNull(),
   }),
   (schema) => ({

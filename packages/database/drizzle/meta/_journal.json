@@ -127,6 +127,13 @@
       "when": 1718334844293,
       "tag": "0017_futuristic_medusa",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1718347804930,
+      "tag": "0018_slippery_landau",
+      "breakpoints": true
     }
   ]
 }
