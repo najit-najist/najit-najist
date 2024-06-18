@@ -6,7 +6,7 @@ import { PlusIcon } from '@heroicons/react/24/solid';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, ErrorMessage, Input, Select } from '@najit-najist/ui';
 import { FC, useCallback, useMemo, useState } from 'react';
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { useController, useFieldArray, useFormContext } from 'react-hook-form';
 
 import { RecipeFormData } from '../../_types';
 import { AddMetricModal } from './AddMetricModal';
@@ -15,8 +15,14 @@ const MetricSelect: FC<{
   initialMetrics: RecipeResourceMetric[];
   index: number;
 }> = ({ initialMetrics, index }) => {
+  const { field, fieldState, formState } = useController<
+    RecipeFormData,
+    `resources.${number}.metric`
+  >({
+    name: `resources.${index}.metric`,
+  });
   const [addNewItemModalOpen, setAddNewItemModalOpen] = useState(false);
-  const { data: metrics, refetch } = trpc.recipes.metrics.getMany.useQuery(
+  const { data: metrics } = trpc.recipes.metrics.getMany.useQuery(
     {},
     {
       initialData: {
@@ -40,32 +46,24 @@ const MetricSelect: FC<{
 
   return (
     <>
-      <Controller
-        name={`resources.${index}.metric`}
-        render={({
-          field: { name, onChange, value },
-          formState,
-          fieldState,
-        }) => (
-          <Select
-            name={name}
-            selected={metricsSet.get(value?.id)}
-            items={metrics.items}
-            formatter={({ name }) => name}
-            onChange={(item) => onChange(item)}
-            disabled={formState.isSubmitting}
-            error={fieldState.error}
-            className="min-w-[140px]"
-            onAddNewItem={addNewResourceMetric}
-          />
-        )}
+      <Select
+        name={field.name}
+        selected={metricsSet.get(field.value?.id)}
+        items={metrics.items}
+        formatter={({ name }) => name}
+        onChange={(item) => field.onChange(item)}
+        disabled={formState.isSubmitting}
+        error={(fieldState.error as any)?.id ?? fieldState.error}
+        className="min-w-[140px]"
+        label="Hello"
+        onAddNewItem={addNewResourceMetric}
       />
       <AddMetricModal
         onClose={() => {
           setAddNewItemModalOpen(false);
-          refetch();
         }}
         open={addNewItemModalOpen}
+        onCreated={(created) => field.onChange(created)}
       />
     </>
   );
@@ -105,7 +103,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
 
   return (
     <>
-      {formState.errors.resources ? (
+      {formState.errors.resources?.message ? (
         <ErrorMessage>
           <ExclamationCircleIcon className="w-5 h-5 inline -mt-1" />{' '}
           {formState.errors.resources?.message}
@@ -115,9 +113,9 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
         {(resources ?? []).map((item, index) => (
           <li
             key={item.id}
-            className=" gap-2 flex items-end rounded-md hover:bg-gray-50"
+            className=" gap-2 flex items-start rounded-md hover:bg-gray-50"
           >
-            <div className="bg-white aspect-square flex items-center justify-center h-[38px] border-gray-300 border rounded-md">
+            <div className="bg-white aspect-square flex items-center justify-center h-10 border-gray-300 border rounded-md mt-6">
               {index + 1}.
             </div>
             <Input
@@ -138,7 +136,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
               onClick={onRemove(index)}
               color="softRed"
               appearance="spaceless"
-              className="w-10 h-10 flex-none"
+              className="w-10 h-10 flex-none mt-6"
               disabled={formState.isSubmitting}
             >
               <TrashIcon className="w-5 h-5 m-auto" />

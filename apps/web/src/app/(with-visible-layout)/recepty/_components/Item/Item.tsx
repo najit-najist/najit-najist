@@ -108,7 +108,7 @@ export const Item: FC<
             onModel: recipes,
           }) ? (
             <Link
-              href={`${linkHref}?editor=true`}
+              href={`/administrace${linkHref}`}
               className={buttonStyles({
                 appearance: 'spaceless',
                 color: 'blue',

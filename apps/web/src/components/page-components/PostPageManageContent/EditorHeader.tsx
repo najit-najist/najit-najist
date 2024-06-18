@@ -63,7 +63,7 @@ export const EditorHeader: FC<{
   const pathname = usePathname();
   const router = useRouter();
   const isEditorEnabled = viewType === 'edit';
-  const href = `${pathname}${isEditorEnabled ? '' : '?editor=true'}`;
+  const href = `${isEditorEnabled ? '' : '/administrace'}${pathname}`;
 
   const {
     mutateAsync: deleteItem,

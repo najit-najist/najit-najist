@@ -10,10 +10,13 @@ export function createActionWithValidation<
 >(
   schema: S,
   action: (input: O) => R,
-  onError?: (
-    validationResult: z.SafeParseReturnType<I, O>,
-    input: I
-  ) => Promise<any>
+  options?: {
+    onValidationError?: (
+      validationResult: z.SafeParseReturnType<I, O>,
+      input: I
+    ) => Promise<any>;
+    onHandlerError?: (error: Error, input: O) => void | Promise<void>;
+  }
 ) {
   return async (
     input: I
@@ -21,7 +24,7 @@ export function createActionWithValidation<
     const validated = await schema.safeParseAsync(input);
 
     if (!validated.success) {
-      await Promise.resolve(onError?.(validated, input));
+      await Promise.resolve(options?.onValidationError?.(validated, input));
       const errors = zodErrorToFormErrors(validated.error.errors, true);
 
       if (errors['']) {
@@ -34,6 +37,20 @@ export function createActionWithValidation<
       };
     }
 
-    return await action(validated.data);
+    try {
+      return await action(validated.data);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        error.message !== 'NEXT_REDIRECT' &&
+        error.message !== 'NEXT_NOT_FOUND'
+      ) {
+        await Promise.resolve(
+          options?.onHandlerError?.(error as Error, validated.data)
+        );
+      }
+
+      throw error;
+    }
   };
 }

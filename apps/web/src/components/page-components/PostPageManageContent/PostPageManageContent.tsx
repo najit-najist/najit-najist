@@ -46,7 +46,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
                 ]
               : [
                   {
-                    link: '/clanky/novy',
+                    link: '/administrace/clanky/novy',
                     text: 'Nový',
                     active: true,
                   },

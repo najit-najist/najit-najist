@@ -1,4 +1,4 @@
-import { AppRouterInput } from '@custom-types/AppRouter';
+import { createRecipeAction } from './actions/createRecipeAction';
 
 export type ViewType = 'create' | 'edit' | 'view';
-export type RecipeFormData = AppRouterInput['recipes']['create'];
+export type RecipeFormData = Parameters<typeof createRecipeAction>[0];

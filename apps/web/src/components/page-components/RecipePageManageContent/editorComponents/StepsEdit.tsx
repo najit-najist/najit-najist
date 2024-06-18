@@ -72,6 +72,11 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
               disabled={formState.isSubmitting}
               type="number"
               placeholder="v minutách"
+              error={
+                (formState.errors.steps as any)?.[groupIndex]?.parts?.[
+                  groupItemIndex
+                ]?.duration
+              }
               {...register(
                 `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
                 {
@@ -81,8 +86,8 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
             />
             <Controller
               name={`steps.${groupIndex}.parts.${groupItemIndex}.content`}
-              render={({ field: { ref, ...field } }) => (
-                <LazyEditor {...field} />
+              render={({ field: { ref, ...field }, fieldState }) => (
+                <LazyEditor error={fieldState.error} {...field} />
               )}
             />
           </div>
@@ -126,7 +131,7 @@ export const StepsEdit: FC = () => {
 
   return (
     <>
-      {formState.errors.steps ? (
+      {formState.errors.steps?.message ? (
         <ErrorMessage>
           <ExclamationCircleIcon className="w-5 h-5 inline -mt-1" />{' '}
           {formState.errors.steps?.message}

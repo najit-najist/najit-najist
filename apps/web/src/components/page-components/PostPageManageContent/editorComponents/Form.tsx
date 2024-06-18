@@ -66,7 +66,7 @@ export const Form: FC<
 
         const newData = await action;
 
-        router.push(`/clanky/${newData.slug}?editor=true`);
+        router.push(`/administrace/clanky/${newData.slug}`);
       }
     },
     [viewType, createPost, editorReferences, post, router, updatePost]

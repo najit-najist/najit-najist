@@ -2,11 +2,11 @@
 
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
-import { userAddresses, users } from '@najit-najist/database/models';
+import { UserRoles, userAddresses, users } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { logger } from '@server/logger';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
-import { getLoggedInUserId } from '@server/utils/server';
+import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
@@ -28,6 +28,13 @@ export const deleteUserAction = createActionWithValidation(
       notFound();
     }
 
+    const loggedInUser = await getLoggedInUser();
+
+    if (loggedInUser.role !== UserRoles.ADMIN) {
+      logger.error('NON ADMIN - tried to delete user');
+      throw new Error('Not authorized');
+    }
+
     const pathname = `/administrace/uzivatele/${user.id}`;
     try {
       await database.transaction(async (tx) => {
@@ -35,7 +42,6 @@ export const deleteUserAction = createActionWithValidation(
         await tx.delete(users).where(eq(users.id, user.id));
       });
     } catch (error) {
-      console.log({ error });
       logger.error({ userId: user.id, error }, 'User cannot be deleted');
 
       redirect(`${pathname}?failed-to-delete`);

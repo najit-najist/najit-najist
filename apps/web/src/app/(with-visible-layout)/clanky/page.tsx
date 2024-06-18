@@ -43,7 +43,7 @@ export default async function Page({ searchParams }: Params) {
             action: UserActions.CREATE,
             onModel: postsModel,
           }) ? (
-            <Link href="/clanky/novy" className="">
+            <Link href="/administrace/clanky/novy" className="">
               <PlusIcon className="inline w-12" />
             </Link>
           ) : null}

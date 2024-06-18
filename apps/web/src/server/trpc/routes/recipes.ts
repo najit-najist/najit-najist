@@ -6,7 +6,6 @@ import {
   eq,
   getTableName,
   ilike,
-  inArray,
   or,
   sql,
 } from '@najit-najist/database/drizzle';
@@ -18,15 +17,10 @@ import {
   RecipeResourceMetric,
   RecipeStep,
   recipeImages,
-  recipeResources,
-  recipeSteps,
   recipes,
 } from '@najit-najist/database/models';
-import { isFileBase64, slugSchema } from '@najit-najist/schemas';
+import { slugSchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
-import { LibraryService } from '@server/services/LibraryService';
-import { slugifyString } from '@server/utils/slugifyString';
 import generateCursor from 'drizzle-cursor';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
@@ -34,8 +28,6 @@ import { z } from 'zod';
 import { ApplicationError } from '../../errors/ApplicationError';
 import { EntityNotFoundError } from '../../errors/EntityNotFoundError';
 import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
-import { recipeCreateInputSchema } from '../../schemas/recipeCreateInputSchema';
-import { recipeUpdateInputSchema } from '../../schemas/recipeUpdateInputSchema';
 import { t } from '../instance';
 import { onlyAdminProcedure } from '../procedures/onlyAdminProcedure';
 import { protectedProcedure } from '../procedures/protectedProcedure';
@@ -69,284 +61,6 @@ const getOneBy = async <V extends keyof Recipe>(by: V, value: Recipe[V]) => {
 };
 
 export const recipesRouter = t.router({
-  create: onlyAdminProcedure
-    .input(recipeCreateInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const library = new LibraryService(recipes);
-
-      try {
-        const recipe = await database.transaction(async (tx) => {
-          library.beginTransaction();
-
-          const { images, steps, resources, ...createPayload } = input;
-          const [created] = await tx
-            .insert(recipes)
-            .values({
-              ...createPayload,
-              categoryId: input.category.id,
-              difficultyId: input.difficulty.id,
-              slug: slugifyString(input.title),
-              createdById: ctx.sessionData.userId,
-            })
-            .returning();
-
-          await Promise.all([
-            ...images.map((encoded) =>
-              library
-                .create(created, encoded)
-                .then(({ filename }) =>
-                  tx
-                    .insert(recipeImages)
-                    .values({ file: filename, recipeId: created.id })
-                )
-            ),
-            tx.insert(recipeSteps).values(
-              steps.map((step) => ({
-                recipeId: recipe.id,
-                title: step.title,
-                parts: step.parts,
-              }))
-            ),
-            tx.insert(recipeResources).values(
-              resources.map((resource) => ({
-                recipeId: recipe.id,
-                count: resource.count,
-                metricId: resource.metric.id,
-                title: resource.title,
-                description: resource.description,
-                optional: resource.optional,
-              }))
-            ),
-          ]);
-
-          await library.commit();
-
-          return created;
-        });
-
-        // TODO: handle images
-
-        revalidatePath(`/recepty/${recipe.slug}`);
-        revalidatePath(`/recepty`);
-
-        return recipe;
-      } catch (error) {
-        library.endTransaction();
-        logger.error(error, 'Could not create recipe');
-
-        throw error;
-      }
-    }),
-
-  update: onlyAdminProcedure
-    .input(entityLinkSchema.extend({ data: recipeUpdateInputSchema }))
-    .mutation(async ({ ctx, input }) => {
-      const library = new LibraryService(recipes);
-      library.beginTransaction();
-
-      try {
-        const existing = await getOneBy('id', input.id);
-        const {
-          images,
-          category,
-          difficulty,
-          resources,
-          steps,
-          ...updatePayload
-        } = input.data;
-
-        await database.transaction(async (tx) => {
-          await tx
-            .update(recipes)
-            .set({
-              ...updatePayload,
-              updateById: ctx.sessionData.userId,
-              updatedAt: new Date(),
-              ...(category?.id ? { categoryId: category.id } : {}),
-              ...(difficulty?.id ? { difficultyId: difficulty.id } : {}),
-            })
-            .where(eq(recipes.id, existing.id));
-
-          if (steps) {
-            const stepsThatRemain = steps.filter(({ id }) => !!id);
-            const stepsThatRemainAsIds = stepsThatRemain.map(({ id }) => id);
-            const promisesToFulfill: Promise<any>[] = [];
-
-            const stepsToDelete = existing.resources.filter(
-              ({ id }) => !stepsThatRemainAsIds.includes(id)
-            );
-            if (stepsToDelete.length) {
-              promisesToFulfill.push(
-                tx.delete(recipeSteps).where(
-                  and(
-                    eq(recipeSteps.recipeId, existing.id),
-                    inArray(
-                      recipeSteps.id,
-                      stepsToDelete.map(({ id }) => id)
-                    )
-                  )
-                )
-              );
-            }
-
-            if (stepsThatRemain.length) {
-              for (const step of stepsThatRemain) {
-                promisesToFulfill.push(
-                  tx
-                    .update(recipeSteps)
-                    .set({
-                      parts: step.parts,
-                      updatedAt: new Date(),
-                      title: step.title,
-                    })
-                    .where(
-                      and(
-                        eq(recipeSteps.id, step.id!),
-                        eq(recipeSteps.recipeId, existing.id)
-                      )
-                    )
-                );
-              }
-            }
-
-            const stepsToCreate = steps.filter(({ id }) => !id);
-            if (stepsToCreate.length) {
-              promisesToFulfill.push(
-                tx.insert(recipeSteps).values(
-                  stepsToCreate.map((step) => ({
-                    ...step,
-                    recipeId: existing.id,
-                  }))
-                )
-              );
-            }
-
-            await Promise.all(promisesToFulfill);
-          }
-
-          if (resources) {
-            const resourcesThatRemain = resources.filter(({ id }) => !!id);
-            const resourcesThatRemainAsIds = resourcesThatRemain.map(
-              ({ id }) => id
-            );
-            const promisesToFulfill: Promise<any>[] = [];
-
-            const resourcesToDelete = existing.resources.filter(
-              ({ id }) => !resourcesThatRemainAsIds.includes(id)
-            );
-            if (resourcesToDelete.length) {
-              promisesToFulfill.push(
-                tx.delete(recipeResources).where(
-                  and(
-                    eq(recipeSteps.recipeId, existing.id),
-                    inArray(
-                      recipeResources.id,
-                      resourcesToDelete.map(({ id }) => id)
-                    )
-                  )
-                )
-              );
-            }
-
-            if (resourcesThatRemain.length) {
-              for (const resource of resourcesThatRemain) {
-                promisesToFulfill.push(
-                  tx
-                    .update(recipeResources)
-                    .set({
-                      count: resource.count,
-                      description: resource.description,
-                      updatedAt: new Date(),
-                      metricId: resource.metric.id,
-                      title: resource.title,
-                      optional: resource.optional,
-                    })
-                    .where(
-                      and(
-                        eq(recipeResources.id, resource.id!),
-                        eq(recipeResources.recipeId, existing.id)
-                      )
-                    )
-                );
-              }
-            }
-
-            const resourcesToCreate = resources.filter(({ id }) => !id);
-            if (resourcesToCreate.length) {
-              promisesToFulfill.push(
-                tx.insert(recipeResources).values(
-                  resourcesToCreate.map((resource) => ({
-                    ...resource,
-                    metricId: resource.metric.id,
-                    recipeId: existing.id,
-                  }))
-                )
-              );
-            }
-
-            await Promise.all(promisesToFulfill);
-          }
-
-          if (images) {
-            const filesToDelete = existing.images.filter(
-              ({ file }) => !images.includes(file)
-            );
-
-            const promisesToFullfill: Promise<any>[] = [];
-
-            if (filesToDelete.length) {
-              promisesToFullfill.push(
-                tx.delete(recipeImages).where(
-                  inArray(
-                    recipeImages.id,
-                    filesToDelete.map(({ id }) => id)
-                  )
-                ),
-                ...filesToDelete.map(({ file }) =>
-                  library.delete(existing, file)
-                )
-              );
-            }
-
-            promisesToFullfill.push(
-              ...images
-                .filter((newOrExistingImage) =>
-                  isFileBase64(newOrExistingImage)
-                )
-                .map((newImage) =>
-                  library
-                    .create(existing, newImage)
-                    .then(({ filename }) =>
-                      tx
-                        .insert(recipeImages)
-                        .values({ file: filename, recipeId: existing.id })
-                    )
-                )
-            );
-
-            await Promise.all(promisesToFullfill);
-          }
-        });
-
-        revalidatePath(`/recepty/${existing.slug}`);
-        revalidatePath(`/recepty`);
-
-        return existing;
-      } catch (error) {
-        library.endTransaction();
-
-        if (error instanceof EntityNotFoundError) {
-          throw new ApplicationError({
-            code: ErrorCodes.ENTITY_MISSING,
-            message: `Recept pod daným id '${input.id}' nebyl nalezen`,
-            origin: 'recipes',
-          });
-        }
-
-        throw error;
-      }
-    }),
-
   delete: onlyAdminProcedure
     .input(entityLinkSchema)
     .mutation(async ({ input, ctx }) => {

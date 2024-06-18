@@ -159,7 +159,7 @@ async function RecipesGroup() {
       }}
       add={{
         title: 'Přidat recept',
-        url: '/recepty/novy',
+        url: '/administrace/recepty/novy',
       }}
     >
       {items.map((item) => (
@@ -188,7 +188,7 @@ async function PostsGroup() {
       }}
       add={{
         title: 'Přidat článek',
-        url: '/clanky/novy',
+        url: '/administrace/clanky/novy',
       }}
     >
       {items.map((item) => (
@@ -217,7 +217,7 @@ async function ProductsGroup() {
       }}
       add={{
         title: 'Přidat produkt',
-        url: '/produkty/novy',
+        url: '/administrace/produkty/novy',
       }}
     >
       {items.map((item) => (

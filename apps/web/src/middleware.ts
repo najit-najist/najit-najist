@@ -1,20 +1,10 @@
 import { LOGIN_THEN_REDIRECT_TO_PARAMETER } from '@constants';
-import {
-  User,
-  UserRoles,
-  coupons,
-  posts,
-  products,
-  recipes,
-  users,
-} from '@najit-najist/database/models';
-import { UserActions, canUser } from '@server/utils/canUser';
+import { User, UserRoles } from '@najit-najist/database/models';
 import { getEdgeSession } from '@server/utils/edge';
-import type { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import { NextRequest, NextResponse } from 'next/server';
 
 const loggedInPathsRegex = new RegExp(
-  `^\/((administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*|clanky\/novy)$`,
+  `^\/(administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*$`,
   'g'
 );
 
@@ -22,14 +12,6 @@ const unauthorizedOnlyPaths = new RegExp(
   `\/(login|registrace|zapomenute-heslo|zmena-emailu)[^\n]*$`,
   'g'
 );
-
-const routesToModels: [RegExp, PgTableWithColumns<any>][] = [
-  [/\/uzivatele/, users],
-  [/\/recepty/, recipes],
-  [/\/produkty/, products],
-  [/\/clanky/, posts],
-  [/\/kupony/, coupons],
-];
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next();
@@ -106,61 +88,14 @@ export async function middleware(request: NextRequest) {
     }
 
     if (currentUser && isLoggedInOnlyPath) {
-      const { pathname: requestPathname, searchParams: requestSearchParams } =
-        requestUrl;
+      const { pathname: requestPathname } = requestUrl;
       const isUnderAdministration = requestPathname.includes('/administrace');
-      const createNewPathnameChunk = '/novy';
-      const editorParamName = 'editor';
 
       if (isUnderAdministration && currentUser.role !== UserRoles.ADMIN) {
-        // TODO: create new page that shows 401
-        return toPathname('/muj-ucet/profil');
-      }
+        const url = requestUrl.clone();
+        url.pathname = '/unauthorized';
 
-      const modelForRoute = routesToModels.find(([matcher]) =>
-        matcher.test(requestPathname)
-      );
-
-      // Lock create new
-      if (requestPathname.includes(createNewPathnameChunk)) {
-        if (!modelForRoute) {
-          throw new Error(
-            `Not implemented model rule for create new item ${createNewPathnameChunk} ${requestPathname}`
-          );
-        }
-
-        if (
-          !canUser(currentUser, {
-            action: UserActions.CREATE,
-            onModel: modelForRoute[1],
-          })
-        ) {
-          // TODO: create new page that shows 401
-          return toPathname(
-            requestPathname.replace(createNewPathnameChunk, '')
-          );
-        }
-      }
-
-      // log editor
-      if (requestSearchParams.has(editorParamName)) {
-        if (!modelForRoute?.[1]) {
-          throw new Error('Not implemented model rule for update new item');
-        }
-
-        if (
-          !canUser(currentUser, {
-            action: UserActions.UPDATE,
-            onModel: modelForRoute[1],
-          })
-        ) {
-          const newUrl = requestUrl.clone();
-
-          // Just delete that param and editor wont activate :)
-          newUrl.searchParams.delete(editorParamName);
-
-          return NextResponse.redirect(newUrl);
-        }
+        return NextResponse.rewrite(url);
       }
     }
   }

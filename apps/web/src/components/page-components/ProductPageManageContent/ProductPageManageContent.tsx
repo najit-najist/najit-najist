@@ -89,7 +89,7 @@ export const ProductPageManageContent: FC<
                 ].filter(Boolean) as BreadcrumbItem[])
               : [
                   {
-                    link: '/produkty/novy',
+                    link: '/administrace/produkty/novy',
                     text: 'Nový',
                     active: true,
                   },

@@ -79,7 +79,7 @@ export const RecipePageManageContent = async ({
                 ]
               : [
                   {
-                    link: '/recepty/novy',
+                    link: '/administrace/recepty/novy',
                     text: 'Nový',
                     active: true,
                   },

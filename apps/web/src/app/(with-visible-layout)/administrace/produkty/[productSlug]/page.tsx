@@ -63,7 +63,7 @@ export async function generateMetadata({ params }: Params) {
     });
 
     return {
-      title: recipe.name,
+      title: `Upravení ${recipe.name}`,
     };
   } catch {
     return {
@@ -89,7 +89,7 @@ export default async function Page({ params }: Params) {
           onModel: products,
         })
       }
-      viewType={'view'}
+      viewType={'edit'}
       product={product}
     />
   );

@@ -56,12 +56,14 @@ export const metricsRouter = t.router({
 
   create: onlyAdminProcedure
     .input(recipeResourceMetricCreateInputSchema)
-    .mutation(async ({ input, ctx }) => {
+    .mutation(async ({ input }) => {
       try {
-        return await database
+        const result = await database
           .insert(recipeResourceMetrics)
           .values({ name: input.name })
           .returning();
+
+        return result[0]!;
       } catch (error) {
         if (error instanceof DrizzleError) {
           logger.error(error, 'Failed to create recipe resource metric');

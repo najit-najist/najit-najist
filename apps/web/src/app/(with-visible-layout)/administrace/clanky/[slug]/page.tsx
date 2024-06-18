@@ -21,7 +21,7 @@ export async function generateMetadata({
     .catch(() => {});
 
   return {
-    title: post?.title,
+    title: `Upravení ${post?.title}`,
   };
 }
 
@@ -61,7 +61,7 @@ export default async function PostUnderPage({
   return (
     <PostPageManageContent
       isEditorHeaderShown={canEdit}
-      viewType={'view'}
+      viewType={'edit'}
       post={post}
     />
   );

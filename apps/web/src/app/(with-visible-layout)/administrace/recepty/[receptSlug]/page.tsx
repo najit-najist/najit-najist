@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: Params) {
     const recipe = await trpc.recipes.getOne({ slug: receptSlug });
 
     return {
-      title: recipe.title,
+      title: `Upravení ${recipe.title}`,
     };
   } catch {
     return {};
@@ -44,7 +44,7 @@ export default async function Page({ params }: Params) {
           onModel: recipes,
         })
       }
-      viewType={'view'}
+      viewType={'edit'}
       recipe={recipe}
     />
   );

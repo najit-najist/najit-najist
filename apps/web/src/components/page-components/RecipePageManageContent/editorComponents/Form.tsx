@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@najit-najist/ui';
@@ -11,6 +10,8 @@ import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { RecipeFormData } from '../_types';
+import { createRecipeAction } from '../actions/createRecipeAction';
+import { updateRecipeAction } from '../actions/updateRecipeAction';
 
 export const Form: FC<
   PropsWithChildren<{
@@ -32,13 +33,11 @@ export const Form: FC<
     ),
   });
   const { handleSubmit } = formMethods;
-  const { mutateAsync: updateRecipe } = trpc.recipes.update.useMutation();
-  const { mutateAsync: createRecipe } = trpc.recipes.create.useMutation();
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
       if (viewType === 'edit') {
-        const action = updateRecipe({
+        const action = updateRecipeAction({
           id: recipe!.id,
           data: {
             title: values.title,
@@ -58,11 +57,10 @@ export const Form: FC<
           error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
         });
 
-        const result = await action;
-
-        router.push(`/recepty/${result.slug}?editor=true`);
+        await action;
+        router.refresh();
       } else if (viewType === 'create') {
-        const action = createRecipe({
+        const action = createRecipeAction({
           title: values.title,
           description: values.description,
           resources: values.resources,
@@ -79,12 +77,10 @@ export const Form: FC<
           error: (error) => <b>Recept nemohl být vytvořen. {error.message}</b>,
         });
 
-        const result = await action;
-
-        router.push(`/recepty/${result.slug}`);
+        await action;
       }
     },
-    [createRecipe, router, updateRecipe, viewType, recipe]
+    [router, viewType, recipe]
   );
 
   return (

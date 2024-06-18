@@ -3,26 +3,40 @@ import { ErrorCodes } from '@custom-types/ErrorCodes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { Button, Input, Modal, ModalProps } from '@najit-najist/ui';
-import { recipeResourceCreateInputSchema } from '@server/schemas/recipeResourceCreateInputSchema';
+import { recipeResourceMetricCreateInputSchema } from '@server/schemas/recipeResourceMetricCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-export const AddMetricModal: FC<Pick<ModalProps, 'open' | 'onClose'>> = ({
-  open,
-  onClose,
-}) => {
+export const AddMetricModal: FC<
+  Pick<ModalProps, 'open' | 'onClose'> & {
+    onCreated?: (metric: RecipeResourceMetric) => void;
+  }
+> = ({ open, onClose, onCreated }) => {
   const { mutateAsync: create } = trpc.recipes.metrics.create.useMutation();
   const { register, formState, handleSubmit, setError, reset } = useForm<
     Pick<RecipeResourceMetric, 'name'>
   >({
     defaultValues: { name: '' },
-    resolver: zodResolver(recipeResourceCreateInputSchema),
+    resolver: zodResolver(recipeResourceMetricCreateInputSchema),
   });
+
+  const utils = trpc.useUtils();
 
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async (input) => {
     try {
-      await create(input);
+      const result = await create(input);
+      const currentQueryData = utils.recipes.metrics.getMany.getData();
+      utils.recipes.metrics.getMany.setData(
+        {},
+        {
+          nextToken: '',
+          total: 1,
+          ...currentQueryData,
+          items: [...(currentQueryData?.items ?? []), result],
+        }
+      );
+      onCreated?.(result);
       onClose(false);
       reset();
     } catch (error) {

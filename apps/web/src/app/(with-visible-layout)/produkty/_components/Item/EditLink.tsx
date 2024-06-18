@@ -39,7 +39,7 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
       trigger={
         <Link
           // @ts-ignore
-          href={`${href}?editor=true`}
+          href={`/administrace${href}`}
           className={buttonStyles({
             appearance: 'spaceless',
             color: 'blue',

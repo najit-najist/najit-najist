@@ -72,7 +72,7 @@ export default async function RecipesPage({
           }) ? (
             <Tooltip
               trigger={
-                <Link href="/produkty/novy" className="">
+                <Link href="/administrace/produkty/novy" className="">
                   <PlusIcon className="inline w-12" />
                 </Link>
               }

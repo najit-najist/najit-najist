@@ -121,7 +121,7 @@ const AddNewButton: FC = async () => {
       action: UserActions.CREATE,
       onModel: recipesModel,
     }) ? (
-    <Link href="/recepty/novy" className="">
+    <Link href="/administrace/recepty/novy" className="">
       <PlusIcon className="inline w-12" />
     </Link>
   ) : null;
