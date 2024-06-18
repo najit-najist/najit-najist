@@ -1,18 +1,18 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { Recipe } from '@najit-najist/database/models';
 import { Button, buttonStyles } from '@najit-najist/ui';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
-import { FC } from 'react';
+import { usePathname } from 'next/navigation';
+import { FC, useTransition } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { ViewType } from './_types';
+import { deleteRecipeAction } from './actions/deleteRecipeAction';
 
-const SubmitButton: FC = () => {
+const SubmitButton: FC<{ disabled?: boolean }> = ({ disabled }) => {
   const { formState } = useFormContext();
 
   return (
@@ -21,6 +21,7 @@ const SubmitButton: FC = () => {
         className="ml-auto"
         type="submit"
         isLoading={formState.isSubmitting}
+        disabled={disabled}
       >
         Uložit
       </Button>
@@ -33,19 +34,9 @@ export const EditorHeader: FC<{
   recipe?: Pick<Recipe, 'id' | 'slug'>;
 }> = ({ viewType, recipe }) => {
   const pathname = usePathname();
-  const router = useRouter();
   const isEditorEnabled = viewType === 'edit';
   const href = `${isEditorEnabled ? '' : '/administrace'}${pathname}`;
-
-  const {
-    mutateAsync: deleteItem,
-    isLoading: isRemoving,
-    isSuccess: isRemoved,
-  } = trpc.recipes.delete.useMutation();
-
-  const onLinkClick = () => {
-    router.refresh();
-  };
+  const [isDeleting, startDeleting] = useTransition();
 
   const onDeleteClick = async () => {
     if (!recipe) {
@@ -53,9 +44,9 @@ export const EditorHeader: FC<{
     }
 
     if (confirm('Opravdu smazat recept?')) {
-      await deleteItem(recipe);
-
-      router.push('/recepty');
+      startDeleting(async () => {
+        await deleteRecipeAction(recipe);
+      });
     }
   };
 
@@ -64,8 +55,7 @@ export const EditorHeader: FC<{
       <div className="container mx-auto my-2 flex">
         {viewType !== 'create' ? (
           <Link
-            href={href as any}
-            onClick={onLinkClick}
+            href={href}
             className={buttonStyles({
               color: isEditorEnabled ? 'subtleRed' : 'normal',
               asLink: true,
@@ -79,18 +69,18 @@ export const EditorHeader: FC<{
           </Link>
         ) : null}
         <div className="ml-auto flex gap-4">
-          {isEditorEnabled || viewType === 'create' ? <SubmitButton /> : null}
+          {isEditorEnabled || viewType === 'create' ? (
+            <SubmitButton disabled={isDeleting} />
+          ) : null}
           {viewType === 'edit' ? (
             <Button
               appearance="spaceless"
               color="red"
               className="ml-3 text-white h-full aspect-square"
-              isLoading={isRemoving || isRemoved}
+              isLoading={isDeleting}
               onClick={onDeleteClick}
             >
-              {!(isRemoving || isRemoved) ? (
-                <TrashIcon className="w-5" />
-              ) : null}
+              {!isDeleting ? <TrashIcon className="w-5" /> : null}
             </Button>
           ) : null}
         </div>

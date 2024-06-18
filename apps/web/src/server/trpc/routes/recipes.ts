@@ -61,19 +61,6 @@ const getOneBy = async <V extends keyof Recipe>(by: V, value: Recipe[V]) => {
 };
 
 export const recipesRouter = t.router({
-  delete: onlyAdminProcedure
-    .input(entityLinkSchema)
-    .mutation(async ({ input, ctx }) => {
-      const existing = await getOneBy('id', input.id);
-
-      await database.delete(recipes).where(eq(recipes.id, existing.id));
-
-      revalidatePath(`/recepty/${existing.slug}`);
-      revalidatePath(`/recepty`);
-
-      return;
-    }),
-
   getMany: protectedProcedure
     .input(
       defaultGetManySchema
