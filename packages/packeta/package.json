@@ -37,7 +37,7 @@
     "soap": "^1.0.2"
   },
   "devDependencies": {
-    "@najit-najist/tsconfig": "*",
+    "@najit-najist/tsconfig": "workspace:*",
     "@swc/core": "^1.3.96",
     "@types/node": "^18.11.3",
     "typescript": "^5.2.2"

@@ -13,8 +13,8 @@
     "lint": "eslint *.ts*"
   },
   "devDependencies": {
-    "@najit-najist/eslint-config-custom": "*",
-    "@najit-najist/tsconfig": "*",
+    "@najit-najist/eslint-config-custom": "workspace:*",
+    "@najit-najist/tsconfig": "workspace:*",
     "@tailwindcss/typography": "^0.5.10",
     "@tailwindcss/forms": "^0.5.3",
     "tailwindcss": "^3.2.4",

@@ -136,7 +136,11 @@ export const Content: FC = () => {
           </Alert>
         ) : null}
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+          <form
+            autoComplete="on"
+            className="space-y-6"
+            onSubmit={handleSubmit(onSubmit)}
+          >
             <div>
               <label
                 htmlFor="email"

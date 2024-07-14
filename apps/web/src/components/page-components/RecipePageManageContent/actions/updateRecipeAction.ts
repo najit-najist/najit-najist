@@ -75,123 +75,34 @@ export const updateRecipeAction = createActionWithValidation(
           .where(eq(recipes.id, existing.id));
 
         if (steps) {
-          const stepsThatRemain = steps.filter(({ id }) => !!id);
-          const stepsThatRemainAsIds = stepsThatRemain.map(({ id }) => id);
-          const promisesToFulfill: Promise<any>[] = [];
+          await tx
+            .delete(recipeSteps)
+            .where(eq(recipeSteps.recipeId, existing.id));
 
-          const stepsToDelete = existing.resources.filter(
-            ({ id }) => !stepsThatRemainAsIds.includes(id)
-          );
-          if (stepsToDelete.length) {
-            promisesToFulfill.push(
-              tx.delete(recipeSteps).where(
-                and(
-                  eq(recipeSteps.recipeId, existing.id),
-                  inArray(
-                    recipeSteps.id,
-                    stepsToDelete.map(({ id }) => id)
-                  )
-                )
-              )
+          if (steps.length) {
+            await tx.insert(recipeSteps).values(
+              steps.map((step) => ({
+                ...step,
+                recipeId: existing.id,
+              }))
             );
           }
-
-          if (stepsThatRemain.length) {
-            for (const step of stepsThatRemain) {
-              promisesToFulfill.push(
-                tx
-                  .update(recipeSteps)
-                  .set({
-                    parts: step.parts,
-                    updatedAt: new Date(),
-                    title: step.title,
-                  })
-                  .where(
-                    and(
-                      eq(recipeSteps.id, step.id!),
-                      eq(recipeSteps.recipeId, existing.id)
-                    )
-                  )
-              );
-            }
-          }
-
-          const stepsToCreate = steps.filter(({ id }) => !id);
-          if (stepsToCreate.length) {
-            promisesToFulfill.push(
-              tx.insert(recipeSteps).values(
-                stepsToCreate.map((step) => ({
-                  ...step,
-                  recipeId: existing.id,
-                }))
-              )
-            );
-          }
-
-          await Promise.all(promisesToFulfill);
         }
 
         if (resources) {
-          const resourcesThatRemain = resources.filter(({ id }) => !!id);
-          const resourcesThatRemainAsIds = resourcesThatRemain.map(
-            ({ id }) => id
-          );
-          const promisesToFulfill: Promise<any>[] = [];
+          await tx
+            .delete(recipeResources)
+            .where(eq(recipeResources.recipeId, existing.id));
 
-          const resourcesToDelete = existing.resources.filter(
-            ({ id }) => !resourcesThatRemainAsIds.includes(id)
-          );
-          if (resourcesToDelete.length) {
-            promisesToFulfill.push(
-              tx.delete(recipeResources).where(
-                and(
-                  eq(recipeSteps.recipeId, existing.id),
-                  inArray(
-                    recipeResources.id,
-                    resourcesToDelete.map(({ id }) => id)
-                  )
-                )
-              )
+          if (resources.length) {
+            await tx.insert(recipeResources).values(
+              resources.map((resource) => ({
+                ...resource,
+                metricId: resource.metric.id,
+                recipeId: existing.id,
+              }))
             );
           }
-
-          if (resourcesThatRemain.length) {
-            for (const resource of resourcesThatRemain) {
-              promisesToFulfill.push(
-                tx
-                  .update(recipeResources)
-                  .set({
-                    count: resource.count,
-                    description: resource.description,
-                    updatedAt: new Date(),
-                    metricId: resource.metric.id,
-                    title: resource.title,
-                    optional: resource.optional,
-                  })
-                  .where(
-                    and(
-                      eq(recipeResources.id, resource.id!),
-                      eq(recipeResources.recipeId, existing.id)
-                    )
-                  )
-              );
-            }
-          }
-
-          const resourcesToCreate = resources.filter(({ id }) => !id);
-          if (resourcesToCreate.length) {
-            promisesToFulfill.push(
-              tx.insert(recipeResources).values(
-                resourcesToCreate.map((resource) => ({
-                  ...resource,
-                  metricId: resource.metric.id,
-                  recipeId: existing.id,
-                }))
-              )
-            );
-          }
-
-          await Promise.all(promisesToFulfill);
         }
 
         if (images) {

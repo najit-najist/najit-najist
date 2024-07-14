@@ -30,8 +30,8 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@najit-najist/database": "*",
-    "@najit-najist/packeta": "*",
+    "@najit-najist/database": "workspace:*",
+    "@najit-najist/packeta": "workspace:*",
     "zod": "^3.22.4",
     "js-base64": "^3.7.7",
     "dayjs": "^1.11.10",
@@ -40,6 +40,6 @@
   "devDependencies": {
     "vitest": "^0.24.5",
     "tsc-alias": "^1.8.7",
-    "@najit-najist/tsconfig": "*"
+    "@najit-najist/tsconfig": "workspace:*"
   }
 }
