@@ -66,20 +66,29 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
           message: 'Váš učet ještě není aktivován, dokončete registraci',
           path: ['root'],
         });
-      } else if (
-        userForInput.status === UserStates.BANNED ||
-        userForInput.status === UserStates.DEACTIVATED
-      ) {
+      } else if (userForInput.status === UserStates.BANNED) {
         logger.warn(
           { email: input.email, status: userForInput.status },
-          'User banned or deactivated tried to log in'
+          'User banned tried to log in'
         );
 
         ctx.addIssue({
           code: 'custom',
           fatal: true,
           message:
-            'Váš účet je deaktivován nebo byl zablokován. Pokud si myslíte, že se jedná o chybu tak nás neváhejte kontaktovat',
+            'Váš účet byl zablokován. Pokud si myslíte, že se jedná o chybu tak nás neváhejte kontaktovat',
+          path: ['root'],
+        });
+      } else if (userForInput.status === UserStates.DEACTIVATED) {
+        logger.warn(
+          { email: input.email, status: userForInput.status },
+          'User deactivated tried to log in'
+        );
+
+        ctx.addIssue({
+          code: 'custom',
+          fatal: true,
+          message: 'Účet pod uvedeným emailem již nevedeme.',
           path: ['root'],
         });
       }
