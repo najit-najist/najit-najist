@@ -26,7 +26,7 @@
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
     "build": "pnpm build:package && pnpm build:package:cjs && pnpm build:types",
     "build:package": "swc ./src -d dist --strip-leading-paths ",
-    "build:package:cjs": "swc ./src -d dist/cjs --config-file commonjs.swcrc",
+    "build:package:cjs": "swc ./src -d dist/cjs --strip-leading-paths --config-file commonjs.swcrc",
     "build:types": "tsc",
     "dev": "pnpm run --filter=@najit-najist/packeta \"/^dev:.*/\"",
     "dev:package": "pnpm build:package --watch",
