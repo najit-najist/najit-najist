@@ -1,4 +1,3 @@
-import { EntityLink } from '@najit-najist/schemas';
 import { getTableName } from 'drizzle-orm';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 
@@ -14,7 +13,7 @@ export type GetFileUrlOptions = {
 // Just a copy from api
 export const getFileUrl = <M extends PgTableWithColumns<any>>(
   model: M,
-  ownerId: EntityLink['id'],
+  ownerId: string | number,
   filename: string,
   options?: GetFileUrlOptions
 ) => {

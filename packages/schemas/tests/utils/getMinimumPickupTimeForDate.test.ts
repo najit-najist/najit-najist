@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { dayjs } from '../../src/internals/dates';
+import { Dayjs, dayjs } from '../../src/internals/dates';
 import { getMinimumPickupTimeForDate } from '../../src/utils/getMinimumPickupTimeForDate';
 
 vi.useFakeTimers();
 
-const extractTimeFromDate = (date: Date | null) =>
+const extractTimeFromDate = (date: Date | Dayjs | null) =>
   date ? dayjs(date).format('HH:mm') : null;
 
 describe('timeSchema', () => {

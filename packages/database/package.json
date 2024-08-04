@@ -25,34 +25,34 @@
     "dist"
   ],
   "scripts": {
+    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
+    "build": "pnpm build:package && pnpm build:types && pnpm build:types:aliases",
+    "build:package": "swc ./src -d dist --strip-leading-paths",
+    "build:types": "tsc",
+    "build:types:aliases": "tsc-alias",
     "dev": "pnpm run --filter=@najit-najist/database \"/^dev:.*/\"",
     "dev:package": "pnpm build:package --watch",
     "dev:package:types": "pnpm build:types --watch",
     "dev:package:types:aliases": "pnpm build:types:aliases --watch",
-    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
-    "build": "pnpm build:package && pnpm build:types && pnpm build:types:aliases",
-    "build:package": "swc ./src -d dist",
-    "build:types": "tsc",
-    "build:types:aliases": "tsc-alias",
+    "migrate": "pnpm run migration:create && pnpm run migration:migrate",
     "migration:create": "drizzle-kit generate",
     "migration:migrate": "node ./scripts/migrate.js",
-    "migrate": "pnpm run migration:create && pnpm run migration:migrate",
-    "test": "vitest",
     "start:studio": "drizzle-kit studio",
+    "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@najit-najist/packeta": "workspace:*",
-    "drizzle-orm": "^0.30.10",
-    "better-sqlite3": "^9.4.3",
-    "pg": "^8.11.3"
+    "better-sqlite3": "^11.1.2",
+    "drizzle-orm": "^0.32.1",
+    "pg": "^8.12.0"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",
-    "drizzle-kit": "^0.21.1",
-    "@types/pg": "^8.11.2",
-    "tsc-alias": "^1.8.7",
-    "@types/better-sqlite3": "^7.6.9",
-    "@types/node": "^18.11.3"
+    "@types/better-sqlite3": "^7.6.11",
+    "@types/node": "^18.19.42",
+    "@types/pg": "^8.11.6",
+    "drizzle-kit": "^0.23.0",
+    "tsc-alias": "^1.8.10"
   }
 }

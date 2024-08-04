@@ -1,51 +1,51 @@
 {
   "name": "@najit-najist/email-templates",
   "version": "0.0.0",
+  "license": "MIT",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "module": "dist/index.js",
   "exports": {
     "./*": "./*",
     "./package.json": "./package.json",
     ".": {
-        "import": "./dist/index.js",
-        "require": "./dist/index.cjs",
-        "types": "./dist/index.d.ts"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs",
+      "types": "./dist/index.d.ts"
     }
   },
-  "license": "MIT",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
+    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
+    "build": "pnpm build:package && pnpm build:types",
+    "build:package": "swc ./src -d dist --strip-leading-paths ",
+    "build:types": "tsc",
     "dev": "pnpm run --filter=@najit-najist/email-templates \"/^dev:.*/\"",
     "dev:package": "pnpm build:package --watch",
     "dev:package:types": "pnpm build:types --watch",
-    "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
-    "build": "pnpm build:package && pnpm build:types",
-    "build:package": "swc ./src -d dist",
-    "build:types": "tsc",
     "dev:preview": "npx email dev --dir=src"
   },
   "dependencies": {
-    "react": "18.2",
-    "react-dom": "18.2",
-    "clsx": "^1.1.1",
-    "dayjs": "^1.11.10",
-    "react-email" : "^2.1.4",
-    "@najit-najist/tailwind-plugin": "workspace:*",
-    "@najit-najist/ui": "workspace:*",
+    "@heroicons/react": "^2.1.5",
     "@najit-najist/database": "workspace:*",
     "@najit-najist/schemas": "workspace:*",
-    "@react-email/render": "^0.0.15",
-    "@react-email/components": "^0.0.19",
-    "@react-email/tailwind": "^0.0.18",
-    "@react-email/img": "^0.0.8",
-    "@heroicons/react": "^2.0.12"
+    "@najit-najist/tailwind-plugin": "workspace:*",
+    "@najit-najist/ui": "workspace:*",
+    "@react-email/components": "^0.0.22",
+    "@react-email/img": "^0.0.9",
+    "@react-email/render": "^0.0.17",
+    "@react-email/tailwind": "^0.0.19",
+    "clsx": "^2.1.1",
+    "dayjs": "^1.11.12",
+    "react": "18.2",
+    "react-dom": "18.2",
+    "react-email": "^2.1.6"
   },
   "devDependencies": {
-    "@types/react": "^18.3.1",
-    "@types/react-dom": "^18.3.0",
     "@najit-najist/tsconfig": "workspace:*",
-    "@swc/core": "^1.3.96",
-    "typescript": "^5.2.2"
+    "@swc/core": "^1.7.2",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "typescript": "^5.5.4"
   }
 }

@@ -1,5 +1,5 @@
 import { HandRaisedIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva, cx, VariantProps } from 'class-variance-authority';
 import { DetailedHTMLProps, FC, HTMLAttributes, ReactNode } from 'react';
 
 type AlertRootVariantProps = VariantProps<typeof alertRootStyles>;
@@ -24,10 +24,37 @@ const alertRootStyles = cva('rounded-md p-4', {
       warning: 'bg-yellow-50',
       success: 'bg-green-50',
     },
+    outlined: {
+      true: cx('border'),
+      false: '',
+    },
   },
   defaultVariants: {
     color: 'default',
+    outlined: false,
   },
+  compoundVariants: [
+    {
+      color: 'default',
+      outlined: true,
+      className: 'border-blue-400',
+    },
+    {
+      color: 'error',
+      outlined: true,
+      className: 'border-red-400',
+    },
+    {
+      color: 'warning',
+      outlined: true,
+      className: 'border-yellow-400',
+    },
+    {
+      color: 'success',
+      outlined: true,
+      className: 'border-gren-400',
+    },
+  ],
 });
 
 const iconStyles = cva('h-5 w-5 -mt-[1px]', {
@@ -80,10 +107,11 @@ export const Alert: FC<AlertProps> = ({
   children,
   iconClassName,
   onDismissClick,
+  outlined,
   ...rest
 }) => {
   return (
-    <div className={alertRootStyles({ className, color })} {...rest}>
+    <div className={alertRootStyles({ className, color, outlined })} {...rest}>
       <div className="flex">
         {IconComponent ? (
           <div className="flex-shrink-0">

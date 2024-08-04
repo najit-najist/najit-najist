@@ -15,9 +15,9 @@
   "devDependencies": {
     "@najit-najist/eslint-config-custom": "workspace:*",
     "@najit-najist/tsconfig": "workspace:*",
-    "@tailwindcss/typography": "^0.5.10",
-    "@tailwindcss/forms": "^0.5.3",
-    "tailwindcss": "^3.2.4",
+    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/typography": "^0.5.13",
+    "tailwindcss": "^3.4.7",
     "tailwindcss-animate": "1.0.6"
   },
   "peerDependencies": {
