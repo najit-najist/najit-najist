@@ -25,17 +25,17 @@ RUN apk add --no-cache libc6-compat
 
 WORKDIR /workspace-install
 
-COPY pnpm-lock.yaml pnpm-lock.yaml 
-COPY pnpm-workspace.yaml pnpm-workspace.yaml 
+COPY pnpm-lock.yaml pnpm-lock.yaml
+COPY pnpm-workspace.yaml pnpm-workspace.yaml
 
 RUN --mount=type=bind,target=/docker-context \
     rsync -amv --delete \
-          --exclude='node_modules' \
-          --exclude='*/node_modules' \
-          --include='package.json' \
-          --include='*/package.json' \
-          --include='*/' --exclude='*' \
-          /docker-context/ /workspace-install/;
+    --exclude='node_modules' \
+    --exclude='*/node_modules' \
+    --include='package.json' \
+    --include='*/package.json' \
+    --include='*/' --exclude='*' \
+    /docker-context/ /workspace-install/;
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
@@ -86,15 +86,15 @@ ENV NODE_ENV production
 RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nextjs
 
 COPY --from=builder /workspace-builder/package.json \
-                    /workspace-builder/pnpm-lock.yaml \
-                    /workspace-builder/pnpm-workspace.yaml \
-                    ./
+    /workspace-builder/pnpm-lock.yaml \
+    /workspace-builder/pnpm-workspace.yaml \
+    ./
 
 COPY --from=builder /workspace-builder/apps/web/next.config.mjs \
-                    /workspace-builder/apps/web/package.json \
-                    /workspace-builder/apps/web/next-env.d.ts \
-                    /workspace-builder/apps/web/src/ \
-                    ./apps/web/
+    /workspace-builder/apps/web/package.json \
+    /workspace-builder/apps/web/next-env.d.ts \
+    /workspace-builder/apps/web/src/ \
+    ./apps/web/
 
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/.next ./apps/web/.next
 COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/public ./apps/web/public
@@ -119,5 +119,7 @@ EXPOSE 4000
 ENV HOSTNAME "0.0.0.0"
 
 WORKDIR /app
+
+ENV NODE_ENV=production
 
 CMD ["npm", "run", "start-production"]
