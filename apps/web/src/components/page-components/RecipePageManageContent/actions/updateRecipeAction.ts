@@ -84,7 +84,7 @@ export const updateRecipeAction = createActionWithValidation(
               steps.map((step) => ({
                 ...step,
                 recipeId: existing.id,
-              }))
+              })),
             );
           }
         }
@@ -100,14 +100,14 @@ export const updateRecipeAction = createActionWithValidation(
                 ...resource,
                 metricId: resource.metric.id,
                 recipeId: existing.id,
-              }))
+              })),
             );
           }
         }
 
         if (images) {
           const filesToDelete = existing.images.filter(
-            ({ file }) => !images.includes(file)
+            ({ file }) => !images.includes(file),
           );
 
           const promisesToFullfill: Promise<any>[] = [];
@@ -117,10 +117,12 @@ export const updateRecipeAction = createActionWithValidation(
               tx.delete(recipeImages).where(
                 inArray(
                   recipeImages.id,
-                  filesToDelete.map(({ id }) => id)
-                )
+                  filesToDelete.map(({ id }) => id),
+                ),
               ),
-              ...filesToDelete.map(({ file }) => library.delete(existing, file))
+              ...filesToDelete.map(({ file }) =>
+                library.delete(existing, file),
+              ),
             );
           }
 
@@ -133,12 +135,13 @@ export const updateRecipeAction = createActionWithValidation(
                   .then(({ filename }) =>
                     tx
                       .insert(recipeImages)
-                      .values({ file: filename, recipeId: existing.id })
-                  )
-              )
+                      .values({ file: filename, recipeId: existing.id }),
+                  ),
+              ),
           );
 
           await Promise.all(promisesToFullfill);
+          await library.commit();
         }
       });
 
@@ -153,5 +156,5 @@ export const updateRecipeAction = createActionWithValidation(
 
       throw error;
     }
-  }
+  },
 );

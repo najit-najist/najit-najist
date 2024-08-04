@@ -112,7 +112,10 @@ export const profileRouter = t.router({
       }
 
       try {
-        const user = await ProfileService.registerOne(input);
+        const user = await ProfileService.registerOne({
+          ...input,
+          assignCartId: ctx.sessionData?.cartId,
+        });
 
         logger.info(
           {

@@ -4,6 +4,7 @@ import {
   User,
   UserRoles,
   UserStates,
+  userCarts,
   users,
 } from '@najit-najist/database/models';
 import {
@@ -11,6 +12,7 @@ import {
   WelcomeAndFinish,
   renderAsync,
 } from '@najit-najist/email-templates';
+import { EntityLink } from '@najit-najist/schemas';
 import { logger } from '@server/logger';
 import jwt from 'jsonwebtoken';
 import { jwtDecode } from 'jwt-decode';
@@ -50,13 +52,13 @@ export class ProfileService {
         userId: this.forUser.id,
       } satisfies PasswordResetPaylod,
       tokenSecret,
-      { expiresIn: '1d', ...jwtVerifyOptions }
+      { expiresIn: '1d', ...jwtVerifyOptions },
     );
     const emailContent = await renderAsync(
       PasswordReset({
         siteOrigin: config.app.origin,
         token,
-      })
+      }),
     );
 
     await database
@@ -78,7 +80,7 @@ export class ProfileService {
       .catch((error) => {
         logger.error(
           { error, userId: this.forUser.id },
-          'Failed to init reset user password'
+          'Failed to init reset user password',
         );
 
         throw error;
@@ -103,7 +105,7 @@ export class ProfileService {
         }
 
         resolve(true);
-      })
+      }),
     );
 
     return new ProfileService(user.getFor());
@@ -127,7 +129,12 @@ export class ProfileService {
     return new ProfileService(user);
   }
 
-  static async registerOne(input: z.infer<typeof userRegisterInputSchema>) {
+  static async registerOne({
+    assignCartId,
+    ...input
+  }: z.infer<typeof userRegisterInputSchema> & {
+    assignCartId?: EntityLink['id'];
+  }) {
     const tokenSecret = crypto.randomBytes(10).toString('hex') + Date.now();
 
     const user = await UserService.create({
@@ -142,12 +149,19 @@ export class ProfileService {
       _registerSecret: tokenSecret,
     });
 
+    if (assignCartId) {
+      await database
+        .update(userCarts)
+        .set({ userId: user.id })
+        .where(eq(userCarts.id, assignCartId));
+    }
+
     const token = jwt.sign(
       {
         userId: user.id,
       } satisfies PasswordResetPaylod,
       tokenSecret,
-      { expiresIn: '2d', ...jwtVerifyOptions }
+      { expiresIn: '2d', ...jwtVerifyOptions },
     );
 
     try {
@@ -155,7 +169,7 @@ export class ProfileService {
         WelcomeAndFinish({
           siteOrigin: config.app.origin,
           token,
-        })
+        }),
       );
 
       await MailService.send({
@@ -187,7 +201,7 @@ export class ProfileService {
             id: user.getFor().id,
             email: user.getFor().email,
           },
-        }
+        },
       );
     }
 
@@ -200,7 +214,7 @@ export class ProfileService {
         }
 
         resolve(true);
-      })
+      }),
     );
 
     return new ProfileService(user.getFor());

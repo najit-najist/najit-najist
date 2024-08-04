@@ -63,7 +63,7 @@ export const ProductPageManageContent: FC<
   ]);
 
   const deliveryMethodsAsObject = Object.fromEntries(
-    deliveryMethods.map((d) => [d.id, d])
+    deliveryMethods.map((d) => [d.id, d]),
   );
   const star = <StarIcon className="text-gray-400 w-5" />;
 
@@ -72,7 +72,7 @@ export const ProductPageManageContent: FC<
       <div className="container mt-6 mb-3">
         <Breadcrumbs
           items={[
-            { link: '/produkty', text: 'Produkty' },
+            { link: '/produkty', text: 'E-Shop' },
             ...(product
               ? ([
                   product.category
@@ -111,7 +111,7 @@ export const ProductPageManageContent: FC<
                   src={getFileUrl(
                     products,
                     props.product.id,
-                    props.product.images[0].file
+                    props.product.images[0].file,
                   )}
                 />
                 <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
@@ -173,7 +173,7 @@ export const ProductPageManageContent: FC<
           <div
             className={clsx(
               'flex flex-wrap items-center grid-cols-2 gap-2 mt-2',
-              process.env.NODE_ENV === 'production' ? 'opacity-0' : ''
+              process.env.NODE_ENV === 'production' ? 'opacity-0' : '',
             )}
           >
             <div className={clsx('flex')}>
@@ -223,7 +223,7 @@ export const ProductPageManageContent: FC<
         <aside
           className={clsx(
             'w-full lg:w-auto lg:col-span-2',
-            viewType == 'create' ? 'opacity-0' : ''
+            viewType == 'create' ? 'opacity-0' : '',
           )}
         >
           {isEditorEnabled ? (

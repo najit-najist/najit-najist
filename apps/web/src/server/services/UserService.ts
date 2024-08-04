@@ -9,6 +9,7 @@ import {
   UserNewsletter,
   telephoneNumbers,
   userAddresses,
+  userCarts,
   userNewsletters,
   users,
 } from '@najit-najist/database/models';
@@ -74,7 +75,7 @@ export class UserService {
           } else {
             const { filename: newAvatarFilename } = await library.create(
               this.forUser,
-              updatePayload.avatar
+              updatePayload.avatar,
             );
 
             updatePayload.avatar = newAvatarFilename;
@@ -196,7 +197,7 @@ export class UserService {
             {
               id: created.id,
             },
-            newAvatar
+            newAvatar,
           );
 
           postCreateUpdatePayload.avatar = newAvatarFilename;
@@ -262,7 +263,7 @@ export class UserService {
       NonNullable<
         Parameters<typeof database.query.users.findFirst>['0']
       >['where']
-    >
+    >,
   >(where: T): Promise<UserWithRelations | undefined> {
     return await database.query.users.findFirst({
       where,
@@ -278,10 +279,10 @@ export class UserService {
 
   static async getOneBy<V extends keyof User>(
     by: V,
-    value: User[V]
+    value: User[V],
   ): Promise<UserWithRelations> {
     const item = await this.queryOneBy((schema, { eq }) =>
-      eq(schema[by], value as any)
+      eq(schema[by], value as any),
     );
 
     if (!item) {
@@ -298,14 +299,14 @@ export class UserService {
   }
 
   static async forUser(
-    link: EntityLink | Pick<UserWithRelations, 'email'> | UserWithRelations
+    link: EntityLink | Pick<UserWithRelations, 'email'> | UserWithRelations,
   ) {
     return new UserService(
       Object.keys(link).length > 1 && 'id' in link
         ? (link as UserWithRelations)
         : 'id' in link
-        ? await this.getOneBy('id', link.id)
-        : await this.getOneBy('email', link.email)
+          ? await this.getOneBy('id', link.id)
+          : await this.getOneBy('email', link.email),
     );
   }
 }
