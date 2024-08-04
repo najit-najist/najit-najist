@@ -19,7 +19,7 @@ const items: Item[] = [
   { title: 'Restaurace', href: '/', imageSrc: waitressImage },
   { title: 'Akce', href: '/', imageSrc: eventsImage },
   {
-    title: 'Produkty',
+    title: 'E-Shop',
     href: '/produkty',
     imageSrc: shoppingImage,
     enabled: true,

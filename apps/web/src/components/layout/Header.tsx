@@ -10,7 +10,7 @@ const navLinks = [
   { text: 'Úvod', href: '/' },
   { text: 'Náš příběh', href: '/#o-nas' },
   { text: 'Recepty', href: '/recepty' },
-  { text: 'Produkty', href: '/produkty' },
+  { text: 'E-Shop', href: '/produkty' },
   { text: 'Články', href: '/clanky' },
   { text: 'Kontakt', href: '/kontakt' },
 ];

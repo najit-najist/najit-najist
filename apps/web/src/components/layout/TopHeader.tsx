@@ -347,7 +347,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     <StyledLink href="/recepty">Recepty</StyledLink>
                   </Menu.Item>
                   <Menu.Item>
-                    <StyledLink href="/produkty">Produkty</StyledLink>
+                    <StyledLink href="/produkty">E-Shop</StyledLink>
                   </Menu.Item>
                 </Column>
                 {loggedInUser?.role === UserRoles.ADMIN ? (

@@ -210,7 +210,7 @@ async function ProductsGroup() {
 
   return (
     <GroupRoot
-      title="Produkty"
+      title="E-Shop"
       more={{
         title: 'Zobrazit další produkty',
         url: '/produkty',

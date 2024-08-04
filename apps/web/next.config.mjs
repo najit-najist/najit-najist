@@ -44,13 +44,13 @@ let nextConfig = {
             },
           },
         ],
-      }
+      },
     );
 
     config.plugins.push(
       new webpack.IgnorePlugin({
         resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
-      })
+      }),
     );
 
     if (nextRuntime === 'edge') {
@@ -66,6 +66,16 @@ let nextConfig = {
       {
         source: '/github',
         destination: 'https://github.com/najit-najist/najit-najist',
+        permanent: false,
+      },
+      {
+        source: '/eshop',
+        destination: '/produkty',
+        permanent: false,
+      },
+      {
+        source: '/e-shop',
+        destination: '/produkty',
         permanent: false,
       },
     ];

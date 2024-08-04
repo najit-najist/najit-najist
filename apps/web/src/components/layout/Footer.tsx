@@ -55,7 +55,7 @@ export const footerNavigationItems: NavigationItems = {
       { name: 'Události', href: '/udalosti' },
       { name: 'Recepty', href: '/recepty' },
       { name: 'Články', href: '/clanky' },
-      { name: 'Produkty', href: '/produkty' },
+      { name: 'E-Shop', href: '/produkty' },
     ],
     other: [],
   },
@@ -165,7 +165,7 @@ export const Footer: FC<PropsWithChildren> = () => {
                   ))}
                 </ul>
               </div>
-              
+
             </div> */}
               <div>
                 <h3 className="text-base font-medium text-project-secondary font-title">
