@@ -1,14 +1,20 @@
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
+import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
+import { Alert, buttonStyles } from '@najit-najist/ui';
 import { logger } from '@server/logger';
+import { UserService } from '@server/services/UserService';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
+import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { formatPrice } from '@utils';
-import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { getUserCart } from '@utils/getUserCart';
 import clsx from 'clsx';
+import { cookies as getCookies } from 'next/headers';
+import Link from 'next/link';
 import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
 
 import { CartItem } from './_internals/CartItem/CartItem';
@@ -42,14 +48,20 @@ const SectionTitle: FC<
   </h2>
 );
 
+// TODO: this page should be behind dynamic page - each cart should have its own subpage. that way it will be faster for user
 export default async function Page() {
-  const userId = await getLoggedInUserId();
-  const [user, cart] = await Promise.all([
-    await getLoggedInUser(),
-    await getUserCart({ id: userId }),
-  ]);
+  const cookies = getCookies();
+  const session = await getSessionFromCookies({ cookies });
 
-  if (!cart.products.length) {
+  const loggedInUser = session.authContent?.userId
+    ? await UserService.getOneBy('id', session.authContent?.userId)
+    : null;
+  const cart = await getUserCart({
+    type: loggedInUser ? 'user' : 'cart',
+    value: Number(loggedInUser?.id ?? session.cartId ?? '0'),
+  });
+
+  if (!cart?.products.length) {
     return <EmptyCart />;
   }
 
@@ -65,15 +77,15 @@ export default async function Page() {
             d.name = `${d.name} (${formatPrice(d.price ?? 0)})`;
 
             return [d.id, d];
-          })
-        )
+          }),
+        ),
     ),
     getCachedPaymentMethods().then((methods) =>
       methods.map((d) => {
         d.name = `${d.name} (${formatPrice(d.price ?? 0)})`;
 
         return d;
-      })
+      }),
     ),
   ]);
 
@@ -84,7 +96,7 @@ export default async function Page() {
   for (const productInCart of cart.products) {
     if (productInCart.product.onlyForDeliveryMethod) {
       const deliveryMethod = deliveryMethods.get(
-        productInCart.product.onlyForDeliveryMethod.id
+        productInCart.product.onlyForDeliveryMethod.id,
       );
 
       if (deliveryMethod) {
@@ -111,8 +123,8 @@ export default async function Page() {
   if (!defaultDeliveryMethod) {
     logger.error(
       {
-        user: {
-          id: userId,
+        cart: {
+          id: cart.id,
         },
         products: cart.products.map((p) => ({
           id: p.product,
@@ -120,11 +132,7 @@ export default async function Page() {
         })),
         deliveryMethods: deliverMethodsAsArray.map((d) => ({ id: d.id })),
       },
-      'User wrong cart product x delivery method combination'
-    );
-
-    throw new Error(
-      'Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat.'
+      'Wrong cart product x delivery method combination',
     );
   }
 
@@ -132,14 +140,14 @@ export default async function Page() {
     (item) =>
       !item.exceptDeliveryMethods
         .map(({ id }) => id)
-        .includes(defaultDeliveryMethod.id ?? '')
+        .includes(defaultDeliveryMethod?.id ?? 0),
   );
 
   const paymentMethodPrices = Object.fromEntries(
-    paymentMethods.map(({ slug, price }) => [slug, price ?? 0])
+    paymentMethods.map(({ slug, price }) => [slug, price ?? 0]),
   );
   const deliveryMethodsPrices = Object.fromEntries(
-    deliverMethodsAsArray.map(({ slug, price }) => [slug, price ?? 0])
+    deliverMethodsAsArray.map(({ slug, price }) => [slug, price ?? 0]),
   );
 
   return (
@@ -151,38 +159,73 @@ export default async function Page() {
       </PageHeader>
       <FormProvider
         defaultFormValues={{
-          deliveryMethod: { slug: defaultDeliveryMethod.slug ?? null },
+          deliveryMethod: { slug: defaultDeliveryMethod?.slug ?? null },
           paymentMethod: { slug: defaultPaymentMethod?.slug ?? null },
           address: {
             municipality: { id: null as any },
-            ...user.address,
-            city: user.address?.city ?? '',
-            houseNumber: user.address?.houseNumber ?? '',
-            postalCode: user.address?.postalCode ?? '',
-            streetName: user.address?.streetName ?? '',
+            ...loggedInUser?.address,
+            city: loggedInUser?.address?.city ?? '',
+            houseNumber: loggedInUser?.address?.houseNumber ?? '',
+            postalCode: loggedInUser?.address?.postalCode ?? '',
+            streetName: loggedInUser?.address?.streetName ?? '',
           },
-          email: user.email ?? '',
-          firstName: user.firstName ?? '',
-          lastName: user.lastName ?? '',
-          telephoneNumber: user.telephone?.telephone ?? '',
+          email: loggedInUser?.email ?? '',
+          firstName: loggedInUser?.firstName ?? '',
+          lastName: loggedInUser?.lastName ?? '',
+          telephoneNumber: loggedInUser?.telephone?.telephone ?? '',
           saveAddressToAccount: false,
         }}
       >
         <div className="container flex flex-col lg:flex-row gap-10">
           <div className="w-full">
-            <SectionTitle>Kontaktní adresa</SectionTitle>
-            <UserContactFormPart />
-            <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
-              Výběr dopravy
-            </SectionTitle>
-            <DeliveryMethodFormPart
-              paymentMethods={paymentMethods}
-              deliveryMethods={deliverMethodsAsArray}
-            />
-            <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
-              Výběr platby
-            </SectionTitle>
-            <PaymentMethodFormPart paymentMethods={paymentMethods} />
+            {loggedInUser && defaultDeliveryMethod ? (
+              <>
+                <SectionTitle>Kontaktní adresa</SectionTitle>
+                <UserContactFormPart />
+                <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
+                  Výběr dopravy
+                </SectionTitle>
+                <DeliveryMethodFormPart
+                  paymentMethods={paymentMethods}
+                  deliveryMethods={deliverMethodsAsArray}
+                />
+                <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
+                  Výběr platby
+                </SectionTitle>
+                <PaymentMethodFormPart paymentMethods={paymentMethods} />
+              </>
+            ) : null}
+            {!loggedInUser ? (
+              <Alert
+                outlined
+                color="warning"
+                icon={ExclamationTriangleIcon}
+                heading="Pro dokončení objednávky se prosím přihlašte!"
+              >
+                <div className="flex gap-2 mt-2">
+                  <Link
+                    className={buttonStyles()}
+                    href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                  >
+                    Přihlásit se
+                  </Link>
+                  <Link
+                    className={buttonStyles()}
+                    href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                  >
+                    Registrovat se
+                  </Link>
+                </div>
+              </Alert>
+            ) : null}
+            {!defaultDeliveryMethod ? (
+              <Alert
+                outlined
+                color="error"
+                icon={ExclamationTriangleIcon}
+                heading="Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat. Neváhejte nás kontaktovat."
+              />
+            ) : null}
           </div>
           <div className="w-full lg:max-w-md">
             <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>
@@ -192,15 +235,19 @@ export default async function Page() {
                   <CartItem key={cartItem.id} data={cartItem} />
                 ))}
               </ul>
-              <CouponInfo cartCupon={cart.coupon} />
+              {loggedInUser ? <CouponInfo cartCupon={cart.coupon} /> : null}
               <PriceList
                 paymentMethodsPrices={paymentMethodPrices}
                 deliveryMethodsPrices={deliveryMethodsPrices}
                 subtotal={cart.subtotal}
                 totalDiscount={cart.discount}
               />
-              <hr className="!mt-0" />
-              <CheckoutButton />
+              {loggedInUser ? (
+                <>
+                  <hr className="!mt-0" />
+                  <CheckoutButton />
+                </>
+              ) : null}
             </Section>
           </div>
         </div>

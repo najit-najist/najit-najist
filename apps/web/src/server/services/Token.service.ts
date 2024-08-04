@@ -1,5 +1,5 @@
 import jwt, { Algorithm } from 'jsonwebtoken';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 import { config } from '../config';
 

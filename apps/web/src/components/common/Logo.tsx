@@ -8,3 +8,5 @@ export interface LogoProps extends Omit<ImageProps, 'src' | 'alt'> {}
 export const Logo: FC<LogoProps> = ({ ...props }) => {
   return <Image src={logoImage} alt="Logo stránky najitnajist.cz" {...props} />;
 };
+
+export { logoImage };

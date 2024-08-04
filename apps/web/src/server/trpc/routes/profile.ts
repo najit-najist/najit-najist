@@ -25,44 +25,42 @@ import { userCartRoutes } from './profile/cart/cart';
 import { userLikedRoutes } from './profile/liked';
 
 const passwordResetRoutes = t.router({
-  do: t.procedure
-    .input(resetPasswordSchema)
-    .mutation(async ({ ctx, input }) => {
-      let forUser: UserWithRelations;
+  do: t.procedure.input(resetPasswordSchema).mutation(async ({ input }) => {
+    let forUser: UserWithRelations;
 
-      try {
-        forUser = await UserService.getOneBy('email', input.email);
-      } catch (error) {
-        logger.error(
-          { input, error },
-          'User tried to reset password but no user has been found under email'
-        );
+    try {
+      forUser = await UserService.getOneBy('email', input.email);
+    } catch (error) {
+      logger.error(
+        { input, error },
+        'User tried to reset password but no user has been found under email',
+      );
 
-        return null;
-      }
+      return null;
+    }
 
-      if (
-        forUser.status !== UserStates.ACTIVE &&
-        forUser.status !== UserStates.PASSWORD_RESET &&
-        forUser.status !== UserStates.SUBSCRIBED
-      ) {
-        logger.error(
-          { input },
-          'User tried to reset password but its not active or in password reset mode'
-        );
-        throw new Error(
-          'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován'
-        );
-      }
+    if (
+      forUser.status !== UserStates.ACTIVE &&
+      forUser.status !== UserStates.PASSWORD_RESET &&
+      forUser.status !== UserStates.SUBSCRIBED
+    ) {
+      logger.error(
+        { input },
+        'User tried to reset password but its not active or in password reset mode',
+      );
+      throw new Error(
+        'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován',
+      );
+    }
 
-      if (forUser.status === UserStates.SUBSCRIBED) {
-        logger.warn({ input }, 'Subscribed user reset their password');
-      }
+    if (forUser.status === UserStates.SUBSCRIBED) {
+      logger.warn({ input }, 'Subscribed user reset their password');
+    }
 
-      const result = await passwordResetRequest(forUser);
+    const result = await passwordResetRequest(forUser);
 
-      return result;
-    }),
+    return result;
+  }),
   finalize: t.procedure
     .input(finalizeResetPasswordSchema)
     .mutation(async ({ ctx, input }) => {
@@ -90,7 +88,7 @@ export const profileRouter = t.router({
   update: protectedProcedure
     .input(userProfileUpdateInputSchema)
     .mutation(async ({ ctx, input }) => {
-      const user = await UserService.forUser({ id: ctx.sessionData.userId });
+      const user = await UserService.forUser({ id: ctx.sessionData.user.id });
 
       await user.update(input);
     }),
@@ -98,7 +96,7 @@ export const profileRouter = t.router({
   me: protectedProcedure
     .output(privateUserOutputSchema)
     .query(async ({ ctx }) => {
-      const user = await UserService.getOneBy('id', ctx.sessionData.userId);
+      const user = await UserService.getOneBy('id', ctx.sessionData.user.id);
 
       return {
         ...user,
@@ -121,7 +119,7 @@ export const profileRouter = t.router({
             user: omit(user, ['_password']),
             input: omit(input, ['password']),
           },
-          'Registering user - user created'
+          'Registering user - user created',
         );
 
         return {
@@ -136,7 +134,7 @@ export const profileRouter = t.router({
         ) {
           logger.error(
             { error, email: input.email },
-            'Registering user - user already exists'
+            'Registering user - user already exists',
           );
 
           throw new TRPCError({
@@ -156,7 +154,7 @@ export const profileRouter = t.router({
     .mutation(async ({ ctx, input }) => {
       try {
         const user = await ProfileService.getOneUserForRegisterToken(
-          input.token
+          input.token,
         );
         await user.finishRegistration();
 

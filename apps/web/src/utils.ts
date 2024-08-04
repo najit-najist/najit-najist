@@ -11,7 +11,7 @@ export enum ReadFileError {
 
 export const readFile = async (
   file: File,
-  { filter, width }: { filter: RegExp; width?: number }
+  { filter, width }: { filter: RegExp; width?: number },
 ) => {
   const compressedFile = await new Promise<File>((resolve, reject) => {
     new Compressor(file, {
@@ -49,7 +49,7 @@ export const readFile = async (
 
 export function getChangedValues<G extends Record<any, any>>(
   allValues: G,
-  dirtyFields: FormState<G>['dirtyFields'] | true
+  dirtyFields: FormState<G>['dirtyFields'] | true,
 ): Partial<G> {
   if (dirtyFields === true || Array.isArray(dirtyFields)) return allValues;
 
@@ -57,20 +57,23 @@ export function getChangedValues<G extends Record<any, any>>(
     Object.keys(dirtyFields).map((key) => [
       key,
       getChangedValues(allValues[key], (dirtyFields as any)[key]),
-    ])
+    ]),
   ) as Partial<G>;
 }
 
 export const isLocalPickup = (
-  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+  delivery:
+    | Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+    | undefined
+    | null,
 ) => delivery?.slug === 'local-pickup';
 
 export const isPacketaDeveliveryMethod = (
-  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>,
 ) => delivery.slug === 'send';
 
 export const getTotalPrice = (
-  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>
+  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>,
 ) => {
   return (
     order.subtotal +

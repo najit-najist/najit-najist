@@ -16,8 +16,8 @@ export async function GET(request: NextRequest) {
       '/login',
       process.env.NODE_ENV === 'production'
         ? 'https://najitnajist.cz'
-        : 'http://localhost:3000'
-    ).toString()
+        : 'http://localhost:3000',
+    ).toString(),
   );
 
   return new Response(null, {

@@ -1,11 +1,19 @@
 'use server';
 
 import { database } from '@najit-najist/database';
-import { UserStates } from '@najit-najist/database/models';
+import { eq, inArray } from '@najit-najist/database/drizzle';
+import {
+  UserCartProduct,
+  userCartProducts,
+  userCarts,
+  UserStates,
+} from '@najit-najist/database/models';
+import { EntityLink } from '@najit-najist/schemas';
 import { logger } from '@server/logger';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import { PasswordService } from '@server/services/Password.service';
 import { UserService } from '@server/services/UserService';
+import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { setSessionToCookies } from '@server/utils/setSessionToCookies';
 import { zodErrorToFormErrors } from '@utils/zodErrorToFormErrors';
 import { cookies } from 'next/headers';
@@ -31,7 +39,7 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
 
       logger.warn(
         { email: input.email },
-        'Subscribed user tried to login, but we showed message'
+        'Subscribed user tried to login, but we showed message',
       );
 
       return;
@@ -54,7 +62,7 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
         { email: input.email },
         userForInput
           ? 'User gave invalid credentials'
-          : 'User tried to log in under non existing email'
+          : 'User tried to log in under non existing email',
       );
     } else {
       if (userForInput.status === UserStates.INVITED) {
@@ -69,7 +77,7 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
       } else if (userForInput.status === UserStates.BANNED) {
         logger.warn(
           { email: input.email, status: userForInput.status },
-          'User banned tried to log in'
+          'User banned tried to log in',
         );
 
         ctx.addIssue({
@@ -82,7 +90,7 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
       } else if (userForInput.status === UserStates.DEACTIVATED) {
         logger.warn(
           { email: input.email, status: userForInput.status },
-          'User deactivated tried to log in'
+          'User deactivated tried to log in',
         );
 
         ctx.addIssue({
@@ -93,10 +101,86 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
         });
       }
     }
-  }
+  },
 );
 
 export type LoginActionOptions = z.input<typeof inputValidation>;
+const simpleCartWith = {
+  products: true,
+  coupon: true,
+} as const;
+
+const mergeCartsUponLogin = async (
+  loggedUserId: EntityLink['id'],
+  anonymousCartId: EntityLink['id'],
+) => {
+  const anonymousCart = await database.query.userCarts.findFirst({
+    where: (schema, { eq }) => eq(schema.id, anonymousCartId),
+    with: simpleCartWith,
+  });
+
+  // Return early, this means that cart died sooner that user session
+  if (!anonymousCart) {
+    return;
+  }
+
+  const userCart = await database.query.userCarts.findFirst({
+    where: (schema, { eq }) => eq(schema.userId, loggedUserId),
+    with: simpleCartWith,
+  });
+
+  // If user has no cart yet then the work is easier
+  if (!userCart) {
+    await database
+      .update(userCarts)
+      .set({ userId: loggedUserId })
+      .where(eq(userCarts.id, anonymousCart.id));
+
+    return;
+  }
+
+  await database.transaction(async (ctx) => {
+    // delete existing and merge the state between each entry in cart - there can be same products. Do not forget about the coupons!
+    await ctx
+      .delete(userCarts)
+      .where(inArray(userCarts.id, [anonymousCart.id, userCart.id]));
+
+    const [newCart] = await ctx
+      .insert(userCarts)
+      .values({
+        couponId: userCart.couponId,
+        userId: userCart.userId,
+      })
+      .returning();
+
+    const resultedProductsAsMap = new Map<
+      UserCartProduct['id'],
+      Omit<UserCartProduct, 'id' | 'createdAt' | 'updatedAt'>
+    >();
+    const mergedProductItems = [
+      ...anonymousCart.products,
+      ...userCart.products,
+    ];
+
+    for (const cartItem of mergedProductItems) {
+      const existring = resultedProductsAsMap.get(cartItem.productId);
+      if (!existring) {
+        resultedProductsAsMap.set(cartItem.productId, {
+          cartId: newCart.id,
+          count: cartItem.count,
+          productId: cartItem.productId,
+        });
+        continue;
+      }
+
+      existring.count += cartItem.count;
+    }
+
+    await ctx
+      .insert(userCartProducts)
+      .values([...resultedProductsAsMap.values()]);
+  });
+};
 
 export async function loginAction(options: LoginActionOptions) {
   const validatedInput = await inputValidation.safeParseAsync(options);
@@ -109,7 +193,7 @@ export async function loginAction(options: LoginActionOptions) {
         },
         errors: validatedInput.error.format(),
       },
-      'User failed to log in, but tried'
+      'User failed to log in, but tried',
     );
 
     return {
@@ -118,13 +202,14 @@ export async function loginAction(options: LoginActionOptions) {
   }
 
   try {
+    const session = await getSessionFromCookies({ cookies: cookies() });
     const user = await UserService.forUser({
       email: validatedInput.data.email,
     });
 
     logger.info(
       { email: validatedInput.data.email },
-      'User successfully logged in'
+      'User successfully logged in',
     );
 
     // No need to wait
@@ -135,11 +220,23 @@ export async function loginAction(options: LoginActionOptions) {
       .catch((error) =>
         logger.error(
           { email: validatedInput.data.email, error },
-          'Cannot update user lastLoggedIn'
-        )
+          'Cannot update user lastLoggedIn',
+        ),
       );
 
-    // add user token to session
+    const userId = user.getFor().id;
+    const { cartId } = session;
+    if (cartId) {
+      try {
+        await mergeCartsUponLogin(userId, cartId);
+      } catch (error) {
+        logger.error(
+          { error, user: { id: userId }, anonymousCartId: cartId },
+          'Failed to merge anonymous cart with the logged in user cart',
+        );
+      }
+    }
+
     await setSessionToCookies(
       {
         // TODO: This should be removed after release
@@ -148,7 +245,7 @@ export async function loginAction(options: LoginActionOptions) {
           userId: user.getFor().id,
         },
       },
-      cookies()
+      cookies(),
     );
 
     return {

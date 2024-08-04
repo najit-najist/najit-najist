@@ -10,7 +10,8 @@ import { getFileUrl } from '@server/utils/getFileUrl';
 import { useQueryClient } from '@tanstack/react-query';
 import clsx from 'clsx';
 import Link from 'next/link';
-import { FC, ReactElement, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { FC, ReactElement, ReactNode, useCallback } from 'react';
 
 import { CustomImage } from './CustomImage';
 
@@ -35,7 +36,7 @@ const SuccessMessage: FC<
               products,
               productId,
               productMetadata.images.at(0)!.file,
-              { height: 50, quality: 60 }
+              { height: 50, quality: 60 },
             )}
           />
         </div>
@@ -81,17 +82,19 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   const queryClient = useQueryClient();
   const { mutateAsync: addToCart, isLoading } =
     trpc.profile.cart.products.add.useMutation();
+  const router = useRouter();
   let buttonText: ReactNode = null;
   let contentBeforeText: ReactElement | null = null;
 
-  const handleAddToCartClick = async () => {
+  const handleAddToCartClick = useCallback(async () => {
     // add to cart and refetch newest cart for client
     const addToCartPromise = addToCart({ product: { id: productId } }).then(
       async () => {
         await queryClient.invalidateQueries({
           queryKey: useUserCartQueryKey,
         });
-      }
+        router.prefetch('/muj-ucet/kosik/pokladna');
+      },
     );
 
     toast.promise(addToCartPromise, {
@@ -108,7 +111,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
     });
 
     await addToCartPromise;
-  };
+  }, [addToCart, productId, productMetadata, queryClient, router]);
 
   if (!withoutText) {
     buttonText = disabled ? 'Dočasně nedostupné' : 'Přidat do košíku';

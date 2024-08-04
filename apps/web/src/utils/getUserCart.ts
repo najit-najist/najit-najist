@@ -5,13 +5,23 @@ import { EntityLink } from '@najit-najist/schemas';
 
 import { getCartItemPrice } from './getCartItemPrice';
 
-export type ProductFromCart = Awaited<
-  ReturnType<typeof getUserCart>
+export type ProductFromCart = NonNullable<
+  Awaited<ReturnType<typeof getUserCart>>
 >['products'][number];
 
-export const getUserCart = async (user: EntityLink) => {
+export type GetUserCartOptions = {
+  type: 'user' | 'cart';
+  value: EntityLink['id'];
+};
+
+export type GetUserCartOutput = Awaited<ReturnType<typeof getUserCart>>;
+
+export const getUserCart = async (options: GetUserCartOptions) => {
   let cart = await database.query.userCarts.findFirst({
-    where: (schema, { eq }) => eq(schema.userId, user.id),
+    where: (schema, { eq }) =>
+      options.type === 'cart'
+        ? eq(schema.id, options.value)
+        : eq(schema.userId, options.value),
     with: {
       products: {
         orderBy: [asc(orderedProducts.createdAt)],
@@ -41,17 +51,7 @@ export const getUserCart = async (user: EntityLink) => {
   });
 
   if (!cart) {
-    const [createdCart] = await database
-      .insert(userCarts)
-      .values({ userId: user.id })
-      .returning();
-
-    cart = {
-      ...createdCart,
-      products: [],
-      coupon: null,
-      couponId: null,
-    };
+    return null;
   }
 
   const discountPatch = cart.coupon?.patches[0];
@@ -68,7 +68,7 @@ export const getUserCart = async (user: EntityLink) => {
   const products = cart.products.map((cartItem) => {
     const { discount: discountForItem, value: batchedPrice } = getCartItemPrice(
       cartItem,
-      cart.coupon ?? undefined
+      cart.coupon ?? undefined,
     );
 
     subtotal += batchedPrice;
@@ -98,7 +98,7 @@ export const getUserCart = async (user: EntityLink) => {
 
   if (!hasPickyCoupon && discountPatch?.reductionPercentage) {
     totalDiscount += Math.round(
-      (subtotal / 100) * discountPatch?.reductionPercentage
+      (subtotal / 100) * discountPatch?.reductionPercentage,
     );
   }
 

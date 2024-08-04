@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Logo } from '@components/common/Logo';
 import {
   ShoppingBagIcon,
@@ -28,7 +27,7 @@ import {
 } from 'react';
 
 const pillStyles = clsx(
-  'inline-flex items-center min-w-[32px] text-center sm:text-left duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3'
+  'inline-flex items-center min-w-[32px] text-center sm:text-left duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3',
 );
 
 const Column: FC<PropsWithChildren<{ title: string; className?: string }>> = ({
@@ -80,7 +79,7 @@ const BonusPill: FC<TopHeaderProps & { hideOnMobile?: boolean }> = ({
     <Link
       className={clsx(
         'relative',
-        hideOnMobile ? 'hidden md:inline-flex' : 'inline-flex'
+        hideOnMobile ? 'hidden md:inline-flex' : 'inline-flex',
       )}
       href="/preview-special"
       prefetch={false}
@@ -93,7 +92,7 @@ const BonusPill: FC<TopHeaderProps & { hideOnMobile?: boolean }> = ({
       <div
         className={clsx(
           pillStyles,
-          'bg-sky-100 hover:bg-sky-200 text-sky-500 relative'
+          'bg-sky-100 hover:bg-sky-200 text-sky-500 relative',
         )}
       >
         <SparklesIcon className="inline text-yellow-400 w-6 h-6 mr-2" />
@@ -111,7 +110,7 @@ const RegisterPill: FC<{ hideOnMobile?: boolean }> = ({ hideOnMobile }) => {
         ' items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-project-primary hover:text-white bg-white shadow-sm shadow-project-primary font-small'
+        'hover:bg-project-primary hover:text-white bg-white shadow-sm shadow-project-primary font-small',
       )}
     >
       Registrovat
@@ -129,7 +128,7 @@ const AdministrationPill: FC<{ hideOnMobile?: boolean }> = ({
         'items-center',
         hideOnMobile ? 'sm:inline-flex hidden' : 'inline-flex sm:hidden',
         pillStyles,
-        'hover:bg-yellow-300 bg-yellow-200 text-yellow-600 shadow-sm shadow-yellow-400'
+        'hover:bg-yellow-300 bg-yellow-200 text-yellow-600 shadow-sm shadow-yellow-400',
       )}
     >
       Administrace
@@ -198,7 +197,7 @@ const ShoppingBagButton: FC = () => {
         <div
           className={clsx(
             'absolute -bottom-1 -left-1 bg-red-500 w-5 h-5 rounded-full text-sm flex items-center justify-center text-white',
-            indicatorState === 'bounce' ? 'animate-bounce duration-300' : ''
+            indicatorState === 'bounce' ? 'animate-bounce duration-300' : '',
           )}
         >
           {cartQuantity}
@@ -230,10 +229,10 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                       <AdministrationPill hideOnMobile />
                     ) : null}
 
-                    <Link
+                    <a
                       className={clsx(
                         pillStyles,
-                        'bg-red-100 hover:bg-red-200 text-red-600'
+                        'bg-red-100 hover:bg-red-200 text-red-600',
                       )}
                       href="/logout"
                       onClick={(event) => {
@@ -241,10 +240,9 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                           event.preventDefault();
                         }
                       }}
-                      prefetch={false}
                     >
                       Odhlásit se
-                    </Link>
+                    </a>
 
                     <Link
                       className={clsx([
@@ -272,10 +270,6 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                     >
                       <UserIcon className="w-4 h-4" />
                     </Link>
-
-                    <ErrorBoundary fallback={null}>
-                      <ShoppingBagButton />
-                    </ErrorBoundary>
                   </>
                 ) : (
                   <>
@@ -285,13 +279,16 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                       className={clsx(
                         'inline-flex items-center',
                         pillStyles,
-                        'bg-project-primary text-white'
+                        'bg-project-primary text-white',
                       )}
                     >
                       Přihlásit se
                     </Link>
                   </>
                 )}
+                <ErrorBoundary fallback={null}>
+                  <ShoppingBagButton />
+                </ErrorBoundary>
               </div>
               <Menu.Button
                 className={clsx(
@@ -299,7 +296,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
                   'flex md:hidden',
                   menuIsOpen
                     ? 'bg-red-100 text-red-400 hover:bg-red-200 hover:text-red-600'
-                    : 'bg-white hover:bg-project-primary hover:text-white'
+                    : 'bg-white hover:bg-project-primary hover:text-white',
                 )}
               >
                 {menuIsOpen ? (

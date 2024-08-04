@@ -4,13 +4,13 @@ import { getEdgeSession } from '@server/utils/edge';
 import { NextRequest, NextResponse } from 'next/server';
 
 const loggedInPathsRegex = new RegExp(
-  `^\/(administrace|muj-ucet|recepty|preview-special|produkty)[^\n]*$`,
-  'g'
+  `^\/(administrace|muj-ucet\/objednavky|muj-ucet\/profil|recepty|preview-special)[^\n]*$`,
+  'g',
 );
 
 const unauthorizedOnlyPaths = new RegExp(
   `\/(login|registrace|zapomenute-heslo|zmena-emailu)[^\n]*$`,
-  'g'
+  'g',
 );
 
 export async function middleware(request: NextRequest) {
@@ -47,7 +47,7 @@ export async function middleware(request: NextRequest) {
 
   const isLoggedInOnlyPath = loggedInPathsRegex.test(requestUrl.pathname);
   const isUnauthorizedOnlyPath = unauthorizedOnlyPaths.test(
-    requestUrl.pathname
+    requestUrl.pathname,
   );
   if (isLoggedInOnlyPath || isUnauthorizedOnlyPath) {
     const headers = new Headers();
@@ -58,7 +58,7 @@ export async function middleware(request: NextRequest) {
 
     const currentUserResponse = await fetch(
       `http://localhost:${process.env.PORT}/api/muj-ucet/profil`,
-      { headers }
+      { headers },
     );
     const currentUser = (await currentUserResponse.json()) as User;
 
@@ -68,7 +68,7 @@ export async function middleware(request: NextRequest) {
 
       url.searchParams.set(
         LOGIN_THEN_REDIRECT_TO_PARAMETER,
-        requestUrl.pathname
+        requestUrl.pathname,
       );
 
       return NextResponse.redirect(url);
@@ -77,7 +77,7 @@ export async function middleware(request: NextRequest) {
       url.pathname = '/muj-ucet/profil';
 
       const nextPathname = url.searchParams.get(
-        LOGIN_THEN_REDIRECT_TO_PARAMETER
+        LOGIN_THEN_REDIRECT_TO_PARAMETER,
       );
       if (nextPathname) {
         url.pathname = nextPathname;

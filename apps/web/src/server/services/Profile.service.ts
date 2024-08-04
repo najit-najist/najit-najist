@@ -13,7 +13,7 @@ import {
 } from '@najit-najist/email-templates';
 import { logger } from '@server/logger';
 import jwt from 'jsonwebtoken';
-import jwtDecode from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 import crypto from 'node:crypto';
 import { z } from 'zod';
 

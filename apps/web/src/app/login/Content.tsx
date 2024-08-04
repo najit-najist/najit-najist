@@ -3,6 +3,7 @@
 import {
   loginPageCallbacks,
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
+  LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER,
 } from '@constants';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -38,15 +39,15 @@ export const Content: FC = () => {
   } = formMethods;
 
   const isPasswordResetSuccessfulCallback = searchParams?.has(
-    'passwordResetSuccessful'
+    'passwordResetSuccessful',
   );
   const isPasswordResetCallback = searchParams?.has('passwordResetCallback');
   const isRegistrationCallback = searchParams?.has('registrationCallback');
   const isRegistrationPreviewCallback = searchParams?.has(
-    loginPageCallbacks.previewRegistrationFinished
+    loginPageCallbacks.previewRegistrationFinished,
   );
   const userNeedsToLoginBeforeContinuing = searchParams?.has(
-    LOGIN_THEN_REDIRECT_TO_PARAMETER
+    LOGIN_THEN_REDIRECT_TO_PARAMETER,
   );
 
   const onSubmit = useCallback<SubmitHandler<FormValues>>(
@@ -66,15 +67,16 @@ export const Content: FC = () => {
 
       const redirectTo =
         searchParams?.get(LOGIN_THEN_REDIRECT_TO_PARAMETER) ??
+        searchParams?.get(LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER) ??
         '/muj-ucet/profil';
 
       // TODO: this is for reloading cache on client
-      window.location.href = new URL(
-        redirectTo,
-        window.location.origin
-      ).toString();
+      const newUrl = new URL(redirectTo, window.location.origin);
+
+      newUrl.host = window.location.host;
+      window.location.href = newUrl.toString();
     },
-    [trackEvent, searchParams, setError]
+    [trackEvent, searchParams, setError],
   );
 
   return (

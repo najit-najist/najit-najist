@@ -4,20 +4,19 @@ import { findUserById } from '@server/utils/server';
 import { t } from '../instance';
 
 export const userMiddleware = t.middleware(async ({ next, ctx }) => {
-  const session = await getSessionFromCookies();
+  const { authContent, cartId } = await getSessionFromCookies();
 
-  if (session.authContent) {
-    return next({
-      ctx: {
-        sessionData: {
-          ...session.authContent,
-          user: await findUserById(session.authContent.userId),
-        },
+  return next({
+    ctx: {
+      sessionData: {
+        cartId,
+        userId: authContent?.userId,
+        ...(authContent?.userId && {
+          user: await findUserById(authContent.userId),
+        }),
       },
-    });
-  }
-
-  return next();
+    },
+  });
 });
 
 /**

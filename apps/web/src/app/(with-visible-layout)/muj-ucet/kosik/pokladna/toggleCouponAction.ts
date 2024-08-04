@@ -26,17 +26,26 @@ const schema = z
         onlyForProductCategories: true,
         onlyForProducts: true,
       },
-    })
+    }),
   )
   .refine(
     (coupon): coupon is NonNullable<typeof coupon> =>
       !!coupon && !isCouponExpired(coupon) && !!coupon.enabled,
-    'Kupón byl již expirován nebo ho již nevedeme'
+    'Kupón byl již expirován nebo ho již nevedeme',
   );
 
 export const toggleCouponAction = async (input: { name?: string }) => {
   const loggedInUserId = await getLoggedInUserId();
-  const cart = await getUserCart({ id: loggedInUserId });
+  const cart = await getUserCart({ type: 'user', value: loggedInUserId });
+
+  if (!cart) {
+    logger.warn(
+      { loggedInUserId },
+      'User tried to pick coupon, but has no items in cart. This is probably bug',
+    );
+
+    throw new Error('Žádné produkty v košíku');
+  }
 
   if (!cart.coupon || (input.name && cart.coupon.name !== input.name)) {
     const validated = await schema.safeParseAsync(input);
@@ -51,7 +60,7 @@ export const toggleCouponAction = async (input: { name?: string }) => {
 
       logger.warn(
         { errors, input, loggedInUserId },
-        'User tried to pick coupon, but validation failed'
+        'User tried to pick coupon, but validation failed',
       );
 
       return {

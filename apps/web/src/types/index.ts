@@ -7,6 +7,7 @@ declare module 'iron-session' {
     authContent?: {
       userId: number;
     };
+    cartId?: number;
     previewAuthorized?: boolean;
   }
 }
@@ -28,7 +29,7 @@ export interface LayoutProps {
 }
 
 export type LayoutComponent = (
-  props: LayoutProps
+  props: LayoutProps,
 ) => React.ReactNode | Promise<React.ReactNode>;
 
 export type PostWithRelations =

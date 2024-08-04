@@ -29,5 +29,9 @@ export function FormProvider({
     resolver: initialFormData ? updateResolver : createResolver,
   });
 
-  return <HookformProvider {...formMethods}>{children}</HookformProvider>;
+  return (
+    <HookformProvider {...formMethods}>
+      {children as JSX.Element}
+    </HookformProvider>
+  );
 }

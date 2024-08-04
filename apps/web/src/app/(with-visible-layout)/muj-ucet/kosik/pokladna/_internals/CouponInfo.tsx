@@ -2,7 +2,7 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { Alert, Button, Input } from '@najit-najist/ui';
-import { getUserCart } from '@utils/getUserCart';
+import { getUserCart, GetUserCartOutput } from '@utils/getUserCart';
 import { useRouter } from 'next/navigation';
 import {
   ChangeEventHandler,
@@ -16,11 +16,11 @@ import { FieldError, useFormContext } from 'react-hook-form';
 import { toggleCouponAction } from '../toggleCouponAction';
 
 export type CouponInfoProps = {
-  cartCupon: Awaited<ReturnType<typeof getUserCart>>['coupon'];
+  cartCupon: NonNullable<GetUserCartOutput>['coupon'];
 };
 
 const isEnterKeyEvent = (
-  event: Parameters<KeyboardEventHandler<HTMLInputElement>>[0]
+  event: Parameters<KeyboardEventHandler<HTMLInputElement>>[0],
 ) => event.key === 'Enter';
 
 export function CouponInfo({

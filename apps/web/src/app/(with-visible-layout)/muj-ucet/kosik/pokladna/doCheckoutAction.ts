@@ -18,7 +18,6 @@ import {
   productStock,
   telephoneNumbers,
   userAddresses,
-  userCartProducts,
   userCarts,
 } from '@najit-najist/database/models';
 import {
@@ -92,7 +91,7 @@ const sendEmails = (orderId: Order['id']) => {
       }).catch((error) => {
         logger.error(
           { error, order },
-          `Order flow - could not notify admin to its email with order information`
+          `Order flow - could not notify admin to its email with order information`,
         );
       }),
       MailService.send({
@@ -103,7 +102,7 @@ const sendEmails = (orderId: Order['id']) => {
       }).catch((error) => {
         logger.error(
           { error, order },
-          `Order flow - could not notify admin to its email with order information`
+          `Order flow - could not notify admin to its email with order information`,
         );
       }),
     ]);
@@ -117,7 +116,7 @@ const sendEmails = (orderId: Order['id']) => {
     }).catch((error) => {
       logger.error(
         { error, order },
-        `Order flow - could not notify user to its email with order information`
+        `Order flow - could not notify user to its email with order information`,
       );
     });
     sendUserPerf.stop();
@@ -181,7 +180,7 @@ const trackEvent = async (orderId: Order['id']) => {
   } catch (error) {
     logger.error(
       { orderId, error, performance: perf.summarize() },
-      'Failed to track event for new order'
+      'Failed to track event for new order',
     );
   }
 };
@@ -198,7 +197,13 @@ export const doCheckoutAction = createActionWithValidation(
       const paymentMethod = input.paymentMethod!;
 
       const cartPerf = perf.track('get-cart');
-      const cart = await getUserCart({ id: userId });
+      const cart = await getUserCart({ type: 'user', value: userId });
+      if (!cart) {
+        throw new Error(
+          'User has no cart during checkout, this is probably bug',
+        );
+      }
+
       cartPerf.stop();
 
       if (
@@ -295,7 +300,7 @@ export const doCheckoutAction = createActionWithValidation(
           cart.products.map((productInCart) => {
             const { value: totalPrice, discount } = getCartItemPrice(
               productInCart,
-              cart.coupon ?? undefined
+              cart.coupon ?? undefined,
             );
 
             return {
@@ -305,7 +310,7 @@ export const doCheckoutAction = createActionWithValidation(
               totalPrice,
               discount,
             };
-          })
+          }),
         );
 
         await tx.delete(userCarts).where(eq(userCarts.id, cart.id));
@@ -394,12 +399,12 @@ export const doCheckoutAction = createActionWithValidation(
     } catch (error) {
       logger.error(
         { error, performance: perf.summarize() },
-        'Failed to create order'
+        'Failed to create order',
       );
       throw error;
     }
 
     redirect(orderRedirectTo);
     return undefined;
-  }
+  },
 );

@@ -1,4 +1,4 @@
-import type { Execa$ } from 'execa';
+import type * as Execa from 'execa';
 import fs from 'fs-extra';
 import { notFound } from 'next/navigation';
 import { NextResponse } from 'next/server';
@@ -131,7 +131,7 @@ class StreamPump {
   }
 }
 
-let execa: Execa$ | undefined = undefined;
+let execa: (typeof Execa)['$'] | undefined = undefined;
 
 export async function GET(request: Request, { params }: Context) {
   let filePath = path.join(

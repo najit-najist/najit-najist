@@ -1,9 +1,9 @@
 import { trpc } from '@client/trpc';
 import { Municipality } from '@najit-najist/database/models';
 import { Combobox, ComboboxProps } from '@najit-najist/ui';
-import { FC, useState } from 'react';
+import { FC } from 'react';
 import { useController } from 'react-hook-form';
-import { useDebounce } from 'usehooks-ts';
+import { useDebounceValue } from 'usehooks-ts';
 
 export const MunicipalitySelect: FC<
   Pick<ComboboxProps, 'className' | 'required' | 'label' | 'size'> & {
@@ -15,8 +15,7 @@ export const MunicipalitySelect: FC<
     name,
   });
 
-  const [query, setQuery] = useState('');
-  const debouncedQuery = useDebounce(query, 300);
+  const [debouncedQuery, setDebouncedQuery] = useDebounceValue('', 300);
   const { data, isLoading } = trpc.address.municipality.get.many.useQuery(
     {
       query: debouncedQuery,
@@ -30,7 +29,9 @@ export const MunicipalitySelect: FC<
       displayValue={(item) => item?.name}
       itemLabelFormatter={(item) => item?.name}
       items={data ?? []}
-      onInputValueChange={(event) => setQuery(event.currentTarget.value)}
+      onInputValueChange={(event) =>
+        setDebouncedQuery(event.currentTarget.value)
+      }
       onSelectedValueChange={(nextValue) => {
         field.onBlur();
         field.onChange(nextValue);
