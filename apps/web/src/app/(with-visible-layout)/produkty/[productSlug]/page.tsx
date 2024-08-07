@@ -19,9 +19,10 @@ type Params = {
 
 export async function generateMetadata({ params }: Params) {
   const { productSlug } = params;
+  const decodedSlug = decodeURIComponent(productSlug);
 
   const product = await database.query.products.findFirst({
-    where: (schema, { eq }) => eq(schema.slug, productSlug),
+    where: (schema, { eq }) => eq(schema.slug, decodedSlug),
     columns: { slug: true, name: true },
   });
 
@@ -45,11 +46,12 @@ export default async function Page({ params }: Params) {
       action: UserActions.UPDATE,
       onModel: products,
     });
+  const decodedSlug = decodeURIComponent(productSlug);
 
   const product = await database.query.products.findFirst({
     where: (schema, { eq, and, isNotNull }) =>
       and(
-        eq(schema.slug, productSlug),
+        eq(schema.slug, decodedSlug),
         canUserSeeUnpublished ? undefined : isNotNull(schema.publishedAt),
       ),
     with: {

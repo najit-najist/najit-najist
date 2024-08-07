@@ -57,9 +57,11 @@ type Params = {
 
 export async function generateMetadata({ params }: Params) {
   const { productSlug } = params;
+  const decodedSlug = decodeURIComponent(productSlug);
+
   try {
     const recipe = await getCachedTrpcCaller().products.get.one({
-      slug: productSlug,
+      slug: decodedSlug,
     });
 
     return {
@@ -75,9 +77,10 @@ export async function generateMetadata({ params }: Params) {
 export default async function Page({ params }: Params) {
   const { productSlug } = params;
   const loggedInUser = await getCachedLoggedInUser();
+  const decodedSlug = decodeURIComponent(productSlug);
 
   const product = await getCachedTrpcCaller()
-    .products.get.one({ slug: productSlug })
+    .products.get.one({ slug: decodedSlug })
     .catch(() => notFound());
 
   return (
