@@ -9,7 +9,6 @@ import {
   UserNewsletter,
   telephoneNumbers,
   userAddresses,
-  userCarts,
   userNewsletters,
   users,
 } from '@najit-najist/database/models';
