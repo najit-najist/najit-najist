@@ -52,7 +52,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'weekly',
         priority: 0.5,
       },
-      (
+      ...(
         await database.query.products.findMany({
           where: (schema, { isNotNull }) => isNotNull(schema.publishedAt),
         })
@@ -62,7 +62,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: 'monthly',
         priority: 0.7,
       })),
-      (
+      ...(
         await database.query.posts.findMany({
           where: (schema, { isNotNull }) => isNotNull(schema.publishedAt),
         })
