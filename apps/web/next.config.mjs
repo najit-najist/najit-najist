@@ -17,6 +17,9 @@ let nextConfig = {
       },
     ],
   },
+  serverRuntimeConfig: {
+    BUILD_TIMESTAMP: Date.now().toString(),
+  },
   transpilePackages: [
     '@najit-najist/ui',
     '@najit-najist/database',
