@@ -7,7 +7,7 @@ const { BUILD_TIMESTAMP } = process.env;
 const buildTimestamp = BUILD_TIMESTAMP ? Number(BUILD_TIMESTAMP) : undefined;
 console.log({ buildTimestamp });
 
-const todayAsString = dayjs(buildTimestamp).format('YYYY-MM-DD');
+const todayAsString = dayjs(buildTimestamp).toDate();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const origin = 'https://najitnajist.cz';
@@ -58,7 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
       ).map((product) => ({
         url: `/produkty/${encodeURIComponent(product.slug)}`,
-        lastModified: dayjs(product.updatedAt).format('YYYY-MM-DD'),
+        lastModified: dayjs(product.updatedAt ?? product.publishedAt).toDate(),
         changeFrequency: 'monthly',
         priority: 0.7,
       })),
@@ -68,7 +68,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
       ).map((post) => ({
         url: `/clanky/${encodeURIComponent(post.slug)}`,
-        lastModified: dayjs(post.updatedAt).format('YYYY-MM-DD'),
+        lastModified: dayjs(post.updatedAt ?? post.publishedAt).toDate(),
         changeFrequency: 'monthly',
         priority: 0.7,
       })),
