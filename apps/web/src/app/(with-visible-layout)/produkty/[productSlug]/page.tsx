@@ -62,6 +62,11 @@ export default async function Page({ params }: Params) {
       stock: true,
     },
   });
+  const firstShipping = await database.query.orderDeliveryMethods.findFirst({
+    where: (schema, { isNotNull, and, gt }) =>
+      and(isNotNull(schema.price), gt(schema.price, 0)),
+    orderBy: (schema, { asc }) => asc(schema.price),
+  });
 
   if (!product) {
     logger.error(
@@ -100,8 +105,45 @@ export default async function Page({ params }: Params) {
         email: ADMIN_EMAIL,
         name: 'Najít & Najíst',
         logo: new URL(logoImage.src, APP_BASE_URL).toString(),
+        hasMerchantReturnPolicy: {
+          '@type': 'MerchantReturnPolicy',
+          applicableCountry: 'CZ',
+          returnPolicyCategory: 'https://schema.org/MerchantReturnUnspecified',
+          returnMethod: 'https://schema.org/ReturnInStore',
+          returnFees: 'https://schema.org/FreeReturn',
+        },
       },
+      ...(firstShipping && {
+        shippingDetails: {
+          '@type': 'OfferShippingDetails',
+          shippingRate: {
+            '@type': 'MonetaryAmount',
+            value: firstShipping.price ?? 0,
+            currency: 'CZK',
+          },
+          shippingDestination: {
+            '@type': 'DefinedRegion',
+            addressCountry: 'CZ',
+          },
+          deliveryTime: {
+            '@type': 'ShippingDeliveryTime',
+            handlingTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 1,
+              maxValue: 3,
+              unitCode: 'DAY',
+            },
+            transitTime: {
+              '@type': 'QuantitativeValue',
+              minValue: 1,
+              maxValue: 5,
+              unitCode: 'DAY',
+            },
+          },
+        },
+      }),
     },
+
     description: product.description ?? '',
     // aggregateRating: {
     //   '@type': 'AggregateRating',

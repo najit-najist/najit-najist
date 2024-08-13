@@ -54,7 +54,7 @@ const baseWith = {
 
 export const getOneProductBy = async <V extends keyof Product>(
   by: V,
-  value: Product[V]
+  value: Product[V],
 ) => {
   const item = await database.query.products.findFirst({
     where: (schema, { eq }) => eq(schema[by], value as any),
@@ -99,7 +99,7 @@ const getRoutes = t.router({
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
             message: `Produkt pod daným polem '${Object.keys(
-              input
+              input,
             )}' nebyl nalezen`,
             origin: 'products',
           });
@@ -113,7 +113,7 @@ const getRoutes = t.router({
       defaultGetManySchema.omit({ page: true }).extend({
         cursor: z.string().optional(),
         categorySlug: z.array(slugSchema).optional(),
-      })
+      }),
     )
     .query(async ({ input, ctx }) => {
       const { search, categorySlug } = input ?? {};
@@ -128,8 +128,8 @@ const getRoutes = t.router({
         conditions.push(
           inArray(
             products.categoryId,
-            categories.map(({ id }) => id)
-          )
+            categories.map(({ id }) => id),
+          ),
         );
       }
 
@@ -137,8 +137,8 @@ const getRoutes = t.router({
         conditions.push(
           or(
             ilike(products.name, `%${search}%`),
-            ilike(products.description, `%${search}%`)
-          )!
+            ilike(products.description, `%${search}%`),
+          )!,
         );
       }
 
@@ -226,7 +226,7 @@ const getCategoriesRoutes = t.router({
           perPage: z.number().min(1).default(99).optional(),
           omitEmpty: z.boolean().default(false),
         })
-        .default({})
+        .default({}),
     )
     .query(async ({ input, ctx }) => {
       const cursor = generateCursor({
@@ -251,7 +251,7 @@ const getCategoriesRoutes = t.router({
             cursor.where(input.page),
             input.search
               ? ilike(productCategories.name, `%${input.search}%`)
-              : undefined
+              : undefined,
           ),
           orderBy: cursor.orderBy,
           with: {
@@ -375,8 +375,8 @@ export const productsRoutes = t.router({
                 tx.insert(productImages).values({
                   productId: createdProduct.id,
                   file: filename,
-                })
-              )
+                }),
+              ),
             );
           }
           await Promise.all(imagesThatAreBeingCreated);
@@ -396,7 +396,7 @@ export const productsRoutes = t.router({
           {
             error,
           },
-          'Failed to create product'
+          'Failed to create product',
         );
 
         throw error;
@@ -495,7 +495,7 @@ export const productsRoutes = t.router({
 
           if (images) {
             const filesToDelete = existing.images.filter(
-              ({ file }) => !images.includes(file)
+              ({ file }) => !images.includes(file),
             );
 
             const promisesToFulfill: Promise<any>[] = [];
@@ -505,19 +505,19 @@ export const productsRoutes = t.router({
                 tx.delete(productImages).where(
                   inArray(
                     productImages.id,
-                    filesToDelete.map(({ id }) => id)
-                  )
+                    filesToDelete.map(({ id }) => id),
+                  ),
                 ),
                 ...filesToDelete.map(({ file }) =>
-                  library.delete(existing, file)
-                )
+                  library.delete(existing, file),
+                ),
               );
             }
 
             promisesToFulfill.push(
               ...images
                 .filter((newOrExistingImage) =>
-                  isFileBase64(newOrExistingImage)
+                  isFileBase64(newOrExistingImage),
                 )
                 .map((newImage) =>
                   library
@@ -525,9 +525,9 @@ export const productsRoutes = t.router({
                     .then(({ filename }) =>
                       tx
                         .insert(productImages)
-                        .values({ file: filename, productId: existing.id })
-                    )
-                )
+                        .values({ file: filename, productId: existing.id }),
+                    ),
+                ),
             );
 
             await Promise.all(promisesToFulfill);
@@ -547,6 +547,9 @@ export const productsRoutes = t.router({
 
         revalidatePath('/muj-ucet/kosik/pokladna');
         revalidatePath(`/produkty/${encodeURIComponent(updated.slug)}`);
+        revalidatePath(
+          `/administrace/produkty/${encodeURIComponent(updated.slug)}`,
+        );
         revalidatePath(`/produkty`);
 
         return updated;
