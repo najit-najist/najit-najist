@@ -1,16 +1,16 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@najit-najist/ui';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
-import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { ProductFormData } from '../_types';
+import { createProductAction } from '../actions/createProductAction';
+import { updateProductAction } from '../actions/updateProductAction';
 
 export const Form: FC<
   PropsWithChildren<{
@@ -18,8 +18,6 @@ export const Form: FC<
     product?: ProductWithRelationsLocal;
   }>
 > = ({ children, viewType, product }) => {
-  const router = useRouter();
-
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
       ...product,
@@ -27,14 +25,13 @@ export const Form: FC<
       stock: product?.stock ?? undefined,
       images: product?.images.map(({ file }) => file),
       category: product?.category ?? undefined,
+      weight: 0,
     },
     resolver: zodResolver(
-      viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema
+      viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema,
     ),
   });
   const { handleSubmit } = formMethods;
-  const { mutateAsync: updateProduct } = trpc.products.update.useMutation();
-  const { mutateAsync: createProduct } = trpc.products.create.useMutation();
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
     async (values) => {
@@ -45,7 +42,7 @@ export const Form: FC<
 
       if (viewType === 'edit') {
         const { id } = product!;
-        const updateProductPromise = updateProduct({
+        const updateProductPromise = updateProductAction({
           id,
           payload: {
             name: values.name,
@@ -56,6 +53,7 @@ export const Form: FC<
             publishedAt,
             category: values.category,
             onlyForDeliveryMethod: values.onlyForDeliveryMethod,
+            weight: values.weight,
           },
         });
 
@@ -65,13 +63,9 @@ export const Form: FC<
           error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
         });
 
-        const result = await updateProductPromise;
-
-        router.push(
-          `/administrace/produkty/${encodeURIComponent(result.slug)}`
-        );
+        await updateProductPromise;
       } else if (viewType === 'create') {
-        const createProductPromise = createProduct({
+        const createProductPromise = createProductAction({
           name: values.name,
           description: values.description,
           images: values.images,
@@ -80,6 +74,7 @@ export const Form: FC<
           publishedAt,
           category: values.category,
           onlyForDeliveryMethod: values.onlyForDeliveryMethod,
+          weight: values.weight,
         });
 
         toast.promise(createProductPromise, {
@@ -88,12 +83,10 @@ export const Form: FC<
           error: (error) => <b>Nemohli produkt vytvořit. {error.message}</b>,
         });
 
-        const data = await createProductPromise;
-
-        router.push(`/produkty/${encodeURIComponent(data.slug)}`);
+        await createProductPromise;
       }
     },
-    [createProduct, router, updateProduct, viewType, product]
+    [viewType, product],
   );
 
   return (

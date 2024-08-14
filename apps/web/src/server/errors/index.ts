@@ -1,2 +1,3 @@
-export * from './EntityNotFoundError';
 export * from './ApplicationError';
+export * from './EntityNotFoundError';
+export * from './InsufficientRoleError';

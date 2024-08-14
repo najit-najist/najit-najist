@@ -16,7 +16,7 @@ export interface AlertProps
   onDismissClick?: () => void;
 }
 
-const alertRootStyles = cva('rounded-md p-4', {
+const alertRootStyles = cva('rounded-md p-3 border-solid', {
   variants: {
     color: {
       default: 'bg-blue-50',
@@ -121,7 +121,7 @@ export const Alert: FC<AlertProps> = ({
             />
           </div>
         ) : null}
-        <div className="ml-3 w-full">
+        <div className={cx(IconComponent && 'ml-3', 'w-full')}>
           <div className="flex justify-between items-start">
             <h3 className={titleStyles({ color })}>{heading}</h3>
             {onDismissClick ? (

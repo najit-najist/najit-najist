@@ -28,13 +28,14 @@ export const products = pgTable(
         () => productCategories.id,
         {
           onDelete: 'restrict',
-        }
+        },
       ),
       onlyForDeliveryMethodId: integer(
-        'only_for_delivery_method_id'
+        'only_for_delivery_method_id',
       ).references(() => orderDeliveryMethods.id, { onDelete: 'cascade' }),
-    })
-  )
+      weight: integer('weight').default(0),
+    }),
+  ),
 );
 
 export const productsRelations = relations(products, ({ one, many }) => ({

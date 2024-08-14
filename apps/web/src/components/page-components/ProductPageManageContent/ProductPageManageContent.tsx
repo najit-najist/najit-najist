@@ -4,6 +4,7 @@ import { dayjs } from '@dayjs';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
 import { products } from '@najit-najist/database/models';
 import {
+  Alert,
   Badge,
   BreadcrumbItem,
   Breadcrumbs,
@@ -31,6 +32,7 @@ import { OnlyDeliveryMethodBadge } from './editorComponents/OnlyDeliveryMethodBa
 import { PriceEditor } from './editorComponents/PriceEditor';
 import { StockEdit } from './editorComponents/StockEdit';
 import { TitleEdit } from './editorComponents/TitleEdit';
+import { WeightEdit } from './editorComponents/WeightEdit';
 
 const Title: FC<PropsWithChildren> = ({ children }) => (
   <h3 className="mb-2 text-2xl font-semibold font-title">{children}</h3>
@@ -141,7 +143,20 @@ export const ProductPageManageContent: FC<
           )}
         </div>
 
-        <div className="w-full md:w-8/12 lg:w-auto lg:col-span-6 md:pl-5">
+        <div className="w-full md:w-8/12 lg:w-auto lg:col-span-7">
+          {isEditorEnabled ? (
+            <Alert
+              outlined
+              heading="Administrace"
+              color="warning"
+              className="p-3 mb-4"
+            >
+              <StockEdit />
+              <hr className="h-0.5 bg-gray-100 border-none my-3" />
+              <AvailibilityEdit deliveryMethods={deliveryMethods} />
+            </Alert>
+          ) : null}
+
           <div className="flex gap-5 items-center mb-9">
             {isEditorEnabled ? (
               <CategoryEdit categories={categories.items} />
@@ -197,6 +212,12 @@ export const ProductPageManageContent: FC<
             )}
           </div>
 
+          {isEditorEnabled ? (
+            <div className="mt-5">
+              <WeightEdit />
+            </div>
+          ) : null}
+
           {product && viewType === 'view' ? (
             <div className="flex mt-10">
               <UserActions stock={product.stock} product={product} />
@@ -222,66 +243,13 @@ export const ProductPageManageContent: FC<
 
         <aside
           className={clsx(
-            'w-full lg:w-auto lg:col-span-2',
+            'w-full lg:w-auto lg:col-span-1',
             viewType == 'create' ? 'opacity-0' : '',
           )}
-        >
-          {isEditorEnabled ? (
-            <>
-              <Paper className="p-3">
-                <StockEdit />
-              </Paper>
-              <Paper className="p-3 mt-4">
-                <AvailibilityEdit deliveryMethods={deliveryMethods} />
-              </Paper>
-              {product?.createdAt ||
-              product?.updatedAt ||
-              product?.publishedAt ? (
-                <Paper className="p-3 mt-4">
-                  <h3 className="font-bold font-title">Časová osa</h3>
-                  <hr className="h-0.5 bg-gray-100 border-none mt-2 mb-3" />
-                  <div className="grid gap-5">
-                    {product?.createdAt ? (
-                      <Input
-                        label="Vytvořeno"
-                        value={dayjs
-                          .tz(product.createdAt)
-                          .format(DEFAULT_DATE_FORMAT)}
-                        disabled
-                      />
-                    ) : null}
-
-                    {product?.updatedAt ? (
-                      <Input
-                        label="Upraveno"
-                        value={dayjs
-                          .tz(product.updatedAt)
-                          .format(DEFAULT_DATE_FORMAT)}
-                        disabled
-                      />
-                    ) : null}
-
-                    {product?.publishedAt ? (
-                      <Input
-                        label="Publikováno"
-                        value={dayjs
-                          .tz(product.publishedAt)
-                          .format(DEFAULT_DATE_FORMAT)}
-                        disabled
-                      />
-                    ) : null}
-                  </div>
-                </Paper>
-              ) : null}
-            </>
-          ) : null}
-        </aside>
+        />
       </div>
       {isEditorHeaderShown ? (
-        <EditorHeader
-          viewType={props.viewType}
-          product={product ? { id: product.id, slug: product.slug } : undefined}
-        />
+        <EditorHeader viewType={props.viewType} product={product} />
       ) : null}
     </>
   );

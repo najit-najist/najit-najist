@@ -12,7 +12,7 @@ export const AvailibilityEdit: FC<{
 }> = ({ deliveryMethods }) => {
   const localPickup = useMemo(
     () => deliveryMethods.find((d) => isLocalPickup(d)),
-    [deliveryMethods]
+    [deliveryMethods],
   );
   if (!localPickup) {
     throw new Error('No local pickup in database');
@@ -35,8 +35,6 @@ export const AvailibilityEdit: FC<{
 
   return (
     <>
-      <h3 className="font-bold font-title">Dostupnost</h3>
-      <hr className="h-0.5 bg-gray-100 border-none mt-2 mb-5" />
       <CheckboxWrapper childId="local-pickup-only" title="Pouze osobně">
         <Checkbox
           id="local-pickup-only"

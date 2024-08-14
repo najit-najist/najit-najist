@@ -141,6 +141,13 @@
       "when": 1718363505306,
       "tag": "0019_numerous_apocalypse",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1723600724822,
+      "tag": "0020_silent_synch",
+      "breakpoints": true
     }
   ]
 }

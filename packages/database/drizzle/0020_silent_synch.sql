@@ -1,0 +1,1 @@
+ALTER TABLE "products" ADD COLUMN "weight" integer DEFAULT 0;

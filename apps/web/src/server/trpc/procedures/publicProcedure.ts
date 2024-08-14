@@ -1,5 +1,5 @@
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
-import { findUserById } from '@server/utils/server';
+import { findUserById } from '@server/utils/server/findUserById';
 
 import { t } from '../instance';
 

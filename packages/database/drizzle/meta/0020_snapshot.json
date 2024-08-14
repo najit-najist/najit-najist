@@ -1,7 +1,70 @@
 {
+  "id": "43311a11-51f5-47fd-9754-5644e9e2dd10",
+  "prevId": "e265db39-416e-42ec-94cc-000e49351515",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
+    "public.comgate_payments": {
+      "name": "comgate_payments",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "redirect_url": {
+          "name": "redirect_url",
+          "type": "varchar(1000)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "transaction_id": {
+          "name": "transaction_id",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "comgate_payments_order_id_orders_id_fk": {
+          "name": "comgate_payments_order_id_orders_id_fk",
+          "tableFrom": "comgate_payments",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
     "public.contact_form_replies": {
       "name": "contact_form_replies",
       "schema": "",
@@ -37,6 +100,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "lastname": {
+          "name": "lastname",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "message": {
           "name": "message",
           "type": "varchar",
@@ -61,25 +130,319 @@
         "contact_form_replies_user_id_users_id_fk": {
           "name": "contact_form_replies_user_id_users_id_fk",
           "tableFrom": "contact_form_replies",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.coupon_patches": {
+      "name": "coupon_patches",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coupon_id": {
+          "name": "coupon_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "reduction_price": {
+          "name": "reduction_price",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "reduction_percentage": {
+          "name": "reduction_percentage",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "coupon_patches_coupon_id_coupons_id_fk": {
+          "name": "coupon_patches_coupon_id_coupons_id_fk",
+          "tableFrom": "coupon_patches",
+          "tableTo": "coupons",
+          "columnsFrom": [
+            "coupon_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.coupons": {
+      "name": "coupons",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": true
+        },
+        "valid_from": {
+          "name": "valid_from",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "valid_to": {
+          "name": "valid_to",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "minimal_product_count": {
+          "name": "minimal_product_count",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {
+        "coupons_name_idx": {
+          "name": "coupons_name_idx",
+          "columns": [
+            {
+              "expression": "name",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "coupons_name_unique": {
+          "name": "coupons_name_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "name"
+          ]
+        }
+      }
+    },
+    "public.coupons_for_product_categories": {
+      "name": "coupons_for_product_categories",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coupon_id": {
+          "name": "coupon_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category_id": {
+          "name": "category_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "coupons_for_product_categories_coupon_id_coupons_id_fk": {
+          "name": "coupons_for_product_categories_coupon_id_coupons_id_fk",
+          "tableFrom": "coupons_for_product_categories",
+          "tableTo": "coupons",
+          "columnsFrom": [
+            "coupon_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "coupons_for_product_categories_category_id_product_categories_id_fk": {
+          "name": "coupons_for_product_categories_category_id_product_categories_id_fk",
+          "tableFrom": "coupons_for_product_categories",
+          "tableTo": "product_categories",
+          "columnsFrom": [
+            "category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "contact_form_replies_email_unique": {
-          "name": "contact_form_replies_email_unique",
+        "unique_coupon_category_combination": {
+          "name": "unique_coupon_category_combination",
+          "nullsNotDistinct": false,
           "columns": [
-            "email"
+            "coupon_id",
+            "category_id"
+          ]
+        }
+      }
+    },
+    "public.coupons_for_products": {
+      "name": "coupons_for_products",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coupon_id": {
+          "name": "coupon_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "product_id": {
+          "name": "product_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "coupons_for_products_coupon_id_coupons_id_fk": {
+          "name": "coupons_for_products_coupon_id_coupons_id_fk",
+          "tableFrom": "coupons_for_products",
+          "tableTo": "coupons",
+          "columnsFrom": [
+            "coupon_id"
           ],
-          "nullsNotDistinct": false
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "coupons_for_products_product_id_products_id_fk": {
+          "name": "coupons_for_products_product_id_products_id_fk",
+          "tableFrom": "coupons_for_products",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "unique_coupon_product_combination": {
+          "name": "unique_coupon_product_combination",
+          "nullsNotDistinct": false,
+          "columns": [
+            "coupon_id",
+            "product_id"
+          ]
         }
       }
     },
@@ -106,8 +469,14 @@
           "primaryKey": false,
           "notNull": false
         },
-        "firstname": {
-          "name": "firstname",
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
@@ -115,25 +484,25 @@
       },
       "indexes": {
         "name_slug_idx": {
+          "name": "name_slug_idx",
           "columns": [
             {
-              "expression": "firstname",
+              "expression": "name",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             },
             {
-              "expression": "firstname",
+              "expression": "slug",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "with": {},
-          "name": "name_slug_idx",
           "isUnique": true,
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {},
@@ -171,10 +540,10 @@
       "uniqueConstraints": {
         "user_newsletters_email_unique": {
           "name": "user_newsletters_email_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "email"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -201,6 +570,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "municipality_id": {
           "name": "municipality_id",
           "type": "integer",
@@ -209,6 +584,12 @@
         },
         "house_number": {
           "name": "house_number",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street_name": {
+          "name": "street_name",
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
@@ -224,41 +605,35 @@
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
-        },
-        "order_id": {
-          "name": "order_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "order_addresses_municipality_id_municipalities_id_fk": {
-          "name": "order_addresses_municipality_id_municipalities_id_fk",
-          "tableFrom": "order_addresses",
-          "columnsFrom": [
-            "municipality_id"
-          ],
-          "tableTo": "municipalities",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
-        },
         "order_addresses_order_id_orders_id_fk": {
           "name": "order_addresses_order_id_orders_id_fk",
           "tableFrom": "order_addresses",
+          "tableTo": "orders",
           "columnsFrom": [
             "order_id"
           ],
-          "tableTo": "orders",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "order_addresses_municipality_id_municipalities_id_fk": {
+          "name": "order_addresses_municipality_id_municipalities_id_fk",
+          "tableFrom": "order_addresses",
+          "tableTo": "municipalities",
+          "columnsFrom": [
+            "municipality_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -289,6 +664,12 @@
         },
         "name": {
           "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "slug": {
+          "name": "slug",
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": true
@@ -341,6 +722,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "product_id": {
           "name": "product_id",
           "type": "integer",
@@ -358,26 +745,109 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "discount": {
+          "name": "discount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "ordered_products_product_id_products_id_fk": {
-          "name": "ordered_products_product_id_products_id_fk",
+        "ordered_products_order_id_orders_id_fk": {
+          "name": "ordered_products_order_id_orders_id_fk",
           "tableFrom": "ordered_products",
+          "tableTo": "orders",
           "columnsFrom": [
-            "product_id"
+            "order_id"
           ],
-          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "ordered_products_product_id_products_id_fk": {
+          "name": "ordered_products_product_id_products_id_fk",
+          "tableFrom": "ordered_products",
+          "tableTo": "products",
+          "columnsFrom": [
+            "product_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {}
+    },
+    "public.orders_local_pickup_dates": {
+      "name": "orders_local_pickup_dates",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "orders_local_pickup_dates_order_id_orders_id_fk": {
+          "name": "orders_local_pickup_dates_order_id_orders_id_fk",
+          "tableFrom": "orders_local_pickup_dates",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "orders_local_pickup_dates_order_id_unique": {
+          "name": "orders_local_pickup_dates_order_id_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "order_id"
+          ]
+        }
+      }
     },
     "public.order_payment_methods_except_delivery_methods": {
       "name": "order_payment_methods_except_delivery_methods",
@@ -401,28 +871,28 @@
         "order_payment_methods_except_delivery_methods_payment_method_id_order_payment_methods_id_fk": {
           "name": "order_payment_methods_except_delivery_methods_payment_method_id_order_payment_methods_id_fk",
           "tableFrom": "order_payment_methods_except_delivery_methods",
+          "tableTo": "order_payment_methods",
           "columnsFrom": [
             "payment_method_id"
           ],
-          "tableTo": "order_payment_methods",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "order_payment_methods_except_delivery_methods_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "order_payment_methods_except_delivery_methods_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "order_payment_methods_except_delivery_methods",
+          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "delivery_method_id"
           ],
-          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -469,6 +939,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": 0
+        },
+        "slug": {
+          "name": "slug",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
         },
         "notes": {
           "name": "notes",
@@ -518,6 +994,13 @@
           "primaryKey": false,
           "notNull": true
         },
+        "discount": {
+          "name": "discount",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
         "user_id": {
           "name": "user_id",
           "type": "integer",
@@ -542,6 +1025,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "lastname": {
+          "name": "lastname",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "payment_method_id": {
           "name": "payment_method_id",
           "type": "integer",
@@ -553,6 +1042,14 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true
+        },
+        "state": {
+          "name": "state",
+          "type": "user_states",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'new'"
         },
         "notes": {
           "name": "notes",
@@ -573,6 +1070,12 @@
           "primaryKey": false,
           "notNull": false,
           "default": 0
+        },
+        "coupon_patch_id": {
+          "name": "coupon_patch_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -580,54 +1083,147 @@
         "orders_user_id_users_id_fk": {
           "name": "orders_user_id_users_id_fk",
           "tableFrom": "orders",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "orders_telephone_id_telephone_numbers_id_fk": {
           "name": "orders_telephone_id_telephone_numbers_id_fk",
           "tableFrom": "orders",
+          "tableTo": "telephone_numbers",
           "columnsFrom": [
             "telephone_id"
           ],
-          "tableTo": "telephone_numbers",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "no action",
+          "onUpdate": "no action"
         },
         "orders_payment_method_id_order_payment_methods_id_fk": {
           "name": "orders_payment_method_id_order_payment_methods_id_fk",
           "tableFrom": "orders",
+          "tableTo": "order_payment_methods",
           "columnsFrom": [
             "payment_method_id"
           ],
-          "tableTo": "order_payment_methods",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "orders_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "orders_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "orders",
+          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "delivery_method_id"
           ],
-          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        },
+        "orders_coupon_patch_id_coupon_patches_id_fk": {
+          "name": "orders_coupon_patch_id_coupon_patches_id_fk",
+          "tableFrom": "orders",
+          "tableTo": "coupon_patches",
+          "columnsFrom": [
+            "coupon_patch_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "public.packeta_parcels": {
+      "name": "packeta_parcels",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address_id": {
+          "name": "address_id",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address_type": {
+          "name": "address_type",
+          "type": "packeta_parcel_Types",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "packet_id": {
+          "name": "packet_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "packet_barcode_raw": {
+          "name": "packet_barcode_raw",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "packet_barcode_pretty": {
+          "name": "packet_barcode_pretty",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order_id": {
+          "name": "order_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "packeta_parcels_order_id_orders_id_fk": {
+          "name": "packeta_parcels_order_id_orders_id_fk",
+          "tableFrom": "packeta_parcels",
+          "tableTo": "orders",
+          "columnsFrom": [
+            "order_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -675,17 +1271,17 @@
       "uniqueConstraints": {
         "post_categories_title_unique": {
           "name": "post_categories_title_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "post_categories_slug_unique": {
           "name": "post_categories_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -693,6 +1289,18 @@
       "name": "posts",
       "schema": "",
       "columns": {
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "serial",
@@ -709,18 +1317,6 @@
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -763,48 +1359,48 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "posts_created_by_users_id_fk": {
-          "name": "posts_created_by_users_id_fk",
+        "posts_created_by_id_users_id_fk": {
+          "name": "posts_created_by_id_users_id_fk",
           "tableFrom": "posts",
-          "columnsFrom": [
-            "created_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "created_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
-        "posts_updated_by_users_id_fk": {
-          "name": "posts_updated_by_users_id_fk",
+        "posts_updated_by_id_users_id_fk": {
+          "name": "posts_updated_by_id_users_id_fk",
           "tableFrom": "posts",
-          "columnsFrom": [
-            "updated_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "posts_title_unique": {
           "name": "posts_title_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "posts_slug_unique": {
           "name": "posts_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -830,28 +1426,28 @@
         "posts_to_post_categories_post_id_posts_id_fk": {
           "name": "posts_to_post_categories_post_id_posts_id_fk",
           "tableFrom": "posts_to_post_categories",
+          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
-          "tableTo": "posts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "posts_to_post_categories_category_id_post_categories_id_fk": {
           "name": "posts_to_post_categories_category_id_post_categories_id_fk",
           "tableFrom": "posts_to_post_categories",
+          "tableTo": "post_categories",
           "columnsFrom": [
             "category_id"
           ],
-          "tableTo": "post_categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -898,15 +1494,15 @@
         "preview_subscriber_tokens_for_user_id_users_id_fk": {
           "name": "preview_subscriber_tokens_for_user_id_users_id_fk",
           "tableFrom": "preview_subscriber_tokens",
+          "tableTo": "users",
           "columnsFrom": [
             "for_user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -954,17 +1550,17 @@
       "uniqueConstraints": {
         "product_categories_title_unique": {
           "name": "product_categories_title_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "product_categories_slug_unique": {
           "name": "product_categories_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1009,15 +1605,15 @@
         "product_images_product_id_products_id_fk": {
           "name": "product_images_product_id_products_id_fk",
           "tableFrom": "product_images",
+          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
-          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1070,15 +1666,15 @@
         "product_prices_product_id_products_id_fk": {
           "name": "product_prices_product_id_products_id_fk",
           "tableFrom": "product_prices",
+          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
-          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1088,6 +1684,18 @@
       "name": "products",
       "schema": "",
       "columns": {
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "serial",
@@ -1104,18 +1712,6 @@
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -1147,85 +1743,92 @@
           "name": "category_id",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false
         },
         "only_for_delivery_method_id": {
           "name": "only_for_delivery_method_id",
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "weight": {
+          "name": "weight",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "products_created_by_users_id_fk": {
-          "name": "products_created_by_users_id_fk",
+        "products_created_by_id_users_id_fk": {
+          "name": "products_created_by_id_users_id_fk",
           "tableFrom": "products",
-          "columnsFrom": [
-            "created_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "created_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
-        "products_updated_by_users_id_fk": {
-          "name": "products_updated_by_users_id_fk",
+        "products_updated_by_id_users_id_fk": {
+          "name": "products_updated_by_id_users_id_fk",
           "tableFrom": "products",
-          "columnsFrom": [
-            "updated_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
         "products_category_id_product_categories_id_fk": {
           "name": "products_category_id_product_categories_id_fk",
           "tableFrom": "products",
+          "tableTo": "product_categories",
           "columnsFrom": [
             "category_id"
           ],
-          "tableTo": "product_categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "products_only_for_delivery_method_id_order_delivery_methods_id_fk": {
           "name": "products_only_for_delivery_method_id_order_delivery_methods_id_fk",
           "tableFrom": "products",
+          "tableTo": "order_delivery_methods",
           "columnsFrom": [
             "only_for_delivery_method_id"
           ],
-          "tableTo": "order_delivery_methods",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "products_name_unique": {
           "name": "products_name_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "products_slug_unique": {
           "name": "products_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1270,15 +1873,15 @@
         "product_stock_product_id_products_id_fk": {
           "name": "product_stock_product_id_products_id_fk",
           "tableFrom": "product_stock",
+          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
-          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1326,17 +1929,17 @@
       "uniqueConstraints": {
         "recipe_categories_title_unique": {
           "name": "recipe_categories_title_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "recipe_categories_slug_unique": {
           "name": "recipe_categories_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1388,17 +1991,17 @@
       "uniqueConstraints": {
         "recipe_difficulties_name_unique": {
           "name": "recipe_difficulties_name_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "recipe_difficulties_slug_unique": {
           "name": "recipe_difficulties_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1443,15 +2046,15 @@
         "recipe_images_recipe_id_recipes_id_fk": {
           "name": "recipe_images_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_images",
+          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
-          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1493,10 +2096,10 @@
       "uniqueConstraints": {
         "recipe_resource_metrics_name_unique": {
           "name": "recipe_resource_metrics_name_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "name"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1567,38 +2170,39 @@
         "recipe_resources_recipe_id_recipes_id_fk": {
           "name": "recipe_resources_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_resources",
+          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
-          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "recipe_resources_metric_id_recipe_resource_metrics_id_fk": {
           "name": "recipe_resources_metric_id_recipe_resource_metrics_id_fk",
           "tableFrom": "recipe_resources",
+          "tableTo": "recipe_resource_metrics",
           "columnsFrom": [
             "metric_id"
           ],
-          "tableTo": "recipe_resource_metrics",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
-        "recipe_resources_title_unique": {
-          "name": "recipe_resources_title_unique",
+        "title_for_recipe": {
+          "name": "title_for_recipe",
+          "nullsNotDistinct": false,
           "columns": [
+            "recipe_id",
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1606,6 +2210,18 @@
       "name": "recipes",
       "schema": "",
       "columns": {
+        "created_by_id": {
+          "name": "created_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "updated_by_id": {
+          "name": "updated_by_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "id": {
           "name": "id",
           "type": "serial",
@@ -1622,18 +2238,6 @@
         "updated_at": {
           "name": "updated_at",
           "type": "timestamp with time zone",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_by": {
-          "name": "created_by",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "updated_by": {
-          "name": "updated_by",
-          "type": "integer",
           "primaryKey": false,
           "notNull": false
         },
@@ -1677,74 +2281,74 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "recipes_created_by_users_id_fk": {
-          "name": "recipes_created_by_users_id_fk",
+        "recipes_created_by_id_users_id_fk": {
+          "name": "recipes_created_by_id_users_id_fk",
           "tableFrom": "recipes",
-          "columnsFrom": [
-            "created_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "created_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
-        "recipes_updated_by_users_id_fk": {
-          "name": "recipes_updated_by_users_id_fk",
+        "recipes_updated_by_id_users_id_fk": {
+          "name": "recipes_updated_by_id_users_id_fk",
           "tableFrom": "recipes",
-          "columnsFrom": [
-            "updated_by"
-          ],
           "tableTo": "users",
+          "columnsFrom": [
+            "updated_by_id"
+          ],
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         },
         "recipes_category_id_recipe_categories_id_fk": {
           "name": "recipes_category_id_recipe_categories_id_fk",
           "tableFrom": "recipes",
+          "tableTo": "recipe_categories",
           "columnsFrom": [
             "category_id"
           ],
-          "tableTo": "recipe_categories",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         },
         "recipes_difficulty_id_recipe_difficulties_id_fk": {
           "name": "recipes_difficulty_id_recipe_difficulties_id_fk",
           "tableFrom": "recipes",
+          "tableTo": "recipe_difficulties",
           "columnsFrom": [
             "difficulty_id"
           ],
-          "tableTo": "recipe_difficulties",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "recipes_title_unique": {
           "name": "recipes_title_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "title"
-          ],
-          "nullsNotDistinct": false
+          ]
         },
         "recipes_slug_unique": {
           "name": "recipes_slug_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "slug"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1796,15 +2400,15 @@
         "recipe_steps_recipe_id_recipes_id_fk": {
           "name": "recipe_steps_recipe_id_recipes_id_fk",
           "tableFrom": "recipe_steps",
+          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
-          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1833,10 +2437,10 @@
       "uniqueConstraints": {
         "telephone_number_codes_code_unique": {
           "name": "telephone_number_codes_code_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "code"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -1878,6 +2482,7 @@
       },
       "indexes": {
         "telephone_with_index_idx": {
+          "name": "telephone_with_index_idx",
           "columns": [
             {
               "expression": "telephone",
@@ -1892,26 +2497,25 @@
               "nulls": "last"
             }
           ],
-          "with": {},
-          "name": "telephone_with_index_idx",
           "isUnique": true,
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
         }
       },
       "foreignKeys": {
         "telephone_numbers_code_telephone_number_codes_code_fk": {
           "name": "telephone_numbers_code_telephone_number_codes_code_fk",
           "tableFrom": "telephone_numbers",
+          "tableTo": "telephone_number_codes",
           "columnsFrom": [
             "code"
           ],
-          "tableTo": "telephone_number_codes",
           "columnsTo": [
             "code"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -1940,6 +2544,12 @@
           "primaryKey": false,
           "notNull": false
         },
+        "user_id": {
+          "name": "user_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
         "municipality_id": {
           "name": "municipality_id",
           "type": "integer",
@@ -1948,6 +2558,12 @@
         },
         "house_number": {
           "name": "house_number",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "street_name": {
+          "name": "street_name",
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
@@ -1963,51 +2579,45 @@
           "type": "varchar(256)",
           "primaryKey": false,
           "notNull": false
-        },
-        "user_id": {
-          "name": "user_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "user_addresses_municipality_id_municipalities_id_fk": {
-          "name": "user_addresses_municipality_id_municipalities_id_fk",
-          "tableFrom": "user_addresses",
-          "columnsFrom": [
-            "municipality_id"
-          ],
-          "tableTo": "municipalities",
-          "columnsTo": [
-            "id"
-          ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
-        },
         "user_addresses_user_id_users_id_fk": {
           "name": "user_addresses_user_id_users_id_fk",
           "tableFrom": "user_addresses",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_addresses_municipality_id_municipalities_id_fk": {
+          "name": "user_addresses_municipality_id_municipalities_id_fk",
+          "tableFrom": "user_addresses",
+          "tableTo": "municipalities",
+          "columnsFrom": [
+            "municipality_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "restrict",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {
         "user_addresses_user_id_unique": {
           "name": "user_addresses_user_id_unique",
+          "nullsNotDistinct": false,
           "columns": [
             "user_id"
-          ],
-          "nullsNotDistinct": false
+          ]
         }
       }
     },
@@ -2044,7 +2654,8 @@
           "name": "count",
           "type": "integer",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": 1
         },
         "product_id": {
           "name": "product_id",
@@ -2058,28 +2669,28 @@
         "user_cart_products_cart_id_user_carts_id_fk": {
           "name": "user_cart_products_cart_id_user_carts_id_fk",
           "tableFrom": "user_cart_products",
+          "tableTo": "user_carts",
           "columnsFrom": [
             "cart_id"
           ],
-          "tableTo": "user_carts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "user_cart_products_product_id_products_id_fk": {
           "name": "user_cart_products_product_id_products_id_fk",
           "tableFrom": "user_cart_products",
+          "tableTo": "products",
           "columnsFrom": [
             "product_id"
           ],
-          "tableTo": "products",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2113,6 +2724,12 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "coupon_id": {
+          "name": "coupon_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -2120,15 +2737,28 @@
         "user_carts_user_id_users_id_fk": {
           "name": "user_carts_user_id_users_id_fk",
           "tableFrom": "user_carts",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "user_carts_coupon_id_coupons_id_fk": {
+          "name": "user_carts_coupon_id_coupons_id_fk",
+          "tableFrom": "user_carts",
+          "tableTo": "coupons",
+          "columnsFrom": [
+            "coupon_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2175,28 +2805,28 @@
         "user_liked_posts_user_id_users_id_fk": {
           "name": "user_liked_posts_user_id_users_id_fk",
           "tableFrom": "user_liked_posts",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "user_liked_posts_post_id_posts_id_fk": {
           "name": "user_liked_posts_post_id_posts_id_fk",
           "tableFrom": "user_liked_posts",
+          "tableTo": "posts",
           "columnsFrom": [
             "post_id"
           ],
-          "tableTo": "posts",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2243,28 +2873,28 @@
         "user_liked_recipes_user_id_users_id_fk": {
           "name": "user_liked_recipes_user_id_users_id_fk",
           "tableFrom": "user_liked_recipes",
+          "tableTo": "users",
           "columnsFrom": [
             "user_id"
           ],
-          "tableTo": "users",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         },
         "user_liked_recipes_recipe_id_recipes_id_fk": {
           "name": "user_liked_recipes_recipe_id_recipes_id_fk",
           "tableFrom": "user_liked_recipes",
+          "tableTo": "recipes",
           "columnsFrom": [
             "recipe_id"
           ],
-          "tableTo": "recipes",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "cascade",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
@@ -2305,6 +2935,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "lastname": {
+          "name": "lastname",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
         "avatar_filepath": {
           "name": "avatar_filepath",
           "type": "text",
@@ -2314,6 +2950,7 @@
         "role": {
           "name": "role",
           "type": "user_role",
+          "typeSchema": "public",
           "primaryKey": false,
           "notNull": true,
           "default": "'basic'"
@@ -2321,8 +2958,10 @@
         "status": {
           "name": "status",
           "type": "user_state",
+          "typeSchema": "public",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": "'invited'"
         },
         "last_logged_in": {
           "name": "last_logged_in",
@@ -2335,10 +2974,29 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": false
+        },
+        "password_reset_secret": {
+          "name": "password_reset_secret",
+          "type": "varchar(1064)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "register_secret": {
+          "name": "register_secret",
+          "type": "varchar(1064)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(1064)",
+          "primaryKey": false,
+          "notNull": true
         }
       },
       "indexes": {
         "name_idx": {
+          "name": "name_idx",
           "columns": [
             {
               "expression": "firstname",
@@ -2347,39 +3005,82 @@
               "nulls": "last"
             },
             {
-              "expression": "firstname",
+              "expression": "lastname",
               "isExpression": false,
               "asc": true,
               "nulls": "last"
             }
           ],
-          "with": {},
-          "name": "name_idx",
-          "isUnique": true,
+          "isUnique": false,
+          "concurrently": false,
           "method": "btree",
-          "concurrently": false
+          "with": {}
+        },
+        "user_email_idx": {
+          "name": "user_email_idx",
+          "columns": [
+            {
+              "expression": "email",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
         }
       },
       "foreignKeys": {
         "users_telephone_id_telephone_numbers_id_fk": {
           "name": "users_telephone_id_telephone_numbers_id_fk",
           "tableFrom": "users",
+          "tableTo": "telephone_numbers",
           "columnsFrom": [
             "telephone_id"
           ],
-          "tableTo": "telephone_numbers",
           "columnsTo": [
             "id"
           ],
-          "onUpdate": "no action",
-          "onDelete": "no action"
+          "onDelete": "set null",
+          "onUpdate": "no action"
         }
       },
       "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
+      "uniqueConstraints": {
+        "users_email_unique": {
+          "name": "users_email_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "email"
+          ]
+        }
+      }
     }
   },
   "enums": {
+    "public.user_states": {
+      "name": "user_states",
+      "schema": "public",
+      "values": [
+        "new",
+        "unpaid",
+        "unconfirmed",
+        "confirmed",
+        "finished",
+        "dropped",
+        "shipped"
+      ]
+    },
+    "public.packeta_parcel_Types": {
+      "name": "packeta_parcel_Types",
+      "schema": "public",
+      "values": [
+        "external",
+        "internal"
+      ]
+    },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
@@ -2405,11 +3106,10 @@
     }
   },
   "schemas": {},
+  "sequences": {},
   "_meta": {
+    "columns": {},
     "schemas": {},
-    "tables": {},
-    "columns": {}
-  },
-  "id": "b4b3d46d-5c09-405f-b388-9249a29676c6",
-  "prevId": "00000000-0000-0000-0000-000000000000"
+    "tables": {}
+  }
 }

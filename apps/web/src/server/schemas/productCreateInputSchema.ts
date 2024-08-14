@@ -19,4 +19,9 @@ export const productCreateInputSchema = z.object({
   publishedAt: stringOrDateToDateSchema,
   price: productPriceCreateInputSchema.omit({ product: true }),
   stock: productStockCreateInputSchema.nullable().optional(),
+  weight: z
+    .number({
+      required_error: 'Váha je povinná',
+    })
+    .min(0, { message: 'Minimální váha je 0g' }),
 });

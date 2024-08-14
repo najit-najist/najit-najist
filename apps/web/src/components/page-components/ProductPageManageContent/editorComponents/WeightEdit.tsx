@@ -1,33 +1,33 @@
 'use client';
 
 import { Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
-import { FC } from 'react';
+import { ReactElement } from 'react';
 import { useFormContext } from 'react-hook-form';
 
 import { ProductFormData } from '../_types';
 
-export const PriceEditor: FC = () => {
+export const WeightEdit = (): ReactElement => {
   const { register, formState } = useFormContext<ProductFormData>();
 
   return (
     <div className="max-w-md">
       <Input
         size="lg"
-        label="Cena"
+        label="Váha"
         type="number"
-        placeholder="Cena produktu"
+        placeholder="Váha produktu v gramech"
         // TODO: is it possible to get this value from schema somehow?
         min={0}
         suffix={
           <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
             <span className="flex items-center justify-center px-4 h-full text-lg whitespace-nowrap">
-              Kč / Ks
+              g
             </span>
           </div>
         }
         error={formState.errors.price?.value}
         disabled={formState.isSubmitting}
-        {...register('price.value', { valueAsNumber: true })}
+        {...register('weight', { valueAsNumber: true })}
       />
     </div>
   );

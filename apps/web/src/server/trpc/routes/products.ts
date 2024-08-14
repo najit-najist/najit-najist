@@ -4,7 +4,6 @@ import {
   DrizzleError,
   SQL,
   and,
-  eq,
   getTableName,
   ilike,
   inArray,
@@ -15,31 +14,19 @@ import {
 import {
   Product,
   productCategories,
-  productImages,
-  productPrices,
-  productStock,
   products,
-  userCartProducts,
 } from '@najit-najist/database/models';
-import {
-  isFileBase64,
-  nonEmptyStringSchema,
-  slugSchema,
-} from '@najit-najist/schemas';
+import { nonEmptyStringSchema, slugSchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { ApplicationError, EntityNotFoundError } from '@server/errors';
 import { logger } from '@server/logger';
-import { LibraryService } from '@server/services/LibraryService';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { slugifyString } from '@server/utils/slugifyString';
 import generateCursor from 'drizzle-cursor';
-import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
 import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
 import { productCategoryCreateInputSchema } from '../../schemas/productCategoryCreateInputSchema';
-import { productCreateInputSchema } from '../../schemas/productCreateInputSchema';
-import { productUpdateInputSchema } from '../../schemas/productUpdateInputSchema';
 import { t } from '../instance';
 import { onlyAdminProcedure } from '../procedures/onlyAdminProcedure';
 import { publicProcedure } from '../procedures/publicProcedure';
@@ -323,252 +310,5 @@ const categoriesRoutes = t.router({
 
 export const productsRoutes = t.router({
   get: getRoutes,
-  create: onlyAdminProcedure
-    .input(productCreateInputSchema)
-    .mutation(async ({ input }) => {
-      const library = new LibraryService(products);
-
-      try {
-        library.beginTransaction();
-
-        const created = await database.transaction(async (tx) => {
-          const {
-            onlyForDeliveryMethod,
-            price,
-            images,
-            category,
-            stock,
-            ...createPayload
-          } = input;
-
-          const [createdProduct] = await tx
-            .insert(products)
-            .values({
-              ...createPayload,
-              slug: slugifyString(input.name),
-              categoryId: input.category?.id,
-              ...(typeof onlyForDeliveryMethod !== 'undefined'
-                ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
-                : {}),
-            })
-            .returning();
-
-          await tx
-            .insert(productPrices)
-            .values({ ...price, productId: createdProduct.id })
-            .returning();
-
-          if (stock) {
-            await tx
-              .insert(productStock)
-              .values({
-                productId: createdProduct.id,
-                value: stock.value,
-              })
-              .returning();
-          }
-
-          const imagesThatAreBeingCreated: Promise<any>[] = [];
-          for (const imageBase64 of images) {
-            imagesThatAreBeingCreated.push(
-              library.create(createdProduct, imageBase64).then(({ filename }) =>
-                tx.insert(productImages).values({
-                  productId: createdProduct.id,
-                  file: filename,
-                }),
-              ),
-            );
-          }
-          await Promise.all(imagesThatAreBeingCreated);
-
-          await library.commit();
-
-          return createdProduct;
-        });
-
-        revalidatePath(`/produkty`);
-
-        return created;
-      } catch (error) {
-        library.endTransaction();
-
-        logger.error(
-          {
-            error,
-          },
-          'Failed to create product',
-        );
-
-        throw error;
-      }
-    }),
-
-  delete: onlyAdminProcedure
-    .input(entityLinkSchema)
-    .mutation(async ({ input, ctx }) => {
-      const existing = await getOneProductBy('id', input.id);
-
-      await database.delete(products).where(eq(products.id, input.id));
-
-      revalidatePath(`/produkty/${encodeURIComponent(existing.slug)}`);
-      revalidatePath(`/produkty`);
-
-      return;
-    }),
-
-  update: onlyAdminProcedure
-    .input(entityLinkSchema.extend({ payload: productUpdateInputSchema }))
-    .mutation(async ({ input, ctx }) => {
-      const library = new LibraryService(products);
-
-      try {
-        const existing = await getOneProductBy('id', input.id);
-
-        const updated = await database.transaction(async (tx) => {
-          const {
-            images,
-            price,
-            stock,
-            category,
-            onlyForDeliveryMethod,
-            ...updatePayload
-          } = input.payload;
-
-          const [updated] = await tx
-            .update(products)
-            .set({
-              ...updatePayload,
-              ...(updatePayload.name
-                ? { slug: slugifyString(updatePayload.name) }
-                : {}),
-              ...(category?.id ? { categoryId: category.id } : {}),
-              ...(typeof onlyForDeliveryMethod !== 'undefined'
-                ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
-                : {}),
-            })
-            .where(eq(products.id, existing.id))
-            .returning();
-
-          if (typeof stock?.value === 'number') {
-            await tx
-              .update(productStock)
-              .set({
-                value: stock.value,
-              })
-              .where(eq(productStock.productId, existing.id));
-          }
-
-          if (
-            typeof price?.value === 'number' ||
-            typeof price?.discount === 'number'
-          ) {
-            await tx
-              .update(productPrices)
-              .set({
-                value: price.value,
-                discount: price.discount,
-              })
-              .where(eq(productPrices.productId, existing.id));
-          }
-
-          if (typeof stock?.value === 'number' || stock === null) {
-            if (stock) {
-              if (!existing.stock) {
-                await tx.insert(productStock).values({
-                  value: stock.value ?? 1,
-                  productId: existing.id,
-                });
-              } else {
-                await tx
-                  .update(productStock)
-                  .set({
-                    value: stock.value,
-                  })
-                  .where(eq(productStock.productId, existing.id));
-              }
-            } else if (stock === null && existing.stock) {
-              await tx
-                .delete(productStock)
-                .where(eq(productStock.productId, existing.id));
-            }
-          }
-
-          if (images) {
-            const filesToDelete = existing.images.filter(
-              ({ file }) => !images.includes(file),
-            );
-
-            const promisesToFulfill: Promise<any>[] = [];
-
-            if (filesToDelete.length) {
-              promisesToFulfill.push(
-                tx.delete(productImages).where(
-                  inArray(
-                    productImages.id,
-                    filesToDelete.map(({ id }) => id),
-                  ),
-                ),
-                ...filesToDelete.map(({ file }) =>
-                  library.delete(existing, file),
-                ),
-              );
-            }
-
-            promisesToFulfill.push(
-              ...images
-                .filter((newOrExistingImage) =>
-                  isFileBase64(newOrExistingImage),
-                )
-                .map((newImage) =>
-                  library
-                    .create(existing, newImage)
-                    .then(({ filename }) =>
-                      tx
-                        .insert(productImages)
-                        .values({ file: filename, productId: existing.id }),
-                    ),
-                ),
-            );
-
-            await Promise.all(promisesToFulfill);
-          }
-
-          // Remove disabled products from user carts if it should not be published
-          if (updatePayload.publishedAt === null) {
-            await tx
-              .delete(userCartProducts)
-              .where(eq(userCartProducts.productId, existing.id));
-          }
-
-          await library.commit();
-
-          return updated;
-        });
-
-        revalidatePath('/muj-ucet/kosik/pokladna');
-        revalidatePath(`/produkty/${encodeURIComponent(updated.slug)}`);
-        revalidatePath(
-          `/administrace/produkty/${encodeURIComponent(updated.slug)}`,
-        );
-        revalidatePath(`/produkty`);
-
-        return updated;
-      } catch (error) {
-        logger.error(error, 'Failed to update product');
-
-        library.endTransaction();
-
-        if (error instanceof EntityNotFoundError) {
-          throw new ApplicationError({
-            code: ErrorCodes.ENTITY_MISSING,
-            message: `Recept pod daným id '${input.id}' nebyl nalezen`,
-            origin: 'products',
-          });
-        }
-
-        throw error;
-      }
-    }),
-
   categories: categoriesRoutes,
 });

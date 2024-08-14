@@ -20,7 +20,7 @@ const defaultStock: Pick<ProductStock, 'value'> = {
 export const StockEdit: FC = () => {
   const { register, formState } = useFormContext<ProductFormData>();
   const enableStockValue = useRef<Pick<ProductStock, 'value'> | undefined>(
-    defaultStock
+    defaultStock,
   );
   const stockInput = useController({
     name: 'stock',
@@ -52,8 +52,6 @@ export const StockEdit: FC = () => {
       </CheckboxWrapper>
       {stockEnabled ? (
         <>
-          <hr className="h-0.5 bg-gray-100 border-none mt-4 mb-5" />
-
           <Input
             label="Počet produktů na skladě"
             type="number"
@@ -69,6 +67,7 @@ export const StockEdit: FC = () => {
             }
             error={formState.errors.stock?.value}
             disabled={!stockEnabled}
+            rootClassName="mt-2"
             {...register('stock.value', {
               valueAsNumber: true,
               shouldUnregister: true,
