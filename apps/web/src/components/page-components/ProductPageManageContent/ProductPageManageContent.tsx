@@ -1,6 +1,4 @@
-import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ProductWithRelationsLocal } from '@custom-types';
-import { dayjs } from '@dayjs';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
 import { products } from '@najit-najist/database/models';
 import {
@@ -8,9 +6,8 @@ import {
   Badge,
   BreadcrumbItem,
   Breadcrumbs,
-  Input,
-  Paper,
   Price,
+  Tooltip,
 } from '@najit-najist/ui';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
@@ -30,6 +27,7 @@ import { Form } from './editorComponents/Form';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
 import { OnlyDeliveryMethodBadge } from './editorComponents/OnlyDeliveryMethodBadge';
 import { PriceEditor } from './editorComponents/PriceEditor';
+import { ProductCompositionsEdit } from './editorComponents/ProductCompositionsEdit';
 import { StockEdit } from './editorComponents/StockEdit';
 import { TitleEdit } from './editorComponents/TitleEdit';
 import { WeightEdit } from './editorComponents/WeightEdit';
@@ -57,7 +55,7 @@ export const ProductPageManageContent: FC<
   const { name } = product ?? {};
   const isEditorEnabled = props.viewType !== 'view';
   const hrComponent = (
-    <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-5" />
+    <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-3" />
   );
   const [categories, deliveryMethods] = await Promise.all([
     getCachedTrpcCaller().products.categories.get.many(),
@@ -239,6 +237,41 @@ export const ProductPageManageContent: FC<
               <DescriptionEdit />
             )}
           </div>
+
+          {((viewType === 'view' && !!product?.composedOf.length) ||
+            viewType !== 'view') && (
+            <div className="mb-10 mt-12">
+              <Title>Složení</Title>
+              {hrComponent}
+              {String(viewType) === 'view' ? (
+                <div className="flex flex-wrap gap-x-1 gap-y-1.5">
+                  {product?.composedOf.map((item, index, items) => (
+                    <Tooltip
+                      disabled={!item.description}
+                      key={item.id}
+                      trigger={
+                        <p
+                          className={clsx(
+                            item.description
+                              ? 'decoration-dashed underline hover:decoration-solid cursor-help'
+                              : undefined,
+                          )}
+                        >
+                          {item.rawMaterial.name}
+                          {item.notes ? <> ({item.notes})</> : null}
+                          {items.length - 1 === index ? null : ', '}
+                        </p>
+                      }
+                    >
+                      {item.description}
+                    </Tooltip>
+                  ))}
+                </div>
+              ) : (
+                <ProductCompositionsEdit />
+              )}
+            </div>
+          )}
         </div>
 
         <aside

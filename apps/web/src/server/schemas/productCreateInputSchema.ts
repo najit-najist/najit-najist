@@ -24,4 +24,15 @@ export const productCreateInputSchema = z.object({
       required_error: 'Váha je povinná',
     })
     .min(0, { message: 'Minimální váha je 0g' }),
+  composedOf: z.array(
+    z.object({
+      id: z.coerce.number().nullish(),
+      rawMaterial: entityLinkSchema.extend({
+        name: z.string().nullish(),
+      }),
+      notes: z.string().nullish(),
+      description: z.string().nullish(),
+      order: z.number(),
+    }),
+  ),
 });

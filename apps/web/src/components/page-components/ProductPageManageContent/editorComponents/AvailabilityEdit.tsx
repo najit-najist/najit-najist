@@ -35,7 +35,11 @@ export const AvailibilityEdit: FC<{
 
   return (
     <>
-      <CheckboxWrapper childId="local-pickup-only" title="Pouze osobně">
+      <CheckboxWrapper
+        childId="local-pickup-only"
+        title="Pouze osobně"
+        className="font-title !text-base"
+      >
         <Checkbox
           id="local-pickup-only"
           checked={hasLocalPickupSelected}

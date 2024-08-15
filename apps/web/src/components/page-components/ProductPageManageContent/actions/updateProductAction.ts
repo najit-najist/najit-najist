@@ -1,27 +1,26 @@
 'use server';
 
-import { ErrorCodes } from '@custom-types/ErrorCodes';
+import { dayjs } from '@dayjs';
 import { database } from '@najit-najist/database';
 import { eq, inArray } from '@najit-najist/database/drizzle';
 import {
   productImages,
   productPrices,
+  productRawMaterialsToProducts,
   products,
   productStock,
   userCartProducts,
   UserRoles,
 } from '@najit-najist/database/models';
 import { entityLinkSchema, isFileBase64 } from '@najit-najist/schemas';
-import {
-  ApplicationError,
-  EntityNotFoundError,
-  InsufficientRoleError,
-} from '@server/errors';
+import { InsufficientRoleError } from '@server/errors';
 import { logger } from '@server/logger';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
 import { LibraryService } from '@server/services/LibraryService';
 import { getOneProductBy } from '@server/trpc/routes/products';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
+import { isNextNotFound } from '@server/utils/isNextNotFound';
+import { isNextRedirect } from '@server/utils/isNextRedirect';
 import { getLoggedInUser } from '@server/utils/server/getLoggedInUser';
 import { slugifyString } from '@server/utils/slugifyString';
 import { revalidatePath } from 'next/cache';
@@ -29,7 +28,6 @@ import { redirect } from 'next/navigation';
 
 export const updateProductAction = createActionWithValidation(
   entityLinkSchema.extend({ payload: productUpdateInputSchema }),
-
   async (input) => {
     const user = await getLoggedInUser();
 
@@ -49,6 +47,7 @@ export const updateProductAction = createActionWithValidation(
           stock,
           category,
           onlyForDeliveryMethod,
+          composedOf,
           ...updatePayload
         } = input.payload;
 
@@ -63,7 +62,7 @@ export const updateProductAction = createActionWithValidation(
             ...(typeof onlyForDeliveryMethod !== 'undefined'
               ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
               : {}),
-            updatedAt: new Date(),
+            updatedAt: dayjs().toDate(),
           })
           .where(eq(products.id, existing.id))
           .returning();
@@ -75,6 +74,21 @@ export const updateProductAction = createActionWithValidation(
               value: stock.value,
             })
             .where(eq(productStock.productId, existing.id));
+        }
+
+        await tx
+          .delete(productRawMaterialsToProducts)
+          .where(eq(productRawMaterialsToProducts.productId, updated.id));
+        if (composedOf?.length) {
+          await tx.insert(productRawMaterialsToProducts).values(
+            composedOf.map(({ rawMaterial, notes, order, description }) => ({
+              productId: updated.id,
+              rawMaterialId: rawMaterial.id,
+              notes,
+              order,
+              description,
+            })),
+          );
         }
 
         if (
@@ -173,19 +187,16 @@ export const updateProductAction = createActionWithValidation(
 
       return updated;
     } catch (error) {
-      logger.error(error, 'Failed to update product');
-
-      library.endTransaction();
-
-      if (error instanceof EntityNotFoundError) {
-        throw new ApplicationError({
-          code: ErrorCodes.ENTITY_MISSING,
-          message: `Recept pod daným id '${input.id}' nebyl nalezen`,
-          origin: 'products',
-        });
+      if (!isNextRedirect(error) && !isNextNotFound(error)) {
+        library.endTransaction();
       }
 
       throw error;
     }
+  },
+  {
+    onHandlerError(error) {
+      logger.error(error, 'Failed to update product');
+    },
   },
 );

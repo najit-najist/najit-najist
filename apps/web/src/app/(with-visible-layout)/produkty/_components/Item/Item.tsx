@@ -11,7 +11,7 @@ import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 
 export const Item: FC<
-  ProductWithRelationsLocal & { showEditLink?: boolean }
+  Omit<ProductWithRelationsLocal, 'composedOf'> & { showEditLink?: boolean }
 > = ({
   images,
   name,
@@ -45,7 +45,7 @@ export const Item: FC<
         {!publishedAt ? (
           <div
             className={clsx(
-              'absolute w-full h-full bg-white opacity-50 top-0 left-0'
+              'absolute w-full h-full bg-white opacity-50 top-0 left-0',
             )}
           />
         ) : null}

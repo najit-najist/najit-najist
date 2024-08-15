@@ -20,7 +20,9 @@ import { nonEmptyStringSchema, slugSchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { ApplicationError, EntityNotFoundError } from '@server/errors';
 import { logger } from '@server/logger';
+import { productRawMaterialCreateInputSchema } from '@server/schemas/productRawMaterialCreateInputSchema';
 import { UserActions, canUser } from '@server/utils/canUser';
+import { getProductRawMaterials } from '@server/utils/getProductRawMaterials';
 import { slugifyString } from '@server/utils/slugifyString';
 import generateCursor from 'drizzle-cursor';
 import { z } from 'zod';
@@ -37,7 +39,15 @@ const baseWith = {
   onlyForDeliveryMethod: true,
   price: true,
   stock: true,
-} as const;
+  composedOf: {
+    with: {
+      rawMaterial: true,
+    },
+    orderBy: (schema, { asc }) => asc(schema.order),
+  },
+} as const satisfies NonNullable<
+  Parameters<typeof database.query.products.findFirst>['0']
+>['with'];
 
 export const getOneProductBy = async <V extends keyof Product>(
   by: V,
@@ -311,4 +321,13 @@ const categoriesRoutes = t.router({
 export const productsRoutes = t.router({
   get: getRoutes,
   categories: categoriesRoutes,
+  rawMaterials: t.router({
+    get: t.router({
+      many: publicProcedure
+        .input(productRawMaterialCreateInputSchema)
+        .query(async ({ input }) => {
+          return getProductRawMaterials(input);
+        }),
+    }),
+  }),
 });

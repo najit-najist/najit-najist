@@ -4,6 +4,7 @@ import { database } from '@najit-najist/database';
 import {
   productImages,
   productPrices,
+  productRawMaterialsToProducts,
   products,
   productStock,
   UserRoles,
@@ -13,6 +14,8 @@ import { logger } from '@server/logger';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { LibraryService } from '@server/services/LibraryService';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
+import { isNextNotFound } from '@server/utils/isNextNotFound';
+import { isNextRedirect } from '@server/utils/isNextRedirect';
 import { getLoggedInUser } from '@server/utils/server/getLoggedInUser';
 import { slugifyString } from '@server/utils/slugifyString';
 import { revalidatePath } from 'next/cache';
@@ -39,6 +42,7 @@ export const createProductAction = createActionWithValidation(
           images,
           category,
           stock,
+          composedOf,
           ...createPayload
         } = input;
 
@@ -58,6 +62,18 @@ export const createProductAction = createActionWithValidation(
           .insert(productPrices)
           .values({ ...price, productId: createdProduct.id })
           .returning();
+
+        if (composedOf.length) {
+          await tx.insert(productRawMaterialsToProducts).values(
+            composedOf.map(({ rawMaterial, notes, order, description }) => ({
+              productId: createdProduct.id,
+              rawMaterialId: rawMaterial.id,
+              notes,
+              order,
+              description,
+            })),
+          );
+        }
 
         if (stock) {
           await tx
@@ -94,16 +110,21 @@ export const createProductAction = createActionWithValidation(
 
       return created;
     } catch (error) {
-      library.endTransaction();
+      if (!isNextRedirect(error) && !isNextNotFound(error)) {
+        library.endTransaction();
+      }
 
+      throw error;
+    }
+  },
+  {
+    onHandlerError(error) {
       logger.error(
         {
           error,
         },
         'Failed to create product',
       );
-
-      throw error;
-    }
+    },
   },
 );

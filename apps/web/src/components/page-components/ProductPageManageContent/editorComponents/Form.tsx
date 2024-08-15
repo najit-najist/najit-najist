@@ -25,7 +25,8 @@ export const Form: FC<
       stock: product?.stock ?? undefined,
       images: product?.images.map(({ file }) => file),
       category: product?.category ?? undefined,
-      weight: 0,
+      weight: product?.weight ?? 0,
+      composedOf: product?.composedOf ?? [],
     },
     resolver: zodResolver(
       viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema,
@@ -54,6 +55,7 @@ export const Form: FC<
             category: values.category,
             onlyForDeliveryMethod: values.onlyForDeliveryMethod,
             weight: values.weight,
+            composedOf: values.composedOf,
           },
         });
 
@@ -75,6 +77,7 @@ export const Form: FC<
           category: values.category,
           onlyForDeliveryMethod: values.onlyForDeliveryMethod,
           weight: values.weight,
+          composedOf: values.composedOf,
         });
 
         toast.promise(createProductPromise, {

@@ -83,7 +83,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
         }
       }
     },
-    [onItemUploadEnd, onUploadStart, value]
+    [onItemUploadEnd, onUploadStart, value],
   );
 
   const src = useMemo(
@@ -93,13 +93,13 @@ const ImagePicker: FC<ImagePickerProps> = ({
           ? value
           : getFileUrl(products, productId, value)
         : value,
-    [productId, value]
+    [productId, value],
   );
 
   return (
     <div
       className={clsx([
-        'w-full aspect-square bg-gray-100 text-project-primary rounded-md col-span-2 relative ring-2 ring-offset-2',
+        'w-full aspect-square bg-gray-100 text-project-primary rounded-md col-span-3 relative ring-2 ring-offset-2',
         error ? 'ring-red-500' : 'ring-transparent',
       ])}
     >
@@ -190,19 +190,19 @@ export const ImagesEdit: FC<{ productId?: number }> = ({ productId }) => {
         defaultValue: [...values].filter(Boolean),
       });
     },
-    [getValues, resetField]
+    [getValues, resetField],
   );
 
   const onFirstUploadStart = useCallback<ImagePickerProps['onUploadStart']>(
     () => setIsMainImageUploading(true),
-    []
+    [],
   );
 
   const onUploadMultipleStart = useCallback<ImagePickerProps['onUploadStart']>(
     (items) => {
       setNumberOfUploadingFiles(items.length);
     },
-    []
+    [],
   );
 
   const onUploadMultipleItemEnd = useCallback<
@@ -235,11 +235,11 @@ export const ImagesEdit: FC<{ productId?: number }> = ({ productId }) => {
         return prev - 1;
       });
     },
-    [getValues, field]
+    [getValues, field],
   );
 
   const skeleton = (
-    <Skeleton className="w-full animate-pulse col-span-2 aspect-square flex">
+    <Skeleton className="w-full animate-pulse col-span-3 aspect-square flex">
       <ArrowPathIcon className="w-12 h-12 animate-spin m-auto" />
     </Skeleton>
   );
@@ -280,7 +280,7 @@ export const ImagesEdit: FC<{ productId?: number }> = ({ productId }) => {
         {Array.from(new Array(numberOfUploadingFiles).fill('')).map(
           (_, key) => (
             <Fragment key={key}>{skeleton}</Fragment>
-          )
+          ),
         )}
         {field.value?.length >= 1 ? (
           <ImagePicker

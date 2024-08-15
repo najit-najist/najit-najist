@@ -21,6 +21,8 @@ export * from './posts';
 
 export * from './previewSubscriberTokens';
 export * from './productCategories';
+export * from './productRawMaterials';
+export * from './productRawMaterialsToProducts';
 export * from './productImages';
 export * from './productPrices';
 export * from './products';

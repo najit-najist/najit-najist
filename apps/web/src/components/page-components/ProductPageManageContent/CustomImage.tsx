@@ -17,7 +17,7 @@ export const CustomImage: FC<
       unoptimized={isPreview}
       className={clsx(
         'absolute top-0 left-0 w-full h-full object-center object-cover rounded-md',
-        className
+        className,
       )}
       {...rest}
     />
@@ -28,6 +28,6 @@ export const CustomImage: FC<
   }
 
   return (
-    <div className="relative w-full col-span-2 aspect-square">{image}</div>
+    <div className="relative w-full col-span-3 aspect-square">{image}</div>
   );
 };

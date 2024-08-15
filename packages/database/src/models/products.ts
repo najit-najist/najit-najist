@@ -14,6 +14,7 @@ import { orderDeliveryMethods } from './orderDeliveryMethods';
 import { productCategories } from './productCategories';
 import { productImages } from './productImages';
 import { productPrices } from './productPrices';
+import { productRawMaterialsToProducts } from './productRawMaterialsToProducts';
 import { productStock } from './productStock';
 
 export const products = pgTable(
@@ -51,6 +52,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   price: one(productPrices),
   stock: one(productStock),
   onlyForCoupons: many(couponsForProducts),
+  composedOf: many(productRawMaterialsToProducts),
 }));
 
 export type Product = typeof products.$inferSelect;

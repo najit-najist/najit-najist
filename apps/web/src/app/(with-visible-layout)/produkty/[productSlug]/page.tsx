@@ -60,6 +60,12 @@ export default async function Page({ params }: Params) {
       onlyForDeliveryMethod: true,
       price: true,
       stock: true,
+      composedOf: {
+        with: {
+          rawMaterial: true,
+        },
+        orderBy: (schema, { asc }) => asc(schema.order),
+      },
     },
   });
   const firstShipping = await database.query.orderDeliveryMethods.findFirst({

@@ -1,4 +1,4 @@
-import { AppRouterInput } from '@custom-types/AppRouter';
+import type { createProductAction } from './actions/createProductAction';
 
 export type ViewType = 'create' | 'edit' | 'view';
-export type ProductFormData = AppRouterInput['products']['create'];
+export type ProductFormData = Parameters<typeof createProductAction>['0'];

@@ -1,6 +1,4 @@
-import { DEFAULT_DATE_FORMAT } from '@constants';
 import { ProductWithRelationsLocal } from '@custom-types';
-import { dayjs } from '@dayjs';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { buttonStyles } from '@najit-najist/ui';
 import clsx from 'clsx';
@@ -8,6 +6,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 import { DeleteButton } from './DeleteButton';
+import { EditedAt } from './EditedAt';
 import { EditorButtons } from './EditorButtons';
 import { ViewType } from './_types';
 
@@ -39,16 +38,10 @@ export const EditorHeader: FC<{
               ) : null}
               {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}
             </Link>
-            <div className="ml-5 text-gray-500 tet-sm flex flex-col">
-              {product.updatedAt ? (
-                <>Upraveno: {dayjs(product.updatedAt).fromNow()}</>
-              ) : (
-                <>
-                  Vytvořeno:{' '}
-                  {dayjs(product.createdAt).format(DEFAULT_DATE_FORMAT)}
-                </>
-              )}
-            </div>
+            <EditedAt
+              createdAt={product.createdAt}
+              updatedAt={product.updatedAt}
+            />
           </div>
         ) : null}
         <div className="ml-auto flex gap-4">
