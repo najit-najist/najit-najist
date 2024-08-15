@@ -95,6 +95,11 @@ export const Form: FC<
     [viewType, product],
   );
 
+  const errorsAsArray = Object.entries(formMethods.formState.errors ?? {});
+  if (errorsAsArray.length) {
+    console.log('Handling errors in form', { errorsAsArray });
+  }
+
   return (
     <FormProvider {...formMethods}>
       <form onSubmit={handleSubmit(onSubmit)}>{children}</form>

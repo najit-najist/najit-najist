@@ -70,6 +70,9 @@ export function AlergensEdit(): ReactNode {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useDebounceValue('', 500);
   const trpcUtils = trpc.useUtils();
+  const { remove } = useFieldArray<ProductFormData, typeof fieldName>({
+    name: fieldName,
+  });
   const { field } = useController<ProductFormData, typeof fieldName>({
     name: fieldName,
   });
@@ -97,12 +100,7 @@ export function AlergensEdit(): ReactNode {
   );
   const handleItemRemove: MouseEventHandler<HTMLButtonElement> = (event) => {
     const index = Number(event.currentTarget.dataset.index);
-
-    const newValue = field.value;
-
-    delete newValue[index];
-
-    field.onChange(newValue);
+    remove(index);
   };
 
   const onClickCreateNew: MouseEventHandler<HTMLAnchorElement> = async (
