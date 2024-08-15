@@ -76,12 +76,6 @@ export function AlergensEdit(): ReactNode {
 
   const { isLoading: isCreatingAlergen, mutateAsync: createAlergen } =
     useAddAlergen();
-  const { remove, fields, append } = useFieldArray<
-    ProductFormData,
-    typeof fieldName
-  >({
-    name: fieldName,
-  });
   const { data, isLoading } = trpc.products.alergens.get.many.useQuery(
     { perPage: 4, search: debouncedSearch },
     { enabled: search.length ? !!debouncedSearch.length : false },
@@ -101,13 +95,15 @@ export function AlergensEdit(): ReactNode {
     },
     [setSearchValue],
   );
-  const handleItemRemove = useCallback<MouseEventHandler<HTMLButtonElement>>(
-    (event) => {
-      const index = Number(event.currentTarget.dataset.index);
-      remove(index);
-    },
-    [remove],
-  );
+  const handleItemRemove: MouseEventHandler<HTMLButtonElement> = (event) => {
+    const index = Number(event.currentTarget.dataset.index);
+
+    const newValue = field.value;
+
+    delete newValue[index];
+
+    field.onChange(newValue);
+  };
 
   const onClickCreateNew: MouseEventHandler<HTMLAnchorElement> = async (
     event,
@@ -137,7 +133,7 @@ export function AlergensEdit(): ReactNode {
       throw new Error('Failed to create alergen');
     }
 
-    append(result.data);
+    field.onChange([...field.value, result.data]);
 
     setCreateNewOpen(false);
     trpcUtils.products.alergens.get.many.invalidate();
@@ -146,6 +142,8 @@ export function AlergensEdit(): ReactNode {
     }, 100);
   };
 
+  const value = field.value ?? [];
+
   return (
     <>
       <div className="relative">
@@ -153,14 +151,14 @@ export function AlergensEdit(): ReactNode {
           immediate
           multiple
           by="id"
-          value={fields}
+          value={value}
           onChange={field.onChange}
           onClose={setSearchValue}
           disabled={isSubmitting}
         >
           <ComboboxInput
             as={Input}
-            placeholder="Vyhledávání surovin..."
+            placeholder="Vyhledávání alergenů..."
             size="normal"
             suffix={
               <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
@@ -216,13 +214,13 @@ export function AlergensEdit(): ReactNode {
           </ComboboxOptions>
         </Combobox>
       </div>
-      {fields.length ? null : (
+      {value.length ? null : (
         <p className="text-gray-500 mt-5">
-          Zatím žádné suroviny. Žačněte přidávat vyhledáváním
+          Zatím žádné alergeny. Žačněte přidávat vyhledáváním
         </p>
       )}
       <div className="mb-3 flex mt-3 gap-2 flex-wrap duration">
-        {fields.map((item, index) => (
+        {value.map((item, index) => (
           <Badge key={item.id} color="green" size="lg">
             <Tooltip
               disabled={!item.description}
@@ -281,6 +279,7 @@ export function AlergensEdit(): ReactNode {
               rootClassName="mt-4"
               label="Název alergenu"
               {...createAlergenForm.register('name')}
+              error={createAlergenForm.formState.errors.name}
               disabled={isCreatingAlergen}
             />
             <Textarea
@@ -288,6 +287,7 @@ export function AlergensEdit(): ReactNode {
               label="Popisek"
               placeholder="Vysvětlivka, varování, atp..."
               disabled={isCreatingAlergen}
+              error={createAlergenForm.formState.errors.description}
               {...createAlergenForm.register('description')}
             />
 
