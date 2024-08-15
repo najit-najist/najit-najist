@@ -86,6 +86,7 @@ export const testOrder: OrderWithRelations = {
         name: 'Produkt moc dlouhy',
         slug: '/produkt',
         description: 'Very loooooooong description',
+        weight: 0,
         stock: {
           value: 1,
           productId: 2,
@@ -113,6 +114,7 @@ export const testOrder: OrderWithRelations = {
           value: 1,
           productId: 4,
         },
+        weight: 0,
         price: { discount: null, value: 100, productId: 4 },
       },
     },
