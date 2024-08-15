@@ -1,8 +1,8 @@
 import { AppRouterOutput } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
+import { database } from '@najit-najist/database';
 import { posts } from '@najit-najist/database/models';
-import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import HTMLReactParser from 'html-react-parser';
 import Image from 'next/image';
@@ -98,7 +98,16 @@ const Item: FC<PostWithRelations> = async ({
 };
 
 export const LatestPosts: FC = async () => {
-  const { items } = await getCachedTrpcCaller().posts.getMany({ perPage: 4 });
+  const items = await database.query.posts.findMany({
+    where: (schema, { isNotNull }) => isNotNull(schema.publishedAt),
+    limit: 4,
+    orderBy: (schema, { desc }) => desc(schema.publishedAt),
+    with: {
+      categories: {
+        with: { category: true },
+      },
+    },
+  });
 
   return (
     <div className="container mx-auto mt-20" id="o-nas">
