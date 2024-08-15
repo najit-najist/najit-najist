@@ -27,6 +27,7 @@ export const Form: FC<
       category: product?.category ?? undefined,
       weight: product?.weight ?? 0,
       composedOf: product?.composedOf ?? [],
+      alergens: product?.alergens ?? [],
     },
     resolver: zodResolver(
       viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema,
@@ -56,6 +57,7 @@ export const Form: FC<
             onlyForDeliveryMethod: values.onlyForDeliveryMethod,
             weight: values.weight,
             composedOf: values.composedOf,
+            alergens: values.alergens,
           },
         });
 
@@ -78,6 +80,7 @@ export const Form: FC<
           onlyForDeliveryMethod: values.onlyForDeliveryMethod,
           weight: values.weight,
           composedOf: values.composedOf,
+          alergens: values.alergens,
         });
 
         toast.promise(createProductPromise, {

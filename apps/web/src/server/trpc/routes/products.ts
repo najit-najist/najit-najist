@@ -20,8 +20,10 @@ import { nonEmptyStringSchema, slugSchema } from '@najit-najist/schemas';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { ApplicationError, EntityNotFoundError } from '@server/errors';
 import { logger } from '@server/logger';
+import { productAlergenCreateInputSchema } from '@server/schemas/productAlergenCreateInputSchema';
 import { productRawMaterialCreateInputSchema } from '@server/schemas/productRawMaterialCreateInputSchema';
 import { UserActions, canUser } from '@server/utils/canUser';
+import { getproductAlergens } from '@server/utils/getProductAlergens';
 import { getProductRawMaterials } from '@server/utils/getProductRawMaterials';
 import { slugifyString } from '@server/utils/slugifyString';
 import generateCursor from 'drizzle-cursor';
@@ -44,6 +46,12 @@ const baseWith = {
       rawMaterial: true,
     },
     orderBy: (schema, { asc }) => asc(schema.order),
+  },
+  alergens: {
+    with: {
+      alergen: true,
+    },
+    // orderBy: (schema, {asc}) => asc(schema.)
   },
 } as const satisfies NonNullable<
   Parameters<typeof database.query.products.findFirst>['0']
@@ -88,7 +96,10 @@ const getRoutes = t.router({
           throw new EntityNotFoundError({ entityName: getTableName(products) });
         }
 
-        return product;
+        return {
+          ...product,
+          alergens: product.alergens.map(({ alergen }) => alergen),
+        };
       } catch (error) {
         logger.error({ error, input }, 'Failed to get product');
 
@@ -321,6 +332,15 @@ const categoriesRoutes = t.router({
 export const productsRoutes = t.router({
   get: getRoutes,
   categories: categoriesRoutes,
+  alergens: t.router({
+    get: t.router({
+      many: publicProcedure
+        .input(productAlergenCreateInputSchema)
+        .query(async ({ input }) => {
+          return getproductAlergens(input);
+        }),
+    }),
+  }),
   rawMaterials: t.router({
     get: t.router({
       many: publicProcedure

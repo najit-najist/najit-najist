@@ -2,6 +2,7 @@
 
 import { database } from '@najit-najist/database';
 import {
+  productAlergensToProducts,
   productImages,
   productPrices,
   productRawMaterialsToProducts,
@@ -43,6 +44,7 @@ export const createProductAction = createActionWithValidation(
           category,
           stock,
           composedOf,
+          alergens,
           ...createPayload
         } = input;
 
@@ -71,6 +73,15 @@ export const createProductAction = createActionWithValidation(
               notes,
               order,
               description,
+            })),
+          );
+        }
+
+        if (alergens.length) {
+          await tx.insert(productAlergensToProducts).values(
+            alergens.map(({ id }) => ({
+              alergenId: id,
+              productId: created.id,
             })),
           );
         }

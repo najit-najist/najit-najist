@@ -66,6 +66,12 @@ export default async function Page({ params }: Params) {
         },
         orderBy: (schema, { asc }) => asc(schema.order),
       },
+      alergens: {
+        with: {
+          alergen: true,
+        },
+        // orderBy: (schema, {asc}) => asc(schema.)
+      },
     },
   });
   const firstShipping = await database.query.orderDeliveryMethods.findFirst({
@@ -193,7 +199,10 @@ export default async function Page({ params }: Params) {
           })
         }
         viewType={'view'}
-        product={product}
+        product={{
+          ...product,
+          alergens: product.alergens.map(({ alergen }) => alergen),
+        }}
       />
     </>
   );

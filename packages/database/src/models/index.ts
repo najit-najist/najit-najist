@@ -20,6 +20,8 @@ export * from './postCategories';
 export * from './posts';
 
 export * from './previewSubscriberTokens';
+export * from './productAlergens';
+export * from './productAlergensToProducts';
 export * from './productCategories';
 export * from './productRawMaterials';
 export * from './productRawMaterialsToProducts';

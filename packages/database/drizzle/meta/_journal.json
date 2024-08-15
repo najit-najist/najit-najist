@@ -169,6 +169,13 @@
       "when": 1723720131603,
       "tag": "0023_pretty_baron_strucker",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1723728672956,
+      "tag": "0024_modern_blacklash",
+      "breakpoints": true
     }
   ]
 }

@@ -11,7 +11,9 @@ import { EditLink } from './EditLink';
 import { ImageSlider } from './ImageSlider';
 
 export const Item: FC<
-  Omit<ProductWithRelationsLocal, 'composedOf'> & { showEditLink?: boolean }
+  Omit<ProductWithRelationsLocal, 'composedOf' | 'alergens'> & {
+    showEditLink?: boolean;
+  }
 > = ({
   images,
   name,

@@ -39,56 +39,50 @@ import {
 import {
   FormProvider,
   SubmitHandler,
+  useController,
   useFieldArray,
   useForm,
   useFormState,
-  useWatch,
 } from 'react-hook-form';
 import { useDebounceValue } from 'usehooks-ts';
 
 import { ProductFormData } from '../_types';
-import { createProductRawMaterialAction } from '../actions/createProductRawMaterialAction';
+import { createProductAlergen } from '../actions/createProductAlergen';
 
-const fieldName = 'composedOf';
+const fieldName = 'alergens';
 
-const useAddRawMaterial = () =>
+const useAddAlergen = () =>
   useMutation({
-    mutationFn: createProductRawMaterialAction,
-    mutationKey: ['create-product-raw-material'],
+    mutationFn: createProductAlergen,
+    mutationKey: ['create-product-alergen'],
   });
 
 type AppendMaterialFormValues = {
-  id: string | number | undefined;
-  description?: string | null;
-  notes?: string | null;
-  rawMaterial: Pick<ProductRawMaterial, 'id' | 'name'>;
-  order?: number;
-  editingAtIndex?: number;
+  id: number | null | undefined;
+  name: string | null | undefined;
+  description: string | null | undefined;
 };
 
-export function ProductCompositionsEdit(): ReactNode {
+export function AlergensEdit(): ReactNode {
   const { isSubmitting } = useFormState();
-  const appendMaterialForm = useForm<AppendMaterialFormValues>();
-  const [rawMaterialModalOpen, setRawMaterialModalOpen] = useState(false);
+  const createAlergenForm = useForm<AppendMaterialFormValues>();
+  const [createNewOpen, setCreateNewOpen] = useState(false);
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useDebounceValue('', 500);
   const trpcUtils = trpc.useUtils();
-
-  const editingAtIndex = useWatch({
-    name: 'editingAtIndex',
-    control: appendMaterialForm.control,
+  const { field } = useController<ProductFormData, typeof fieldName>({
+    name: fieldName,
   });
-  const isEditing = typeof editingAtIndex === 'number';
 
-  const { isLoading: isCreatingRawMaterial, mutateAsync: createRawMaterial } =
-    useAddRawMaterial();
-  const { remove, fields, append, update } = useFieldArray<
+  const { isLoading: isCreatingAlergen, mutateAsync: createAlergen } =
+    useAddAlergen();
+  const { remove, fields, append } = useFieldArray<
     ProductFormData,
     typeof fieldName
   >({
     name: fieldName,
   });
-  const { data, isLoading } = trpc.products.rawMaterials.get.many.useQuery(
+  const { data, isLoading } = trpc.products.alergens.get.many.useQuery(
     { perPage: 4, search: debouncedSearch },
     { enabled: search.length ? !!debouncedSearch.length : false },
   );
@@ -114,73 +108,41 @@ export function ProductCompositionsEdit(): ReactNode {
     },
     [remove],
   );
-  const handleItemEdit: MouseEventHandler<HTMLButtonElement> = (event) => {
-    const index = Number(event.currentTarget.dataset.index);
-    const valuesAtIndex = fields[index];
 
-    if (!valuesAtIndex) {
-      throw new Error(`There are no values at index ${index}`);
-    }
-
-    appendMaterialForm.reset(
-      // @ts-ignore
-      {
-        editingAtIndex: index,
-        ...valuesAtIndex,
-      },
-    );
-
-    setRawMaterialModalOpen(true);
-  };
-
-  const onCreateRawMaterial: MouseEventHandler<HTMLAnchorElement> = async (
+  const onClickCreateNew: MouseEventHandler<HTMLAnchorElement> = async (
     event,
   ) => {
     event.preventDefault();
     const value = String(event.currentTarget.dataset.value);
 
-    const newMaterialAsPromise = createRawMaterial({ name: value });
+    setCreateNewOpen(true);
 
-    toast.promise(newMaterialAsPromise, {
-      error: (error) => `Nemůžeme vytvořit surovinu: ${error.message}`,
-      loading: 'Vytvářím surovinu',
-      success: 'Surovina vytvořena! Pokračujte v přidání pod produkt...',
-    });
-
-    setRawMaterialModalOpen(true);
-
-    const material = await newMaterialAsPromise;
-    if ('errors' in material) {
-      toast.error(
-        `Nemůžeme vytvořit novou surovinu, protože: ${material.errors.name}`,
-      );
-
-      return;
-    }
-
-    appendMaterialForm.setValue('rawMaterial', material.data);
-    trpcUtils.products.rawMaterials.get.many.invalidate();
+    createAlergenForm.setValue('name', value);
   };
 
-  const onAppendOrEditRawMaterial: SubmitHandler<AppendMaterialFormValues> = ({
-    editingAtIndex,
-    id,
-    ...values
-  }) => {
-    const payload = {
-      ...values,
-      order: values.order ?? (fields.at(-1)?.order ?? -1) + 1,
-    };
+  const onSubmitCreateAlergen: SubmitHandler<
+    AppendMaterialFormValues
+  > = async ({ id, ...values }) => {
+    const result = await createAlergen(
+      // @ts-ignore
+      values,
+    );
 
-    if (typeof editingAtIndex === 'number') {
-      update(editingAtIndex, payload);
-    } else {
-      append(payload);
+    if ('errors' in result) {
+      for (const [key, value] of Object.entries(result.errors)) {
+        // @ts-ignore
+        createAlergenForm.setError(key, value);
+      }
+
+      throw new Error('Failed to create alergen');
     }
 
-    setRawMaterialModalOpen(false);
+    append(result.data);
+
+    setCreateNewOpen(false);
+    trpcUtils.products.alergens.get.many.invalidate();
     setTimeout(() => {
-      appendMaterialForm.reset();
+      createAlergenForm.reset();
     }, 100);
   };
 
@@ -191,20 +153,8 @@ export function ProductCompositionsEdit(): ReactNode {
           immediate
           multiple
           by="id"
-          value={fields.map(({ rawMaterial }) => rawMaterial)}
-          onChange={(values) => {
-            const lastItem = values.at(-1);
-
-            if (!lastItem) {
-              return;
-            }
-
-            appendMaterialForm.setValue('rawMaterial', {
-              ...lastItem,
-              name: lastItem.name ?? '',
-            });
-            setRawMaterialModalOpen(true);
-          }}
+          value={fields}
+          onChange={field.onChange}
           onClose={setSearchValue}
           disabled={isSubmitting}
         >
@@ -254,7 +204,7 @@ export function ProductCompositionsEdit(): ReactNode {
                     href="#"
                     tabIndex={1}
                     data-value={debouncedSearch}
-                    onClick={onCreateRawMaterial}
+                    onClick={onClickCreateNew}
                     role="button"
                     className="text-project-primary hover:underline"
                   >
@@ -284,22 +234,21 @@ export function ProductCompositionsEdit(): ReactNode {
                       : undefined,
                   )}
                 >
-                  {item.rawMaterial.name}
-                  {item.notes ? <> ({item.notes})</> : null}
+                  {item.name}
                 </span>
               }
             >
               {item.description}
             </Tooltip>
 
-            <button
-              onClick={handleItemEdit}
-              data-index={index}
-              className="text-blue-800 hover:bg-blue-100 duration-300 p-1 -mr-1 rounded-md"
-              type="button"
-            >
-              <PencilIcon className="w-4 h-4 hover:rotate-12 duration-300" />
-            </button>
+            {/*  <button
+                 onClick={handleItemEdit}
+                 data-index={index}
+                 className="text-blue-800 hover:bg-blue-100 duration-300 p-1 -mr-1 rounded-md"
+                 type="button"
+               >
+                 <PencilIcon className="w-4 h-4 hover:rotate-12 duration-300" />
+               </button> */}
             <button
               onClick={handleItemRemove}
               data-index={index}
@@ -311,61 +260,44 @@ export function ProductCompositionsEdit(): ReactNode {
           </Badge>
         ))}
       </div>
-      <FormProvider {...appendMaterialForm}>
+      <FormProvider {...createAlergenForm}>
         <Modal
-          open={rawMaterialModalOpen}
+          open={createNewOpen}
           onClose={() => {
             if (confirm('Opravdu zavřít bez uložení?')) {
-              setRawMaterialModalOpen(false);
+              setCreateNewOpen(false);
             }
           }}
         >
-          <h2>
-            {isEditing
-              ? 'Uložení suroviny pod produktem'
-              : 'Vložení suroviny pod produkt'}
-          </h2>
+          <h2>Vytvoření nového alergenu</h2>
           <form
             onSubmit={(event) => {
               event.stopPropagation();
-              appendMaterialForm.handleSubmit(onAppendOrEditRawMaterial)(event);
+              createAlergenForm.handleSubmit(onSubmitCreateAlergen)(event);
             }}
           >
-            {isCreatingRawMaterial ? (
-              <Alert
-                heading="Stále se vytváří surovina, sečkejte chvíli prosím..."
-                className="my-4"
-              />
-            ) : null}
             <Input
               required
               rootClassName="mt-4"
-              label="Název suroviny"
-              {...appendMaterialForm.register('rawMaterial.name')}
-              disabled
-            />
-            <Input
-              rootClassName="mt-4"
-              label="Poznámky"
-              placeholder="Velikost v procentech, jiny název, atp..."
-              disabled={isCreatingRawMaterial}
-              {...appendMaterialForm.register('notes')}
+              label="Název alergenu"
+              {...createAlergenForm.register('name')}
+              disabled={isCreatingAlergen}
             />
             <Textarea
               wrapperClassName="mt-4"
               label="Popisek"
               placeholder="Vysvětlivka, varování, atp..."
-              disabled={isCreatingRawMaterial}
-              {...appendMaterialForm.register('description')}
+              disabled={isCreatingAlergen}
+              {...createAlergenForm.register('description')}
             />
 
             <Button
               autoFocus
               type="submit"
               className="mt-4"
-              isLoading={isCreatingRawMaterial}
+              isLoading={isCreatingAlergen}
             >
-              {isEditing ? 'Uložit' : 'Vložit'}
+              Vytvořit
             </Button>
           </form>
         </Modal>

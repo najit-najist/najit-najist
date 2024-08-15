@@ -35,4 +35,11 @@ export const productCreateInputSchema = z.object({
       order: z.number(),
     }),
   ),
+  alergens: z.array(
+    z.object({
+      id: z.coerce.number(),
+      name: z.string().nullish(),
+      description: z.string().nullish(),
+    }),
+  ),
 });

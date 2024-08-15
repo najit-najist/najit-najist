@@ -11,6 +11,7 @@ import { withDefaultFields } from '../internal/withDefaultFields';
 import { withOwnableFields } from '../internal/withOwnableFields';
 import { couponsForProducts } from './couponsForProducts';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
+import { productAlergensToProducts } from './productAlergensToProducts';
 import { productCategories } from './productCategories';
 import { productImages } from './productImages';
 import { productPrices } from './productPrices';
@@ -53,6 +54,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   stock: one(productStock),
   onlyForCoupons: many(couponsForProducts),
   composedOf: many(productRawMaterialsToProducts),
+  alergens: many(productAlergensToProducts),
 }));
 
 export type Product = typeof products.$inferSelect;

@@ -19,6 +19,7 @@ import { FC, PropsWithChildren } from 'react';
 import { CustomImage } from './CustomImage';
 import { EditorHeader } from './EditorHeader';
 import { UserActions } from './UserActions';
+import { AlergensEdit } from './editorComponents/AlergensEdit';
 import { AvailibilityEdit } from './editorComponents/AvailabilityEdit';
 import { CategoryEdit } from './editorComponents/CategoryEdit';
 import { DescriptionEdit } from './editorComponents/DescriptionEdit';
@@ -237,6 +238,40 @@ export const ProductPageManageContent: FC<
               <DescriptionEdit />
             )}
           </div>
+
+          {((viewType === 'view' && !!product?.alergens.length) ||
+            viewType !== 'view') && (
+            <div className="mb-10 mt-12">
+              <Title>Alergeny</Title>
+              {hrComponent}
+              {String(viewType) === 'view' ? (
+                <div className="flex flex-wrap gap-x-1 gap-y-1.5">
+                  {product?.alergens.map((item, index, items) => (
+                    <Tooltip
+                      disabled={!item.description}
+                      key={item.id}
+                      trigger={
+                        <p
+                          className={clsx(
+                            item.description
+                              ? 'decoration-dashed underline hover:decoration-solid cursor-help'
+                              : undefined,
+                          )}
+                        >
+                          {item.name}
+                          {items.length - 1 === index ? null : ', '}
+                        </p>
+                      }
+                    >
+                      {item.description}
+                    </Tooltip>
+                  ))}
+                </div>
+              ) : (
+                <AlergensEdit />
+              )}
+            </div>
+          )}
 
           {((viewType === 'view' && !!product?.composedOf.length) ||
             viewType !== 'view') && (

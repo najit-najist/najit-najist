@@ -4,6 +4,7 @@ import { dayjs } from '@dayjs';
 import { database } from '@najit-najist/database';
 import { eq, inArray } from '@najit-najist/database/drizzle';
 import {
+  productAlergensToProducts,
   productImages,
   productPrices,
   productRawMaterialsToProducts,
@@ -48,6 +49,7 @@ export const updateProductAction = createActionWithValidation(
           category,
           onlyForDeliveryMethod,
           composedOf,
+          alergens,
           ...updatePayload
         } = input.payload;
 
@@ -76,19 +78,35 @@ export const updateProductAction = createActionWithValidation(
             .where(eq(productStock.productId, existing.id));
         }
 
-        await tx
-          .delete(productRawMaterialsToProducts)
-          .where(eq(productRawMaterialsToProducts.productId, updated.id));
-        if (composedOf?.length) {
-          await tx.insert(productRawMaterialsToProducts).values(
-            composedOf.map(({ rawMaterial, notes, order, description }) => ({
-              productId: updated.id,
-              rawMaterialId: rawMaterial.id,
-              notes,
-              order,
-              description,
-            })),
-          );
+        if (composedOf) {
+          await tx
+            .delete(productRawMaterialsToProducts)
+            .where(eq(productRawMaterialsToProducts.productId, updated.id));
+          if (composedOf?.length) {
+            await tx.insert(productRawMaterialsToProducts).values(
+              composedOf.map(({ rawMaterial, notes, order, description }) => ({
+                productId: updated.id,
+                rawMaterialId: rawMaterial.id,
+                notes,
+                order,
+                description,
+              })),
+            );
+          }
+        }
+
+        if (alergens) {
+          await tx
+            .delete(productAlergensToProducts)
+            .where(eq(productAlergensToProducts.productId, updated.id));
+          if (alergens?.length) {
+            await tx.insert(productAlergensToProducts).values(
+              alergens.map(({ id }) => ({
+                alergenId: id,
+                productId: updated.id,
+              })),
+            );
+          }
         }
 
         if (
