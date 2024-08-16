@@ -7,15 +7,21 @@ import { createActionWithValidation } from '@server/utils/createActionWithValida
 import { getProductRawMaterial } from '@server/utils/getProductRawMaterial';
 import { getLoggedInUser } from '@server/utils/server';
 import { slugifyString } from '@server/utils/slugifyString';
-import { z } from 'zod';
+
+import { createProductRawMaterialSchema } from '../schemas/createProductRawMaterialSchema';
 
 export const createProductRawMaterialAction = createActionWithValidation(
-  z.object({
-    name: z.string().refine(async (value) => {
-      const existing = await getProductRawMaterial({ name: value });
+  createProductRawMaterialSchema.superRefine(async ({ name }, ctx) => {
+    const existing = await getProductRawMaterial({ name });
 
-      return !existing;
-    }, 'Tato surovina již existuje'),
+    if (!existing) {
+      ctx.addIssue({
+        path: ['name'],
+        code: 'custom',
+        fatal: true,
+        message: 'Tato surovina již existuje',
+      });
+    }
   }),
   async (input) => {
     const user = await getLoggedInUser();

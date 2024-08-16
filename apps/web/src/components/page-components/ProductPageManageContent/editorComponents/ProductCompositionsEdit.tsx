@@ -1,6 +1,7 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { createProductRawMaterialAction } from '@components/page-components/ProductRawMaterialManageContent/actions/createProductRawMaterialAction';
 import {
   ArrowPathIcon,
   CheckIcon,
@@ -47,15 +48,8 @@ import {
 import { useDebounceValue } from 'usehooks-ts';
 
 import { ProductFormData } from '../_types';
-import { createProductRawMaterialAction } from '../actions/createProductRawMaterialAction';
 
 const fieldName = 'composedOf';
-
-const useAddRawMaterial = () =>
-  useMutation({
-    mutationFn: createProductRawMaterialAction,
-    mutationKey: ['create-product-raw-material'],
-  });
 
 type AppendMaterialFormValues = {
   id: string | number | undefined;
@@ -65,6 +59,12 @@ type AppendMaterialFormValues = {
   order?: number;
   editingAtIndex?: number;
 };
+
+const useAddRawMaterial = () =>
+  useMutation({
+    mutationFn: createProductRawMaterialAction,
+    mutationKey: ['create-product-raw-material'],
+  });
 
 export function ProductCompositionsEdit(): ReactNode {
   const { isSubmitting } = useFormState();

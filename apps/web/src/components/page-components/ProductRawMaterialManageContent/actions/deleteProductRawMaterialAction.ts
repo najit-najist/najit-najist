@@ -2,16 +2,19 @@
 
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
-import { coupons, UserRoles } from '@najit-najist/database/models';
+import {
+  coupons,
+  productRawMaterials,
+  UserRoles,
+} from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
-import { logger } from '@server/logger';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 import { z } from 'zod';
 
-export const deleteCouponAction = createActionWithValidation(
+export const deleteProductRawMaterialAction = createActionWithValidation(
   z.object({ id: z.number() }),
   async (input) => {
     const user = await getLoggedInUser();
@@ -20,38 +23,30 @@ export const deleteCouponAction = createActionWithValidation(
       throw new InsufficientRoleError();
     }
 
-    const coupon = await database.query.coupons.findFirst({
+    const item = await database.query.productRawMaterials.findFirst({
       where: (s, { eq }) => eq(s.id, input.id),
       with: {
-        patches: {
+        partOf: {
           with: {
-            orders: {
-              limit: 1,
-            },
+            product: true,
           },
         },
       },
     });
 
-    if (!coupon) {
+    if (!item) {
       notFound();
     }
 
-    const wasUsedInOrder = coupon.patches.some(({ orders }) => orders.length);
+    await database.delete(productRawMaterials).where(eq(coupons.id, item.id));
 
-    if (wasUsedInOrder) {
-      logger.error(
-        { coupon: { id: coupon.id } },
-        'Tried to delete coupon but it was used',
-      );
-
-      notFound();
+    revalidatePath('/administrace/suroviny');
+    for (const { product } of item.partOf) {
+      const path = `/produkty/${encodeURIComponent(product.slug)}`;
+      revalidatePath(path);
+      revalidatePath(`/administrace/${path}`);
     }
-
-    await database.delete(coupons).where(eq(coupons.id, coupon.id));
-
-    revalidatePath('/administrace/kupony');
-    redirect('/administrace/kupony');
+    redirect('/administrace/suroviny');
 
     return null;
   },

@@ -282,6 +282,33 @@ async function CouponsGroup() {
   );
 }
 
+async function MaterialsGroup() {
+  const items = await database.query.productRawMaterials.findMany({ limit: 4 });
+
+  return (
+    <GroupRoot
+      title="Suroviny"
+      more={{
+        title: 'Zobrazit další suroviny',
+        url: '/administrace/suroviny',
+      }}
+      add={{
+        title: 'Přidat surovinu',
+        url: '/administrace/suroviny/novy',
+      }}
+    >
+      {items.map((item) => (
+        <Item
+          key={item.id}
+          createdAt={item.createdAt}
+          href={`/administrace/suroviny/${item.id}`}
+          title={`${item.name}`}
+        />
+      ))}
+    </GroupRoot>
+  );
+}
+
 export default async function Page() {
   return (
     <div className="container py-20">
@@ -304,6 +331,9 @@ export default async function Page() {
         </Suspense>
         <Suspense fallback={<GroupSkeleton />}>
           <ProductsGroup />
+        </Suspense>
+        <Suspense fallback={<GroupSkeleton />}>
+          <MaterialsGroup />
         </Suspense>
       </div>
     </div>
