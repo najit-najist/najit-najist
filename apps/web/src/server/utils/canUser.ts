@@ -87,18 +87,40 @@ const ruleSet: RuleSet = {
 /**
  * Checks if provided user can or cannot do certain actions on model
  */
-export const canUser = (user: Pick<User, 'role'>, options: CanUserOptions) => {
+
+function canUser(
+  user: Pick<User, 'role'>,
+  method: CanUserOptions['action'],
+  optionsOrModel: CanUserOptions['onModel'],
+): boolean;
+function canUser(user: Pick<User, 'role'>, options: CanUserOptions): boolean;
+function canUser(
+  user: Pick<User, 'role'>,
+  optionsOrMethod: CanUserOptions | UserActions,
+  model?: CanUserOptions['onModel'],
+) {
   const modelsForRole = ruleSet[user.role];
 
   if (typeof modelsForRole === 'boolean') {
     return modelsForRole;
   }
 
-  const modelRules = modelsForRole.get(options.onModel) ?? false;
+  const modelRules =
+    modelsForRole.get(
+      typeof optionsOrMethod === 'object' ? optionsOrMethod.onModel : model!,
+    ) ?? false;
 
   if (typeof modelRules === 'boolean') {
     return modelRules;
   }
 
-  return modelRules[options.action] ?? false;
-};
+  return (
+    modelRules[
+      typeof optionsOrMethod === 'object'
+        ? optionsOrMethod.action
+        : optionsOrMethod
+    ] ?? false
+  );
+}
+
+export { canUser };

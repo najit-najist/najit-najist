@@ -1,6 +1,6 @@
 import { Logo } from '@components/common/Logo';
 import { ADMIN_EMAIL } from '@constants';
-import { TvIcon, EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/outline';
+import { TvIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 

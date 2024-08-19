@@ -2,12 +2,14 @@
 
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
-import { products, UserRoles } from '@najit-najist/database/models';
+import { products } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
-import { getOneProductBy } from '@server/trpc/routes/products';
+import { canUser, UserActions } from '@server/utils/canUser';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
+import { getProduct } from '@server/utils/getProduct';
 import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
+import { notFound } from 'next/navigation';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 
@@ -16,11 +18,14 @@ export const deleteProductAction = createActionWithValidation(
   async (input) => {
     const user = await getLoggedInUser();
 
-    if (user.role !== UserRoles.ADMIN) {
+    if (!canUser(user, UserActions.DELETE, products)) {
       throw new InsufficientRoleError();
     }
 
-    const existing = await getOneProductBy('id', input.id);
+    const existing = await getProduct(input);
+    if (!existing) {
+      return notFound();
+    }
 
     await database.delete(products).where(eq(products.id, input.id));
 

@@ -18,14 +18,14 @@ import { InsufficientRoleError } from '@server/errors';
 import { logger } from '@server/logger';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
 import { LibraryService } from '@server/services/LibraryService';
-import { getOneProductBy } from '@server/trpc/routes/products';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
+import { getProduct } from '@server/utils/getProduct';
 import { isNextNotFound } from '@server/utils/isNextNotFound';
 import { isNextRedirect } from '@server/utils/isNextRedirect';
 import { getLoggedInUser } from '@server/utils/server/getLoggedInUser';
 import { slugifyString } from '@server/utils/slugifyString';
 import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 export const updateProductAction = createActionWithValidation(
   entityLinkSchema.extend({ payload: productUpdateInputSchema }),
@@ -38,9 +38,12 @@ export const updateProductAction = createActionWithValidation(
 
     const library = new LibraryService(products);
 
-    try {
-      const existing = await getOneProductBy('id', input.id);
+    const existing = await getProduct(input);
+    if (!existing) {
+      notFound();
+    }
 
+    try {
       const updated = await database.transaction(async (tx) => {
         const {
           images,

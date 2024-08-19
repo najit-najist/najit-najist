@@ -9,18 +9,60 @@ import {
 import { Tooltip } from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
-import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { getProductCategories } from '@server/utils/getProductCategories';
+import { getProducts } from '@server/utils/getProducts';
+import { Metadata, ResolvingMetadata } from 'next';
 import Link from 'next/link';
 
 import { AsideFilters } from './_components/AsideFilters';
 import { InfiniteProducts } from './_components/InfiniteProducts';
 import { ProductsMainPageParams } from './_types';
 
-export const metadata = {
-  title: 'Všechny Produkty',
-  description:
-    'Vytvořili jsme pro Vás jednoduchý seznam produktů, které si můžete objednat a nechat připravit na prodejně. Jednoduše si vyberte ze seznamu,  objednávku odešlete mailem z Vašeho registrovaného e-mailu na adresu  prodejnahk@najitnajist.cz  nebo si vše objednejte a zaplaťte přímo v prodejně na ulici Tomkova 1230/4a  v Hradci Králové.',
-};
+const SEARCH_PAGE_TITLE = 'Výsledek vyhledávání produktů';
+
+function createTitleFromCategories(categories: ProductCategory[]) {
+  return categories
+    .map((value, index, values) => {
+      let result = value.name;
+      if (index === values.length - 2) {
+        result += ' a';
+      } else if (index !== values.length - 1) {
+        result += ',';
+      }
+
+      return result;
+    })
+    .join(' ');
+}
+
+export async function generateMetadata(
+  { searchParams }: ProductsMainPageParams,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const { 'category-slug': categoriesSlugFromUrl, query } = searchParams;
+  const result = {
+    title: query ? SEARCH_PAGE_TITLE : 'Všechny Produkty',
+    description:
+      'Vytvořili jsme pro Vás jednoduchý seznam produktů, které si můžete objednat a nechat připravit na prodejně. Jednoduše si vyberte ze seznamu,  objednávku odešlete mailem z Vašeho registrovaného e-mailu na adresu  prodejnahk@najitnajist.cz  nebo si vše objednejte a zaplaťte přímo v prodejně na ulici Tomkova 1230/4a  v Hradci Králové.',
+  };
+  const categoriesAsArray = categoriesSlugFromUrl?.split(',');
+
+  if (categoriesAsArray?.length && !query) {
+    result.title = SEARCH_PAGE_TITLE;
+
+    if (categoriesAsArray.length === 1) {
+      const { items: categories } = await getProductCategories({
+        perPage: 10,
+        omitEmpty: true,
+        filter: { slug: categoriesAsArray },
+      });
+
+      result.title = createTitleFromCategories(categories);
+    }
+  }
+
+  return result;
+}
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
@@ -39,7 +81,6 @@ export default async function RecipesPage({
   const { query, 'category-slug': categoriesSlugFromUrl } = searchParams;
   const userDidSearch = !!query || !!categoriesSlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
-  const trpc = getCachedTrpcCaller();
   const categoriesAsArray = categoriesSlugFromUrl?.split(',');
   const search = {
     search: query,
@@ -48,14 +89,14 @@ export default async function RecipesPage({
   };
 
   const [productsQueryResult, { items: categories }] = await Promise.all([
-    trpc.products.get.many(search),
-    trpc.products.categories.get.many({ perPage: 1000, omitEmpty: true }),
+    getProducts(search, { loggedInUser: currentUser }),
+    getProductCategories({ perPage: 9999, omitEmpty: true }),
   ]);
 
   let selectedCategories: typeof categories = [];
   if (categoriesAsArray?.length) {
     selectedCategories = categories.filter((item) =>
-      categoriesAsArray?.includes(item.slug)
+      categoriesAsArray?.includes(item.slug),
     );
   }
 
@@ -64,7 +105,13 @@ export default async function RecipesPage({
       {/* <Notice /> */}
       <PageHeader className="container">
         <div className="flex justify-between items-center">
-          <PageTitle>{metadata.title}</PageTitle>
+          <PageTitle>
+            {query || selectedCategories.length > 1
+              ? SEARCH_PAGE_TITLE
+              : selectedCategories.length
+                ? createTitleFromCategories(selectedCategories)
+                : 'Všechny Produkty'}
+          </PageTitle>
           {currentUser &&
           canUser(currentUser, {
             action: UserActions.CREATE,
@@ -82,7 +129,11 @@ export default async function RecipesPage({
           ) : null}
         </div>
         <PageDescription>
-          Vyberte si z našeho rozmanitého sortimentu
+          {query
+            ? 'Vyberte si z našeho rozmanitého sortimentu vyhledaných produktů'
+            : selectedCategories.length
+              ? 'Vyberte si z našich produktů, které jste si vyhledali'
+              : 'Vyberte si z našeho rozmanitého sortimentu'}
         </PageDescription>
       </PageHeader>
 

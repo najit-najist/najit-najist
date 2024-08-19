@@ -198,7 +198,7 @@ export default async function Page({ params }: Params) {
             onModel: products,
           })
         }
-        viewType={'view'}
+        viewType="view"
         product={{
           ...product,
           alergens: product.alergens.map(({ alergen }) => alergen),

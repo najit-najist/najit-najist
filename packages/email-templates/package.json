@@ -23,7 +23,7 @@
     "dev": "pnpm run --filter=@najit-najist/email-templates \"/^dev:.*/\"",
     "dev:package": "pnpm build:package --watch",
     "dev:package:types": "pnpm build:types --watch",
-    "dev:preview": "npx email dev --dir=src"
+    "start:preview": "npx email dev --dir=src"
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",

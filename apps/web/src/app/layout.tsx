@@ -32,7 +32,7 @@ const montserrat = Montserrat({
 export const metadata = {
   title: {
     template: '%s | Najít Najíst',
-    default: 'Hlavní stránka | Najít Najíst',
+    default: 'Najít Najíst',
   },
   creator: 'Ondřej Langr <hi@ondrejlangr.cz>',
   publisher: 'najitnajist',
@@ -65,7 +65,7 @@ const RootLayout: LayoutComponent = ({ children }) => {
           montserrat.className,
           inter.variable,
           dmSerifDisplay.variable,
-          montserrat.variable
+          montserrat.variable,
         )}
       >
         <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>

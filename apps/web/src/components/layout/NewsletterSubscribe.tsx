@@ -2,16 +2,17 @@
 
 import { trpc } from '@client/trpc';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useCurrentUser, usePlausible } from '@hooks';
+import { usePlausible } from '@hooks';
 import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import { Button, buttonStyles, Input } from '@najit-najist/ui';
+import type { UserWithRelations } from '@server/services/UserService';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 
-// TODO: make this work
-
-export const NewsletterSubscribe: FC = () => {
+export const NewsletterSubscribe: FC<{
+  user: UserWithRelations | undefined;
+}> = ({ user }) => {
   const formMethods = useForm({
     defaultValues: {
       email: '',
@@ -20,13 +21,6 @@ export const NewsletterSubscribe: FC = () => {
   });
   const { trackEvent } = usePlausible();
   const { handleSubmit, register, formState } = formMethods;
-  const { data } = useCurrentUser({
-    useErrorBoundary: false,
-    retry: false,
-    trpc: {
-      ssr: false,
-    },
-  });
 
   const { mutateAsync: subscribe } = trpc.newsletter.subscribe.useMutation();
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async ({ email }) => {
@@ -54,7 +48,7 @@ export const NewsletterSubscribe: FC = () => {
                 Buďte vždy v obraze o novinkách a akcích z našeho webu.
               </p>
             </div>
-            {!data ? (
+            {!user ? (
               <div className="mt-6 sm:mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
                 <form onSubmit={handleSubmit(onSubmit)} className="sm:flex">
                   <Input
@@ -91,7 +85,7 @@ export const NewsletterSubscribe: FC = () => {
             ) : (
               <div className="flex items-end flex-col gap-2">
                 <p className="text-white">
-                  {data.newsletter
+                  {user.newsletter
                     ? 'Jste již přihlášeni'
                     : 'Zatím nejste přihlášeni'}{' '}
                   k novinkám

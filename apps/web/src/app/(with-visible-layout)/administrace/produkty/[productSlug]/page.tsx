@@ -3,6 +3,7 @@ import { products } from '@najit-najist/database/models';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
+import { getProduct } from '@server/utils/getProduct';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 120;
@@ -59,19 +60,19 @@ export async function generateMetadata({ params }: Params) {
   const { productSlug } = params;
   const decodedSlug = decodeURIComponent(productSlug);
 
-  try {
-    const recipe = await getCachedTrpcCaller().products.get.one({
-      slug: decodedSlug,
-    });
+  const product = await getProduct({
+    slug: decodedSlug,
+  });
 
-    return {
-      title: `Upravení ${recipe.name}`,
-    };
-  } catch {
+  if (!product) {
     return {
       title: 'Nenalezeno',
     };
   }
+
+  return {
+    title: `Upravení ${product.name}`,
+  };
 }
 
 export default async function Page({ params }: Params) {
@@ -79,9 +80,13 @@ export default async function Page({ params }: Params) {
   const loggedInUser = await getCachedLoggedInUser();
   const decodedSlug = decodeURIComponent(productSlug);
 
-  const product = await getCachedTrpcCaller()
-    .products.get.one({ slug: decodedSlug })
-    .catch(() => notFound());
+  const product = await getProduct({
+    slug: decodedSlug,
+  });
+
+  if (!product) {
+    notFound();
+  }
 
   return (
     <ProductPageManageContent

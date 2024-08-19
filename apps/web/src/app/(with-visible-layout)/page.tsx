@@ -1,4 +1,5 @@
 import { NewsletterSubscribe } from '@components/layout';
+import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { FC } from 'react';
 
 import { HeroBanner } from './_components/HeroBanner';
@@ -9,7 +10,9 @@ import { VideoSection } from './_components/VideoSection';
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-const MainPage: FC = () => {
+const MainPage: FC = async () => {
+  const loggedInUser = await getCachedLoggedInUser();
+
   return (
     <>
       <HeroBanner />
@@ -17,7 +20,7 @@ const MainPage: FC = () => {
       <VideoSection />
       <LatestPosts />
       <div className="mt-28" />
-      <NewsletterSubscribe />
+      <NewsletterSubscribe user={loggedInUser} />
     </>
   );
 };

@@ -1,3 +1,4 @@
+import type { getProduct } from '@server/utils/getProduct';
 import { ReactNode } from 'react';
 
 import type { AppRouterOutput } from './AppRouter';
@@ -37,8 +38,9 @@ export type PostWithRelations =
 
 export type UserWithRelations = AppRouterOutput['users']['getOne'];
 export type RecipeWithRelations = AppRouterOutput['recipes']['getOne'];
-export type ProductWithRelationsLocal =
-  AppRouterOutput['products']['get']['one'];
+export type ProductWithRelationsLocal = NonNullable<
+  Awaited<ReturnType<typeof getProduct>>
+>;
 
 export type OrderPaymentMethodWithRelations =
   AppRouterOutput['orders']['paymentMethods']['get']['many'][number];
