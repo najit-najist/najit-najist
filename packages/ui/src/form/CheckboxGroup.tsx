@@ -40,12 +40,12 @@ export function CheckboxGroup<T extends ItemType>({
       const isChecked = event.target.checked;
       const morphedItem = options.find(
         (item) =>
-          item.id === event.target.id || item.id === Number(event.target.id)
+          item.id === event.target.id || item.id === Number(event.target.id),
       );
 
       if (!morphedItem) {
         console.warn(
-          'Could not find item in checkbox group hence not assigning it as selected'
+          'Could not find item in checkbox group hence not assigning it as selected',
         );
 
         return;
@@ -54,7 +54,7 @@ export function CheckboxGroup<T extends ItemType>({
       onChange((prev) => {
         if (morphedItem.id === 0) {
           if (isChecked) {
-            return [...options];
+            return [];
           }
 
           return [];
@@ -67,7 +67,7 @@ export function CheckboxGroup<T extends ItemType>({
         return [...prev].filter((item) => item.id !== morphedItem.id);
       });
     },
-    [options, onChange]
+    [options, onChange],
   );
 
   return (
@@ -90,7 +90,10 @@ export function CheckboxGroup<T extends ItemType>({
           >
             <Checkbox
               id={String(itemId)}
-              checked={itemIds?.includes(itemValue.id)}
+              checked={
+                itemIds?.includes(itemValue.id) ||
+                (itemValue.id === 0 && !itemIds?.length)
+              }
               onChange={onItemCheckedChange}
             />
           </CheckboxWrapper>
