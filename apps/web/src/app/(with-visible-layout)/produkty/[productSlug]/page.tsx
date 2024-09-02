@@ -193,7 +193,7 @@ export default async function Page({ params }: Params) {
       />
       <ProductPageManageContent
         isEditorHeaderShown={
-          loggedInUser &&
+          !!loggedInUser &&
           canUser(loggedInUser, {
             action: UserActions.UPDATE,
             onModel: products,
