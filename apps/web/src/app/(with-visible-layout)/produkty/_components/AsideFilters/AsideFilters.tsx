@@ -62,7 +62,7 @@ export const AsideFilters: FC<{
         router.push(route);
       });
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {
@@ -72,59 +72,58 @@ export const AsideFilters: FC<{
     return () => subscription.unsubscribe();
   }, [handleSubmit, onSubmit, watch]);
 
-  const content = (
-    <FormProvider {...formMethods}>
-      <form
-        className="divide-y-2 [&>*:not(:first-child)]:pt-4"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        <Input
-          placeholder="Vyhledávání..."
-          rootClassName="w-full"
-          suffix={
-            <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
-              {formMethods.formState.isSubmitting || isRefreshing ? (
-                <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
-              ) : (
-                <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
-              )}
-            </div>
-          }
-          {...register('query')}
-        />
-
-        <Controller<FormValues>
-          name="categories"
-          render={({ field: { name, value, onChange } }) => (
-            <CheckboxGroup
-              rootClassName="mt-5"
-              name={name}
-              label="Kategorie"
-              titleField="name"
-              options={categories}
-              value={value as any}
-              onChange={(callback) => onChange(callback(value as any))}
-            />
-          )}
-        />
-      </form>
-    </FormProvider>
-  );
-
   return (
     <>
-      <aside className="flex-none w-full max-w-[18rem]">
-        <Button
-          color="secondary"
-          notRounded
-          appearance="spaceless"
-          padding="sm"
-          className="rounded-full text-xl block sm:hidden"
-        >
-          <AdjustmentsVerticalIcon className="w-6 h-6 inline mr-2" />
-          Filtrovat
-        </Button>
-        {isDesktop || !isClient ? content : null}
+      <aside className="flex-none w-full sm:max-w-[18rem]">
+        <FormProvider {...formMethods}>
+          <form
+            className="divide-y-2 [&>*:not(:first-child)]:pt-4"
+            onSubmit={handleSubmit(onSubmit)}
+          >
+            <div className="flex gap-2">
+              <Input
+                placeholder="Vyhledávání..."
+                rootClassName="w-full"
+                suffix={
+                  <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+                    {formMethods.formState.isSubmitting || isRefreshing ? (
+                      <ArrowPathIcon className="w-6 h-6 mx-3 sm:mx-5 my-2 animate-spin" />
+                    ) : (
+                      <MagnifyingGlassIcon className="w-6 h-6 mx-3 sm:mx-5 my-2" />
+                    )}
+                  </div>
+                }
+                {...register('query')}
+              />
+              {/* <Button
+                color="secondary"
+                notRounded
+                appearance="spaceless"
+                padding="off"
+                className="rounded-md text-xl block sm:hidden flex-none px-2"
+              >
+                <AdjustmentsVerticalIcon className="w-6 h-6 inline -mt-1" />
+              </Button> */}
+            </div>
+
+            {!isClient || isDesktop ? (
+              <Controller<FormValues>
+                name="categories"
+                render={({ field: { name, value, onChange } }) => (
+                  <CheckboxGroup
+                    rootClassName="mt-5"
+                    name={name}
+                    label="Kategorie"
+                    titleField="name"
+                    options={categories}
+                    value={value as any}
+                    onChange={(callback) => onChange(callback(value as any))}
+                  />
+                )}
+              />
+            ) : null}
+          </form>
+        </FormProvider>
       </aside>
     </>
   );
