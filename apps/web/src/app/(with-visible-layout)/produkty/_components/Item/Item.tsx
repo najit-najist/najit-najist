@@ -55,12 +55,13 @@ export const Item: FC<
           {!publishedAt ? (
             <Badge className="whitespace-nowrap">Nepublikováno</Badge>
           ) : null}
-          {onlyForDeliveryMethod ? (
+          {onlyForDeliveryMethod && !outOfStock ? (
             <Badge color="yellow">
               <TruckIcon className="w-4 h-4" />
               Pouze {onlyForDeliveryMethod.name.toLowerCase()}
             </Badge>
           ) : null}
+          {outOfStock ? <Badge color="red">Vyprodáno</Badge> : null}
         </div>
         <div className="absolute bottom-0 left-0 m-2 flex flex-col items-end gap-2">
           <Suspense>
@@ -89,17 +90,19 @@ export const Item: FC<
             value={price?.value ?? 0}
             className={outOfStock ? 'line-through' : ''}
           />
-          <AddToCartButton
-            productId={id}
-            productMetadata={{
-              images,
-              name,
-              slug,
-            }}
-            disabled={outOfStock || !publishedAt}
-            withIcon
-            withoutText
-          />
+          {!outOfStock ? (
+            <AddToCartButton
+              productId={id}
+              productMetadata={{
+                images,
+                name,
+                slug,
+              }}
+              disabled={!publishedAt}
+              withIcon
+              withoutText
+            />
+          ) : null}
         </div>
       </div>
     </article>

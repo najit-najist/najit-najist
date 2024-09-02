@@ -5,8 +5,8 @@ import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
 import { logger } from '@server/logger';
 import { UserActions, canUser } from '@server/utils/canUser';
-import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getFileUrl } from '@server/utils/getFileUrl';
+import { getLoggedInUser } from '@server/utils/server';
 import { isLocalPickup } from '@utils';
 import { notFound } from 'next/navigation';
 import { WithContext, Product as SchemaProduct } from 'schema-dts';
@@ -39,9 +39,9 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function Page({ params }: Params) {
   const { productSlug } = params;
-  const loggedInUser = await getCachedLoggedInUser();
+  const loggedInUser = await getLoggedInUser().catch(() => null);
   const canUserSeeUnpublished =
-    loggedInUser &&
+    !!loggedInUser &&
     canUser(loggedInUser, {
       action: UserActions.UPDATE,
       onModel: products,

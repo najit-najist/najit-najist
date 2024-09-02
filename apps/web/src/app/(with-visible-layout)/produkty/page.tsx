@@ -137,11 +137,11 @@ export default async function RecipesPage({
         </PageDescription>
       </PageHeader>
 
-      <div className="container pb-10">
+      <div className="container pb-5 sm:pb-10">
         <hr className="border-none h-1 bg-gray-100" />
       </div>
 
-      <div className="flex flex-col sm:flex-row container gap-10">
+      <div className="flex flex-col sm:flex-row container gap-5 sm:gap-10">
         <AsideFilters
           categories={[fallbackCategories, ...categories]}
           initialValues={{ query, categories: selectedCategories }}
