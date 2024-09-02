@@ -60,10 +60,14 @@ type Params = {
 export async function generateMetadata({ params }: Params) {
   const { productSlug } = params;
   const decodedSlug = decodeURIComponent(productSlug);
+  const loggedInUser = await getLoggedInUser();
 
-  const product = await getProduct({
-    slug: decodedSlug,
-  });
+  const product = await getProduct(
+    {
+      slug: decodedSlug,
+    },
+    { loggedInUser },
+  );
 
   if (!product) {
     return {

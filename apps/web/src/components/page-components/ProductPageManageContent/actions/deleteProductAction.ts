@@ -22,7 +22,9 @@ export const deleteProductAction = createActionWithValidation(
       throw new InsufficientRoleError();
     }
 
-    const existing = await getProduct(input);
+    const existing = await getProduct(input, {
+      loggedInUser: user,
+    });
     if (!existing) {
       return notFound();
     }

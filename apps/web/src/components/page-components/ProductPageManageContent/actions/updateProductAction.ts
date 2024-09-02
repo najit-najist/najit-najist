@@ -38,7 +38,9 @@ export const updateProductAction = createActionWithValidation(
 
     const library = new LibraryService(products);
 
-    const existing = await getProduct(input);
+    const existing = await getProduct(input, {
+      loggedInUser: user,
+    });
     if (!existing) {
       notFound();
     }
