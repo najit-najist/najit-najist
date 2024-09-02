@@ -1,12 +1,13 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 import { products } from '@najit-najist/database/models';
+import { logger } from '@server/logger';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
-import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getProduct } from '@server/utils/getProduct';
+import { getLoggedInUser } from '@server/utils/server';
 import { notFound } from 'next/navigation';
 
-export const revalidate = 120;
+export const revalidate = 0;
 
 // TODO
 const jsonLd = {
@@ -77,14 +78,21 @@ export async function generateMetadata({ params }: Params) {
 
 export default async function Page({ params }: Params) {
   const { productSlug } = params;
-  const loggedInUser = await getCachedLoggedInUser();
+  const loggedInUser = await getLoggedInUser();
   const decodedSlug = decodeURIComponent(productSlug);
 
-  const product = await getProduct({
-    slug: decodedSlug,
-  });
+  const product = await getProduct(
+    {
+      slug: decodedSlug,
+    },
+    { loggedInUser },
+  );
 
   if (!product) {
+    logger.error(
+      { productSlug, loggedInUser: !!loggedInUser },
+      'Could not find product to administrate',
+    );
     notFound();
   }
 
