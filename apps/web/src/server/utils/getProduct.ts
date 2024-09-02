@@ -28,7 +28,9 @@ export async function getProduct(
         canUserViewUnpublished ? undefined : isNotNull(schema.publishedAt),
       ),
     with: {
-      images: true,
+      images: {
+        orderBy: (schema, { asc }) => asc(schema.createdAt),
+      },
       category: true,
       onlyForDeliveryMethod: true,
       price: true,
