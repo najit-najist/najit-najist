@@ -11,6 +11,7 @@ import { isLocalPickup } from '@utils';
 import { notFound } from 'next/navigation';
 import { WithContext, Product as SchemaProduct } from 'schema-dts';
 
+export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 type Params = {
