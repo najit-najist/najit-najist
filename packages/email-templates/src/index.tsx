@@ -49,7 +49,7 @@ export type {
   NewsletterComponent,
 } from './types.js';
 
-export { render, renderAsync } from '@react-email/render';
+export { render } from '@react-email/render';
 
 export default function Mail() {
   return <>Hi!</>;

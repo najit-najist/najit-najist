@@ -10,7 +10,7 @@ import {
 import {
   PasswordReset,
   WelcomeAndFinish,
-  renderAsync,
+  render,
 } from '@najit-najist/email-templates';
 import { EntityLink } from '@najit-najist/schemas';
 import { logger } from '@server/logger';
@@ -54,7 +54,7 @@ export class ProfileService {
       tokenSecret,
       { expiresIn: '1d', ...jwtVerifyOptions },
     );
-    const emailContent = await renderAsync(
+    const emailContent = await render(
       PasswordReset({
         siteOrigin: config.app.origin,
         token,
@@ -165,7 +165,7 @@ export class ProfileService {
     );
 
     try {
-      const emailContent = await renderAsync(
+      const emailContent = await render(
         WelcomeAndFinish({
           siteOrigin: config.app.origin,
           token,

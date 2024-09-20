@@ -1,7 +1,6 @@
 // @ts-expect-error -- its okay
 import { getTheme } from '@najit-najist/tailwind-plugin/index.cjs';
-import { Head, Html, Img, Link } from '@react-email/components';
-import { Tailwind } from '@react-email/tailwind';
+import { Head, Html, Img, Link, Tailwind } from '@react-email/components';
 import { FC, PropsWithChildren } from 'react';
 
 import { Attachment, BaseEmailProps } from '../types';

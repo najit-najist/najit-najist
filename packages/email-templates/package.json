@@ -31,15 +31,13 @@
     "@najit-najist/schemas": "workspace:*",
     "@najit-najist/tailwind-plugin": "workspace:*",
     "@najit-najist/ui": "workspace:*",
-    "@react-email/components": "^0.0.22",
-    "@react-email/img": "^0.0.9",
-    "@react-email/render": "^0.0.17",
-    "@react-email/tailwind": "^0.0.19",
+    "@react-email/components": "^0.0.25",
+    "@react-email/render": "^1.0.1",
     "clsx": "^2.1.1",
     "dayjs": "^1.11.12",
     "react": "18.2",
     "react-dom": "18.2",
-    "react-email": "^2.1.6"
+    "react-email": "^3.0.1"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",

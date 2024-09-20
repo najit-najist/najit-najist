@@ -12,7 +12,7 @@ import {
 import {
   OrderConfirmed,
   OrderShipped,
-  renderAsync,
+  render,
 } from '@najit-najist/email-templates';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { entityLinkSchema } from '@najit-najist/schemas';
@@ -45,29 +45,29 @@ class FailedRefundError extends Error {
 }
 
 const onOrderConfirmed: OrderStateListener = async (
-  order: OrderWithRelations
+  order: OrderWithRelations,
 ) => {
   await MailService.send({
     to: order.email,
     subject: `Objednávka #${order.id} potvrzena`,
-    body: await renderAsync(
+    body: await render(
       OrderConfirmed({
         orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
         order,
         siteOrigin: config.app.origin,
-      })
+      }),
     ),
   });
 };
 const onOrderShipped: OrderStateListener = async (
-  order: OrderWithRelations
+  order: OrderWithRelations,
 ) => {
   await MailService.send({
     to: order.email,
     subject: `Objednávka #${order.id} ${
       isLocalPickup(order.deliveryMethod) ? 'připravena' : 'odeslána'
     }`,
-    body: await renderAsync(
+    body: await render(
       OrderShipped({
         orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
         order: {
@@ -85,7 +85,7 @@ const onOrderShipped: OrderStateListener = async (
           })),
         },
         siteOrigin: config.app.origin,
-      })
+      }),
     ),
   });
 };
@@ -100,7 +100,7 @@ const onOrderDropped: OrderStateListener = async (order) => {
     } else {
       logger.warn(
         { order },
-        'Could not find packeta parcel for dropped order event'
+        'Could not find packeta parcel for dropped order event',
       );
     }
   }
@@ -112,20 +112,20 @@ const onOrderDropped: OrderStateListener = async (order) => {
 
     if (comgatePayment) {
       const paymentCancelResponse = await ComgateClient.cancelPayment(
-        comgatePayment.transactionId
+        comgatePayment.transactionId,
       );
 
       if (paymentCancelResponse.data.code !== ComgateResponseCode.OK) {
         logger.warn(
           { order, resp: paymentCancelResponse.data },
-          'Could not cancel payment, we will try to refund'
+          'Could not cancel payment, we will try to refund',
         );
 
         const paymentRefundResponse = await ComgateClient.refundPaymentForOrder(
           {
             ...order,
             comgatePayment,
-          }
+          },
         );
 
         if (paymentRefundResponse.data.code !== ComgateResponseCode.OK) {
@@ -138,7 +138,7 @@ const onOrderDropped: OrderStateListener = async (order) => {
     } else {
       logger.warn(
         { order },
-        'Could not find comgate payment for dropped order event'
+        'Could not find comgate payment for dropped order event',
       );
     }
   }
@@ -176,13 +176,13 @@ export async function updateOrderAction(options: UpdateOrderActionOption) {
         .catch((error) => {
           logger.error(
             { error, order },
-            `Order flow ${newState} - could not finish listener due to some errors`
+            `Order flow ${newState} - could not finish listener due to some errors`,
           );
         })
         .finally(() => {
           logger.warn(
             { perf: perf.summarize(), newState },
-            'Perf of order state hooks'
+            'Perf of order state hooks',
           );
         });
     }

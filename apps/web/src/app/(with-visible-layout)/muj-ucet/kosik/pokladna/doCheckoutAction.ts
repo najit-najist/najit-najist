@@ -23,7 +23,7 @@ import {
 import {
   ThankYouOrder,
   ThankYouOrderAdmin,
-  renderAsync,
+  render,
 } from '@najit-najist/email-templates';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { config } from '@server/config';
@@ -77,8 +77,8 @@ const sendEmails = (orderId: Order['id']) => {
 
     const renderHtmlPerf = perf.track('render-html');
     const [adminNoticeHtml, userNoticeHtml] = await Promise.all([
-      renderAsync(adminNoticeContents),
-      renderAsync(userNotice),
+      render(adminNoticeContents),
+      render(userNotice),
     ]);
     renderHtmlPerf.stop();
 

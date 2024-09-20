@@ -1,7 +1,7 @@
 import { database } from '@najit-najist/database';
 import { contactFormReplies } from '@najit-najist/database/models';
 import {
-  renderAsync,
+  render,
   ContactUsAdminReply,
   ContactUsUserReply,
 } from '@najit-najist/email-templates';
@@ -32,7 +32,7 @@ export const contactUsRoutes = t.router({
         .catch((error) => {
           logger.error(
             { error },
-            `Contact Us Flow - Failed to create entry in database`
+            `Contact Us Flow - Failed to create entry in database`,
           );
 
           throw new Error('Error happened');
@@ -41,38 +41,38 @@ export const contactUsRoutes = t.router({
       MailService.send({
         to: config.mail.baseEmail,
         subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
-        body: await renderAsync(
+        body: await render(
           ContactUsAdminReply({
             email: input.email,
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
             siteOrigin: config.app.origin,
-          })
+          }),
         ),
       }).catch((error) => {
         logger.error(
           { error, createdResponse },
-          `Contact Us Flow - Failed to send email with contact form, but should be created in database`
+          `Contact Us Flow - Failed to send email with contact form, but should be created in database`,
         );
       });
 
       MailService.send({
         to: input.email,
         subject: 'Děkujeme za Váš zájem',
-        body: await renderAsync(
+        body: await render(
           ContactUsUserReply({
             email: input.email,
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
             siteOrigin: config.app.origin,
-          })
+          }),
         ),
       }).catch((error) => {
         logger.error(
           { error, input },
-          `Contact Us Flow - email sending to user failed`
+          `Contact Us Flow - email sending to user failed`,
         );
       });
 
