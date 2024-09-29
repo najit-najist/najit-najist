@@ -63,34 +63,13 @@ export const Item: FC<
           ) : null}
           {outOfStock ? <Badge color="red">Vyprodáno</Badge> : null}
         </div>
-        <div className="absolute bottom-0 left-0 m-2 flex flex-col items-end gap-2">
-          <Suspense>
+        <Suspense>
+          <div className="absolute bottom-0 left-0 m-2">
             <EditLink href={linkHref as any} />
-          </Suspense>
-        </div>
-      </div>
-      <div className="pb-5 flex flex-col justify-between w-full h-full">
-        <div className="flex-none">
-          <h3 className="text-project-secondary uppercase text-sm font-semibold mt-4 mb-1">
-            {category?.name ?? 'Ostatní'}
-          </h3>
-          <Link href={linkHref} className="hover:underline">
-            <h2 className="mb-2 text-2xl sm:text-3xl font-bold tracking-tight text-gray-900 font-title">
-              {name}
-            </h2>
-          </Link>
-        </div>
-
-        <p className="mb-3 font-normal text-gray-700 dark:text-gray-400 tracking-wide">
-          {descriptionPreview}
-        </p>
-
-        <div className="flex items-center justify-between">
-          <Price
-            value={price?.value ?? 0}
-            className={outOfStock ? 'line-through' : ''}
-          />
-          {!outOfStock ? (
+          </div>
+        </Suspense>
+        {!outOfStock ? (
+          <div className="absolute bottom-0 right-0 m-2">
             <AddToCartButton
               productId={id}
               productMetadata={{
@@ -102,8 +81,32 @@ export const Item: FC<
               withIcon
               withoutText
             />
-          ) : null}
+          </div>
+        ) : null}
+      </div>
+      <div className="pb-5 flex flex-col w-full h-full">
+        <div className="flex items-center justify-between mt-3">
+          <Price
+            value={price?.value ?? 0}
+            discount={price?.discount ?? 0}
+            className={outOfStock ? 'line-through' : ''}
+          />
         </div>
+
+        <div className="flex-none">
+          <Link href={linkHref} className="hover:underline">
+            <h2 className="text-2xl font-bold tracking-tight text-gray-900 font-title">
+              {name}
+            </h2>
+          </Link>
+          <h3 className="text-project-secondary uppercase text-sm font-semibold">
+            {category?.name ?? 'Ostatní'}
+          </h3>
+        </div>
+
+        {/* <p className="mb-3 font-normal text-sm leading-5 text-gray-700 dark:text-gray-400 tracking-wide mt-3">
+          {descriptionPreview}
+        </p> */}
       </div>
     </article>
   );

@@ -8,4 +8,9 @@ export const getProductsInputSchema = defaultGetManySchema
   .extend({
     cursor: z.string().optional(),
     categorySlug: z.array(slugSchema).optional(),
+    sortBy: z
+      .object({
+        price: z.enum(['asc', 'desc']).optional(),
+      })
+      .optional(),
   });

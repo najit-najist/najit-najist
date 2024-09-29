@@ -29,7 +29,7 @@ const selectButtonStyles = cva(
       size: 'normal',
       color: 'default',
     },
-  }
+  },
 );
 
 export type ItemBase = { id: string | number };
@@ -65,6 +65,14 @@ export function Select<T extends ItemBase>({
   addNewItemLabel = 'Přidat nový',
   fallbackButtonContents = 'Vyberte',
 }: SelectProps<T>): ReactElement {
+  const labelValue = (
+    multiple && Array.isArray(selected) ? selected?.length : selected
+  )
+    ? Array.isArray(selected)
+      ? selected.map(formatter).join(', ')
+      : (formatter(selected!) ?? '')
+    : fallbackButtonContents;
+
   return (
     <Listbox
       value={selected}
@@ -85,9 +93,7 @@ export function Select<T extends ItemBase>({
               aria-disabled={disabled}
               className={selectButtonStyles()}
             >
-              <span className="block truncate">
-                {selected ? formatter(selected) ?? '' : fallbackButtonContents}
-              </span>
+              <span className="block truncate">{labelValue}</span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon
                   className="h-5 w-5 text-gray-400"
@@ -112,7 +118,7 @@ export function Select<T extends ItemBase>({
                         active
                           ? 'bg-project-primary text-white'
                           : 'text-gray-900',
-                        'relative cursor-default select-none py-2 pl-3 pr-9'
+                        'relative cursor-default select-none py-2 pl-3 pr-9',
                       )
                     }
                     value={item}
@@ -122,7 +128,7 @@ export function Select<T extends ItemBase>({
                         <span
                           className={cx(
                             selected ? 'font-semibold' : 'font-normal',
-                            'block truncate'
+                            'block truncate',
                           )}
                         >
                           {formatter(item)}
@@ -132,7 +138,7 @@ export function Select<T extends ItemBase>({
                           <span
                             className={cx(
                               active ? 'text-white' : 'text-ocean-600',
-                              'absolute inset-y-0 right-0 flex items-center pr-4'
+                              'absolute inset-y-0 right-0 flex items-center pr-4',
                             )}
                           >
                             <CheckIcon className="h-5 w-5" aria-hidden="true" />
@@ -156,7 +162,7 @@ export function Select<T extends ItemBase>({
 
                     <span
                       className={cx(
-                        'absolute inset-y-0 right-0 flex items-center pr-4 text-project-secondary group-hover:text-white'
+                        'absolute inset-y-0 right-0 flex items-center pr-4 text-project-secondary group-hover:text-white',
                       )}
                     >
                       <PlusIcon className="h-5 w-5" aria-hidden="true" />

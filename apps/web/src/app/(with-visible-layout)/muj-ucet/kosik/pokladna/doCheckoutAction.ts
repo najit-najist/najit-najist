@@ -33,6 +33,7 @@ import { createActionWithValidation } from '@server/utils/createActionWithValida
 import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
 import { getLoggedInUserId, getOrderById } from '@server/utils/server';
 import { getTotalPrice } from '@utils';
+import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { getPerfTracker } from '@utils/getPerfTracker';
 import { getUserCart } from '@utils/getUserCart';
@@ -256,7 +257,10 @@ export const doCheckoutAction = createActionWithValidation(
               : OrderState.UNCONFIRMED,
             userId: userId,
             paymentMethodPrice: paymentMethod.price,
-            deliveryMethodPrice: deliveryMethod.price,
+            deliveryMethodPrice: formatDeliveryMethodPrice(
+              deliveryMethod.price ?? 0,
+              cart,
+            ).formatted,
             subtotal: cart.subtotal,
             discount: cart.discount,
             // Only assign discount when user is actually eligible

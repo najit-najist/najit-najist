@@ -21,9 +21,11 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
       <ol role="list" className="flex items-center space-x-4">
         <li>
           <div>
-            <Link href="/" className="text-gray-400 hover:text-gray-500">
-              <HomeIcon className="h-4 w-4 flex-shrink-0" aria-hidden="true" />
-              <span className="sr-only">Domů</span>
+            <Link
+              href="/"
+              className="text-project-primary text-opacity-80 hover:text-opacity-100 text-sm font-medium"
+            >
+              najitnajist.cz
             </Link>
           </div>
         </li>
@@ -45,7 +47,7 @@ export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
                   page.active
                     ? 'text-project-secondary hover:text-project-primary hover:underline'
                     : 'text-gray-500 hover:text-gray-700',
-                  page.className
+                  page.className,
                 )}
                 aria-current={page.active ? 'page' : undefined}
               >

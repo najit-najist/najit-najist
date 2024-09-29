@@ -12,6 +12,10 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
       textShadow:
         '#c8c8c8 1px 1px 0px, #b4b4b4 0px 2px 0px, #a0a0a0 0px 3px 0px, rgb(140 140 140 / 50%) 0px 4px 0px, #787878 0px 0px 0px, rgb(0 0 0 / 50%) 0px 5px 10px',
     },
+
+    '.border-project': {
+      border: `2px solid ${theme('colors.gray.200')}`,
+    },
   });
 
   addBase({

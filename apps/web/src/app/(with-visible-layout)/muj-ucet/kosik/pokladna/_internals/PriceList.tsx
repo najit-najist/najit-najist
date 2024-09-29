@@ -5,7 +5,9 @@ import {
   OrderDeliveryMethod,
   OrderPaymentMethod,
 } from '@najit-najist/database/models';
+import { Alert } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
+import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import clsx from 'clsx';
 import { FC } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -34,6 +36,12 @@ export const PriceList: FC<{
 
   const selectedDeliveryMethodPrice: number | undefined =
     deliveryMethodsPrices[deliveryMethod.slug];
+
+  const deliveryMethodPrice = formatDeliveryMethodPrice(
+    selectedDeliveryMethodPrice,
+    { subtotal },
+  );
+
   const selectedPaymentMethodPrice: number | undefined =
     paymentMethodsPrices[paymentMethod.slug];
 
@@ -44,7 +52,7 @@ export const PriceList: FC<{
         <span
           className={clsx(
             'text-gray-900',
-            transitionIsHappening ? 'blur-sm' : ''
+            transitionIsHappening ? 'blur-sm' : '',
           )}
         >
           {formatPrice(subtotal)}
@@ -58,7 +66,7 @@ export const PriceList: FC<{
             <span
               className={clsx(
                 'text-project-primary',
-                transitionIsHappening ? 'blur-sm' : ''
+                transitionIsHappening ? 'blur-sm' : '',
               )}
             >
               - {formatPrice(totalDiscount)}
@@ -74,12 +82,29 @@ export const PriceList: FC<{
             <span
               className={clsx(
                 'text-gray-900',
-                transitionIsHappening ? 'blur-sm' : ''
+                transitionIsHappening ? 'blur-sm' : '',
               )}
             >
-              {formatPrice(selectedDeliveryMethodPrice)}
+              {formatPrice(deliveryMethodPrice.formatted)}
+              {deliveryMethodPrice.formatted !==
+              deliveryMethodPrice.original ? (
+                <span className="text-gray-300">
+                  {' '}
+                  (<s>{formatPrice(selectedDeliveryMethodPrice)}</s>)
+                </span>
+              ) : null}
             </span>
           </div>
+          {deliveryMethodPrice.formatted !== deliveryMethodPrice.original ? (
+            <Alert
+              heading="Gratulujeme!"
+              color="success"
+              className="mb-4 -mt-2"
+            >
+              Získáváte dopravu zdarma, jelikož Vaše objednávka překračuje
+              hodnotu {formatPrice(formatDeliveryMethodPrice.limit)}
+            </Alert>
+          ) : null}
         </>
       ) : null}
       {selectedPaymentMethodPrice !== undefined ? (
@@ -90,7 +115,7 @@ export const PriceList: FC<{
             <span
               className={clsx(
                 'text-gray-900',
-                transitionIsHappening ? 'blur-sm' : ''
+                transitionIsHappening ? 'blur-sm' : '',
               )}
             >
               {formatPrice(selectedPaymentMethodPrice)}
@@ -104,10 +129,10 @@ export const PriceList: FC<{
         <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
           {formatPrice(
             getTotalPrice({
-              deliveryMethodPrice: selectedDeliveryMethodPrice,
+              deliveryMethodPrice: deliveryMethodPrice.formatted,
               paymentMethodPrice: selectedPaymentMethodPrice,
               subtotal: subtotal - totalDiscount,
-            })
+            }),
           )}
         </span>
       </div>

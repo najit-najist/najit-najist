@@ -25,34 +25,34 @@ const alertRootStyles = cva('rounded-md p-3 border-solid', {
       success: 'bg-green-50',
     },
     outlined: {
-      true: cx('border'),
+      true: cx('border-2'),
       false: '',
     },
   },
   defaultVariants: {
     color: 'default',
-    outlined: false,
+    outlined: true,
   },
   compoundVariants: [
     {
       color: 'default',
       outlined: true,
-      className: 'border-blue-400',
+      className: 'border-blue-300',
     },
     {
       color: 'error',
       outlined: true,
-      className: 'border-red-400',
+      className: 'border-red-300',
     },
     {
       color: 'warning',
       outlined: true,
-      className: 'border-yellow-400',
+      className: 'border-yellow-400 border-opacity-40',
     },
     {
       color: 'success',
       outlined: true,
-      className: 'border-gren-400',
+      className: 'border-green-300 border-opacity-30',
     },
   ],
 });
@@ -71,7 +71,7 @@ const iconStyles = cva('h-5 w-5 -mt-[1px]', {
   },
 });
 
-const titleStyles = cva('text-sm font-bold', {
+const titleStyles = cva('text-sm font-bold mb-1.5', {
   variants: {
     color: {
       default: 'text-blue-800',
@@ -85,7 +85,7 @@ const titleStyles = cva('text-sm font-bold', {
   },
 });
 
-const contentStyles = cva('mt-2 text-sm', {
+const contentStyles = cva('text-sm', {
   variants: {
     color: {
       default: 'text-blue-700',
@@ -113,17 +113,26 @@ export const Alert: FC<AlertProps> = ({
   return (
     <div className={alertRootStyles({ className, color, outlined })} {...rest}>
       <div className="flex">
-        {IconComponent ? (
-          <div className="flex-shrink-0">
-            <IconComponent
-              className={iconStyles({ color, className: iconClassName })}
-              aria-hidden="true"
-            />
-          </div>
-        ) : null}
-        <div className={cx(IconComponent && 'ml-3', 'w-full')}>
+        <div className="w-full">
           <div className="flex justify-between items-start">
-            <h3 className={titleStyles({ color })}>{heading}</h3>
+            <div>
+              {IconComponent ? (
+                <div className="flex-shrink-0 inline-block">
+                  <IconComponent
+                    className={iconStyles({
+                      color,
+                      className: cx(iconClassName, '-mb-1 mr-3'),
+                    })}
+                    aria-hidden="true"
+                  />
+                </div>
+              ) : null}
+              {heading ? (
+                <h3 className={titleStyles({ color, class: 'inline-block' })}>
+                  {heading}
+                </h3>
+              ) : null}
+            </div>
             {onDismissClick ? (
               <button
                 className="text-red-500 hover:rotate-90 duration-200 flex-none"

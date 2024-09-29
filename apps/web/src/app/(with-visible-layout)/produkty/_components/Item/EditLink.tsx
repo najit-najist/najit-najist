@@ -43,10 +43,10 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
           className={buttonStyles({
             appearance: 'spaceless',
             color: 'blue',
-            className: 'px-2 py-1 h-9 w-9',
+            className: 'h-11 w-11 flex',
           })}
         >
-          <PencilIcon className="w-5 h-5 mt-0.5" />
+          <PencilIcon className="w-5 h-5 m-auto" />
         </Link>
       }
     >

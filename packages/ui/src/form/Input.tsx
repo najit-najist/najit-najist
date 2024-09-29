@@ -36,7 +36,7 @@ export interface InputProps
 }
 
 const inputTypeToAppearance = (
-  type: InputProps['type']
+  type: InputProps['type'],
 ): InputVariantProps['appearance'] => {
   let res: InputVariantProps['appearance'] = 'normal';
 
@@ -54,12 +54,12 @@ const inputTypeToAppearance = (
 };
 
 export const inputStyles = cva(
-  'block w-full border-gray-300 focus:outline-none',
+  'block w-full border-project focus:outline-none',
   {
     variants: {
       appearance: {
-        normal: 'border',
-        checkbox: 'border',
+        normal: '',
+        checkbox: '',
         standalone: 'border-b-2',
       },
       size: {
@@ -83,7 +83,7 @@ export const inputStyles = cva(
         false: 'rounded-r-md',
       },
       readOnly: {
-        true: '!border-gray-300 !focus:border-gray-300 !ring-0 !shadow-none cursor-default',
+        true: '!border-gray-200 !focus:border-gray-200 !ring-0 !shadow-none cursor-default',
         false: 'shadow-sm',
       },
       // withLeftIcon: {
@@ -112,7 +112,7 @@ export const inputStyles = cva(
         appearance: 'normal',
         readOnly: false,
         className:
-          'focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400',
+          'focus:ring-2 focus:ring-white focus:ring-offset-1 focus:ring-offset-green-400',
       },
       {
         color: 'default',
@@ -120,16 +120,16 @@ export const inputStyles = cva(
         className: 'focus:border-green-400',
       },
     ],
-  }
+  },
 );
 
 export const inputPrefixSuffixStyles = cva(
-  'inline-block border border-gray-300 text-gray-500 sm:text-sm bg-white',
+  'inline-block border-project text-gray-500 sm:text-sm bg-white',
   {
     variants: {
       type: {
-        prefix: 'rounded-l-md border-r-0',
-        suffix: 'rounded-r-md border-l-0',
+        prefix: 'rounded-l-md !border-r-0',
+        suffix: 'rounded-r-md !border-l-0',
       },
       centerContent: {
         true: 'flex items-center justify-center',
@@ -139,7 +139,7 @@ export const inputPrefixSuffixStyles = cva(
     defaultVariants: {
       centerContent: false,
     },
-  }
+  },
 );
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
@@ -165,7 +165,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
     // rightIcon,
     ...rest
   },
-  ref
+  ref,
 ) {
   const id = useId();
 

@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 const arrowButtonClassName = clsx(
-  'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r'
+  'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r',
 );
 const arrowClassName = clsx('w-4 h-4');
 
@@ -32,8 +32,8 @@ export const ImageSlider: FC<{
         <div
           ref={sliderRef}
           className={clsx(
-            'keen-slider h-full rounded-lg overflow-hidden',
-            outOfStrock && 'opacity-50'
+            'keen-slider h-full rounded-lg overflow-hidden hover:shadow-2xl duration-200',
+            outOfStrock && 'opacity-50',
           )}
         >
           {imageUrls.map((imageName) => (

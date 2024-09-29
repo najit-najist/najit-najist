@@ -4,6 +4,11 @@ export const buttonStyles = cva(
   'duration-100 focus:outline-none hover:shadow-sm disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap',
   {
     variants: {
+      variant: {
+        default: '',
+        filled: '',
+        rounded: '',
+      },
       color: {
         noColor: '',
         primary:
@@ -24,7 +29,6 @@ export const buttonStyles = cva(
         softRed:
           'bg-red-50 hover:bg-red-100 text-red-600 border border-red-200',
         subtleRed: 'hover:bg-red-50 text-red-600 border-0',
-
         ghost:
           'bg-white disabled:bg-gray-50 disabled:text-red-800 disabled:opacity-50 hover:bg-gray-100 aria-selected:bg-project-primary aria-selected:text-white',
       },
@@ -59,7 +63,7 @@ export const buttonStyles = cva(
       notAnimated: {
         true: '',
         false: cx(
-          '[&:not(disabled)]:hover:scale-[1.02] [&:not(disabled)]:active:scale-95'
+          '[&:not(disabled)]:hover:scale-[1.02] [&:not(disabled)]:active:scale-95',
         ),
       },
       withoutRing: {
@@ -68,6 +72,7 @@ export const buttonStyles = cva(
       },
     },
     defaultVariants: {
+      variant: 'default',
       appearance: 'normal',
       color: 'normal',
       padding: 'off',
@@ -82,5 +87,5 @@ export const buttonStyles = cva(
         color: 'noColor',
       },
     ],
-  }
+  },
 );

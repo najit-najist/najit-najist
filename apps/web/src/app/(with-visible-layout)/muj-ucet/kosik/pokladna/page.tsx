@@ -150,6 +150,11 @@ export default async function Page() {
     deliverMethodsAsArray.map(({ slug, price }) => [slug, price ?? 0]),
   );
 
+  const cartHasProductMoreThanStock = cart.products.find(
+    ({ product, count: countInCart }) =>
+      product.stock ? product.stock.value < countInCart : false,
+  );
+
   return (
     <>
       <PageHeader className="container">
@@ -245,6 +250,19 @@ export default async function Page() {
               {loggedInUser ? (
                 <>
                   <hr className="!mt-0" />
+                  {cartHasProductMoreThanStock ? (
+                    <div className="mx-4">
+                      <Alert
+                        heading="Upozornění"
+                        color="warning"
+                        icon={ExclamationTriangleIcon}
+                      >
+                        Jeden z produktů ve Vašem košíku přesahuje naše skladové
+                        možnosti a tak nemůžeme zajistit úplné dodání. Budeme
+                        Vás po vytvoření objednávky kontaktovat.
+                      </Alert>
+                    </div>
+                  ) : null}
                   <CheckoutButton />
                 </>
               ) : null}

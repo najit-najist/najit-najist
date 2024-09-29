@@ -11,21 +11,18 @@ import {
 type PaperVariantProps = VariantProps<typeof paperStyles>;
 type PaperHeaderVariantProps = VariantProps<typeof paperHeaderStyles>;
 
-export const paperStyles = cva(
-  'border border-solid border-gray-300 bg-white rounded-lg',
-  {
-    variants: {
-      shadow: {
-        none: '',
-        sm: 'shadow-sm',
-        normal: 'shadow',
-      },
-    },
-    defaultVariants: {
-      shadow: 'none',
+export const paperStyles = cva('border-project bg-white rounded-lg', {
+  variants: {
+    shadow: {
+      none: '',
+      sm: 'shadow-sm',
+      normal: 'shadow',
     },
   },
-);
+  defaultVariants: {
+    shadow: 'none',
+  },
+});
 
 export const paperHeaderStyles = cva('px-3 font-title tracking-wide', {
   variants: {

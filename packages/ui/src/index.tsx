@@ -30,6 +30,7 @@ export {
 } from './form/PasswordInput.js';
 export {
   RadioGroup,
+  RadioGroupVariants,
   type RadioGroupItem,
   type RadioGroupProps,
 } from './form/RadioGroup.js';

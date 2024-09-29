@@ -6,17 +6,23 @@ import {
   ProductCategory,
   products as productsModel,
 } from '@najit-najist/database/models';
-import { Tooltip } from '@najit-najist/ui';
+import {
+  BreadcrumbItem,
+  Breadcrumbs,
+  buttonStyles,
+  Tooltip,
+} from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getProductCategories } from '@server/utils/getProductCategories';
 import { getProducts } from '@server/utils/getProducts';
 import { Metadata, ResolvingMetadata } from 'next';
 import Link from 'next/link';
+import { z } from 'zod';
 
-import { AsideFilters } from './_components/AsideFilters';
+import { Filters } from './_components/Filters';
 import { InfiniteProducts } from './_components/InfiniteProducts';
-import { ProductsMainPageParams } from './_types';
+import { ProductsMainPageParams, ProductsPageSortBy } from './_types';
 
 const SEARCH_PAGE_TITLE = 'Výsledek vyhledávání produktů';
 
@@ -78,14 +84,24 @@ const fallbackCategories: ProductCategory = {
 export default async function RecipesPage({
   searchParams,
 }: ProductsMainPageParams) {
-  const { query, 'category-slug': categoriesSlugFromUrl } = searchParams;
+  const {
+    query,
+    'category-slug': categoriesSlugFromUrl,
+    sort: unsanitizedSort,
+  } = searchParams;
   const userDidSearch = !!query || !!categoriesSlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
-  const categoriesAsArray = categoriesSlugFromUrl?.split(',');
-  const search = {
+  const { data: sortBy } = z
+    .nativeEnum(ProductsPageSortBy)
+    .safeParse(unsanitizedSort);
+  const [selectedCategorySlug] = categoriesSlugFromUrl?.split(',') ?? [];
+  const search: Parameters<typeof getProducts>[0] = {
     search: query,
-    categorySlug: categoriesAsArray,
+    categorySlug: selectedCategorySlug ? [selectedCategorySlug] : undefined,
     perPage: 15,
+    sortBy: {
+      price: unsanitizedSort as any,
+    },
   };
 
   const [productsQueryResult, { items: categories }] = await Promise.all([
@@ -93,23 +109,37 @@ export default async function RecipesPage({
     getProductCategories({ perPage: 9999, omitEmpty: true }),
   ]);
 
-  let selectedCategories: typeof categories = [];
-  if (categoriesAsArray?.length) {
-    selectedCategories = categories.filter((item) =>
-      categoriesAsArray?.includes(item.slug),
+  let selectedCategory: (typeof categories)[number] | undefined = undefined;
+  if (selectedCategorySlug) {
+    selectedCategory = categories.find(
+      (item) => selectedCategorySlug === item.slug,
     );
+  }
+
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/produkty', text: 'Produkty', active: !selectedCategory },
+  ];
+  if (selectedCategory) {
+    breadcrumbs.push({
+      link: `/produkty?category-slug=${selectedCategory.slug}`,
+      active: true,
+      text: selectedCategory.name,
+    });
   }
 
   return (
     <>
-      {/* <Notice /> */}
-      <PageHeader className="container">
-        <div className="flex justify-between items-center">
+      {/* <N otice /> */}
+      <div className="container mx-auto my-2">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
+      <PageHeader className="container !pb-5">
+        <div className="flex justify-between items-center ">
           <PageTitle>
-            {query || selectedCategories.length > 1
+            {query && !selectedCategory
               ? SEARCH_PAGE_TITLE
-              : selectedCategories.length
-                ? createTitleFromCategories(selectedCategories)
+              : selectedCategory
+                ? createTitleFromCategories([selectedCategory])
                 : 'Všechny Produkty'}
           </PageTitle>
           {currentUser &&
@@ -131,28 +161,50 @@ export default async function RecipesPage({
         <PageDescription>
           {query
             ? 'Vyberte si z našeho rozmanitého sortimentu vyhledaných produktů'
-            : selectedCategories.length
-              ? 'Vyberte si z našich produktů, které jste si vyhledali'
+            : selectedCategory
+              ? `Vyberte si z obsáhlého sortimentu v kategorii ${selectedCategory.name}`
               : 'Vyberte si z našeho rozmanitého sortimentu'}
         </PageDescription>
       </PageHeader>
 
-      <div className="container pb-5 sm:pb-10">
-        <hr className="border-none h-1 bg-gray-100" />
-      </div>
+      {!selectedCategory ? (
+        <>
+          <nav className="container flex flex-wrap gap-2 mb-5">
+            {categories.map((category) => (
+              <Link
+                className={buttonStyles({
+                  padding: 'off',
+                  className: 'py-2 px-4',
+                  appearance: 'spaceless',
+                })}
+                href={{ query: { 'category-slug': category.slug } }}
+                key={category.id}
+              >
+                {category.name}
+              </Link>
+            ))}
+          </nav>
 
-      <div className="flex flex-col sm:flex-row container gap-5 sm:gap-10">
-        <AsideFilters
-          categories={[fallbackCategories, ...categories]}
-          initialValues={{ query, categories: selectedCategories }}
+          <div className="container my-5">
+            <hr className="border-none h-1 bg-gray-100" />
+          </div>
+        </>
+      ) : null}
+
+      <Filters
+        categories={[fallbackCategories, ...categories]}
+        initialValues={{
+          query,
+          sort: sortBy ?? ProductsPageSortBy.RECOMMENDED,
+        }}
+      />
+
+      <div className="w-full container mx-auto">
+        <InfiniteProducts
+          userDidSearch={userDidSearch}
+          initialSearch={search}
+          initialSearchResult={productsQueryResult}
         />
-        <div className="w-full">
-          <InfiniteProducts
-            userDidSearch={userDidSearch}
-            initialSearch={search}
-            initialSearchResult={productsQueryResult}
-          />
-        </div>
       </div>
     </>
   );

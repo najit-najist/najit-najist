@@ -10,6 +10,7 @@ import {
 } from '@najit-najist/database/drizzle';
 import {
   productCategories,
+  productPrices,
   products,
   User,
 } from '@najit-najist/database/models';
@@ -72,24 +73,13 @@ export async function getProducts(
         schema: products.name,
       },
     ],
-    // cursors: [
-    //   {
-    //     order: 'DESC',
-    //     key: products.createdAt.name,
-    //     schema: products.createdAt,
-    //   },
-    //   {
-    //     order: 'ASC',
-    //     key: products.publishedAt.name,
-    //     schema: products.publishedAt,
-    //   },
-    // ],
   });
 
   try {
     const [items, [{ count }]] = await Promise.all([
       database.query.products.findMany({
         where: and(...conditions, cursor.where(input.cursor)),
+        // orderBy: sql`${productPrices.value} desc nulls first`,
         orderBy: cursor.orderBy,
         limit: input.perPage,
         with: {
