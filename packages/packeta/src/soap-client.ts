@@ -22,6 +22,7 @@ export type CreatePacketOptions = Pick<
 export type CancelPacketOptions = {};
 
 const apiKey = process.env.PACKETA_SECRET;
+const apiPublicKey = process.env.NEXT_PUBLIC_PACKETA_KEY;
 
 export class PacketaSoapClient {
   private static PACKETERY_SOAP_URL =
@@ -68,6 +69,26 @@ export class PacketaSoapClient {
     return result[0]['packetStatusResult'] as PacketaCurrentStatusRecord;
   }
 
+  // static async getPickupInfo({
+  //   addressId,
+  //   internal,
+  // }: {
+  //   addressId: string;
+  //   internal: boolean;
+  // }) {
+  //   const url = new URL(
+  //     `https://widget.packeta.com/v6/api/pps/api/widget/v2/I_${addressId}`,
+  //   );
+  //   if (!apiPublicKey) {
+  //     throw new Error('NEXT_PUBLIC_PACKETA_KEY was not propertly provided');
+  //   }
+
+  //   url.searchParams.set('App_ApiKey', apiPublicKey!);
+
+  //   const response = await fetch(url);
+  //   const result = response.json();
+  // }
+
   static async getTracking(packetId: string | number) {
     const client = await this.getClient();
     const result = await client.packetTrackingAsync({
@@ -84,7 +105,7 @@ export class PacketaSoapClient {
 
   static async getPacketLabelPdfBinary(
     packetId: string | number,
-    format: PacketaPacketPDFLabelFormat = PacketaPacketPDFLabelFormat.A6
+    format: PacketaPacketPDFLabelFormat = PacketaPacketPDFLabelFormat.A6,
   ) {
     const client = await this.getClient();
     const result = await client.packetLabelPdfAsync({

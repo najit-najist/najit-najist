@@ -23,8 +23,10 @@ export const packetaParcels = pgTable(
     orderId: integer('order_id')
       .references(() => orders.id)
       .notNull(),
-  })
+  }),
 );
+
+export type PacketaParcel = typeof packetaParcels.$inferSelect;
 
 export const packetaParcelsRelations = relations(packetaParcels, ({ one }) => ({
   order: one(orders, {

@@ -61,7 +61,6 @@ export default async function Page({ params }: Params) {
       },
       category: true,
       onlyForDeliveryMethod: true,
-      price: true,
       stock: true,
       composedOf: {
         with: {
@@ -110,7 +109,7 @@ export default async function Page({ params }: Params) {
     category: product.category?.name,
     offers: {
       '@type': 'Offer',
-      price: product.price?.value ?? 0,
+      price: product.price ?? 0,
       priceCurrency: 'CZK',
       availability:
         product.stock?.value === 0

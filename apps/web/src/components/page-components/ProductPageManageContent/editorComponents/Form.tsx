@@ -21,7 +21,7 @@ export const Form: FC<
   const formMethods = useForm<ProductFormData>({
     defaultValues: {
       ...product,
-      price: product?.price ?? { value: 0 },
+      price: product?.price ?? 0,
       stock: product?.stock ?? undefined,
       images: product?.images.map(({ file }) => file),
       category: product?.category ?? undefined,

@@ -33,7 +33,6 @@ export async function getProduct(
       },
       category: true,
       onlyForDeliveryMethod: true,
-      price: true,
       stock: true,
       composedOf: {
         with: {

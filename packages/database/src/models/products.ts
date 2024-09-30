@@ -13,8 +13,8 @@ import { couponsForProducts } from './couponsForProducts';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
 import { productAlergensToProducts } from './productAlergensToProducts';
 import { productCategories } from './productCategories';
+import { productDiscounts } from './productDiscounts';
 import { productImages } from './productImages';
-import { productPrices } from './productPrices';
 import { productRawMaterialsToProducts } from './productRawMaterialsToProducts';
 import { productStock } from './productStock';
 
@@ -24,6 +24,7 @@ export const products = pgTable(
     withDefaultFields({
       name: varchar('name', { length: 256 }).unique().notNull(),
       slug: varchar('slug', { length: 256 }).unique().notNull(),
+      price: integer('price').default(0).notNull(),
       description: text('description'),
       publishedAt: timestamp('published_at'),
       categoryId: integer('category_id').references(
@@ -50,7 +51,7 @@ export const productsRelations = relations(products, ({ one, many }) => ({
     fields: [products.onlyForDeliveryMethodId],
     references: [orderDeliveryMethods.id],
   }),
-  price: one(productPrices),
+  discount: one(productDiscounts),
   stock: one(productStock),
   onlyForCoupons: many(couponsForProducts),
   composedOf: many(productRawMaterialsToProducts),

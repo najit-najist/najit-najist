@@ -6,20 +6,19 @@ import {
   Coupon,
   CouponForProduct,
   CouponsForProductCategory,
-  ProductPrice,
 } from '@najit-najist/database/models';
 
 export const getCartItemPrice = (
   product: (UserCartProduct | OrderedProduct) & {
-    product: Product & { price: ProductPrice | null };
+    product: Product;
   },
   coupon?: Coupon & {
     onlyForProducts: CouponForProduct[];
     onlyForProductCategories: CouponsForProductCategory[];
     patches: CouponPatch[];
-  }
+  },
 ) => {
-  const totalPrice = product.count * (product.product?.price?.value ?? 0);
+  const totalPrice = product.count * (product.product?.price ?? 0);
   let discount = 0;
 
   if (coupon) {
@@ -28,10 +27,10 @@ export const getCartItemPrice = (
       !!coupon.onlyForProductCategories.length;
     const belongsToGroup =
       coupon?.onlyForProducts.some(
-        ({ productId }) => product.product.id === productId
+        ({ productId }) => product.product.id === productId,
       ) ||
       coupon?.onlyForProductCategories.some(
-        ({ categoryId }) => product.product.categoryId === categoryId
+        ({ categoryId }) => product.product.categoryId === categoryId,
       );
     const couponPatch = coupon?.patches.at(0);
 

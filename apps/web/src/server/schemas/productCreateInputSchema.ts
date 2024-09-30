@@ -5,7 +5,6 @@ import {
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { z } from 'zod';
 
-import { productPriceCreateInputSchema } from './productPriceCreateInputSchema';
 import { productStockCreateInputSchema } from './productStockCreateInputSchema';
 
 export const productCreateInputSchema = z.object({
@@ -17,7 +16,10 @@ export const productCreateInputSchema = z.object({
   category: entityLinkSchema.optional(),
   onlyForDeliveryMethod: entityLinkSchema.nullable().optional(),
   publishedAt: stringOrDateToDateSchema,
-  price: productPriceCreateInputSchema.omit({ product: true }),
+  price: z.coerce
+    .number({ required_error: 'Požadovaná hodnota' })
+    .min(0)
+    .default(0),
   stock: productStockCreateInputSchema.nullable().optional(),
   weight: z
     .number({

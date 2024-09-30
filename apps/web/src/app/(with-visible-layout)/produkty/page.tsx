@@ -100,7 +100,12 @@ export default async function RecipesPage({
     categorySlug: selectedCategorySlug ? [selectedCategorySlug] : undefined,
     perPage: 15,
     sortBy: {
-      price: unsanitizedSort as any,
+      price:
+        unsanitizedSort === ProductsPageSortBy.PRICE_ASCENDING
+          ? 'asc'
+          : unsanitizedSort === ProductsPageSortBy.PRICE_DESCENDING
+            ? 'desc'
+            : undefined,
     },
   };
 

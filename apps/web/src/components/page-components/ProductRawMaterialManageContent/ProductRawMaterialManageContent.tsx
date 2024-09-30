@@ -21,7 +21,6 @@ async function UsedInProducts({ material }: { material: ProductRawMaterial }) {
       product: {
         with: {
           images: true,
-          price: true,
           category: true,
         },
       },

@@ -91,7 +91,7 @@ export const testOrder: OrderWithRelations = {
           value: 1,
           productId: 2,
         },
-        price: { discount: null, value: 100, productId: 2 },
+        price: 100,
       },
     },
     {
@@ -115,7 +115,7 @@ export const testOrder: OrderWithRelations = {
           productId: 4,
         },
         weight: 0,
-        price: { discount: null, value: 100, productId: 4 },
+        price: 100,
       },
     },
   ],

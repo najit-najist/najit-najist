@@ -3,6 +3,8 @@ import { dayjs } from '@dayjs';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
+import { PacketaPickupPointType } from '@najit-najist/packeta';
+import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { Alert } from '@najit-najist/ui';
 import { FC } from 'react';
 
@@ -14,13 +16,26 @@ export const SectionShipmentPayment: FC<{
   order: Order;
   viewType: OrderUnderpageViewType;
 }> = async ({ order }) => {
-  const [paymentMethod, deliveryMethod, localPickupDate] = await Promise.all([
-    database.query.orderPaymentMethods.findFirst({
-      where: (s, { eq }) => eq(s.id, order.paymentMethodId),
-    }),
-    getCachedDeliveryMethod(order.deliveryMethodId),
-    getCachedLocalPickupDate(order.id),
-  ]);
+  const [paymentMethod, deliveryMethod, localPickupDate, packetaPackage] =
+    await Promise.all([
+      database.query.orderPaymentMethods.findFirst({
+        where: (s, { eq }) => eq(s.id, order.paymentMethodId),
+      }),
+      getCachedDeliveryMethod(order.deliveryMethodId),
+      getCachedLocalPickupDate(order.id),
+      database.query.packetaParcels.findFirst({
+        where: (schema, { eq }) => eq(schema.orderId, order.id),
+      }),
+    ]);
+
+  // if (packetaPackage) {
+  //   console.log({ packetaPackage });
+
+  //   packetaPackage.addressType === PacketaPickupPointType.INTERNAL
+  //   console.log(
+  //     await PacketaSoapClient.getPacketStatus(packetaPackage.packetId),
+  //   );
+  // }
 
   return (
     <dl className="grid grid-cols-2 gap-x-6 border-t border-gray-200 py-10 text-sm">

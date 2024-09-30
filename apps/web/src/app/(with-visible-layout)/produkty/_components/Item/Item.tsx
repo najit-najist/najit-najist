@@ -87,8 +87,9 @@ export const Item: FC<
       <div className="pb-5 flex flex-col w-full h-full">
         <div className="flex items-center justify-between mt-3">
           <Price
-            value={price?.value ?? 0}
-            discount={price?.discount ?? 0}
+            value={price ?? 0}
+            // TODO
+            // discount={price ?? 0}
             className={outOfStock ? 'line-through' : ''}
           />
         </div>

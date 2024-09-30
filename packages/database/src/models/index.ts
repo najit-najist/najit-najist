@@ -26,7 +26,7 @@ export * from './productCategories';
 export * from './productRawMaterials';
 export * from './productRawMaterialsToProducts';
 export * from './productImages';
-export * from './productPrices';
+export * from './productDiscounts';
 export * from './products';
 export * from './productStock';
 

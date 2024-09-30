@@ -207,7 +207,7 @@ export const ProductPageManageContent: FC<
             {isEditorEnabled ? (
               <PriceEditor />
             ) : (
-              <Price value={product!.price?.value!} size="lg" />
+              <Price value={product!.price!} size="lg" />
             )}
           </div>
 

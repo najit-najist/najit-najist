@@ -2,7 +2,13 @@
 
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { cva, cx } from 'class-variance-authority';
-import { MouseEventHandler, forwardRef, useCallback, useRef } from 'react';
+import {
+  MouseEventHandler,
+  forwardRef,
+  useCallback,
+  useEffect,
+  useRef,
+} from 'react';
 
 import { Button } from '../Button/Button.js';
 import { Input, InputProps } from './Input.js';
@@ -16,7 +22,7 @@ const stepperButtonStyles = cva(
         minus: 'rounded-r-md border-l-0',
       },
     },
-  }
+  },
 );
 
 const STEP_INTERVAL = 50;
@@ -33,7 +39,7 @@ export const NumberInput = forwardRef<
     disabled,
     ...rest
   },
-  ref
+  ref,
 ) {
   const onMouseDownCountDown = useRef<number | undefined>(undefined);
   const onMouseDownStepper = useRef<number | undefined>(undefined);
@@ -60,25 +66,31 @@ export const NumberInput = forwardRef<
           case 'up':
             onMouseDownStepper.current = setInterval(
               () => onStepUpHandle(),
-              STEP_INTERVAL
+              STEP_INTERVAL,
             ) as unknown as number;
             break;
           case 'down':
             onMouseDownStepper.current = setInterval(
               () => onStepDownHandle(),
-              STEP_INTERVAL
+              STEP_INTERVAL,
             ) as unknown as number;
             break;
         }
       }, STEPPER_START_AFTER) as unknown as number;
     },
-    [onStepUpHandle, onStepDownHandle]
+    [onStepUpHandle, onStepDownHandle],
   );
 
   const clearIntervals = useCallback(() => {
     clearInterval(onMouseDownStepper.current);
     clearInterval(onMouseDownCountDown.current);
   }, []);
+
+  useEffect(() => {
+    if (disabled) {
+      clearIntervals();
+    }
+  }, [disabled, clearIntervals]);
 
   const prefix = (
     <>

@@ -28,7 +28,6 @@ export const getUserCart = async (options: GetUserCartOptions) => {
         with: {
           product: {
             with: {
-              price: true,
               stock: true,
               images: true,
               category: true,

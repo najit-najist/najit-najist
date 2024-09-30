@@ -176,6 +176,27 @@
       "when": 1723728672956,
       "tag": "0024_modern_blacklash",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1727617842769,
+      "tag": "0025_dizzy_husk",
+      "breakpoints": true
+    },
+    {
+      "idx": 26,
+      "version": "7",
+      "when": 1727638423089,
+      "tag": "0026_nappy_dagger",
+      "breakpoints": true
+    },
+    {
+      "idx": 27,
+      "version": "7",
+      "when": 1727638957352,
+      "tag": "0027_hard_changeling",
+      "breakpoints": true
     }
   ]
 }

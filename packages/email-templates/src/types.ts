@@ -8,7 +8,6 @@ import {
   OrderedAddress,
   OrderedProduct,
   Product,
-  ProductPrice,
   ProductStock,
   TelephoneNumber,
 } from '@najit-najist/database/models';
@@ -57,7 +56,6 @@ export type OrderWithRelations = Order & {
     product: Product & {
       images: string[];
       stock?: UnsignedModel<ProductStock> | null;
-      price: UnsignedModel<ProductPrice>;
     };
   })[];
   deliveryMethod: UnsignedModel<OrderDeliveryMethod>;

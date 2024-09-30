@@ -6,7 +6,6 @@ import { eq, inArray } from '@najit-najist/database/drizzle';
 import {
   productAlergensToProducts,
   productImages,
-  productPrices,
   productRawMaterialsToProducts,
   products,
   productStock,
@@ -49,7 +48,6 @@ export const updateProductAction = createActionWithValidation(
       const updated = await database.transaction(async (tx) => {
         const {
           images,
-          price,
           stock,
           category,
           onlyForDeliveryMethod,
@@ -112,19 +110,6 @@ export const updateProductAction = createActionWithValidation(
               })),
             );
           }
-        }
-
-        if (
-          typeof price?.value === 'number' ||
-          typeof price?.discount === 'number'
-        ) {
-          await tx
-            .update(productPrices)
-            .set({
-              value: price.value,
-              discount: price.discount,
-            })
-            .where(eq(productPrices.productId, existing.id));
         }
 
         if (typeof stock?.value === 'number' || stock === null) {

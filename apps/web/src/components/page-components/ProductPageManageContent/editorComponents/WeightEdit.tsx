@@ -25,7 +25,7 @@ export const WeightEdit = (): ReactElement => {
             </span>
           </div>
         }
-        error={formState.errors.price?.value}
+        error={formState.errors.price}
         disabled={formState.isSubmitting}
         {...register('weight', { valueAsNumber: true })}
       />

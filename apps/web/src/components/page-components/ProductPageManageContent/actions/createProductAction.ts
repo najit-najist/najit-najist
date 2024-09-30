@@ -4,7 +4,6 @@ import { database } from '@najit-najist/database';
 import {
   productAlergensToProducts,
   productImages,
-  productPrices,
   productRawMaterialsToProducts,
   products,
   productStock,
@@ -39,7 +38,6 @@ export const createProductAction = createActionWithValidation(
       const created = await database.transaction(async (tx) => {
         const {
           onlyForDeliveryMethod,
-          price,
           images,
           category,
           stock,
@@ -58,11 +56,6 @@ export const createProductAction = createActionWithValidation(
               ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
               : {}),
           })
-          .returning();
-
-        await tx
-          .insert(productPrices)
-          .values({ ...price, productId: createdProduct.id })
           .returning();
 
         if (composedOf.length) {

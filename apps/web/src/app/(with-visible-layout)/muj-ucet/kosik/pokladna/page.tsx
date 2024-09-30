@@ -9,7 +9,6 @@ import { UserService } from '@server/services/UserService';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
-import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { formatPrice } from '@utils';
 import { getUserCart } from '@utils/getUserCart';
 import clsx from 'clsx';

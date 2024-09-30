@@ -10,7 +10,6 @@ import {
 } from '@najit-najist/database/drizzle';
 import {
   productCategories,
-  productPrices,
   products,
   User,
 } from '@najit-najist/database/models';
@@ -25,7 +24,7 @@ export async function getProducts(
   input: z.output<typeof getProductsInputSchema>,
   { loggedInUser }: { loggedInUser?: User } = {},
 ) {
-  const { search, categorySlug } = input ?? {};
+  const { search, categorySlug, sortBy } = input ?? {};
   const conditions: SQL[] = [];
 
   if (categorySlug?.length) {
@@ -66,13 +65,22 @@ export async function getProducts(
       key: products.id.name,
       schema: products.id,
     },
-    cursors: [
-      {
-        order: 'ASC',
-        key: products.name.name,
-        schema: products.name,
-      },
-    ],
+    cursors:
+      sortBy?.price === 'asc' || sortBy?.price === 'desc'
+        ? [
+            {
+              order: sortBy?.price === 'asc' ? 'ASC' : 'DESC',
+              key: products.price.name,
+              schema: products.price,
+            },
+          ]
+        : [
+            {
+              order: 'ASC',
+              key: products.name.name,
+              schema: products.name,
+            },
+          ],
   });
 
   try {
@@ -86,7 +94,6 @@ export async function getProducts(
           category: true,
           images: true,
           onlyForDeliveryMethod: true,
-          price: true,
           stock: true,
         },
       }),
