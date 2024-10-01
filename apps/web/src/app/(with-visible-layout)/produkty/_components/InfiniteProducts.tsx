@@ -41,7 +41,7 @@ export const InfiniteProducts: FC<{
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 w-full divide-y-2 xs:divide-y-0">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-y-6 gap-x-4 sm:gap-x-6 sm:gap-y-6 w-full">
         {pages?.map(({ items, nextCursor }) => (
           <Fragment key={nextCursor ?? 'end'}>
             {items.map((props) => (

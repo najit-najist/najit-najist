@@ -96,18 +96,18 @@ export const Item: FC<
 
         <div className="flex-none">
           <Link href={linkHref} className="hover:underline">
-            <h2 className="text-2xl font-bold tracking-tight text-gray-900 font-title">
+            <h2 className="text-xl font-bold tracking-tight text-gray-900 font-title leading-6 min-h-12">
               {name}
             </h2>
           </Link>
-          <h3 className="text-project-secondary uppercase text-sm font-semibold">
+          <h3 className="text-project-secondary uppercase text-[12px] font-semibold mt-1.5">
             {category?.name ?? 'Ostatní'}
           </h3>
         </div>
 
-        {/* <p className="mb-3 font-normal text-sm leading-5 text-gray-700 dark:text-gray-400 tracking-wide mt-3">
+        <p className="mb-3 font-normal text-[12px] leading-5 text-gray-700 dark:text-gray-400 tracking-wide mt-2">
           {descriptionPreview}
-        </p> */}
+        </p>
       </div>
     </article>
   );
