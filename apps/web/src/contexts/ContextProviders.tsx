@@ -13,13 +13,7 @@ import { EditorJsInstancesProvider } from './editorJsInstancesContext';
 // import { usePathname } from 'next/navigation';
 // import { useGtag } from '@hooks';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      suspense: true,
-    },
-  },
-});
+const queryClient = new QueryClient({});
 
 const transformer = getSuperJson();
 
@@ -31,7 +25,6 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
   // const { track } = useGtag();
   const [trpcClient] = useState(() =>
     trpc.createClient({
-      transformer,
       links: [
         customTrpcLink,
         httpBatchLink({
@@ -39,14 +32,19 @@ export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
             '/api/trpc',
             typeof window === 'undefined'
               ? `http://127.0.0.1:${serverPort}`
-              : window.location.origin
+              : window.location.origin,
           ).toString(),
-          headers: {
-            cookie: cookies,
+          transformer,
+
+          fetch(url, options) {
+            return fetch(url, {
+              ...options,
+              credentials: 'include',
+            });
           },
         }),
       ],
-    })
+    }),
   );
 
   return (

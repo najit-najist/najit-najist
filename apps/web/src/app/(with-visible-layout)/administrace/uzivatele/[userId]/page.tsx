@@ -5,14 +5,16 @@ import { notFound } from 'next/navigation';
 import { EditLinks } from './EditLinks';
 import { Content } from './_components/Content';
 
-type Params = { params: { userId: string } };
+type Params = { params: Promise<{ userId: string }> };
 
 export default async function Page({ params }: Params) {
   let user: UserWithRelations;
+  const { userId } = await params;
+  const trpc = await getCachedTrpcCaller();
 
   try {
-    user = await getCachedTrpcCaller().users.getOne({
-      id: Number(params.userId),
+    user = await trpc.users.getOne({
+      id: Number(userId),
     });
   } catch (error) {
     return notFound();

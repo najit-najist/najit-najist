@@ -16,21 +16,26 @@ export const metadata = {
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-export default async function Page({ params }: { params: { token: string } }) {
-  if (!params.token) {
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ token: string }>;
+}) {
+  const { token } = await params;
+  if (!token) {
     notFound();
   }
 
   const userForToken = await ProfileService.getUserForPasswordResetToken(
-    params.token
+    token,
   ).catch((error) => {
     if (error instanceof EntityNotFoundError) {
       notFound();
     }
 
     logger.error(
-      { error, token: params.token },
-      'Failed to get user from token, its expired or invalid'
+      { error, token },
+      'Failed to get user from token, its expired or invalid',
     );
 
     return undefined;
@@ -44,7 +49,7 @@ export default async function Page({ params }: { params: { token: string } }) {
 
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
             <div className="bg-white py-6 px-4 shadow sm:rounded-lg sm:px-6">
-              <Form token={params.token} />
+              <Form token={token} />
             </div>
             <BottomLinks />
           </div>

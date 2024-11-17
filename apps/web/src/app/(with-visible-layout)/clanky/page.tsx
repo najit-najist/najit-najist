@@ -20,16 +20,17 @@ export const metadata = {
 };
 
 type Params = {
-  searchParams: {
+  searchParams: Promise<{
     query?: string;
-  };
+  }>;
 };
 
 export default async function Page({ searchParams }: Params) {
-  const { query } = searchParams;
+  const { query } = await searchParams;
   const currentUser = await getCachedLoggedInUser();
+  const trpc = await getCachedTrpcCaller();
 
-  const { items: posts } = await getCachedTrpcCaller().posts.getMany({
+  const { items: posts } = await trpc.posts.getMany({
     query,
   });
 

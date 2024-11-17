@@ -15,7 +15,7 @@ const useDelete = () =>
 export const DeleteButton = ({
   id,
 }: Pick<ProductWithRelationsLocal, 'id' | 'slug'>) => {
-  const { mutate, isLoading } = useDelete();
+  const { mutate, isPending: isLoading } = useDelete();
 
   return (
     <Button

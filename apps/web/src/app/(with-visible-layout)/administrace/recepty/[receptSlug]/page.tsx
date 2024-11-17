@@ -8,12 +8,12 @@ import { notFound } from 'next/navigation';
 export const revalidate = 120;
 
 type Params = {
-  params: { receptSlug: string };
+  params: Promise<{ receptSlug: string }>;
 };
 
 export async function generateMetadata({ params }: Params) {
-  const { receptSlug } = params;
-  const trpc = getCachedTrpcCaller();
+  const { receptSlug } = await params;
+  const trpc = await getCachedTrpcCaller();
 
   try {
     const recipe = await trpc.recipes.getOne({ slug: receptSlug });
@@ -27,9 +27,9 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function Page({ params }: Params) {
-  const { receptSlug } = params;
+  const { receptSlug } = await params;
   const loggedInUser = await getCachedLoggedInUser();
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
 
   const recipe = await trpc.recipes
     .getOne({ slug: receptSlug })

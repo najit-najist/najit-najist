@@ -13,7 +13,6 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
   href,
 }) => {
   const { data: loggedInUser } = useCurrentUser({
-    useErrorBoundary: false,
     suspense: true,
     retry: false,
     trpc: {

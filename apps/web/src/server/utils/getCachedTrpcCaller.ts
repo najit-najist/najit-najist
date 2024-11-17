@@ -1,5 +1,5 @@
 import { cache } from 'react';
 
-import { getTrpcCaller } from './server';
+import { createTrpcCaller } from './server';
 
-export const getCachedTrpcCaller = cache(() => getTrpcCaller());
+export const getCachedTrpcCaller = cache(() => createTrpcCaller());

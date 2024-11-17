@@ -4,4 +4,4 @@ export * from './findUserById';
 export * from './getLoggedInUser';
 export * from './getLoggedInUserId';
 export * from './getOrderById';
-export * from './getTrpcCaller';
+export * from './createTrpcCaller';

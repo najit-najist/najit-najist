@@ -53,12 +53,12 @@ export function CouponPageContent({
                 enabled: initialCoupon.enabled,
                 validFrom: initialCoupon.validFrom
                   ? (dayjs(initialCoupon.validFrom).format(
-                      DATETIME_LOCAL_INPUT_FORMAT
+                      DATETIME_LOCAL_INPUT_FORMAT,
                     ) as any)
                   : null,
                 validTo: initialCoupon.validTo
                   ? (dayjs(initialCoupon.validTo).format(
-                      DATETIME_LOCAL_INPUT_FORMAT
+                      DATETIME_LOCAL_INPUT_FORMAT,
                     ) as any)
                   : null,
                 onlyForCategories,
@@ -84,8 +84,8 @@ export function CouponPageContent({
                   coupon={initialCoupon ? { id: initialCoupon.id } : undefined}
                   couldBeDeleted={
                     !initialCoupon?.patches.some(
-                      ({ orders }) => orders.length
-                    ) ?? true
+                      ({ orders }) => orders.length,
+                    ) || true
                   }
                 />
               </Section>

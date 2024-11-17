@@ -2,6 +2,7 @@ import { OrderStateBadge } from '@app-components/OrderStateBadge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
+import { Badge } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -43,7 +44,26 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
+                {order.discount ? (
+                  <>
+                    <s>{formatPrice(order.subtotal + order.discount)}</s>{' '}
+                  </>
+                ) : null}
+                {formatPrice(order.subtotal)}
+              </div>
+            </td>
+            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <div className="text-gray-500">
                 {formatPrice(getTotalPrice(order))}
+              </div>
+            </td>
+            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+              <div className="text-gray-500">
+                {order.couponPatch ? (
+                  <Badge color="blue">{order.couponPatch.coupon.name}</Badge>
+                ) : (
+                  <span className="text-rose-400">Ne</span>
+                )}
               </div>
             </td>
 
@@ -59,7 +79,7 @@ export const Orders: FC<{
         ))
       ) : (
         <tr>
-          <td colSpan={5} className="text-center py-5">
+          <td colSpan={7} className="text-center py-5">
             Žádné objednávky
           </td>
         </tr>

@@ -77,12 +77,13 @@ export function AlergensEdit(): ReactNode {
     name: fieldName,
   });
 
-  const { isLoading: isCreatingAlergen, mutateAsync: createAlergen } =
+  const { isPending: isCreatingAlergen, mutateAsync: createAlergen } =
     useAddAlergen();
-  const { data, isLoading } = trpc.products.alergens.get.many.useQuery(
-    { perPage: 4, search: debouncedSearch },
-    { enabled: search.length ? !!debouncedSearch.length : false },
-  );
+  const { data, isPending: isLoading } =
+    trpc.products.alergens.get.many.useQuery(
+      { perPage: 4, search: debouncedSearch },
+      { enabled: search.length ? !!debouncedSearch.length : false },
+    );
 
   const setSearchValue = useCallback(
     (value: string = '') => {

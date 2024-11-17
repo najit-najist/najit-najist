@@ -7,27 +7,48 @@ import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getCachedUsers } from '@server/utils/getCachedUsers';
 import { getLoggedInUserId } from '@server/utils/server';
+import clsx from 'clsx';
 import Link from 'next/link';
-import { FC, PropsWithChildren, Suspense } from 'react';
+import { FC, PropsWithChildren, ReactNode, Suspense } from 'react';
 
 const Item: FC<{
   title: string;
-  href: string;
+  href?: string;
   createdAt?: Date | string | null;
-}> = ({ title, href, createdAt }) => {
-  return (
-    <Link
-      href={href as any}
-      className={paperStyles({
-        className: 'hover:border-project-primary py-3 px-5',
-      })}
-    >
+  className?: string;
+  size?: 'small' | 'normal';
+}> = ({ title, href, createdAt, className, size = 'normal' }) => {
+  const content = (
+    <>
       {createdAt ? (
         <span className="text-xs block text-gray-500">
           Vytvořeno {dayjs(createdAt).fromNow()}
         </span>
       ) : null}
-      <span className="text-lg block">{title}</span>
+      <span
+        className={clsx({
+          'text-lg block': size === 'normal',
+          block: size === 'small',
+        })}
+      >
+        {title}
+      </span>
+    </>
+  );
+  const rootClassName = paperStyles({
+    className: clsx('hover:border-project-primary', className, {
+      'py-3 px-5': size === 'normal',
+      'py-1 px-3': size === 'small',
+    }),
+  });
+
+  if (!href) {
+    return <div className={rootClassName}>{content}</div>;
+  }
+
+  return (
+    <Link href={href as any} className={rootClassName}>
+      {content}
     </Link>
   );
 };
@@ -44,10 +65,14 @@ function GroupRoot({
   title,
   add,
   more,
+  beforeItems,
+  afterItems,
 }: PropsWithChildren<{
   title: string;
   more?: { title: string; url: string };
   add?: { title: string; url: string };
+  beforeItems?: ReactNode;
+  afterItems?: ReactNode;
 }>) {
   return (
     <div className="flex flex-wrap w-full pt-5 pb-3">
@@ -63,9 +88,11 @@ function GroupRoot({
           title
         )}
       </h3>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full my-3">
+      {beforeItems}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 w-full my-2">
         {children}
       </div>
+      {afterItems}
       <div className="flex flex-wrap gap-x-8 gap-y-3">
         {more ? (
           <Link
@@ -145,7 +172,7 @@ async function UserGroup() {
 }
 
 async function RecipesGroup() {
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
   const { items } = await trpc.recipes.getMany({
     perPage: 4,
   });
@@ -175,7 +202,8 @@ async function RecipesGroup() {
 }
 
 async function PostsGroup() {
-  const { items } = await getCachedTrpcCaller().posts.getMany({
+  const trpc = await getCachedTrpcCaller();
+  const { items } = await trpc.posts.getMany({
     perPage: 4,
   });
 
@@ -204,7 +232,8 @@ async function PostsGroup() {
 }
 
 async function ProductsGroup() {
-  const { items } = await getCachedTrpcCaller().products.get.many({
+  const trpc = await getCachedTrpcCaller();
+  const { items } = await trpc.products.get.many({
     perPage: 4,
   });
 
@@ -234,6 +263,41 @@ async function ProductsGroup() {
 
 async function OrdersGroup() {
   const { items } = await getCachedOrders({ perPage: 4 });
+  const thisMonth = dayjs();
+  const prevMonth = dayjs().set('month', thisMonth.get('month') - 1);
+
+  const ordersThisMonth = await database.query.orders.findMany({
+    where: (schema, { lte, gte, and }) =>
+      and(
+        gte(schema.createdAt, thisMonth.startOf('month').toDate()),
+        lte(schema.createdAt, thisMonth.endOf('month').toDate()),
+      ),
+  });
+
+  const ordersPrevMonth = await database.query.orders.findMany({
+    where: (schema, { lte, gte, and }) =>
+      and(
+        gte(schema.createdAt, prevMonth.startOf('month').toDate()),
+        lte(schema.createdAt, prevMonth.endOf('month').toDate()),
+      ),
+  });
+
+  const thisMonthTotal = ordersThisMonth.reduce(
+    (total, current) =>
+      total +
+      current.subtotal +
+      (current.paymentMethodPrice ?? 0) +
+      (current.deliveryMethodPrice ?? 0),
+    0,
+  );
+  const prevMonthTotal = ordersPrevMonth.reduce(
+    (total, current) =>
+      total +
+      current.subtotal +
+      (current.paymentMethodPrice ?? 0) +
+      (current.deliveryMethodPrice ?? 0),
+    0,
+  );
 
   return (
     <GroupRoot
@@ -242,6 +306,32 @@ async function OrdersGroup() {
         title: 'Zobrazit další objednávky',
         url: '/administrace/objednavky',
       }}
+      afterItems={
+        <>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full mt-0 my-2">
+            <Item
+              size="small"
+              title={`Vytvořeno tento měsíc: ${ordersThisMonth.length}`}
+              className={clsx({
+                '!border-green-300/30 !bg-green-100/50':
+                  ordersThisMonth.length >= ordersPrevMonth.length,
+                '!border-orange-300/30 !bg-orange-100/50':
+                  ordersThisMonth.length < ordersPrevMonth.length,
+              })}
+            />
+            <Item
+              size="small"
+              title={`Nakoupeno za tento měsíc: ${thisMonthTotal}Kč`}
+              className={clsx({
+                '!border-green-300/30 !bg-green-100/50':
+                  thisMonthTotal >= prevMonthTotal,
+                '!border-orange-300/30 !bg-orange-100/50':
+                  thisMonthTotal < prevMonthTotal,
+              })}
+            />
+          </div>
+        </>
+      }
     >
       {items.map((item) => (
         <Item
@@ -315,13 +405,13 @@ export default async function Page() {
       <PageTitle>{metadata.title}</PageTitle>
       <div className="flex flex-col gap-2 mt-5 items-center divide-y-2">
         <Suspense fallback={<GroupSkeleton />}>
+          <OrdersGroup />
+        </Suspense>
+        <Suspense fallback={<GroupSkeleton />}>
           <UserGroup />
         </Suspense>
         <Suspense fallback={<GroupSkeleton />}>
           <RecipesGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <OrdersGroup />
         </Suspense>
         <Suspense fallback={<GroupSkeleton />}>
           <CouponsGroup />

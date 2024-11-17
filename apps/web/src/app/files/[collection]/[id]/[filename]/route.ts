@@ -6,19 +6,21 @@ import path from 'node:path';
 import { Stream } from 'node:stream';
 import type { Readable } from 'node:stream';
 
-type Context = { params: { collection: string; id: string; filename: string } };
+type Context = {
+  params: Promise<{ collection: string; id: string; filename: string }>;
+};
 const appRoot = process.cwd();
 const databasePackageRoot = path.join(
   appRoot,
   '..',
   '..',
   'packages',
-  'database'
+  'database',
 );
 
 // Borrowed from remix. Props to them!
 const createReadableStreamFromReadable = (
-  source: Readable & { readableHighWaterMark?: number }
+  source: Readable & { readableHighWaterMark?: number },
 ) => {
   let pump = new StreamPump(source);
   let stream = new ReadableStream(pump, pump);
@@ -44,7 +46,7 @@ class StreamPump {
       resume?: () => void;
       pause?: () => void;
       destroy?: (error?: Error) => void;
-    }
+    },
   ) {
     this.highWaterMark =
       stream.readableHighWaterMark ||
@@ -96,8 +98,8 @@ class StreamPump {
       } catch (error: any) {
         this.controller.error(
           new Error(
-            'Could not create Buffer, chunk must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object'
-          )
+            'Could not create Buffer, chunk must be of type string or an instance of Buffer, ArrayBuffer, or Array or an Array-like Object',
+          ),
         );
         this.cancel();
       }
@@ -134,13 +136,14 @@ class StreamPump {
 let execa: (typeof Execa)['$'] | undefined = undefined;
 
 export async function GET(request: Request, { params }: Context) {
+  const { collection, id, filename } = await params;
   let filePath = path.join(
     appRoot,
     'private',
     'uploads',
-    params.collection,
-    params.id,
-    params.filename
+    collection,
+    id,
+    filename,
   );
 
   if (!(await fs.pathExists(filePath))) {
@@ -152,7 +155,7 @@ export async function GET(request: Request, { params }: Context) {
 
       const foundFilepath = await execa({
         cwd: databasePackageRoot,
-      })`find . -type f -name ${params.filename}`;
+      })`find . -type f -name ${filename}`;
 
       const { stdout: relativeFilepath } = foundFilepath;
 
@@ -160,12 +163,10 @@ export async function GET(request: Request, { params }: Context) {
         console.log(`Copying ${relativeFilepath}`);
         await fs.copy(
           path.join(databasePackageRoot, relativeFilepath),
-          path.join(path.dirname(filePath), path.basename(relativeFilepath))
+          path.join(path.dirname(filePath), path.basename(relativeFilepath)),
         );
       } else {
-        console.log(
-          `Not found for copying: find . -type f -name ${params.filename}`
-        );
+        console.log(`Not found for copying: find . -type f -name ${filename}`);
         notFound();
       }
     } else {
@@ -174,7 +175,7 @@ export async function GET(request: Request, { params }: Context) {
   }
 
   const fileStream = createReadableStreamFromReadable(
-    fs.createReadStream(filePath)
+    fs.createReadStream(filePath),
   );
 
   return new NextResponse(fileStream);

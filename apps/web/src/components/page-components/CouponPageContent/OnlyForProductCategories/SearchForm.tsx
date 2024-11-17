@@ -39,10 +39,11 @@ export const SearchForm: FC = () => {
   });
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useDebounceValue('', 500);
-  const { data, isLoading } = trpc.products.categories.get.many.useQuery(
-    { perPage: 4, search: debouncedSearch },
-    { enabled: search.length ? !!debouncedSearch.length : false }
-  );
+  const { data, isPending: isLoading } =
+    trpc.products.categories.get.many.useQuery(
+      { perPage: 4, search: debouncedSearch },
+      { enabled: search.length ? !!debouncedSearch.length : false },
+    );
 
   const value = field.value ?? [];
 
@@ -51,21 +52,21 @@ export const SearchForm: FC = () => {
       setDebouncedSearch(value);
       setSearch(value);
     },
-    [setSearch, setDebouncedSearch]
+    [setSearch, setDebouncedSearch],
   );
   const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       const value = event.target.value;
       setSearchValue(value);
     },
-    [setSearchValue]
+    [setSearchValue],
   );
   const handleItemRemove = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (event) => {
       const index = Number(event.currentTarget.dataset.index);
       remove(index);
     },
-    [remove]
+    [remove],
   );
 
   return (

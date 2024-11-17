@@ -54,11 +54,11 @@ const jsonLd = {
 };
 
 type Params = {
-  params: { productSlug: string };
+  params: Promise<{ productSlug: string }>;
 };
 
 export async function generateMetadata({ params }: Params) {
-  const { productSlug } = params;
+  const { productSlug } = await params;
   const decodedSlug = decodeURIComponent(productSlug);
   const loggedInUser = await getLoggedInUser();
 
@@ -81,7 +81,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function Page({ params }: Params) {
-  const { productSlug } = params;
+  const { productSlug } = await params;
   const loggedInUser = await getLoggedInUser();
   const decodedSlug = decodeURIComponent(productSlug);
 

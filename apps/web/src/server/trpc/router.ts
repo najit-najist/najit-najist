@@ -22,3 +22,4 @@ const normalRouter = t.router({
 });
 
 export const appRouter = t.mergeRouters(contactUsRoutes, normalRouter);
+export const getTrpcCaller = t.createCallerFactory(appRouter);

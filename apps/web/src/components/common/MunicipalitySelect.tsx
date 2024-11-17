@@ -16,12 +16,10 @@ export const MunicipalitySelect: FC<
   });
 
   const [debouncedQuery, setDebouncedQuery] = useDebounceValue('', 300);
-  const { data, isLoading } = trpc.address.municipality.get.many.useQuery(
-    {
+  const { data, isPending: isLoading } =
+    trpc.address.municipality.get.many.useQuery({
       query: debouncedQuery,
-    },
-    { suspense: false }
-  );
+    });
 
   return (
     <Combobox<Municipality>

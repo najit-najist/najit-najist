@@ -9,7 +9,7 @@ export const useCurrentUser = (options?: UseCurrentUserOptions) =>
   trpc.profile.me.useQuery(undefined, {
     ...options,
     enabled: typeof window !== 'undefined',
-    onError() {},
+    throwOnError: false,
     refetchInterval: 0,
     refetchOnMount: false,
     refetchOnWindowFocus: false,

@@ -5,7 +5,7 @@ import { AppRouterOutput } from '@custom-types/AppRouter';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { getCachedUsers } from '@server/utils/getCachedUsers';
-import { getTrpcCaller } from '@server/utils/server';
+import { createTrpcCaller } from '@server/utils/server';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 import { z } from 'zod';
@@ -14,11 +14,11 @@ import { SearchForm } from './_components/SearchForm';
 import { Users } from './_components/Users';
 
 type Params = {
-  searchParams: {
+  searchParams: Promise<{
     search?: string;
     query?: string;
     page?: string;
-  };
+  }>;
 };
 
 export const metadata = {
@@ -52,8 +52,8 @@ export default async function Page({ searchParams }: Params) {
     page: pageFromParams,
     ...filter
   } = await searchSchema
-    .parseAsync(searchParams)
-    .catch(() => ({} as Partial<z.infer<typeof searchSchema>>));
+    .parseAsync(await searchParams)
+    .catch(() => ({}) as Partial<z.infer<typeof searchSchema>>);
   const {
     items: users,
     totalItems,
@@ -78,7 +78,8 @@ export default async function Page({ searchParams }: Params) {
   const selectedMunicipalityId = filter['address.municipality']?.at(0);
 
   if (selectedMunicipalityId) {
-    const municipalities = await getTrpcCaller().address.municipality.get.many({
+    const trpc = await createTrpcCaller();
+    const municipalities = await trpc.address.municipality.get.many({
       filter: { id: [Number(selectedMunicipalityId)] },
     });
 

@@ -27,8 +27,8 @@ export function FormContent({
   const isRedirectingAfterCreate = !coupon?.id && formState.isSubmitSuccessful;
   const {
     mutate: deleteCoupon,
-    isLoading: isDeleting,
     data,
+    isPending: isDeleting,
   } = useMutation({
     mutationFn: deleteCouponAction,
   });

@@ -19,7 +19,7 @@ import { ItemSkeleton } from './_components/ItemSkeleton';
 import { SearchForm } from './_components/SearchForm';
 
 type Params = {
-  searchParams: { query?: string; difficulty?: string; type?: string };
+  searchParams: Promise<{ query?: string; difficulty?: string; type?: string }>;
 };
 
 export const metadata = {
@@ -49,12 +49,12 @@ const fallbackType: RecipeCategory = {
 };
 
 const Items: FC<Params> = async ({ searchParams }) => {
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
   const {
     query,
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
-  } = searchParams;
+  } = await searchParams;
 
   const userDidSearch = !!query || !!difficultySlugFromUrl || !!typeSlugFromUrl;
   const [{ items: recipes }, currentUser] = await Promise.all([
@@ -87,12 +87,12 @@ const Items: FC<Params> = async ({ searchParams }) => {
 };
 
 const Form: FC<Params> = async ({ searchParams }) => {
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
   const {
     query,
     difficulty: difficultySlugFromUrl,
     type: typeSlugFromUrl,
-  } = searchParams;
+  } = await searchParams;
 
   const [{ items: recipeDifficulties }, { items: recipeCategories }] =
     await Promise.all([
@@ -127,7 +127,7 @@ const AddNewButton: FC = async () => {
   ) : null;
 };
 
-export default function RecipesPage({ searchParams }: Params) {
+export default async function RecipesPage({ searchParams }: Params) {
   return (
     <>
       <PageHeader className="container">

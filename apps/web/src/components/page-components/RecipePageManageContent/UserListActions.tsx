@@ -29,32 +29,32 @@ const CustomButton: FC<
     appearance="spaceless"
     className={clsx(
       'group p-0.5 pb-0 rounded-md bg-white shadow-sm',
-      className
+      className,
     )}
     {...rest}
   >
     <div
       className={clsx(
         'w-8 h-8 relative -mb-1 group-active:scale-75 duration-500',
-        isSubmitting ? 'animate-bounce-z' : ''
+        isSubmitting ? 'animate-bounce-z' : '',
       )}
     >
       <IconComponent
         className={clsx(
           'w-full h-full duration-100',
-          isActive ? '' : 'group-hover:opacity-40 opacity-0'
+          isActive ? '' : 'group-hover:opacity-40 opacity-0',
         )}
       />
       <OutlinedIconComponent
         className={clsx(
           'w-full h-full absolute top-0 left-0 group-hover:animate-ping group-hover:repeat-1',
-          isActive ? 'hidden' : ''
+          isActive ? 'hidden' : '',
         )}
       />
       <OutlinedIconComponent
         className={clsx(
           'w-full h-full absolute top-0 left-0',
-          isActive ? 'hidden' : ''
+          isActive ? 'hidden' : '',
         )}
       />
     </div>
@@ -76,9 +76,9 @@ export const UserListActions: FC<{ recipeId: Recipe['id'] }> = ({
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-    }
+    },
   );
-  const { mutateAsync: likeRecipe, isLoading } =
+  const { mutateAsync: likeRecipe, isPending: isLoading } =
     trpc.profile.liked.recipes.add.useMutation({
       async onSuccess() {
         await refetch();

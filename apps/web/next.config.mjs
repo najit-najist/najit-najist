@@ -4,6 +4,8 @@ const isProduction = process.env.NODE_ENV === 'production';
 
 process.title = 'najit-najist.cz';
 
+process.env.BUILD_TIMESTAMP = Date.now().toString();
+
 /** @type {import('next').NextConfig} */
 let nextConfig = {
   // reactStrictMode: true,
@@ -16,9 +18,6 @@ let nextConfig = {
         hostname: 'www.comgate.cz',
       },
     ],
-  },
-  serverRuntimeConfig: {
-    BUILD_TIMESTAMP: Date.now().toString(),
   },
   transpilePackages: [
     '@najit-najist/ui',

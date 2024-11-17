@@ -80,7 +80,7 @@ export function ProductCompositionsEdit(): ReactNode {
   });
   const isEditing = typeof editingAtIndex === 'number';
 
-  const { isLoading: isCreatingRawMaterial, mutateAsync: createRawMaterial } =
+  const { isPending: isCreatingRawMaterial, mutateAsync: createRawMaterial } =
     useAddRawMaterial();
   const { remove, fields, append, update } = useFieldArray<
     ProductFormData,
@@ -88,10 +88,11 @@ export function ProductCompositionsEdit(): ReactNode {
   >({
     name: fieldName,
   });
-  const { data, isLoading } = trpc.products.rawMaterials.get.many.useQuery(
-    { perPage: 4, search: debouncedSearch },
-    { enabled: search.length ? !!debouncedSearch.length : false },
-  );
+  const { data, isPending: isLoading } =
+    trpc.products.rawMaterials.get.many.useQuery(
+      { perPage: 4, search: debouncedSearch },
+      { enabled: search.length ? !!debouncedSearch.length : false },
+    );
 
   const setSearchValue = useCallback(
     (value: string = '') => {

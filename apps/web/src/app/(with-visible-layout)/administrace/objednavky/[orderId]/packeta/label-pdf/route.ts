@@ -9,10 +9,11 @@ type Params = {
 
 export const GET = async (
   request: NextRequest,
-  context: { params: Params }
+  context: { params: Promise<Params> },
 ): Promise<NextResponse> => {
+  const { orderId } = await context.params;
   const parcel = await database.query.packetaParcels.findFirst({
-    where: (s, { eq }) => eq(s.orderId, Number(context.params.orderId)),
+    where: (s, { eq }) => eq(s.orderId, Number(orderId)),
   });
 
   if (!parcel) {
@@ -20,7 +21,7 @@ export const GET = async (
   }
 
   const base64BinaryPdf = await PacketaSoapClient.getPacketLabelPdfBinary(
-    parcel.packetId
+    parcel.packetId,
   );
 
   return new NextResponse(Buffer.from(base64BinaryPdf, 'base64'), {

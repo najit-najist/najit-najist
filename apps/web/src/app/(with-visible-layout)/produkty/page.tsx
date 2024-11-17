@@ -45,7 +45,7 @@ export async function generateMetadata(
   { searchParams }: ProductsMainPageParams,
   parent: ResolvingMetadata,
 ): Promise<Metadata> {
-  const { 'category-slug': categoriesSlugFromUrl, query } = searchParams;
+  const { 'category-slug': categoriesSlugFromUrl, query } = await searchParams;
   const result = {
     title: query ? SEARCH_PAGE_TITLE : 'Všechny Produkty',
     description:
@@ -88,7 +88,7 @@ export default async function RecipesPage({
     query,
     'category-slug': categoriesSlugFromUrl,
     sort: unsanitizedSort,
-  } = searchParams;
+  } = await searchParams;
   const userDidSearch = !!query || !!categoriesSlugFromUrl;
   const currentUser = await getCachedLoggedInUser();
   const { data: sortBy } = z

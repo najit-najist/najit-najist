@@ -8,15 +8,17 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 type PageParams = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({
-  params: { slug: postSlug },
+  params,
 }: PageParams): Promise<Metadata> {
-  const post = await getCachedTrpcCaller()
-    .posts.getOne({
-      slug: postSlug,
+  const { slug } = await params;
+  const trpc = await getCachedTrpcCaller();
+  const post = await trpc.posts
+    .getOne({
+      slug,
     })
     .catch(() => {});
 
@@ -28,9 +30,8 @@ export async function generateMetadata({
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
-export default async function PostUnderPage({
-  params: { slug: postSlug },
-}: PageParams) {
+export default async function PostUnderPage({ params }: PageParams) {
+  const { slug } = await params;
   let post: PostWithRelations;
   const loggedInUser = await getCachedLoggedInUser();
   const canEdit =
@@ -47,8 +48,9 @@ export default async function PostUnderPage({
     });
 
   try {
-    post = await getCachedTrpcCaller().posts.getOne({
-      slug: postSlug,
+    const trpc = await getCachedTrpcCaller();
+    post = await trpc.posts.getOne({
+      slug,
     });
 
     if (!post.publishedAt && !canCreate) {

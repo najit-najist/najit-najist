@@ -20,7 +20,7 @@ export function FormContent({
     !rawMaterial?.id && formState.isSubmitSuccessful;
   const {
     mutate: deleteMaterial,
-    isLoading: isDeleting,
+    isPending: isDeleting,
     data,
   } = useMutation({
     mutationFn: deleteProductRawMaterialAction,

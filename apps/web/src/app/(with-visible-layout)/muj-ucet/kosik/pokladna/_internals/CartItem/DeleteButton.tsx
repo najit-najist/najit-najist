@@ -21,7 +21,7 @@ export const DeleteButton: FC<{
   const { startTransition, isActive: isChangingRoutes } =
     useReactTransitionContext();
 
-  const { mutateAsync: removeItem, isLoading: isRemoving } =
+  const { mutateAsync: removeItem, isPending: isRemoving } =
     trpc.profile.cart.products.remove.useMutation();
   const disabled = isChangingRoutes || isSubmitting;
 

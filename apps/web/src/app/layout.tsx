@@ -42,8 +42,8 @@ export const viewport = {
   width: 'device-width',
 };
 
-const RootLayout: LayoutComponent = ({ children }) => {
-  const headersStore = headers();
+const RootLayout: LayoutComponent = async ({ children }) => {
+  const headersStore = await headers();
 
   return (
     <html lang="cs">

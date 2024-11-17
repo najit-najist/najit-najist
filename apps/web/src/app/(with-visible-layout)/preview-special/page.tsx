@@ -32,8 +32,9 @@ export default async function Page() {
     }
   } catch (error) {
     console.log({ error });
+    const awaitedHeader = await headers();
 
-    const redirectTo = headers().get(X_REQUEST_PATH_HEADER_NAME);
+    const redirectTo = awaitedHeader.get(X_REQUEST_PATH_HEADER_NAME);
     redirect(`/login?${LOGIN_THEN_REDIRECT_TO_PARAMETER}=${redirectTo}`);
   }
 

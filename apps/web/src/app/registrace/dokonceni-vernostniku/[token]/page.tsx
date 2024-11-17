@@ -15,12 +15,13 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 const RegistrationFinalizationPage = async ({
-  params: { token },
+  params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) => {
+  const { token } = await params;
   let result: Awaited<ReturnType<typeof trpc.users.getOne>>;
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
 
   try {
     result = await trpc.users.getOne({
@@ -36,7 +37,7 @@ const RegistrationFinalizationPage = async ({
   } catch (error) {
     logger.error(
       { error },
-      'Could not finish preview user registration from token'
+      'Could not finish preview user registration from token',
     );
 
     notFound();

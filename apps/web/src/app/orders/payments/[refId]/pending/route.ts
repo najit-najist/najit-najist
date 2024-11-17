@@ -14,9 +14,9 @@ import { NextRequest } from 'next/server';
 
 export const GET = async (
   request: NextRequest,
-  { params }: { params: { refId: string } }
+  { params }: { params: Promise<{ refId: string }> },
 ) => {
-  const { refId } = params;
+  const { refId } = await params;
 
   const comgatePayment = await database.query.comgatePayments.findFirst({
     where: eq(comgatePayments.orderId, Number(refId)),
@@ -25,7 +25,7 @@ export const GET = async (
   if (!comgatePayment) {
     logger.error(
       { params },
-      'User tried to hit pending redirect on order that does not exist'
+      'User tried to hit pending redirect on order that does not exist',
     );
 
     notFound();
@@ -41,7 +41,7 @@ export const GET = async (
   ) {
     logger?.error(
       { params, stateFromComgate },
-      'User tried to hit pending redirect on order is not pending or does not exist'
+      'User tried to hit pending redirect on order is not pending or does not exist',
     );
 
     notFound();

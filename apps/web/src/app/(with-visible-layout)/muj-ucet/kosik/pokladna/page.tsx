@@ -49,7 +49,7 @@ const SectionTitle: FC<
 
 // TODO: this page should be behind dynamic page - each cart should have its own subpage. that way it will be faster for user
 export default async function Page() {
-  const cookies = getCookies();
+  const cookies = await getCookies();
   const session = await getSessionFromCookies({ cookies });
 
   const loggedInUser = session.authContent?.userId

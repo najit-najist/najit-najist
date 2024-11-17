@@ -1,9 +1,13 @@
 import { Pagination } from '@app-components/Pagination';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { dayjs } from '@dayjs';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Skeleton } from '@najit-najist/ui';
+import { database } from '@najit-najist/database';
+import { Badge, Skeleton } from '@najit-najist/ui';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
+import { formatPrice } from '@utils';
+import { clsx } from 'clsx';
 import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 
@@ -36,7 +40,9 @@ const List: FC = async () => {
           <Th>Uživatel</Th>
           <Th>Stav</Th>
           <Th>Referenční číslo</Th>
-          <Th>Cena</Th>
+          <Th>Cena za produkty</Th>
+          <Th>Cena celkově</Th>
+          <Th>Kupôn</Th>
           <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8">
             <span className="sr-only">Edit</span>
           </th>
@@ -47,7 +53,7 @@ const List: FC = async () => {
       </tbody>
       <tfoot className=" w-full">
         <tr>
-          <th colSpan={6} className="">
+          <th colSpan={8} className="">
             <Pagination
               currentPage={orders.page}
               totalItems={orders.totalItems}
@@ -57,6 +63,93 @@ const List: FC = async () => {
         </tr>
       </tfoot>
     </table>
+  );
+};
+
+const Analytics: FC = async () => {
+  const thisMonth = dayjs();
+  const prevMonth = dayjs().set('month', thisMonth.get('month') - 1);
+
+  const ordersThisMonth = await database.query.orders.findMany({
+    where: (schema, { lte, gte, and }) =>
+      and(
+        gte(schema.createdAt, thisMonth.startOf('month').toDate()),
+        lte(schema.createdAt, thisMonth.endOf('month').toDate()),
+      ),
+  });
+
+  const ordersPrevMonth = await database.query.orders.findMany({
+    where: (schema, { lte, gte, and }) =>
+      and(
+        gte(schema.createdAt, prevMonth.startOf('month').toDate()),
+        lte(schema.createdAt, prevMonth.endOf('month').toDate()),
+      ),
+  });
+
+  const thisMonthTotal = ordersThisMonth.reduce(
+    (total, current) =>
+      total +
+      current.subtotal +
+      (current.paymentMethodPrice ?? 0) +
+      (current.deliveryMethodPrice ?? 0),
+    0,
+  );
+  const prevMonthTotal = ordersPrevMonth.reduce(
+    (total, current) =>
+      total +
+      current.subtotal +
+      (current.paymentMethodPrice ?? 0) +
+      (current.deliveryMethodPrice ?? 0),
+    0,
+  );
+
+  const changeCount = ordersThisMonth.length - ordersPrevMonth.length;
+  const changeRevenue = thisMonthTotal - prevMonthTotal;
+
+  const stats = [
+    {
+      name: 'Tento měsíc',
+      value: ordersThisMonth.length,
+      change: changeCount > 0 ? `+${changeCount}` : changeCount,
+      changeType:
+        ordersThisMonth.length >= ordersPrevMonth.length
+          ? 'positive'
+          : 'negative',
+    },
+    {
+      name: 'Příjem',
+      value: `${thisMonthTotal}Kč`,
+      change:
+        changeRevenue > 0
+          ? `+${formatPrice(changeRevenue)}`
+          : formatPrice(changeRevenue),
+      changeType: thisMonthTotal >= prevMonthTotal ? 'positive' : 'negative',
+    },
+  ];
+
+  return (
+    <div className="bg-white">
+      <dl className="mx-auto grid grid-cols-1 gap-px sm:grid-cols-2 lg:grid-cols-4 container divide-x">
+        {stats.map((stat) => (
+          <div
+            key={stat.name}
+            className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-2 bg-white px-4 py-4 sm:px-6 xl:px-8"
+          >
+            <dt className="text-sm/6 font-medium text-gray-500">{stat.name}</dt>
+            {stat.change !== 0 && stat.change !== formatPrice(0) ? (
+              <dd>
+                <Badge color={stat.changeType === 'negative' ? 'red' : 'green'}>
+                  {stat.change}
+                </Badge>
+              </dd>
+            ) : null}
+            <dd className="w-full flex-none text-3xl/10 font-medium tracking-tight text-gray-900">
+              {stat.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    </div>
   );
 };
 
@@ -88,6 +181,7 @@ export default async function Page() {
           }}
         /> */}
       </PageHeader>
+      <Analytics />
       <div className="mt-8 flow-root !border-t-0 container">
         <div className="overflow-x-auto mb-10">
           <div className="inline-block min-w-full py-2 align-middle">

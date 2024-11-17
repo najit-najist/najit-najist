@@ -31,7 +31,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
   order,
 }) => {
   const [isDoingTransition, setIsDoingTransition] = useTransition();
-  const { mutateAsync: doUpdate, isLoading } = useUpdate();
+  const { mutateAsync: doUpdate, isPending: isLoading } = useUpdate();
   const router = useRouter();
   const buttonsAreDisabled = isDoingTransition || isLoading;
 
@@ -69,7 +69,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
         router.refresh();
       });
     },
-    [order.id, router, doUpdate]
+    [order.id, router, doUpdate],
   );
 
   return (

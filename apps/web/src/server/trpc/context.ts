@@ -2,7 +2,6 @@ import { EntityLink } from '@najit-najist/schemas';
 import { UserWithRelations } from '@server/services/UserService';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { setSessionToCookies } from '@server/utils/setSessionToCookies';
-import { inferAsyncReturnType } from '@trpc/server';
 import { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { IronSessionData } from 'iron-session';
 // Import type overrides
@@ -44,4 +43,4 @@ export const createContext = ({
   return context;
 };
 
-export type Context = inferAsyncReturnType<typeof createContext>;
+export type Context = Awaited<ReturnType<typeof createContext>>;

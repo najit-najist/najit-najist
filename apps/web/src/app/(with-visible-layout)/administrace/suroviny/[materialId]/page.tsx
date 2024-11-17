@@ -2,11 +2,12 @@ import { ProductRawMaterialManageContent } from '@components/page-components/Pro
 import { database } from '@najit-najist/database';
 import { notFound } from 'next/navigation';
 
-type Params = { params: { materialId: string } };
+type Params = { params: Promise<{ materialId: string }> };
 
 export default async function Page({ params }: Params) {
+  const { materialId } = await params;
   const material = await database.query.productRawMaterials.findFirst({
-    where: (s, { eq }) => eq(s.id, Number(params.materialId)),
+    where: (s, { eq }) => eq(s.id, Number(materialId)),
   });
 
   if (!material) {

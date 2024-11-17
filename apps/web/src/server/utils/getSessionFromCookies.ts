@@ -15,7 +15,9 @@ export const getSessionFromCookies = async ({
   cookies,
 }: GetSessionFromCookiesOptions = {}) => {
   const cookiesList = cookies ?? getCookies();
-  const sealFromCookies = cookiesList.get(config.server.session.cookieName);
+  const sealFromCookies = (await cookiesList).get(
+    config.server.session.cookieName,
+  );
 
   const passwordsAsMap = normalizeStringPasswordToMap(
     config.server.session.password,

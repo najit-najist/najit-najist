@@ -67,7 +67,7 @@ export const EditorHeader: FC<{
 
   const {
     mutateAsync: deleteItem,
-    isLoading: isRemoving,
+    isPending: isRemoving,
     isSuccess: isRemoved,
   } = trpc.posts.delete.useMutation();
 

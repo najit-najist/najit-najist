@@ -59,7 +59,7 @@ export const ProductPageManageContent: FC<
     <hr className="bg-ocean-200 border-0 h-0.5 w-full m-0 mb-3" />
   );
   const [categories, deliveryMethods] = await Promise.all([
-    getCachedTrpcCaller().products.categories.get.many(),
+    (await getCachedTrpcCaller()).products.categories.get.many(),
     getCachedDeliveryMethods(),
   ]);
 

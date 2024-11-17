@@ -140,7 +140,7 @@ const ShoppingBagButton: FC = () => {
   const [indicatorState, setIndicatorState] = useState<
     'hide' | 'bounce' | 'stationary'
   >('hide');
-  const { data: productsInCart, isLoading } = useUserCart();
+  const { data: productsInCart, isPending: isLoading } = useUserCart();
   const pathname = usePathname();
 
   const cartQuantity = useMemo(() => {

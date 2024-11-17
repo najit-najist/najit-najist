@@ -80,7 +80,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   productMetadata,
 }) => {
   const queryClient = useQueryClient();
-  const { mutateAsync: addToCart, isLoading } =
+  const { mutateAsync: addToCart, isPending: isLoading } =
     trpc.profile.cart.products.add.useMutation();
   const router = useRouter();
   let buttonText: ReactNode = null;

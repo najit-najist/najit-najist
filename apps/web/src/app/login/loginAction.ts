@@ -202,7 +202,7 @@ export async function loginAction(options: LoginActionOptions) {
   }
 
   try {
-    const session = await getSessionFromCookies({ cookies: cookies() });
+    const session = await getSessionFromCookies({ cookies: await cookies() });
     const user = await UserService.forUser({
       email: validatedInput.data.email,
     });
@@ -245,7 +245,7 @@ export async function loginAction(options: LoginActionOptions) {
           userId: user.getFor().id,
         },
       },
-      cookies(),
+      await cookies(),
     );
 
     return {

@@ -45,9 +45,9 @@ export const SearchForm: FC = () => {
   });
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useDebounceValue('', 500);
-  const { data, isLoading } = trpc.products.get.many.useQuery(
+  const { data, isPending: isLoading } = trpc.products.get.many.useQuery(
     { perPage: 4, search: debouncedSearch },
-    { enabled: search.length ? !!debouncedSearch.length : false }
+    { enabled: search.length ? !!debouncedSearch.length : false },
   );
 
   const value = field.value ?? [];
@@ -57,21 +57,21 @@ export const SearchForm: FC = () => {
       setDebouncedSearch(value);
       setSearch(value);
     },
-    [setSearch, setDebouncedSearch]
+    [setSearch, setDebouncedSearch],
   );
   const handleOnChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       const value = event.target.value;
       setSearchValue(value);
     },
-    [setSearchValue]
+    [setSearchValue],
   );
   const handleItemRemove = useCallback<MouseEventHandler<HTMLButtonElement>>(
     (event) => {
       const index = Number(event.currentTarget.dataset.index);
       remove(index);
     },
-    [remove]
+    [remove],
   );
 
   return (
@@ -164,7 +164,7 @@ export const SearchForm: FC = () => {
                                 src={getFileUrl(
                                   products,
                                   product.id,
-                                  product.images[0].file
+                                  product.images[0].file,
                                 )}
                                 alt=""
                                 className="absolute inset-0 h-full w-full bg-gray-100 object-cover rounded-full"

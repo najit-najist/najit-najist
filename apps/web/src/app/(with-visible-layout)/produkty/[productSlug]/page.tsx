@@ -15,11 +15,11 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 type Params = {
-  params: { productSlug: string };
+  params: Promise<{ productSlug: string }>;
 };
 
 export async function generateMetadata({ params }: Params) {
-  const { productSlug } = params;
+  const { productSlug } = await params;
   const decodedSlug = decodeURIComponent(productSlug);
 
   const product = await database.query.products.findFirst({
@@ -39,7 +39,7 @@ export async function generateMetadata({ params }: Params) {
 }
 
 export default async function Page({ params }: Params) {
-  const { productSlug } = params;
+  const { productSlug } = await params;
   const loggedInUser = await getLoggedInUser().catch(() => null);
   const canUserSeeUnpublished =
     !!loggedInUser &&

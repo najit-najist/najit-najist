@@ -25,7 +25,7 @@ export const initiateSecretSession = async (data: FormData) => {
     url.pathname = '/';
     session.previewAuthorized = true;
 
-    await setSessionToCookies(session, cookies() as ResponseCookies);
+    await setSessionToCookies(session, (await cookies()) as ResponseCookies);
 
     return redirect(url.toString());
   }

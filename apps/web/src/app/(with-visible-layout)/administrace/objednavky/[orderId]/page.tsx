@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     orderId: string;
-  };
+  }>;
 };
 
 export const revalidate = 0;
@@ -18,7 +18,7 @@ export const metadata = {
 };
 
 export default async function Page({ params }: PageProps) {
-  const orderId = Number(params.orderId);
+  const { orderId } = await params;
 
   return (
     <>
@@ -35,7 +35,7 @@ export default async function Page({ params }: PageProps) {
         </Link>
       </div>
       <Suspense fallback={<OrderUnderpageContentLoading />}>
-        <OrderUnderpageContent orderId={orderId} viewType="update" />
+        <OrderUnderpageContent orderId={Number(orderId)} viewType="update" />
       </Suspense>
     </>
   );

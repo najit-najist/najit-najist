@@ -13,10 +13,7 @@ import { getProductCategories } from '@server/utils/getProductCategories';
 import { getProductRawMaterials } from '@server/utils/getProductRawMaterials';
 import { getProducts } from '@server/utils/getProducts';
 import { slugifyString } from '@server/utils/slugifyString';
-import generateCursor from 'drizzle-cursor';
-import { z } from 'zod';
 
-import { defaultGetManySchema } from '../../schemas/base.get-many.schema';
 import { productCategoryCreateInputSchema } from '../../schemas/productCategoryCreateInputSchema';
 import { t } from '../instance';
 import { onlyAdminProcedure } from '../procedures/onlyAdminProcedure';

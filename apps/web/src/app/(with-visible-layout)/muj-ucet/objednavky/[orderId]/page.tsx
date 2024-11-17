@@ -11,9 +11,9 @@ import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
 
 type PageProps = {
-  params: {
+  params: Promise<{
     orderId: string;
-  };
+  }>;
 };
 
 export const revalidate = 0;
@@ -25,7 +25,8 @@ export const metadata = {
 
 export default async function Page({ params }: PageProps) {
   const userId = await getLoggedInUserId();
-  const orderId = Number(params.orderId);
+  const { orderId: orderIdAsString } = await params;
+  const orderId = Number(orderIdAsString);
 
   const selectQuery = database
     .select({ n: sql`1` })
@@ -35,7 +36,7 @@ export default async function Page({ params }: PageProps) {
   const {
     rows: [{ exists }],
   } = await database.execute<{ exists: boolean }>(
-    sql`select exists(${selectQuery}) as exists`
+    sql`select exists(${selectQuery}) as exists`,
   );
 
   if (!exists) {
@@ -58,10 +59,7 @@ export default async function Page({ params }: PageProps) {
         </Link>
       </div>
       <Suspense fallback={<OrderUnderpageContentLoading />}>
-        <OrderUnderpageContent
-          orderId={Number(params.orderId)}
-          viewType="view"
-        />
+        <OrderUnderpageContent orderId={orderId} viewType="view" />
       </Suspense>
     </>
   );

@@ -19,7 +19,7 @@ import { defaultGetManyPagedSchema } from '../../../schemas/base.get-many.schema
 import { UserActions, canUser } from '../../../utils/canUser';
 
 const isLocalPickup = (
-  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
+  delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>,
 ) => delivery?.slug === 'local-pickup';
 
 const paymentMethodRoutes = t.router({
@@ -39,9 +39,9 @@ const paymentMethodRoutes = t.router({
           items.map((item) => ({
             ...item,
             exceptDeliveryMethods: item.exceptDeliveryMethods.map(
-              (exc) => exc.deliveryMethod
+              (exc) => exc.deliveryMethod,
             ),
-          }))
+          })),
         );
 
       return paymentMethods;
@@ -88,7 +88,7 @@ export const orderRoutes = t.router({
             user: z.object({ id: z.array(z.number()) }).optional(),
           })
           .omit({ search: true })
-          .default({})
+          .default({}),
       )
       .query(async ({ input, ctx }) => {
         const { page, perPage } = input;
@@ -128,6 +128,11 @@ export const orderRoutes = t.router({
                   email: true,
                   firstName: true,
                   lastName: true,
+                },
+              },
+              couponPatch: {
+                with: {
+                  coupon: true,
                 },
               },
             },

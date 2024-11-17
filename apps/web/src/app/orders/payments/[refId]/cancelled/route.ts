@@ -19,9 +19,9 @@ import { NextRequest } from 'next/server';
 
 export const GET = async (
   request: NextRequest,
-  { params }: { params: { refId: string } }
+  { params }: { params: Promise<{ refId: string }> },
 ) => {
-  const { refId } = params;
+  const { refId } = await params;
 
   const comgatePayment = await database.query.comgatePayments.findFirst({
     where: eq(comgatePayments.orderId, Number(refId)),
@@ -45,7 +45,7 @@ export const GET = async (
   if (!comgatePayment) {
     logger.error(
       { params },
-      'User tried to hit cancelled redirect on order that does not exist'
+      'User tried to hit cancelled redirect on order that does not exist',
     );
 
     notFound();
@@ -61,7 +61,7 @@ export const GET = async (
   ) {
     logger?.error(
       { params, stateFromComgate },
-      'User tried to hit cancelled redirect on order is not cancelled or does not exist'
+      'User tried to hit cancelled redirect on order is not cancelled or does not exist',
     );
 
     notFound();
@@ -77,7 +77,7 @@ export const GET = async (
   try {
     const productsAndStocksToUpdate =
       comgatePayment.order.orderedProducts.filter(
-        ({ product }) => !!product.stock
+        ({ product }) => !!product.stock,
       );
 
     await Promise.all(
@@ -87,13 +87,13 @@ export const GET = async (
           .set({
             value: product.stock!.value + count,
           })
-          .where(eq(productStock.id, product.stock!.id))
-      )
+          .where(eq(productStock.id, product.stock!.id)),
+      ),
     );
   } catch (error) {
     logger.error(
       { error, params },
-      'Failed to return products on dropped payment'
+      'Failed to return products on dropped payment',
     );
   }
 

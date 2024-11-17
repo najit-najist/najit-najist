@@ -42,7 +42,7 @@ export const RecipePageManageContent = async ({
   isEditorHeaderShown,
   ...props
 }: RecipePageManageContentProps): Promise<ReactElement> => {
-  const trpc = getCachedTrpcCaller();
+  const trpc = await getCachedTrpcCaller();
   const [{ items: metrics }, { items: types }, { items: difficulties }] =
     await Promise.all([
       trpc.recipes.metrics.getMany({ perPage: 9999 }),
@@ -97,7 +97,7 @@ export const RecipePageManageContent = async ({
                   src={getFileUrl(
                     recipes,
                     props.recipe.id,
-                    props.recipe.images[0].file
+                    props.recipe.images[0].file,
                   )}
                 />
                 <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">

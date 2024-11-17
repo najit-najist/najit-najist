@@ -1,5 +1,5 @@
 import { Logo } from '@components/common/Logo';
-import { getTrpcCaller } from '@server/utils/server';
+import { createTrpcCaller } from '@server/utils/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
@@ -13,11 +13,12 @@ export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
 const RegistrationFinalizationPage = async ({
-  params: { token },
+  params,
 }: {
-  params: { token: string };
+  params: Promise<{ token: string }>;
 }) => {
-  const trpc = getTrpcCaller();
+  const { token } = await params;
+  const trpc = await createTrpcCaller();
   let activationFailed = true;
 
   if (!token) {
