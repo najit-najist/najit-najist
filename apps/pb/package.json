@@ -13,10 +13,10 @@
   },
   "types": "dist/index.d.ts",
   "dependencies": {
-    "pocketbase": "^0.21.4"
+    "pocketbase": "^0.21.5"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",
-    "@swc/core": "^1.7.2"
+    "@swc/core": "^1.9.2"
   }
 }

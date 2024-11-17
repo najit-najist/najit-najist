@@ -5,14 +5,14 @@
   "type": "module",
   "main": "index.cjs",
   "dependencies": {
-    "eslint": "^8",
-    "eslint-config-next": "^14.2.5",
+    "eslint": "^9.15.0",
+    "eslint-config-next": "^14.2.18",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-config-turbo": "^2.0.9",
-    "eslint-plugin-react": "^7.35.0"
+    "eslint-config-turbo": "^2.3.0",
+    "eslint-plugin-react": "^7.37.2"
   },
   "devDependencies": {
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.3"
   },
   "publishConfig": {
     "access": "public"

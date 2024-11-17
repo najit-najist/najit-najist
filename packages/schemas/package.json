@@ -32,7 +32,7 @@
   "dependencies": {
     "@najit-najist/database": "workspace:*",
     "@najit-najist/packeta": "workspace:*",
-    "dayjs": "^1.11.12",
+    "dayjs": "^1.11.13",
     "drizzle-zod": "^0.5.1",
     "js-base64": "^3.7.7",
     "zod": "^3.23.8"
@@ -40,6 +40,6 @@
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",
     "tsc-alias": "^1.8.10",
-    "vitest": "^2.0.4"
+    "vitest": "^2.1.5"
   }
 }

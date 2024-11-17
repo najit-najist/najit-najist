@@ -30,13 +30,13 @@
   },
   "dependencies": {
     "@najit-najist/database": "workspace:*",
-    "query-string": "^9.1.0",
-    "soap": "^1.1.0"
+    "query-string": "^9.1.1",
+    "soap": "^1.1.6"
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",
-    "@swc/core": "^1.7.2",
-    "@types/node": "^18.19.42",
-    "typescript": "^5.5.4"
+    "@swc/core": "^1.9.2",
+    "@types/node": "^22.9.0",
+    "typescript": "^5.6.3"
   }
 }
