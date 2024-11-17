@@ -37,6 +37,7 @@ RUN --mount=type=bind,target=/docker-context \
     --include='*/' --exclude='*' \
     /docker-context/ /workspace-install/;
 
+RUN apk add g++ make py3-pip
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 ###################################################################
@@ -69,6 +70,7 @@ COPY --from=deps /workspace-install ./
 
 RUN echo $(ls -1 /workspace-builder/packages)
 RUN pnpm config set node-linker hoisted
+RUN apk add g++ make py3-pip
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
 RUN npm run build:web
