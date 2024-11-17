@@ -19,6 +19,9 @@ let nextConfig = {
       },
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
   transpilePackages: [
     '@najit-najist/ui',
     '@najit-najist/database',
