@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@najit-najist/ui';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -61,10 +62,10 @@ export const Form: FC<
           },
         });
 
-        toast.promise(updateProductPromise, {
+        toast.promise(handlePromiseForToast(updateProductPromise), {
           loading: 'Ukládám úpravy',
           success: <b>Produkt upraven!</b>,
-          error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
+          error: (error) => <b>Nemohli se uložit úpravy. {error.message}</b>,
         });
 
         await updateProductPromise;
@@ -83,7 +84,7 @@ export const Form: FC<
           alergens: values.alergens,
         });
 
-        toast.promise(createProductPromise, {
+        toast.promise(handlePromiseForToast(createProductPromise), {
           loading: 'Vytvářím produkt',
           success: <b>Produkt vytvořen!</b>,
           error: (error) => <b>Nemohli produkt vytvořit. {error.message}</b>,

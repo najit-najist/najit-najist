@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@najit-najist/ui';
 import { postCreateInputSchema } from '@server/schemas/postCreateInputSchema';
 import { postUpdateInputSchema } from '@server/schemas/postUpdateInputSchema';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -24,7 +25,7 @@ export const Form: FC<
   const formMethods = useForm<FormData>({
     defaultValues: post,
     resolver: zodResolver(
-      viewType === 'create' ? postCreateInputSchema : postUpdateInputSchema
+      viewType === 'create' ? postCreateInputSchema : postUpdateInputSchema,
     ),
   });
   const { handleSubmit } = formMethods;
@@ -44,7 +45,7 @@ export const Form: FC<
       if (viewType === 'create') {
         const action = createPost(payload);
 
-        toast.promise(action, {
+        toast.promise(handlePromiseForToast(action), {
           loading: 'Vytvářím článek',
           success: <>Článek vytvořen!</>,
           error: (error) => <b>Nemohli jsme vytvořit článek {error.message}</b>,
@@ -58,7 +59,7 @@ export const Form: FC<
           data: payload,
         });
 
-        toast.promise(action, {
+        toast.promise(handlePromiseForToast(action), {
           loading: 'Ukládám článek',
           success: <>Článek uložen!</>,
           error: (error) => <b>Nemohli jsme uložit článek {error.message}</b>,
@@ -69,7 +70,7 @@ export const Form: FC<
         router.push(`/administrace/clanky/${newData.slug}`);
       }
     },
-    [viewType, createPost, editorReferences, post, router, updatePost]
+    [viewType, createPost, editorReferences, post, router, updatePost],
   );
 
   return (

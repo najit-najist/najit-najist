@@ -1,11 +1,19 @@
 import { cx } from 'class-variance-authority';
-import { forwardRef, useCallback, useId, useState } from 'react';
-import Quill, { ReactQuillProps } from 'react-quill';
+import {
+  ComponentProps,
+  forwardRef,
+  useCallback,
+  useId,
+  useState,
+} from 'react';
+import Quill from 'react-quill-new';
 
 import {
   FormControlWrapper,
   type FormControlWrapperProps,
 } from '../form/FormControlWrapper.js';
+
+type ReactQuillProps = ComponentProps<typeof Quill>;
 
 type QuillProp<T extends keyof ReactQuillProps> = NonNullable<
   ReactQuillProps[T]
@@ -43,7 +51,7 @@ export const QuillEditor = forwardRef<
     rootClassName,
     ...rest
   },
-  ref
+  ref,
 ) {
   const id = useId();
   const [isFocusing, setIsFocusing] = useState(false);
@@ -57,7 +65,7 @@ export const QuillEditor = forwardRef<
       }
       onChangeSelection?.(range, oldRange, source);
     },
-    [onChangeSelection]
+    [onChangeSelection],
   );
 
   return (

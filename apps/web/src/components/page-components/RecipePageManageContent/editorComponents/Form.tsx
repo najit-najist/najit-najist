@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from '@najit-najist/ui';
 import { recipeCreateInputSchema } from '@server/schemas/recipeCreateInputSchema';
 import { recipeUpdateInputSchema } from '@server/schemas/recipeUpdateInputSchema';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -29,7 +30,7 @@ export const Form: FC<
       numberOfPortions: recipe?.numberOfPortions ?? 1,
     },
     resolver: zodResolver(
-      viewType === 'edit' ? recipeUpdateInputSchema : recipeCreateInputSchema
+      viewType === 'edit' ? recipeUpdateInputSchema : recipeCreateInputSchema,
     ),
   });
   const { handleSubmit } = formMethods;
@@ -51,10 +52,10 @@ export const Form: FC<
           },
         });
 
-        toast.promise(action, {
+        toast.promise(handlePromiseForToast(action), {
           loading: 'Ukládám úpravy',
           success: <b>Recept upraven!</b>,
-          error: (error) => <b>Nemohli uložit úpravy. {error.message}</b>,
+          error: (error) => <b>Nemohli se uložit úpravy. {error.message}</b>,
         });
 
         await action;
@@ -71,7 +72,7 @@ export const Form: FC<
           numberOfPortions: values.numberOfPortions ?? 1,
         });
 
-        toast.promise(action, {
+        toast.promise(handlePromiseForToast(action), {
           loading: 'Vytvářím recept',
           success: <b>Recept uložen!</b>,
           error: (error) => <b>Recept nemohl být vytvořen. {error.message}</b>,
@@ -80,7 +81,7 @@ export const Form: FC<
         await action;
       }
     },
-    [router, viewType, recipe]
+    [router, viewType, recipe],
   );
 
   return (

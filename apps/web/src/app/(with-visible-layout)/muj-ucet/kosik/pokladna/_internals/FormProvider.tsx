@@ -7,6 +7,7 @@ import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { toast } from '@najit-najist/ui';
 import { useQueryClient } from '@tanstack/react-query';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import {
   FC,
@@ -60,10 +61,10 @@ export const FormProvider: FC<
 
             throw new Error('Opravte si hodnoty ve formuláři');
           }
-        }
+        },
       );
 
-      toast.promise(newOrderAsPromise, {
+      toast.promise(handlePromiseForToast(newOrderAsPromise), {
         loading: 'Vytvářím objednávku...',
         success:
           'Objednávka vytvořena, děkujeme! Nyní Vás přesměrujeme dále, vyčkejte strpení...',
@@ -75,14 +76,14 @@ export const FormProvider: FC<
       await newOrderAsPromise;
       await queryClient.invalidateQueries({ queryKey: useUserCartQueryKey });
     },
-    [router, plausible, queryClient]
+    [router, plausible, queryClient],
   );
 
   return (
     <reactTransitionContext.Provider
       value={useMemo(
         () => ({ isActive: isDoingTransition, startTransition: doTransition }),
-        [isDoingTransition, doTransition]
+        [isDoingTransition, doTransition],
       )}
     >
       <ReactHookFormProvider {...formMethods}>

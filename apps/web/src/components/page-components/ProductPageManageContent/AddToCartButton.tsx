@@ -8,6 +8,7 @@ import { products } from '@najit-najist/database/models';
 import { Button, Tooltip, buttonStyles, toast } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { useQueryClient } from '@tanstack/react-query';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -97,7 +98,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
       },
     );
 
-    toast.promise(addToCartPromise, {
+    toast.promise(handlePromiseForToast(addToCartPromise), {
       loading: 'Přídávám do košíku',
       success: (
         <SuccessMessage

@@ -4,6 +4,7 @@ import { TrashIcon } from '@heroicons/react/24/outline';
 import { Order } from '@najit-najist/database/models';
 import { Button, toast } from '@najit-najist/ui';
 import { useMutation } from '@tanstack/react-query';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { updateOrderAction } from 'app/(with-visible-layout)/administrace/objednavky/[orderId]/updateAction';
 import { useRouter } from 'next/navigation';
 import { FC, MouseEventHandler, useCallback, useTransition } from 'react';
@@ -57,7 +58,7 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
         },
       });
 
-      toast.promise(updatePromise, {
+      toast.promise(handlePromiseForToast(updatePromise), {
         error: (error) => `Nemůžeme upravit objednávku: ${error.message}`,
         loading: 'Ukládám změny',
         success: 'Objednávka uložena, získávám aktuální data...',

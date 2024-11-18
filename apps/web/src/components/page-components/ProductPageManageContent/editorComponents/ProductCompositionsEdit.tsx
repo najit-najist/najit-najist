@@ -29,6 +29,7 @@ import {
   ComboboxOptions,
 } from '@najit-najist/ui/headless';
 import { useMutation } from '@tanstack/react-query';
+import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { clsx } from 'clsx';
 import {
   ChangeEventHandler,
@@ -142,7 +143,7 @@ export function ProductCompositionsEdit(): ReactNode {
 
     const newMaterialAsPromise = createRawMaterial({ name: value });
 
-    toast.promise(newMaterialAsPromise, {
+    toast.promise(handlePromiseForToast(newMaterialAsPromise), {
       error: (error) => `Nemůžeme vytvořit surovinu: ${error.message}`,
       loading: 'Vytvářím surovinu',
       success: 'Surovina vytvořena! Pokračujte v přidání pod produkt...',
