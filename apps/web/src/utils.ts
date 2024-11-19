@@ -73,12 +73,17 @@ export const isPacketaDeveliveryMethod = (
 ) => delivery.slug === 'send';
 
 export const getTotalPrice = (
-  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>,
+  order: Pick<
+    Order,
+    'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'discount'
+  >,
+  { applyDiscount = true }: { applyDiscount?: boolean } = {},
 ) => {
   return (
     order.subtotal +
     (order.deliveryMethodPrice ?? 0) +
-    (order.paymentMethodPrice ?? 0)
+    (order.paymentMethodPrice ?? 0) -
+    (applyDiscount ? order.discount : 0)
   );
 };
 

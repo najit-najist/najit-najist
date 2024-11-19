@@ -131,7 +131,8 @@ export const PriceList: FC<{
             getTotalPrice({
               deliveryMethodPrice: deliveryMethodPrice.formatted,
               paymentMethodPrice: selectedPaymentMethodPrice,
-              subtotal: subtotal - totalDiscount,
+              subtotal: subtotal,
+              discount: totalDiscount,
             }),
           )}
         </span>

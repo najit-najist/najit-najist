@@ -46,10 +46,14 @@ export const Orders: FC<{
               <div className="text-gray-500">
                 {order.discount ? (
                   <>
-                    <s>{formatPrice(order.subtotal + order.discount)}</s>{' '}
+                    <s>
+                      {formatPrice(
+                        getTotalPrice(order, { applyDiscount: false }),
+                      )}
+                    </s>{' '}
                   </>
                 ) : null}
-                {formatPrice(order.subtotal)}
+                {formatPrice(getTotalPrice(order))}
               </div>
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

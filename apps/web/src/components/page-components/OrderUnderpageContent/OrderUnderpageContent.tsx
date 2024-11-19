@@ -220,7 +220,16 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <div className="flex justify-between">
                 <dt className="font-bold text-gray-900">Celkem</dt>
                 <dd className="text-project-secondary">
-                  {formatPrice(getTotalPrice(order) - order.discount)}
+                  {order.discount ? (
+                    <>
+                      <s>
+                        {formatPrice(
+                          getTotalPrice(order, { applyDiscount: false }),
+                        )}
+                      </s>{' '}
+                    </>
+                  ) : null}
+                  {formatPrice(getTotalPrice(order))}
                 </dd>
               </div>
             </dl>
