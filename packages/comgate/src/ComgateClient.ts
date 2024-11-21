@@ -1,5 +1,4 @@
 import { ComgatePayment, Order } from '@najit-najist/database/models';
-import { disconnect } from 'process';
 import queryString from 'query-string';
 
 import { ComgateGetStatusSuccessResponse } from './ComgateGetStatusSuccessResponse';
@@ -10,7 +9,12 @@ import { TransactionId } from './TransactionId';
 export type CreatePaymentOptions = {
   order: Pick<
     Order,
-    'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'email' | 'id'
+    | 'subtotal'
+    | 'deliveryMethodPrice'
+    | 'paymentMethodPrice'
+    | 'email'
+    | 'id'
+    | 'discount'
   >;
 };
 
