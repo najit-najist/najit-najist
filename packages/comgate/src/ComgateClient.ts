@@ -1,4 +1,5 @@
 import { ComgatePayment, Order } from '@najit-najist/database/models';
+import { disconnect } from 'process';
 import queryString from 'query-string';
 
 import { ComgateGetStatusSuccessResponse } from './ComgateGetStatusSuccessResponse';
@@ -18,12 +19,16 @@ export type CancelPaymentOptions = {
 };
 
 export const getTotalPrice = (
-  order: Pick<Order, 'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice'>
+  order: Pick<
+    Order,
+    'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'discount'
+  >,
 ) => {
   return (
     order.subtotal +
     (order.deliveryMethodPrice ?? 0) +
-    (order.paymentMethodPrice ?? 0)
+    (order.paymentMethodPrice ?? 0) -
+    order.discount
   );
 };
 
@@ -38,7 +43,7 @@ export class ComgateClient {
 
   private static async doRequest<T extends Record<string, any>>(
     path: string,
-    options?: RequestInit
+    options?: RequestInit,
   ) {
     if (!this.merchantId || !this.secret) {
       throw new Error('Missing merchantId or server');
@@ -60,7 +65,7 @@ export class ComgateClient {
 
     const response = await fetch(
       new URL(`/v1.0${path}`, 'https://payments.comgate.cz'),
-      options
+      options,
     );
 
     if (response.status !== 200) {
@@ -114,7 +119,7 @@ export class ComgateClient {
   }
 
   public static async refundPaymentForOrder(
-    order: Order & { comgatePayment: ComgatePayment }
+    order: Order & { comgatePayment: ComgatePayment },
   ) {
     return await this.doRequest<{
       code:
