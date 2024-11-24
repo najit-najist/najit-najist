@@ -1,8 +1,9 @@
 'use client';
 
-import { trpc } from '@client/trpc';
+import { updateMyAddressAction } from '@components/page-components/EditMyProfileContent/actions/updateMyAddressAction';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userProfileUpdateInputSchema } from '@server/schemas/userProfileUpdateInputSchema';
+import { toast } from '@najit-najist/ui';
+import { userAddressUpdateInputSchema } from '@server/schemas/userAddressUpdateInputSchema';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import {
   FormState,
@@ -14,7 +15,7 @@ import { z } from 'zod';
 
 export function getChangedValues<G extends Record<any, any>>(
   allValues: G,
-  dirtyFields: FormState<G>['dirtyFields'] | true
+  dirtyFields: FormState<G>['dirtyFields'] | true,
 ): Partial<G> {
   if (dirtyFields === true || Array.isArray(dirtyFields)) return allValues;
 
@@ -22,22 +23,21 @@ export function getChangedValues<G extends Record<any, any>>(
     Object.keys(dirtyFields).map((key) => [
       key,
       getChangedValues(allValues[key], (dirtyFields as any)[key]),
-    ])
+    ]),
   ) as Partial<G>;
 }
 
-type FormData = z.infer<typeof userProfileUpdateInputSchema>;
+export type FormData = z.infer<typeof userAddressUpdateInputSchema>;
 
 export const FormProvider: FC<PropsWithChildren<{ initialData: FormData }>> = ({
   children,
   initialData,
 }) => {
-  const { mutateAsync: updateProfile } = trpc.profile.update.useMutation();
   const formMethods = useForm<FormData>({
     defaultValues: initialData,
-    resolver: zodResolver(userProfileUpdateInputSchema),
+    resolver: zodResolver(userAddressUpdateInputSchema),
   });
-  const { handleSubmit, formState, reset } = formMethods;
+  const { handleSubmit, formState, reset, setError } = formMethods;
 
   const onSubmit: SubmitHandler<FormData> = useCallback(
     async (values) => {
@@ -50,20 +50,33 @@ export const FormProvider: FC<PropsWithChildren<{ initialData: FormData }>> = ({
         nextValues.address.id = initialData.address?.id;
       }
 
-      await updateProfile(nextValues);
+      const result = await updateMyAddressAction(nextValues);
+      const isError = !!result.errors;
+
+      if (isError) {
+        for (const [errorFieldName, errorMessages] of Object.entries(
+          result.errors ?? {},
+        )) {
+          setError(errorFieldName as any, {
+            message: errorMessages.join(', '),
+          });
+        }
+
+        toast.error(result.message);
+
+        throw new Error('Failed with errors');
+      }
+
+      toast.success(result.message);
+
       reset(undefined, { keepValues: true });
     },
-    [updateProfile, initialData, formState.dirtyFields, reset]
+    [initialData, formState.dirtyFields, reset],
   );
 
   return (
     <HookFormProvider {...formMethods}>
-      <form
-        className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
-        onSubmit={handleSubmit(onSubmit)}
-      >
-        {children}
-      </form>
+      <form onSubmit={handleSubmit(onSubmit)}>{children}</form>
     </HookFormProvider>
   );
 };

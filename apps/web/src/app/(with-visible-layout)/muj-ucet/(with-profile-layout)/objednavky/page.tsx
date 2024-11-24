@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 
 import { Orders } from './_components/Orders';
+import { Section } from '@components/portal';
+import { OrderPreviewItem } from '../_components/OrderPreviewItem';
 
 export const metadata = {
   title: 'Moje objednávky',
@@ -31,54 +33,26 @@ const List: FC = async () => {
   const orders = await getCachedOrders({ user: { id: [loggedInUser.id] } });
 
   return (
-    <table className="min-w-full divide-y divide-gray-300">
-      <thead>
-        <tr>
-          <Th>Datum</Th>
-          <Th>Stav</Th>
-          <Th>Referenční číslo</Th>
-          <Th>Cena</Th>
-          <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6 lg:pr-8">
-            <span className="sr-only">Edit</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody className="divide-y divide-gray-200">
-        <Orders orders={orders.items} />
-      </tbody>
-      <tfoot className=" w-full">
-        <tr>
-          <th colSpan={6} className="">
-            <Pagination
-              currentPage={orders.page}
-              totalItems={orders.totalItems}
-              totalPages={orders.totalPages}
-            />
-          </th>
-        </tr>
-      </tfoot>
-    </table>
+    <div>
+      <ul role="list" className="divide-y divide-gray-100">
+        {orders.items.map((order) => <OrderPreviewItem key={order.id} order={order} />)}
+      </ul>
+
+      <Pagination
+        currentPage={orders.page}
+        totalPages={orders.totalPages}
+      />
+    </div>
   );
 };
 
 export default function Page() {
   return (
-    <>
-      <div className="container mt-5 -mb-5">
-        <Link
-          href="/muj-ucet/profil"
-          className="text-red-400 hover:underline group"
-        >
-          <ArrowLeftIcon
-            strokeWidth={3}
-            className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
-          />
-          Zpět na můj profil
-        </Link>
-      </div>
-      <PageHeader className="container">
-        <div className="flex justify-between items-center">
-          <PageTitle>{metadata.title}</PageTitle>
+    <Section>
+      <div className="px-5 flex justify-between items-center">
+          <h1 className="text-2xl font-title tracking-wide">
+            {metadata.title}
+          </h1>
         </div>
         {/* <SearchForm
           initialData={{
@@ -88,10 +62,7 @@ export default function Page() {
               : undefined,
           }}
         /> */}
-      </PageHeader>
-      <div className="mt-8 flow-root !border-t-0 container">
-        <div className="overflow-x-auto mb-10">
-          <div className="inline-block min-w-full py-2 align-middle">
+          <div className="inline-block min-w-full py-2 align-middle overflow-x-auto px-5">
             <Suspense
               fallback={
                 <>
@@ -109,8 +80,6 @@ export default function Page() {
               <List />
             </Suspense>
           </div>
-        </div>
-      </div>
-    </>
+    </Section>
   );
 }

@@ -1,6 +1,7 @@
 import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
+import { formatPrice } from '@utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC, Fragment } from 'react';
@@ -47,7 +48,7 @@ export const SectionProducts: FC<{ orderId: number }> = async ({ orderId }) => {
             <h4 className="font-medium text-gray-900 font-title text-2xl">
               <Link
                 href={`/produkty/${encodeURIComponent(
-                  orderedProduct.product.slug
+                  orderedProduct.product.slug,
                 )}`}
               >
                 {orderedProduct.product.name}
@@ -73,7 +74,7 @@ export const SectionProducts: FC<{ orderId: number }> = async ({ orderId }) => {
                   Cena za produkt celkem:
                 </dt>
                 <dd className="ml-2 text-gray-700">
-                  {orderedProduct.totalPrice} Kč
+                  {formatPrice(orderedProduct.totalPrice)}
                 </dd>
               </div>
             </dl>

@@ -14,7 +14,7 @@ const tailwindPlugin = plugin(({ addBase, addUtilities, theme }) => {
     },
 
     '.border-project': {
-      border: `2px solid ${theme('colors.gray.200')}`,
+      border: `1.5px solid ${theme('colors.gray.200')}`,
     },
   });
 
@@ -147,6 +147,7 @@ const getTheme = () => ({
           accent: '#119247',
           background: '#F8FCFA',
           text: '#052412',
+          accents: '#052412',
         },
 
         deep: {

@@ -2,6 +2,7 @@ import { dayjs } from '@dayjs';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { database } from '@najit-najist/database';
 import { Badge, Tooltip } from '@najit-najist/ui';
+import { formatPrice } from '@utils';
 import { isCouponExpired } from '@utils/isCouponExpired';
 import Link from 'next/link';
 
@@ -31,12 +32,12 @@ export async function TableContent() {
                 reductions.push(`${patch?.reductionPercentage}%`);
               }
               if (patch?.reductionPrice) {
-                reductions.push(`${patch?.reductionPrice}Kč`);
+                reductions.push(formatPrice(patch.reductionPrice));
               }
 
               if (item.validFrom) {
                 validity.push(
-                  `Od ${dayjs(item.validFrom).format(DATE_FORMAT)}`
+                  `Od ${dayjs(item.validFrom).format(DATE_FORMAT)}`,
                 );
               }
               if (item.validTo) {

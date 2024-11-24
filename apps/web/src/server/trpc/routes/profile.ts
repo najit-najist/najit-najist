@@ -85,14 +85,6 @@ export const profileRouter = t.router({
   liked: userLikedRoutes,
   cart: userCartRoutes,
 
-  update: protectedProcedure
-    .input(userProfileUpdateInputSchema)
-    .mutation(async ({ ctx, input }) => {
-      const user = await UserService.forUser({ id: ctx.sessionData.user.id });
-
-      await user.update(input);
-    }),
-
   me: protectedProcedure
     .output(privateUserOutputSchema)
     .query(async ({ ctx }) => {

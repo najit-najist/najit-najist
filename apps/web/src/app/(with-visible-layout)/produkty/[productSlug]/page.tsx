@@ -83,16 +83,6 @@ export default async function Page({ params }: Params) {
   });
 
   if (!product) {
-    logger.error(
-      {
-        productSlug,
-        canUserSeeUnpublished,
-        user: loggedInUser?.id,
-        userRole: loggedInUser?.role,
-      },
-      'Failed to get product, because user is not eligible or it does not exist',
-    );
-
     return notFound();
   }
 

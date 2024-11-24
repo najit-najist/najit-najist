@@ -1,6 +1,5 @@
 'use client';
 
-import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { Section } from '@components/portal';
 import { User } from '@najit-najist/database/models';
 import {
@@ -33,8 +32,8 @@ export const EditUserUnderPage: FC<{
   userId?: User['id'];
   viewType: ViewType;
   afterProfileImageSlot?: ReactNode;
-}> = ({ userId, viewType, afterProfileImageSlot }) => {
-  const { register, formState } = useFormContext<
+}> = ({ viewType, afterProfileImageSlot }) => {
+  const { register, formState, control } = useFormContext<
     z.infer<typeof userProfileUpdateInputSchema> & { email: string }
   >();
   const email = useWatch({ name: 'email' });
@@ -47,7 +46,7 @@ export const EditUserUnderPage: FC<{
   return (
     <>
       <div className="col-span-2 px-5 sm:px-10 mb-5 md:mb-0 pt-5">
-        <UserAvatarPicker userId={userId} />
+        {/* <UserAvatarPicker userId={userId} /> */}
         {afterProfileImageSlot}
       </div>
       <div className="col-span-4">
@@ -57,10 +56,10 @@ export const EditUserUnderPage: FC<{
               {viewType == 'create'
                 ? 'Nový uživatel'
                 : viewType == 'edit'
-                ? `Upravit uživatele`
-                : viewType == 'edit-myself'
-                ? 'Můj účet'
-                : null}
+                  ? `Upravit uživatele`
+                  : viewType == 'edit-myself'
+                    ? 'Můj účet'
+                    : null}
             </h1>
           </div>
 
@@ -118,7 +117,18 @@ export const EditUserUnderPage: FC<{
             <FormBreak label="Adresa" />
 
             <div className="grid gap-4 grid-cols-1 mt-5">
-              <AddressFields disabled={fieldsAreDisabled} />
+              <AddressFields
+                disabled={fieldsAreDisabled}
+                control={control}
+                fieldMap={{
+                  city: 'address.city',
+                  country: 'address.city',
+                  houseNumber: 'address.houseNumber',
+                  municipality: 'address.municipality',
+                  postalCode: 'address.postalCode',
+                  streetName: 'address.streetName',
+                }}
+              />
             </div>
 
             <div className="mt-5" />

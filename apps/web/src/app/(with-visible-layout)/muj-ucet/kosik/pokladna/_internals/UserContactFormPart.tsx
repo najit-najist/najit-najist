@@ -17,7 +17,7 @@ import { FormValues } from './types';
 
 export const UserContactFormPart: FC = () => {
   const { isActive } = useReactTransitionContext();
-  const { formState, register } = useFormContext<FormValues>();
+  const { formState, register, control } = useFormContext<FormValues>();
   const fieldsAreDisabled = formState.isSubmitting || isActive;
 
   return (
@@ -82,7 +82,18 @@ export const UserContactFormPart: FC = () => {
 
       <FormBreak className="mt-5 mb-2" />
 
-      <AddressFields required />
+      <AddressFields
+        required
+        control={control}
+        fieldMap={{
+          city: 'address.city',
+          country: 'address.city',
+          houseNumber: 'address.houseNumber',
+          municipality: 'address.municipality',
+          postalCode: 'address.postalCode',
+          streetName: 'address.streetName',
+        }}
+      />
 
       <CheckboxWrapper
         childId="save-current-address"

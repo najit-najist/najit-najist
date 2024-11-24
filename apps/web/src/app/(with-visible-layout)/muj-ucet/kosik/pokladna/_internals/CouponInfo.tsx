@@ -2,6 +2,7 @@
 
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { Alert, Button, Input } from '@najit-najist/ui';
+import { formatPrice } from '@utils';
 import { getUserCart, GetUserCartOutput } from '@utils/getUserCart';
 import { useRouter } from 'next/navigation';
 import {
@@ -68,7 +69,7 @@ export function CouponInfo({
     reductions.push(`${patch?.reductionPercentage}%`);
   }
   if (patch?.reductionPrice) {
-    reductions.push(`${patch?.reductionPrice}Kč`);
+    reductions.push(formatPrice(patch?.reductionPrice));
   }
 
   const shouldBeGrouped =

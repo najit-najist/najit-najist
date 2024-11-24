@@ -2,6 +2,8 @@ import { Order, OrderState } from '@najit-najist/database/models';
 import { Badge, BadgeProps } from '@najit-najist/ui';
 import { FC } from 'react';
 
+const DEFAULT_COLOR: NonNullable<BadgeProps['color']> = 'gray';
+
 const orderStateToLabel: Record<OrderState, string> = {
   confirmed: 'Potvrzeno',
   dropped: 'Zrušeno',
@@ -23,7 +25,6 @@ const orderStateToColor: Partial<
   unconfirmed: 'yellow',
   unpaid: 'pink',
 };
-const DEFAULT_COLOR: NonNullable<BadgeProps['color']> = 'gray';
 
 export const OrderStateBadge: FC<{ state: Order['state'] }> = ({ state }) => {
   return (

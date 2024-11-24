@@ -7,6 +7,7 @@ import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getCachedUsers } from '@server/utils/getCachedUsers';
 import { getLoggedInUserId } from '@server/utils/server';
+import { formatPrice } from '@utils';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, PropsWithChildren, ReactNode, Suspense } from 'react';
@@ -321,7 +322,7 @@ async function OrdersGroup() {
             />
             <Item
               size="small"
-              title={`Nakoupeno za tento měsíc: ${thisMonthTotal}Kč`}
+              title={`Nakoupeno za tento měsíc: ${formatPrice(thisMonthTotal)}`}
               className={clsx({
                 '!border-green-300/30 !bg-green-100/50':
                   thisMonthTotal >= prevMonthTotal,

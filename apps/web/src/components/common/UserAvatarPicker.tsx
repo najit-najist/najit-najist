@@ -1,69 +1,71 @@
+'use client';
+
+import { updateMyProfileImageAction } from '@components/page-components/EditMyProfileContent/actions/updateMyProfileImageAction';
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { ArrowPathIcon, UserIcon } from '@heroicons/react/24/outline';
 import { CameraIcon } from '@heroicons/react/24/solid';
-import { users } from '@najit-najist/database/models';
-import {
-  EntityLink,
-  IMAGE_FILE_REGEX,
-  isFileBase64,
-} from '@najit-najist/schemas';
+import { User, users } from '@najit-najist/database/models';
+import { isFileBase64 } from '@najit-najist/schemas';
 import { getFileUrl } from '@server/utils/getFileUrl';
-import { readFile } from '@utils';
 import Image from 'next/image';
-import { useRef, ChangeEventHandler, FC, useMemo, useState } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useRef, FC, useMemo, useActionState } from 'react';
 
-const FIELD_NAME = 'avatar';
 const IMAGE_SIZE = 300;
 
-const AvatarSelect = () => {
-  const [isUploadingToMemory, setIsUploadingToMemory] = useState(false);
-  const { setValue, setError, formState } = useFormContext<{
-    avatar?: string;
-  }>();
+export const UserAvatarPicker: FC<{ user: Pick<User, 'id' | 'avatar'> }> = ({
+  user,
+}) => {
+  const [state, formAction, isChangingImage] = useActionState(
+    updateMyProfileImageAction,
+    { message: '' },
+  );
+
+  const imageUrl = useMemo(() => {
+    const currentImage = state.image ?? user.avatar;
+
+    if (!currentImage) {
+      return null;
+    }
+
+    if (isFileBase64(currentImage ?? '')) {
+      return currentImage ?? '';
+    }
+
+    return getFileUrl(users, user.id, currentImage ?? '', {
+      width: IMAGE_SIZE,
+      height: IMAGE_SIZE,
+    });
+  }, [user, state]);
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onChangeImageClick = () => {
     inputRef.current?.click();
   };
 
-  const onFileChange: ChangeEventHandler<HTMLInputElement> = async (event) => {
-    const files = event.target.files;
-    const [file] = files ?? [];
+  const content = !imageUrl ? (
+    <UserIcon className="absolute top-1/2 left-1/2 text-gray-400 -translate-y-1/2 w-28 h-28 -translate-x-1/2 shadow-md" />
+  ) : (
+    <Image
+      alt="image"
+      src={imageUrl}
+      width={IMAGE_SIZE}
+      height={IMAGE_SIZE}
+      unoptimized={imageUrl.startsWith('data:')}
+      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-full shadow-md"
+    />
+  );
 
-    if (!file) {
-      return;
-    }
-
-    setIsUploadingToMemory(true);
-    try {
-      setValue(
-        FIELD_NAME,
-        await readFile(file, { filter: IMAGE_FILE_REGEX, width: 450 }),
-        {
-          shouldDirty: true,
-          shouldTouch: true,
-        }
-      );
-    } catch (error) {
-      setError(FIELD_NAME, {
-        message: (error as Error).message,
-      });
-    } finally {
-      setIsUploadingToMemory(false);
-    }
-  };
-
-  return (
+  const editButton = (
     <>
       <button
         className="absolute bottom-1 right-1 lg:bottom-4 lg:right-4 bg-white rounded-full p-3 border-2 border-gray-100"
         title="Změnit profilový obrázek"
         type="button"
         onClick={onChangeImageClick}
-        disabled={isUploadingToMemory || formState.isSubmitting}
+        disabled={isChangingImage}
       >
-        {isUploadingToMemory ? (
+        {isChangingImage ? (
           <ArrowPathIcon className="w-7 h-7 animate-spin" />
         ) : (
           <CameraIcon className="w-7 h-7" />
@@ -73,60 +75,26 @@ const AvatarSelect = () => {
         ref={inputRef}
         type="file"
         className="sr-only"
-        onChange={onFileChange}
+        name="image"
+        multiple={false}
         accept={ACCEPT_FILES_IMAGE}
+        onChange={(e) => e.currentTarget.form?.requestSubmit()}
       />
     </>
   );
-};
-
-const Avatar: FC<{ userId?: EntityLink['id'] }> = ({ userId }) => {
-  const { watch, formState } = useFormContext<{ avatar?: string }>();
-  const avatar = watch(FIELD_NAME);
-
-  const imageUrl = useMemo(() => {
-    if (isFileBase64(avatar ?? '') || !userId) {
-      return avatar ?? '';
-    }
-
-    return getFileUrl(users, userId, avatar ?? '', {
-      width: IMAGE_SIZE,
-      height: IMAGE_SIZE,
-    });
-  }, [avatar, userId]);
-
-  const content = !avatar ? (
-    <UserIcon className="absolute top-1/2 left-1/2 text-gray-400 -translate-y-1/2 w-28 h-28 -translate-x-1/2" />
-  ) : (
-    <Image
-      alt="image"
-      src={imageUrl}
-      width={IMAGE_SIZE}
-      height={IMAGE_SIZE}
-      unoptimized={imageUrl.startsWith('data:')}
-      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-full"
-    />
-  );
 
   return (
-    <>
+    <form
+      action={formAction}
+      className="w-full aspect-square relative bg-gray-100 rounded-full mx-auto max-w-lg"
+    >
       {content}
-      {formState.errors.avatar ? (
-        <div className="text-red-500 rounded-md bg-white after:content-[''] after:bg-white after:rotate-90 after:w-10 after:h-10 absolute bottom-0 translate-y-full z-10">
-          {formState.errors.avatar.message}
+      {editButton}
+      {state?.success === false && !isChangingImage ? (
+        <div className="text-red-500 rounded-md bg-white after:content-[''] after:bg-white after:rotate-90 after:w-10 after:h-10 absolute bottom-0 translate-y-full z-10 py-3 px-1.5 text-center shadow-lg w-full">
+          {state.message}
         </div>
       ) : null}
-    </>
-  );
-};
-
-export const UserAvatarPicker: FC<{ userId?: EntityLink['id'] }> = ({
-  userId,
-}) => {
-  return (
-    <div className="w-full aspect-square relative bg-gray-100 rounded-full mx-auto max-w-lg">
-      <Avatar userId={userId} />
-      <AvatarSelect />
-    </div>
+    </form>
   );
 };

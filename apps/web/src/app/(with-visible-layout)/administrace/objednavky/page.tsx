@@ -118,7 +118,7 @@ const Analytics: FC = async () => {
     },
     {
       name: 'Příjem',
-      value: `${thisMonthTotal}Kč`,
+      value: formatPrice(thisMonthTotal),
       change:
         changeRevenue > 0
           ? `+${formatPrice(changeRevenue)}`

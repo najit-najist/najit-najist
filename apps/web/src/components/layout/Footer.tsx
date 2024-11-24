@@ -193,7 +193,7 @@ export const Footer: FC<PropsWithChildren> = () => {
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8 flex">
           <p className="text-base text-project-accent xl:text-center">
-            &copy; 2022 <a href="https://najitnajist.cz">NajitNajist.cz</a>
+            &copy; { new Date().getFullYear()} <a href="https://najitnajist.cz">NajitNajist.cz</a>
           </p>
         </div>
       </div>

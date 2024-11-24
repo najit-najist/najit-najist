@@ -14,9 +14,9 @@ export const Section: FC<
   <Paper className={clsx('w-full', rootClassName)}>
     <div
       className={clsx(
-        'py-5 w-full divide-y divide-gray-200',
+        'py-3 w-full divide-y divide-gray-200',
         className,
-        customSpace ? '' : 'space-y-4 sm:space-y-5'
+        customSpace ? '' : 'space-y-2 sm:space-y-3'
       )}
     >
       {children}

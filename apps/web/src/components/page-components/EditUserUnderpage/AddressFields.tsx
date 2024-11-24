@@ -1,20 +1,38 @@
+'use client';
+
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { AppRouterInput } from '@custom-types/AppRouter';
 import { Input } from '@najit-najist/ui';
-import { FC } from 'react';
-import { useFormContext } from 'react-hook-form';
+import {
+  Control,
+  FieldError,
+  FieldPath,
+  FieldValues,
+  useFormContext,
+} from 'react-hook-form';
 
 /**
  * Set of fields that are specific to user address
  */
-export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
+export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
   required,
   disabled,
-}) => {
+  fieldMap,
+}: {
+  required?: boolean;
+  disabled?: boolean;
+  control: Control<TFieldValues>;
+  fieldMap: {
+    streetName: FieldPath<TFieldValues>;
+    houseNumber: FieldPath<TFieldValues>;
+    postalCode: FieldPath<TFieldValues>;
+    city: FieldPath<TFieldValues>;
+    municipality: FieldPath<TFieldValues>;
+    country: FieldPath<TFieldValues>;
+  };
+}) {
   const { isActive } = useReactTransitionContext();
-  const { formState, register } =
-    useFormContext<AppRouterInput['profile']['update']>();
+  const { formState, register } = useFormContext();
   const fieldsAreDisabled =
     disabled === undefined ? formState.isSubmitting || isActive : disabled;
 
@@ -27,9 +45,11 @@ export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
           label="Ulice"
           autoComplete="street-address"
           placeholder="Název ulice"
-          error={formState.errors.address?.streetName}
+          error={
+            formState.errors[fieldMap.streetName] as FieldError | undefined
+          }
           disabled={fieldsAreDisabled}
-          {...register('address.streetName')}
+          {...register(fieldMap.streetName)}
         />
         <Input
           required={required}
@@ -37,9 +57,11 @@ export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
           label="Číslo popisné"
           placeholder="Čp."
           // autoComplete="email"
-          error={formState.errors.address?.houseNumber}
+          error={
+            formState.errors[fieldMap.houseNumber] as FieldError | undefined
+          }
           disabled={fieldsAreDisabled}
-          {...register('address.houseNumber')}
+          {...register(fieldMap.houseNumber)}
         />
       </div>
 
@@ -50,9 +72,9 @@ export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
           placeholder="Název města"
           rootClassName="md:col-span-3"
           autoComplete="address-level2"
-          error={formState.errors.address?.city}
+          error={formState.errors[fieldMap.city] as FieldError | undefined}
           disabled={fieldsAreDisabled}
-          {...register('address.city')}
+          {...register(fieldMap.city)}
         />
         <Input
           required={required}
@@ -60,19 +82,21 @@ export const AddressFields: FC<{ required?: boolean; disabled?: boolean }> = ({
           label="PSČ"
           placeholder="123 45"
           autoComplete="postal-code"
-          error={formState.errors.address?.postalCode}
+          error={
+            formState.errors[fieldMap.postalCode] as FieldError | undefined
+          }
           disabled={fieldsAreDisabled}
-          {...register('address.postalCode')}
+          {...register(fieldMap.postalCode)}
         />
       </div>
 
       <MunicipalitySelect
         size={null}
         label="Kraj"
-        name="address.municipality"
+        name={fieldMap.municipality}
         required={required}
         disabled={fieldsAreDisabled}
       />
     </>
   );
-};
+}
