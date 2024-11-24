@@ -1,10 +1,6 @@
+import { render, ContactUsAdminReply, ContactUsUserReply } from '@email';
 import { database } from '@najit-najist/database';
 import { contactFormReplies } from '@najit-najist/database/models';
-import {
-  render,
-  ContactUsAdminReply,
-  ContactUsUserReply,
-} from '@najit-najist/email-templates';
 import { logger } from '@server/logger';
 import { contactUsInputSchema } from '@server/schemas/contactUsInputSchema';
 import { MailService } from '@server/services/Mail.service';

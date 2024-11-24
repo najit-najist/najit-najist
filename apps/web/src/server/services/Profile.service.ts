@@ -1,3 +1,4 @@
+import { PasswordReset, WelcomeAndFinish, render } from '@email';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import {
@@ -7,11 +8,6 @@ import {
   userCarts,
   users,
 } from '@najit-najist/database/models';
-import {
-  PasswordReset,
-  WelcomeAndFinish,
-  render,
-} from '@najit-najist/email-templates';
 import { EntityLink } from '@najit-najist/schemas';
 import { logger } from '@server/logger';
 import jwt from 'jsonwebtoken';

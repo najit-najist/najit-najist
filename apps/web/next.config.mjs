@@ -26,7 +26,6 @@ let nextConfig = {
     '@najit-najist/ui',
     '@najit-najist/database',
     '@najit-najist/schemas',
-    '@najit-najist/email-templates',
     '@najit-najist/tailwind-plugin',
   ],
   webpack(config, { isServer, webpack, nextRuntime }) {

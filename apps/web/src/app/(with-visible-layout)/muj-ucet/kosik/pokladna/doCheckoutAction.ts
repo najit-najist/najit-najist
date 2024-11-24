@@ -1,6 +1,7 @@
 'use server';
 
 import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
+import { ThankYouOrder, ThankYouOrderAdmin, render } from '@email';
 import { ComgateClient } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
 import { eq, inArray, sql } from '@najit-najist/database/drizzle';
@@ -20,11 +21,6 @@ import {
   userAddresses,
   userCarts,
 } from '@najit-najist/database/models';
-import {
-  ThankYouOrder,
-  ThankYouOrderAdmin,
-  render,
-} from '@najit-najist/email-templates';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { config } from '@server/config';
 import { logger } from '@server/logger';

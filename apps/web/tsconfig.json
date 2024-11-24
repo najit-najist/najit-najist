@@ -22,6 +22,7 @@
       "@components/*": ["./components/*"],
       "@server/*": ["./server/*"],
       "@client/*": ["./client/*"],
+      "@email/*": ["./email/*"],
       "@dayjs": ["./day"],
       "@app-components/*": ["./app/(with-visible-layout)/_components/*"]
     },
@@ -41,22 +42,19 @@
   "exclude": ["out", "build", "node_modules"],
   "references": [
     {
-      "path": "../../packages/ui",
+      "path": "../../packages/ui"
     },
     {
-      "path": "../../packages/comgate",
+      "path": "../../packages/comgate"
     },
     {
-      "path": "../../packages/email-templates",
+      "path": "../../packages/packeta"
     },
     {
-      "path": "../../packages/packeta",
+      "path": "../../packages/schemas"
     },
     {
-      "path": "../../packages/schemas",
-    },
-    {
-      "path": "../../packages/database",
-    },
-  ],
+      "path": "../../packages/database"
+    }
+  ]
 }

@@ -1,5 +1,6 @@
 'use server';
 
+import { OrderConfirmed, OrderShipped, render } from '@email';
 import { ComgateClient, ComgateResponseCode } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
@@ -9,11 +10,6 @@ import {
   OrderState,
   orders,
 } from '@najit-najist/database/models';
-import {
-  OrderConfirmed,
-  OrderShipped,
-  render,
-} from '@najit-najist/email-templates';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { config } from '@server/config';
