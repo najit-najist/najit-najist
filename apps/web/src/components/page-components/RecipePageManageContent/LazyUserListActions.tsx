@@ -1,6 +1,6 @@
 'use client';
 
-import { Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
 import dynamic from 'next/dynamic';
 
 export const LazyUserListActions = dynamic(
@@ -17,5 +17,5 @@ export const LazyUserListActions = dynamic(
         {/* <Skeleton className="w-9 h-9" /> */}
       </>
     ),
-  }
+  },
 );

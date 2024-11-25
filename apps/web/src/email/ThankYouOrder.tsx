@@ -1,6 +1,10 @@
+import { Alert } from '@components/common/Alert';
+import { Badge } from '@components/common/Badge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Price } from '@components/common/Price';
+import { dayjs } from '@dayjs';
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { products } from '@najit-najist/database/models';
-import { buttonStyles, Alert, Price, Badge } from '@najit-najist/ui';
 import {
   Column,
   Img,
@@ -20,7 +24,6 @@ import { PaperColumn } from './_components/PaperColumn';
 import { Spacing } from './_components/Spacing';
 import { Text } from './_components/Text';
 import { testOrder } from './constants';
-import { dayjs } from './day';
 import { getFileUrl } from './getFileUrl';
 import { OrderWithRelations } from './types';
 
@@ -63,7 +66,7 @@ const OrderProduct: FC<{
                   height: imageSize,
                   width: imageSize,
                 }),
-                siteOrigin
+                siteOrigin,
               ).toString()}
               width={imageSize}
               height={imageSize}
@@ -89,7 +92,7 @@ const OrderProduct: FC<{
         <Link
           className="underline"
           href={`https://najinajist.cz/produkty/${encodeURIComponent(
-            data.product.slug
+            data.product.slug,
           )}`}
         >
           {data.count}x {data.product.name}

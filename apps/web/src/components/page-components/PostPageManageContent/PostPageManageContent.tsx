@@ -1,10 +1,10 @@
+import { Breadcrumbs } from '@components/common/Breadcrumbs';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { PostWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { posts } from '@najit-najist/database/models';
-import { Breadcrumbs } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import clsx from 'clsx';
 import HTMLReactParser from 'html-react-parser';
@@ -80,19 +80,21 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           <div
             className={clsx(
               'grid grid-cols-1',
-              isImageShown ? 'lg:grid-cols-2 gap-9 lg:gap-10' : 'lg:grid-cols-3'
+              isImageShown
+                ? 'lg:grid-cols-2 gap-9 lg:gap-10'
+                : 'lg:grid-cols-3',
             )}
           >
             <div
               className={clsx(
                 'bg-[#388659] h-full lg:rounded-r-lg shadow-lg p-4',
-                isImageShown ? '' : 'col-span-2'
+                isImageShown ? '' : 'col-span-2',
               )}
             >
               <div
                 className={clsx(
                   'font-title sm:text-2xl mx-auto lg:ml-auto lg:mr-0 !leading-[2.5rem] tracking-wide w-full h-full max-w-[640px] md:max-w-3xl',
-                  isImageShown ? 'lg:max-w-2xl' : 'lg:max-w-[63rem]'
+                  isImageShown ? 'lg:max-w-2xl' : 'lg:max-w-[63rem]',
                 )}
               >
                 {props.viewType === 'view' ? (

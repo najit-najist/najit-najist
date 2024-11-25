@@ -1,28 +1,25 @@
 'use client';
 
+import { Button } from '@components/common/Button';
+import { Skeleton } from '@components/common/Skeleton';
+import { ErrorMessage } from '@components/common/form/ErrorMessage';
+import { Input } from '@components/common/form/Input';
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
-import { Button, ErrorMessage, Input, Skeleton } from '@najit-najist/ui';
 import dynamic from 'next/dynamic';
 import { FC, useCallback } from 'react';
-import {
-  Controller,
-  useFieldArray,
-  useFormContext,
-  useWatch,
-} from 'react-hook-form';
+import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
 import { RecipeFormData } from '../_types';
 
 const LazyEditor = dynamic(
-  () =>
-    import('@najit-najist/ui/editor').then(({ QuillEditor }) => QuillEditor),
+  () => import('../../../common/editor').then(({ QuillEditor }) => QuillEditor),
   {
     ssr: false,
     loading() {
       return <Skeleton rounded className="h-14" />;
     },
-  }
+  },
 );
 
 const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
@@ -44,7 +41,7 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
     (itemIndex: number) => () => {
       remove(itemIndex);
     },
-    [remove]
+    [remove],
   );
 
   return (
@@ -81,7 +78,7 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
                 `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
                 {
                   valueAsNumber: true,
-                }
+                },
               )}
             />
             <Controller
@@ -126,7 +123,7 @@ export const StepsEdit: FC = () => {
     (index: number) => () => {
       remove(index);
     },
-    [remove]
+    [remove],
   );
 
   return (

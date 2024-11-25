@@ -4,13 +4,13 @@ import { trpc } from '@client/trpc';
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
 import { PostWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@najit-najist/ui';
 import { postCreateInputSchema } from '@server/schemas/postCreateInputSchema';
 import { postUpdateInputSchema } from '@server/schemas/postUpdateInputSchema';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 import { ViewType } from '../_types';

@@ -1,8 +1,8 @@
 'use client';
 
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { Input } from '@components/common/form/Input';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { Input } from '@najit-najist/ui';
 import {
   Control,
   FieldError,

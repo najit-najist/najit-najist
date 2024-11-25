@@ -1,13 +1,12 @@
-// @ts-expect-error -- its okay
-import { getTheme } from '@najit-najist/tailwind-plugin/index.cjs';
 import { Head, Html, Img, Link, Tailwind } from '@react-email/components';
 import { FC, PropsWithChildren } from 'react';
 
+import tailwindTheme from '../../../tailwind.config';
 import { Attachment, BaseEmailProps } from '../types';
 import { Fonts } from './Fonts';
 import { Text } from './Text';
 
-const { plugins, ...theme } = getTheme();
+const { plugins, ...theme } = tailwindTheme;
 
 export const Layout: FC<
   PropsWithChildren<
@@ -19,7 +18,7 @@ export const Layout: FC<
   >
 > = ({ title, newsletterUuid, children, siteOrigin, attachments }) => {
   return (
-    <Tailwind config={theme}>
+    <Tailwind config={theme as any}>
       <Html lang="cs">
         <Head>
           <title>{title}</title>

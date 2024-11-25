@@ -1,6 +1,8 @@
+import { Badge } from '@components/common/Badge';
+import { Skeleton } from '@components/common/Skeleton';
+import { Tooltip } from '@components/common/Tooltip';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { Badge, Skeleton, Tooltip } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

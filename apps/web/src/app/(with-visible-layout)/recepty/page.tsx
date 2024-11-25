@@ -1,13 +1,13 @@
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { Skeleton } from '@components/common/Skeleton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import {
   RecipeCategory,
   RecipeDifficulty,
   recipes as recipesModel,
 } from '@najit-najist/database/models';
-import { Skeleton } from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';

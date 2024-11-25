@@ -1,5 +1,9 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
+import { Button } from '@components/common/Button';
+import { Input } from '@components/common/form/Input';
+import { PasswordInput } from '@components/common/form/PasswordInput';
 import {
   loginPageCallbacks,
   LOGIN_THEN_REDIRECT_TO_PARAMETER,
@@ -8,8 +12,6 @@ import {
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import { Button, Input, PasswordInput } from '@najit-najist/ui';
-import { Alert } from '@najit-najist/ui';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';

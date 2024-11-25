@@ -1,7 +1,8 @@
+import { Badge } from '@components/common/Badge';
+import { Price } from '@components/common/Price';
 import { AddToCartButton } from '@components/page-components/ProductPageManageContent/AddToCartButton';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { TruckIcon } from '@heroicons/react/20/solid';
-import { Badge, Price } from '@najit-najist/ui';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';

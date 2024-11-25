@@ -1,12 +1,14 @@
+import { Badge } from '@components/common/Badge';
+import { Price } from '@components/common/Price';
+import { Tooltip } from '@components/common/Tooltip';
+import { FormBreak } from '@components/common/form/FormBreak';
 import {
   ExclamationTriangleIcon,
   TagIcon,
   TruckIcon,
 } from '@heroicons/react/24/outline';
 import { products } from '@najit-najist/database/models';
-import { Badge, FormBreak, Price, Tooltip } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
-import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { ProductFromCart } from '@utils/getUserCart';
 import NextImage from 'next/image';
 import Link from 'next/link';

@@ -1,11 +1,11 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Tooltip } from '@components/common/Tooltip';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { Product } from '@najit-najist/database/models';
-import { Tooltip } from '@najit-najist/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';

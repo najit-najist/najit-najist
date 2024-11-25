@@ -1,15 +1,12 @@
 'use client';
 
+import { Checkbox } from '@components/common/form/Checkbox';
+import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
+import { FormBreak } from '@components/common/form/FormBreak';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
+import { Textarea } from '@components/common/form/Textarea';
 import { AddressFields } from '@components/page-components/EditUserUnderpage/AddressFields';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import {
-  Checkbox,
-  CheckboxWrapper,
-  FormBreak,
-  Input,
-  Textarea,
-  inputPrefixSuffixStyles,
-} from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 

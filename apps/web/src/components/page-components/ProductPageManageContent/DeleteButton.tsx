@@ -1,8 +1,8 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { ProductWithRelationsLocal } from '@custom-types/index';
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Button } from '@najit-najist/ui';
 import { useMutation } from '@tanstack/react-query';
 
 import { deleteProductAction } from './actions/deleteProductAction';

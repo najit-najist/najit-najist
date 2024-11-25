@@ -1,12 +1,13 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { Municipality } from '@najit-najist/database/models';
-import { Button, Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
@@ -43,7 +44,7 @@ export const SearchForm: FC<{
       if (address?.municipality) {
         searchParams.set(
           'address.municipality',
-          String(address.municipality.id)
+          String(address.municipality.id),
         );
       } else {
         searchParams.delete('address.municipality');
@@ -54,7 +55,7 @@ export const SearchForm: FC<{
         router.replace(`${route}?${searchParams.toString()}`);
       });
     },
-    [pathName, router]
+    [pathName, router],
   );
 
   const removeFilters = () => {

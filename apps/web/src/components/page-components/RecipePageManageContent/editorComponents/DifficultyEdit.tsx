@@ -1,10 +1,14 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { Modal } from '@components/common/Modal';
+import { ColorPicker } from '@components/common/form/ColorPicker';
+import { Input } from '@components/common/form/Input';
+import { Select } from '@components/common/form/Select';
 import { ErrorCodes, RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RecipeDifficulty } from '@najit-najist/database/models';
-import { Button, ColorPicker, Input, Modal, Select } from '@najit-najist/ui';
 import { recipeDifficultyCreateInputSchema } from '@server/schemas/recipeDifficultyCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useMemo, useState } from 'react';
@@ -38,7 +42,7 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
   const [addItemModalOpen, setAddItemModalOpen] = useState(false);
   const difficultiesSet = useMemo(
     () => new Map(difficulties.items.map((item) => [item.id, item])),
-    [difficulties]
+    [difficulties],
   );
 
   const closeModal = () => {
@@ -83,7 +87,7 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
             selected={difficultiesSet.get(
               typeof field.value === 'string'
                 ? Number(field.value)
-                : (field.value as RecipeDifficulty)?.id
+                : (field.value as RecipeDifficulty)?.id,
             )}
             formatter={({ name }) => name}
             items={difficulties.items}

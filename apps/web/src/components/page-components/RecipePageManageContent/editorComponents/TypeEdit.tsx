@@ -1,10 +1,13 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { Modal } from '@components/common/Modal';
+import { Input } from '@components/common/form/Input';
+import { Select } from '@components/common/form/Select';
 import { ErrorCodes } from '@custom-types/ErrorCodes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RecipeCategory } from '@najit-najist/database/models';
-import { Button, Input, Modal, Select } from '@najit-najist/ui';
 import { recipeCategoryCreateInputSchema } from '@server/schemas/recipeCategoryCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useMemo, useState } from 'react';
@@ -29,7 +32,7 @@ export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   const { mutateAsync: create } = trpc.recipes.types.create.useMutation();
@@ -41,7 +44,7 @@ export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
   const [addItemModalOpen, setAddItemModalOpen] = useState(false);
   const typesSet = useMemo(
     () => new Map(types.items.map((item) => [item.id, item])),
-    [types]
+    [types],
   );
 
   const closeModal = () => {
@@ -77,7 +80,7 @@ export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
           <Select<RecipeCategory>
             name={field.name}
             selected={typesSet.get(
-              typeof field.value === 'number' ? field.value : field.value?.id
+              typeof field.value === 'number' ? field.value : field.value?.id,
             )}
             formatter={({ title }) => title}
             items={types.items}

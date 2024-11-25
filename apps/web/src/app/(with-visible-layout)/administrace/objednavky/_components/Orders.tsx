@@ -1,8 +1,8 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
+import { Badge } from '@components/common/Badge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
-import { Badge } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import Link from 'next/link';
 import { FC } from 'react';

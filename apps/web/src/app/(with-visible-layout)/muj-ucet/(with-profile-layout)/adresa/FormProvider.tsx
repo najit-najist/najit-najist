@@ -2,7 +2,6 @@
 
 import { updateMyAddressAction } from '@components/page-components/EditMyProfileContent/actions/updateMyAddressAction';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@najit-najist/ui';
 import { userAddressUpdateInputSchema } from '@server/schemas/userAddressUpdateInputSchema';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import {
@@ -11,6 +10,7 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 export function getChangedValues<G extends Record<any, any>>(

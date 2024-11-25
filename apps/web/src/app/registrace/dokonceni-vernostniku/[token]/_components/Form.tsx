@@ -1,10 +1,12 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { ErrorMessage } from '@components/common/form/ErrorMessage';
+import { FormBreak } from '@components/common/form/FormBreak';
 import { loginPageCallbacks } from '@constants';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, ErrorMessage, FormBreak } from '@najit-najist/ui';
 import { verifyRegistrationFromPreviewInputSchema } from '@server/schemas/verifyRegistrationFromPreviewInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
@@ -34,7 +36,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
     try {
       await finishRegistration(values);
       router.push(
-        `/login?${loginPageCallbacks.previewRegistrationFinished}=true`
+        `/login?${loginPageCallbacks.previewRegistrationFinished}=true`,
       );
     } catch (error) {
       setError('root', {

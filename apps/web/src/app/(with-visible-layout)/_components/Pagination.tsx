@@ -1,12 +1,12 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import {
   ChevronDoubleLeftIcon,
   ChevronDoubleRightIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
 } from '@heroicons/react/24/solid';
-import { Button } from '@najit-najist/ui';
 import { useRouter } from 'next/navigation';
 import { FC, useTransition } from 'react';
 

@@ -47,7 +47,7 @@ export type {
   FileAttachment,
   LinkAttachment,
   NewsletterComponent,
-} from './types.js';
+} from './types';
 
 export { render } from '@react-email/render';
 

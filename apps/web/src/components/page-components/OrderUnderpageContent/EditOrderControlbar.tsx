@@ -1,8 +1,10 @@
+import { Alert } from '@components/common/Alert';
+import { Paper } from '@components/common/Paper';
+import { Label } from '@components/common/form/Label';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { dayjs } from '@dayjs';
 import { ClockIcon, InformationCircleIcon } from '@heroicons/react/24/outline';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { Alert, Label, Paper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import clsx from 'clsx';
 import { FC } from 'react';
@@ -81,7 +83,7 @@ export const EditOrderControllbar: FC<
       <div
         className={clsx(
           orderIsFinished || orderIsDropped ? 'opacity-50' : '',
-          'pt-3'
+          'pt-3',
         )}
       >
         <Label>Změna stavu objednávky</Label>
@@ -115,10 +117,10 @@ export const EditOrderControllbar: FC<
                     Math.min(1, pickupDateAsDayjs.diff(dayjs.tz(), 'minutes')) <
                     1
                       ? `Osobní odběr byl ${pickupDateAsDayjs.format(
-                          DEFAULT_DATE_FORMAT
+                          DEFAULT_DATE_FORMAT,
                         )}`
                       : `Osobní odběr je ${pickupDateAsDayjs.format(
-                          DEFAULT_DATE_FORMAT
+                          DEFAULT_DATE_FORMAT,
                         )}`
                   }
                 ></Alert>

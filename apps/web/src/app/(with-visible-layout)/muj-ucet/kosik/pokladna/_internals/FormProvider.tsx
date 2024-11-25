@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
-import { toast } from '@najit-najist/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
@@ -21,6 +20,7 @@ import {
   SubmitHandler,
   useForm,
 } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { doCheckoutAction } from '../doCheckoutAction';
 import { FormValues } from './types';

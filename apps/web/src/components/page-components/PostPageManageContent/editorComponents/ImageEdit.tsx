@@ -1,11 +1,12 @@
 'use client';
 
+import { Button } from '@components/common/Button';
+import { Tooltip } from '@components/common/Tooltip';
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import { TrashIcon } from '@heroicons/react/20/solid';
 import { ArrowPathIcon, PhotoIcon } from '@heroicons/react/24/outline';
 import { Post, posts } from '@najit-najist/database/models';
 import { IMAGE_FILE_REGEX, isFileBase64 } from '@najit-najist/schemas';
-import { Button, Tooltip } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { readFile } from '@utils';
 import Image from 'next/image';
@@ -36,7 +37,7 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
     try {
       setValue(
         FIELD_NAME,
-        await readFile(file, { filter: IMAGE_FILE_REGEX, width: 600 })
+        await readFile(file, { filter: IMAGE_FILE_REGEX, width: 600 }),
       );
     } catch (error) {
       setError(FIELD_NAME, {

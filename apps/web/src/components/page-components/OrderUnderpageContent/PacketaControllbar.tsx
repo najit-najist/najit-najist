@@ -1,9 +1,11 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Paper } from '@components/common/Paper';
+import { Tooltip } from '@components/common/Tooltip';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { database } from '@najit-najist/database';
 import { Order } from '@najit-najist/database/models';
 import { PacketaPacketStatusCode } from '@najit-najist/packeta';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
-import { Paper, Tooltip, buttonStyles } from '@najit-najist/ui';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import Link from 'next/link';
@@ -32,7 +34,7 @@ export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
             <div
               className={clsx(
                 index === allItems.length - 1 ? 'h-6' : '-bottom-6',
-                'absolute left-0 top-0 flex w-6 justify-center'
+                'absolute left-0 top-0 flex w-6 justify-center',
               )}
             >
               <div className="w-px bg-gray-200" />

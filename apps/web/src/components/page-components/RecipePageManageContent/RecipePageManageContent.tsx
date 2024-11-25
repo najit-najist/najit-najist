@@ -1,6 +1,7 @@
+import { Breadcrumbs } from '@components/common/Breadcrumbs';
+import { Skeleton } from '@components/common/Skeleton';
 import { RecipeWithRelations } from '@custom-types';
 import { recipes } from '@najit-najist/database/models';
-import { Breadcrumbs, Skeleton } from '@najit-najist/ui';
 import { extractTimeFromSteps } from '@server/utils/extractTimeFromSteps';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getFileUrl } from '@server/utils/getFileUrl';

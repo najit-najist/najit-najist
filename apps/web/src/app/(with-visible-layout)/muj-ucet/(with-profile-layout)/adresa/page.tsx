@@ -1,5 +1,4 @@
 import { Section } from '@components/portal';
-import { Button } from '@najit-najist/ui';
 import { getAuthorizedUserOrRequestLogin } from '@server/utils/getAuthorizedUserOrRequestLogin';
 
 import { Addresses } from './Addresses';

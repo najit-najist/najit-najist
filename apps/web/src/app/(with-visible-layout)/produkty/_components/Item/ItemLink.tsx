@@ -1,6 +1,6 @@
 'use client';
 
-import { buttonStyles } from '@najit-najist/ui';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
 import { FC } from 'react';

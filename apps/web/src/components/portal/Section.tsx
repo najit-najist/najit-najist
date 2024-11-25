@@ -1,6 +1,6 @@
 'use client';
 
-import { Paper } from '@najit-najist/ui';
+import { Paper } from '@components/common/Paper';
 import clsx from 'clsx';
 import { FC, PropsWithChildren } from 'react';
 
@@ -16,7 +16,7 @@ export const Section: FC<
       className={clsx(
         'py-3 w-full divide-y divide-gray-200',
         className,
-        customSpace ? '' : 'space-y-2 sm:space-y-3'
+        customSpace ? '' : 'space-y-2 sm:space-y-3',
       )}
     >
       {children}

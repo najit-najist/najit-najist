@@ -1,11 +1,14 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { Modal } from '@components/common/Modal';
+import { Input } from '@components/common/form/Input';
+import { Select } from '@components/common/form/Select';
 import { AppRouterInput } from '@custom-types/AppRouter';
 import { ErrorCodes } from '@custom-types/ErrorCodes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProductCategory } from '@najit-najist/database/models';
-import { Button, Input, Modal, Select } from '@najit-najist/ui';
 import { productCategoryCreateInputSchema } from '@server/schemas/productCategoryCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC, useState } from 'react';
@@ -27,7 +30,7 @@ export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-    }
+    },
   );
 
   const { mutateAsync: create } = trpc.products.categories.create.useMutation();

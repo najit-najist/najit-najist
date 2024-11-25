@@ -1,8 +1,8 @@
 'use client';
 
+import { getFileUrl } from '@components/common/internal/getFileUrl';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
 import { recipes } from '@najit-najist/database/models';
-import { getFileUrl } from '@najit-najist/ui/src/internal/getFileUrl';
 import clsx from 'clsx';
 import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { FC } from 'react';
 
 const arrowButtonClassName = clsx(
-  'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r'
+  'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r',
 );
 const arrowClassName = clsx('w-4 h-4');
 

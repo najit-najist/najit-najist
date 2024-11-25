@@ -1,5 +1,5 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { LinkIcon } from '@heroicons/react/24/outline';
-import { buttonStyles } from '@najit-najist/ui';
 import { Button, Column, Row, Section } from '@react-email/components';
 
 import { CenteredRow } from './_components/CenteredRow';

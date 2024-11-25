@@ -1,5 +1,5 @@
 import { PasswordStrengthMeter } from '@components/common/PasswordStrengthMeter';
-import { PasswordInput } from '@najit-najist/ui';
+import { PasswordInput } from '@components/common/form/PasswordInput';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 

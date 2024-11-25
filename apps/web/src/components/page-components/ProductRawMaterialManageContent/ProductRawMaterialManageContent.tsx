@@ -1,8 +1,10 @@
+import { Badge } from '@components/common/Badge';
+import { Paper, PaperHeader } from '@components/common/Paper';
+import { Skeleton } from '@components/common/Skeleton';
 import { Section } from '@components/portal';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
 import { database } from '@najit-najist/database';
 import { ProductRawMaterial } from '@najit-najist/database/models';
-import { Badge, Paper, PaperHeader, Skeleton } from '@najit-najist/ui';
 import Link from 'next/link';
 import { Suspense } from 'react';
 

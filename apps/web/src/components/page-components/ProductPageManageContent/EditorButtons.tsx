@@ -1,7 +1,8 @@
 'use client';
 
+import { Button } from '@components/common/Button';
+import { Switch } from '@components/common/form/Switch';
 import { dayjs } from '@dayjs';
-import { Button, Switch } from '@najit-najist/ui';
 import { FC, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 

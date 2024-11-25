@@ -1,12 +1,14 @@
+import { Alert } from '@components/common/Alert';
+import { Button } from '@components/common/Button';
+import { Skeleton } from '@components/common/Skeleton';
+import { ErrorMessage } from '@components/common/form/ErrorMessage';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { TruckIcon } from '@heroicons/react/24/outline';
-import { Order } from '@najit-najist/database/models';
 import {
   PacketaPoint,
   PacketaPointError,
   getPacketaScriptUrl,
 } from '@najit-najist/packeta';
-import { Alert, Button, ErrorMessage, Skeleton } from '@najit-najist/ui';
 import Image from 'next/image';
 import Script from 'next/script';
 import { FC, useState } from 'react';
@@ -135,7 +137,7 @@ export const PacketaPickupDelivery: FC = () => {
                   window.Packeta?.Widget.pick(
                     process.env.NEXT_PUBLIC_PACKETA_KEY!,
                     field.onChange,
-                    { language: 'cs' }
+                    { language: 'cs' },
                   )
                 }
               >

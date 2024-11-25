@@ -1,5 +1,8 @@
+import { Badge } from '@components/common/Badge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Skeleton } from '@components/common/Skeleton';
 import { LazyUserListActions } from '@components/page-components/RecipePageManageContent/LazyUserListActions';
-import { RecipeWithRelations, UserWithRelations } from '@custom-types';
+import { RecipeWithRelations } from '@custom-types';
 import {
   AcademicCapIcon,
   ArchiveBoxIcon,
@@ -7,7 +10,6 @@ import {
   PencilIcon,
 } from '@heroicons/react/24/outline';
 import { User, recipes } from '@najit-najist/database/models';
-import { Badge, Skeleton, buttonStyles } from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { extractTimeFromSteps } from '@server/utils/extractTimeFromSteps';
 import Link from 'next/link';

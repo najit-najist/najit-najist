@@ -1,12 +1,13 @@
 'use client';
 
+import { ErrorMessage } from '@components/common/form/ErrorMessage';
+import { RadioGroup } from '@components/common/form/RadioGroup';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { OrderPaymentMethodWithRelations } from '@custom-types';
 import {
   OrderDeliveryMethod,
   OrderPaymentMethodsSlugs,
 } from '@najit-najist/database/models';
-import { ErrorMessage, RadioGroup } from '@najit-najist/ui';
 import Image from 'next/image';
 import { FC, useMemo } from 'react';
 import { useController, useFormState, useWatch } from 'react-hook-form';
@@ -54,7 +55,7 @@ export const PaymentMethodFormPart: FC<{
 
         return item;
       }),
-    [paymentMethods]
+    [paymentMethods],
   );
 
   const filteredPaymentMethods = useMemo(
@@ -63,9 +64,9 @@ export const PaymentMethodFormPart: FC<{
         (item) =>
           !item.exceptDeliveryMethods
             .map(({ slug }) => slug)
-            .includes(selectedDeliverySlug)
+            .includes(selectedDeliverySlug),
       ),
-    [selectedDeliverySlug, mappedPaymentMethods]
+    [selectedDeliverySlug, mappedPaymentMethods],
   );
 
   if (!filteredPaymentMethods.length) {

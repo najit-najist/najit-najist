@@ -1,5 +1,9 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
+import { Badge } from '@components/common/Badge';
+import { Button } from '@components/common/Button';
+import { Skeleton } from '@components/common/Skeleton';
 import { ACCEPT_FILES_IMAGE } from '@constants';
 import {
   ArrowPathIcon,
@@ -11,7 +15,6 @@ import {
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { Recipe, recipes } from '@najit-najist/database/models';
 import { IMAGE_FILE_REGEX } from '@najit-najist/schemas';
-import { Alert, Badge, Button, Skeleton } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { readFile } from '@utils';
 import clsx from 'clsx';
@@ -83,7 +86,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
         }
       }
     },
-    [onItemUploadEnd, onUploadStart, value]
+    [onItemUploadEnd, onUploadStart, value],
   );
 
   const src = useMemo(
@@ -93,7 +96,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
           ? value
           : getFileUrl(recipes, recipeId, value)
         : value,
-    [recipeId, value]
+    [recipeId, value],
   );
 
   return (
@@ -190,19 +193,19 @@ export const ImagesEdit: FC<{ recipeId?: number }> = ({ recipeId }) => {
         defaultValue: [...values].filter(Boolean),
       });
     },
-    [getValues, resetField]
+    [getValues, resetField],
   );
 
   const onFirstUploadStart = useCallback<ImagePickerProps['onUploadStart']>(
     () => setIsMainImageUploading(true),
-    []
+    [],
   );
 
   const onUploadMultipleStart = useCallback<ImagePickerProps['onUploadStart']>(
     (items) => {
       setNumberOfUploadingFiles(items.length);
     },
-    []
+    [],
   );
 
   const onUploadMultipleItemEnd = useCallback<
@@ -235,7 +238,7 @@ export const ImagesEdit: FC<{ recipeId?: number }> = ({ recipeId }) => {
         return prev - 1;
       });
     },
-    [getValues, field]
+    [getValues, field],
   );
 
   const skeleton = (
@@ -280,7 +283,7 @@ export const ImagesEdit: FC<{ recipeId?: number }> = ({ recipeId }) => {
         {Array.from(new Array(numberOfUploadingFiles).fill('')).map(
           (_, key) => (
             <Fragment key={key}>{skeleton}</Fragment>
-          )
+          ),
         )}
         {field.value?.length >= 1 ? (
           <ImagePicker

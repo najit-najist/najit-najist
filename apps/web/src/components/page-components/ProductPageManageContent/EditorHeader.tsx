@@ -1,6 +1,6 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { buttonStyles } from '@najit-najist/ui';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { FC } from 'react';

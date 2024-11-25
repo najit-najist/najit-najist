@@ -1,11 +1,11 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { NumberInput } from '@components/common/form/NumberInput';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { UserCartProduct } from '@najit-najist/database/models';
-import { NumberInput } from '@najit-najist/ui';
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
@@ -41,7 +41,7 @@ export const CountInput: FC<{
         router.refresh();
       });
     },
-    300
+    300,
   );
 
   const handleCountChange = useCallback<ChangeEventHandler<HTMLInputElement>>(
@@ -50,7 +50,7 @@ export const CountInput: FC<{
 
       syncCartStateDebounced(nextValue);
     },
-    [syncCartStateDebounced]
+    [syncCartStateDebounced],
   );
 
   return (

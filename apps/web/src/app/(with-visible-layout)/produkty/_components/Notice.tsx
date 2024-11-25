@@ -1,7 +1,8 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
+import { Button } from '@components/common/Button';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { Alert, Button } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useCookies } from 'react-cookie';

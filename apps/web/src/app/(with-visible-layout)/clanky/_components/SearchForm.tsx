@@ -1,8 +1,8 @@
 'use client';
 
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
@@ -38,7 +38,7 @@ export const SearchForm: FC<{ initialData?: Partial<FormData> }> = ({
         router.replace(route);
       });
     },
-    [pathName, router]
+    [pathName, router],
   );
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
 import { PasswordStrengthMeter } from '@components/common/PasswordStrengthMeter';
+import { PasswordInput } from '@components/common/form/PasswordInput';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Button, PasswordInput } from '@najit-najist/ui';
 import { finalizeResetPasswordSchema } from '@server/schemas/userProfileResetPasswordInputSchema';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';

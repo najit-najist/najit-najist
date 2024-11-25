@@ -1,18 +1,18 @@
 'use client';
 
-import { FormControlWrapper, Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
+import { FormControlWrapper } from '@components/common/form/FormControlWrapper';
 import dynamic from 'next/dynamic';
 import { Controller } from 'react-hook-form';
 
 const LazyEditor = dynamic(
-  () =>
-    import('@najit-najist/ui/editor').then(({ QuillEditor }) => QuillEditor),
+  () => import('../../../common/editor').then(({ QuillEditor }) => QuillEditor),
   {
     ssr: false,
     loading() {
       return <Skeleton rounded className="h-40" />;
     },
-  }
+  },
 );
 
 export const DescriptionEdit = () => {

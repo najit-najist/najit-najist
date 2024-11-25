@@ -1,10 +1,11 @@
 import { Pagination } from '@app-components/Pagination';
+import { Badge } from '@components/common/Badge';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { Skeleton } from '@components/common/Skeleton';
 import { dayjs } from '@dayjs';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
-import { Badge, Skeleton } from '@najit-najist/ui';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { formatPrice } from '@utils';
 import { clsx } from 'clsx';

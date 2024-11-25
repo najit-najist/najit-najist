@@ -1,18 +1,17 @@
 'use client';
 
-import { Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
 import dynamic from 'next/dynamic';
 import { Controller } from 'react-hook-form';
 
 const LazyEditor = dynamic(
-  () =>
-    import('@najit-najist/ui/editor').then(({ QuillEditor }) => QuillEditor),
+  () => import('../../../common/editor').then(({ QuillEditor }) => QuillEditor),
   {
     ssr: false,
     loading() {
       return <Skeleton rounded className="h-full min-h-60" />;
     },
-  }
+  },
 );
 
 export const DescriptionEdit = () => {

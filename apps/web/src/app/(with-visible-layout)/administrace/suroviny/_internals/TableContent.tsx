@@ -1,5 +1,5 @@
+import { Badge } from '@components/common/Badge';
 import { database } from '@najit-najist/database';
-import { Badge } from '@najit-najist/ui';
 import Link from 'next/link';
 
 export async function TableContent() {

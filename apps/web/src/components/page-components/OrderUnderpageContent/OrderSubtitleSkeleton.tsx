@@ -1,4 +1,4 @@
-import { Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
 
 export const OrderSubtitleSkeleton = () => (
   <>

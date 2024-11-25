@@ -1,22 +1,19 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
+import { Checkbox } from '@components/common/form/Checkbox';
+import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
+import { FormBreak } from '@components/common/form/FormBreak';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks';
-import {
-  Button,
-  Input,
-  FormBreak,
-  inputPrefixSuffixStyles,
-} from '@najit-najist/ui';
-import { CheckboxWrapper } from '@najit-najist/ui';
-import { Checkbox } from '@najit-najist/ui';
 import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldError, FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 
 import { FormValues } from '../_types/FormValues';
@@ -151,8 +148,8 @@ export const Content: FC = () => {
                 }
                 inputMode="numeric"
                 error={
-                  formState.errors.telephone?.telephone ??
-                  formState.errors.telephone
+                  (formState.errors.telephone?.telephone ??
+                    formState.errors.telephone) as FieldError | undefined
                 }
                 disabled={fieldsAreDisabled}
                 {...register('telephone.telephone')}

@@ -1,6 +1,9 @@
-import { Button, Checkbox, CheckboxWrapper, Input } from '@najit-najist/ui';
 import type { FC } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
+
+import { Button } from '../Button';
+import { Checkbox } from '../form/Checkbox';
+import { CheckboxWrapper } from '../form/CheckboxWrapper';
 
 interface FormState {
   analytics: boolean;

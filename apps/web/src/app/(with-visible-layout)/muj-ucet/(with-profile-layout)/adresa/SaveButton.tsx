@@ -1,6 +1,6 @@
 'use client';
 
-import { Button } from '@najit-najist/ui';
+import { Button } from '@components/common/Button';
 import { useFormContext } from 'react-hook-form';
 
 export const SaveButton = () => {

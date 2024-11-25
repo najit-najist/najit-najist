@@ -1,5 +1,5 @@
+import { Badge } from '@components/common/Badge';
 import { TruckIcon } from '@heroicons/react/24/solid';
-import { Badge } from '@najit-najist/ui';
 import { FC } from 'react';
 
 export const OnlyDeliveryMethodBadge: FC<{ onlyDeliveryMethods: string[] }> = ({

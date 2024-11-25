@@ -1,4 +1,4 @@
-import { Paper, PaperHeader } from '@najit-najist/ui';
+import { Paper, PaperHeader } from '@components/common/Paper';
 
 import { SearchForm } from './SearchForm';
 

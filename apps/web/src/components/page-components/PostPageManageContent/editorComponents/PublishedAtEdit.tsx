@@ -1,8 +1,8 @@
 'use client';
 
+import { Input } from '@components/common/form/Input';
 import { DATETIME_LOCAL_INPUT_FORMAT } from '@constants';
 import { dayjs } from '@dayjs';
-import { Input } from '@najit-najist/ui';
 import { ChangeEventHandler, FC } from 'react';
 import { Controller } from 'react-hook-form';
 

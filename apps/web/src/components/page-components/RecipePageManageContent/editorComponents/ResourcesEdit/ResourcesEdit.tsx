@@ -1,10 +1,13 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { ErrorMessage } from '@components/common/form/ErrorMessage';
+import { Input } from '@components/common/form/Input';
+import { Select } from '@components/common/form/Select';
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
-import { Button, ErrorMessage, Input, Select } from '@najit-najist/ui';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useController, useFieldArray, useFormContext } from 'react-hook-form';
 
@@ -33,11 +36,11 @@ const MetricSelect: FC<{
       refetchInterval: 0,
       refetchOnMount: false,
       refetchOnWindowFocus: false,
-    }
+    },
   );
   const metricsSet = useMemo(
     () => new Map(metrics.items.map((item) => [item.id, item])),
-    [metrics]
+    [metrics],
   );
 
   const addNewResourceMetric = useCallback(() => {
@@ -90,7 +93,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
         },
         description: '',
       },
-      { shouldFocus: true }
+      { shouldFocus: true },
     );
   }, [append]);
 
@@ -98,7 +101,7 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
     (index: number) => () => {
       remove(index);
     },
-    [remove]
+    [remove],
   );
 
   return (

@@ -1,14 +1,11 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
+import { Button } from '@components/common/Button';
+import { Tooltip } from '@components/common/Tooltip';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { ArrowPathIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { Coupon } from '@najit-najist/database/models';
-import {
-  Alert,
-  Button,
-  Input,
-  Tooltip,
-  inputPrefixSuffixStyles,
-} from '@najit-najist/ui';
 import { useMutation } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 import { useFormContext } from 'react-hook-form';

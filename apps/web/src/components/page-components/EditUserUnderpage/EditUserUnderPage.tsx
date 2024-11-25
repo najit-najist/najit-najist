@@ -1,14 +1,12 @@
 'use client';
 
+import { Button } from '@components/common/Button';
+import { Checkbox } from '@components/common/form/Checkbox';
+import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
+import { FormBreak } from '@components/common/form/FormBreak';
+import { Input } from '@components/common/form/Input';
 import { Section } from '@components/portal';
 import { User } from '@najit-najist/database/models';
-import {
-  Button,
-  Checkbox,
-  CheckboxWrapper,
-  FormBreak,
-  Input,
-} from '@najit-najist/ui';
 import { userProfileUpdateInputSchema } from '@server/schemas/userProfileUpdateInputSchema';
 import { PasswordInputs } from 'app/registrace/_components/PasswordInputs';
 import { FC, ReactNode } from 'react';

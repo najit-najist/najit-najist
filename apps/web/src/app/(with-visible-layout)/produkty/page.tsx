@@ -1,17 +1,14 @@
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import { Tooltip } from '@components/common/Tooltip';
 import { PlusIcon } from '@heroicons/react/24/outline';
 import {
   ProductCategory,
   products as productsModel,
 } from '@najit-najist/database/models';
-import {
-  BreadcrumbItem,
-  Breadcrumbs,
-  buttonStyles,
-  Tooltip,
-} from '@najit-najist/ui';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getProductCategories } from '@server/utils/getProductCategories';

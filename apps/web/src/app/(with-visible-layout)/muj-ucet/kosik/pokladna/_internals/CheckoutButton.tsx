@@ -1,7 +1,7 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
-import { Button } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext, useWatch } from 'react-hook-form';
 
@@ -16,8 +16,8 @@ export const CheckoutButton: FC = () => {
   const buttonText = isDisabled
     ? 'Pracuji...'
     : paymentMethod.payment_on_checkout
-    ? 'Odeslat a zaplatit'
-    : 'Odeslat';
+      ? 'Odeslat a zaplatit'
+      : 'Odeslat';
 
   return (
     <Button

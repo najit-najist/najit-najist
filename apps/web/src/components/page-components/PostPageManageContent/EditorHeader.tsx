@@ -1,10 +1,12 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Switch } from '@components/common/form/Switch';
 import { PostWithRelations } from '@custom-types';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { Button, Switch, buttonStyles } from '@najit-najist/ui';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';

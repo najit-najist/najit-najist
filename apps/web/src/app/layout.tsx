@@ -1,7 +1,7 @@
 import { CookieBanner } from '@components/common/CookieBanner';
+import { Toaster } from '@components/common/toast';
 import { ContextProviders } from '@contexts';
 import { LayoutComponent } from '@custom-types';
-import { Toaster } from '@najit-najist/ui';
 import clsx from 'clsx';
 import 'keen-slider/keen-slider.min.css';
 import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';

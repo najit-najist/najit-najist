@@ -2,13 +2,13 @@
 
 import { RecipeWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@najit-najist/ui';
 import { recipeCreateInputSchema } from '@server/schemas/recipeCreateInputSchema';
 import { recipeUpdateInputSchema } from '@server/schemas/recipeUpdateInputSchema';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { RecipeFormData } from '../_types';
 import { createRecipeAction } from '../actions/createRecipeAction';

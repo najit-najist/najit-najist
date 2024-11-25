@@ -1,4 +1,4 @@
-import { Badge } from '@najit-najist/ui';
+import { Badge } from '@components/common/Badge';
 import Image, { StaticImageData } from 'next/image';
 import { FC } from 'react';
 

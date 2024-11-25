@@ -1,4 +1,4 @@
-import { Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
 import { FC } from 'react';
 
 import { OrderSubtitleSkeleton } from './OrderSubtitleSkeleton';

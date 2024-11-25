@@ -1,14 +1,11 @@
+import { Alert } from '@components/common/Alert';
+import { Badge } from '@components/common/Badge';
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { Price } from '@components/common/Price';
+import { Tooltip } from '@components/common/Tooltip';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
 import { products } from '@najit-najist/database/models';
-import {
-  Alert,
-  Badge,
-  BreadcrumbItem,
-  Breadcrumbs,
-  Price,
-  Tooltip,
-} from '@najit-najist/ui';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getFileUrl } from '@server/utils/getFileUrl';

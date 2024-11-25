@@ -1,8 +1,11 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
+import { Button } from '@components/common/Button';
+import { Input } from '@components/common/form/Input';
 import { ArrowRightIcon } from '@heroicons/react/24/outline';
-import { Alert, Button, Input } from '@najit-najist/ui';
 import { useSearchParams } from 'next/navigation';
+
 import { initiateSecretSession } from './_action';
 
 export default function Page() {

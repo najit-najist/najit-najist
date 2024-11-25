@@ -1,11 +1,11 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import {
   OrderDeliveryMethod,
   OrderPaymentMethod,
 } from '@najit-najist/database/models';
-import { Alert } from '@najit-najist/ui';
 import { formatPrice, getTotalPrice } from '@utils';
 import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import clsx from 'clsx';

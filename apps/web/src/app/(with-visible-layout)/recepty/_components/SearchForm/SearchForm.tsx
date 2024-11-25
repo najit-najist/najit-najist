@@ -1,5 +1,7 @@
 'use client';
 
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
+import { Select } from '@components/common/form/Select';
 import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
@@ -8,7 +10,6 @@ import {
   RecipeCategory,
   RecipeDifficulty,
 } from '@najit-najist/database/models';
-import { Input, Select, inputPrefixSuffixStyles } from '@najit-najist/ui';
 import debounce from 'lodash.debounce';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
@@ -35,11 +36,11 @@ export const SearchForm: FC<{
   const { handleSubmit, register, watch } = formMethods;
   const difficultiesMap = useMemo(
     () => new Map(difficulties.map((item) => [item.slug, item])),
-    [difficulties]
+    [difficulties],
   );
   const typesAsMap = useMemo(
     () => new Map(types.map((item) => [item.slug, item])),
-    [types]
+    [types],
   );
 
   const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
@@ -62,7 +63,7 @@ export const SearchForm: FC<{
         router.push(route);
       });
     },
-    [router]
+    [router],
   );
 
   useEffect(() => {

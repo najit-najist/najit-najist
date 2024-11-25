@@ -1,9 +1,9 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { DATABASE_TIME_FORMAT, DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
 import { getTotalPrice } from '@najit-najist/comgate';
-import { buttonStyles } from '@najit-najist/ui';
 import { formatPrice } from '@utils';
 import Link from 'next/link';
 import { FC } from 'react';

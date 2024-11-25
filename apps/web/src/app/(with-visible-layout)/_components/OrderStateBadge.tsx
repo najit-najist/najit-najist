@@ -1,5 +1,5 @@
+import { Badge, BadgeProps } from '@components/common/Badge';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { Badge, BadgeProps } from '@najit-najist/ui';
 import { FC } from 'react';
 
 const DEFAULT_COLOR: NonNullable<BadgeProps['color']> = 'gray';

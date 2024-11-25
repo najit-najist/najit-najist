@@ -1,9 +1,10 @@
 import { trpc } from '@client/trpc';
 import { Municipality } from '@najit-najist/database/models';
-import { Combobox, ComboboxProps } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebounceValue } from 'usehooks-ts';
+
+import { Combobox, ComboboxProps } from './form/Combobox';
 
 export const MunicipalitySelect: FC<
   Pick<ComboboxProps, 'className' | 'required' | 'label' | 'size'> & {

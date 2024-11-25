@@ -1,15 +1,10 @@
 import { Pagination } from '@app-components/Pagination';
-import { PageHeader } from '@components/common/PageHeader';
-import { PageTitle } from '@components/common/PageTitle';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { Skeleton } from '@najit-najist/ui';
+import { Skeleton } from '@components/common/Skeleton';
+import { Section } from '@components/portal';
 import { getCachedAuthenticatedUser } from '@server/utils/getCachedAuthenticatedUser';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
-import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 
-import { Orders } from './_components/Orders';
-import { Section } from '@components/portal';
 import { OrderPreviewItem } from '../_components/OrderPreviewItem';
 
 export const metadata = {
@@ -35,13 +30,12 @@ const List: FC = async () => {
   return (
     <div>
       <ul role="list" className="divide-y divide-gray-100">
-        {orders.items.map((order) => <OrderPreviewItem key={order.id} order={order} />)}
+        {orders.items.map((order) => (
+          <OrderPreviewItem key={order.id} order={order} />
+        ))}
       </ul>
 
-      <Pagination
-        currentPage={orders.page}
-        totalPages={orders.totalPages}
-      />
+      <Pagination currentPage={orders.page} totalPages={orders.totalPages} />
     </div>
   );
 };
@@ -50,11 +44,9 @@ export default function Page() {
   return (
     <Section>
       <div className="px-5 flex justify-between items-center">
-          <h1 className="text-2xl font-title tracking-wide">
-            {metadata.title}
-          </h1>
-        </div>
-        {/* <SearchForm
+        <h1 className="text-2xl font-title tracking-wide">{metadata.title}</h1>
+      </div>
+      {/* <SearchForm
           initialData={{
             query,
             address: selectedMunicipality
@@ -62,24 +54,24 @@ export default function Page() {
               : undefined,
           }}
         /> */}
-          <div className="inline-block min-w-full py-2 align-middle overflow-x-auto px-5">
-            <Suspense
-              fallback={
-                <>
-                  <Skeleton className="w-full h-9" />
-                  {new Array(8).fill(true).map((_, index) => (
-                    <Skeleton key={index} className="w-full h-12 mt-2" />
-                  ))}
-                  <div className="flex justify-between gap-2 mt-1">
-                    <Skeleton className="h-9 w-full max-w-24" />
-                    <Skeleton className="h-9 w-full max-w-[220px]" />
-                  </div>
-                </>
-              }
-            >
-              <List />
-            </Suspense>
-          </div>
+      <div className="inline-block min-w-full py-2 align-middle overflow-x-auto px-5">
+        <Suspense
+          fallback={
+            <>
+              <Skeleton className="w-full h-9" />
+              {new Array(8).fill(true).map((_, index) => (
+                <Skeleton key={index} className="w-full h-12 mt-2" />
+              ))}
+              <div className="flex justify-between gap-2 mt-1">
+                <Skeleton className="h-9 w-full max-w-24" />
+                <Skeleton className="h-9 w-full max-w-[220px]" />
+              </div>
+            </>
+          }
+        >
+          <List />
+        </Suspense>
+      </div>
     </Section>
   );
 }

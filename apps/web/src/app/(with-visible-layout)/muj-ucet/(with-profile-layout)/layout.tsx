@@ -1,5 +1,5 @@
+import { Tooltip } from '@components/common/Tooltip';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
-import { Tooltip } from '@najit-najist/ui';
 import { getAuthorizedUserOrRequestLogin } from '@server/utils/getAuthorizedUserOrRequestLogin';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { PropsWithChildren } from 'react';

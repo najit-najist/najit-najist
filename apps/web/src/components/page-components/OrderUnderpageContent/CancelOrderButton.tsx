@@ -1,7 +1,7 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { TrashIcon } from '@heroicons/react/24/solid';
-import { Button } from '@najit-najist/ui';
 import { FC } from 'react';
 
 export const CancelOrderButton: FC = () => {

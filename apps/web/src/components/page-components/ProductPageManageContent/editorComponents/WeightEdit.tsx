@@ -1,6 +1,6 @@
 'use client';
 
-import { Input, inputPrefixSuffixStyles } from '@najit-najist/ui';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { ReactElement } from 'react';
 import { useFormContext } from 'react-hook-form';
 

@@ -23,6 +23,7 @@
       "@server/*": ["./server/*"],
       "@client/*": ["./client/*"],
       "@email/*": ["./email/*"],
+      "@email": ["./email"],
       "@dayjs": ["./day"],
       "@app-components/*": ["./app/(with-visible-layout)/_components/*"]
     },

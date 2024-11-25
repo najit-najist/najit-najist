@@ -2,12 +2,12 @@
 
 import { ProductWithRelationsLocal } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { toast } from '@najit-najist/ui';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { FC, PropsWithChildren, useCallback } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { ProductFormData } from '../_types';
 import { createProductAction } from '../actions/createProductAction';

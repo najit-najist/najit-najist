@@ -1,9 +1,9 @@
+import { Badge } from '@components/common/Badge';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { UserWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
 import { UserIcon } from '@heroicons/react/24/outline';
 import { users as usersModel } from '@najit-najist/database/models';
-import { Badge } from '@najit-najist/ui';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import Image from 'next/image';

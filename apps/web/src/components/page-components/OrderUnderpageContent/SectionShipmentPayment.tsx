@@ -1,11 +1,9 @@
+import { Alert } from '@components/common/Alert';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { dayjs } from '@dayjs';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { PacketaPickupPointType } from '@najit-najist/packeta';
-import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
-import { Alert } from '@najit-najist/ui';
 import { FC } from 'react';
 
 import type { OrderUnderpageViewType } from './OrderUnderpageContent';

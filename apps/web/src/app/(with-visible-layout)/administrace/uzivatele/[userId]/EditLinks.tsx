@@ -1,9 +1,8 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { User, UserStates } from '@najit-najist/database/models';
-import { Button } from '@najit-najist/ui';
-import { useMutation } from '@tanstack/react-query';
 import clsx from 'clsx';
 import { useRouter } from 'next/navigation';
 import { FC, ReactElement, ReactNode, useTransition } from 'react';

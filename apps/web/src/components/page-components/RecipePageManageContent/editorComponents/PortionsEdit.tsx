@@ -1,7 +1,7 @@
 'use client';
 
+import { Input } from '@components/common/form/Input';
 import { Recipe } from '@najit-najist/database/models';
-import { Input } from '@najit-najist/ui';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
 

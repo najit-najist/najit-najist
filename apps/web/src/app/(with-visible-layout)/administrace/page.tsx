@@ -1,8 +1,9 @@
 import { PageTitle } from '@components/common/PageTitle';
+import { paperStyles } from '@components/common/Paper';
+import { Skeleton } from '@components/common/Skeleton';
 import { dayjs } from '@dayjs';
 import { EyeIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
-import { Skeleton, paperStyles } from '@najit-najist/ui';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getCachedUsers } from '@server/utils/getCachedUsers';

@@ -1,6 +1,7 @@
 'use client';
 
 import { Logo } from '@components/common/Logo';
+import { Menu, Transition } from '@headlessui/react';
 import {
   ShoppingBagIcon,
   TruckIcon,
@@ -10,7 +11,6 @@ import {
 import { Bars3Icon, SparklesIcon } from '@heroicons/react/24/solid';
 import { useUserCart } from '@hooks/useUserCart';
 import { User, UserRoles } from '@najit-najist/database/models';
-import { ErrorBoundary, Menu, Transition } from '@najit-najist/ui';
 import { SpecialSections, UserActions, canUser } from '@server/utils/canUser';
 import clsx from 'clsx';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
@@ -25,6 +25,7 @@ import {
   useMemo,
   useState,
 } from 'react';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const pillStyles = clsx(
   'inline-flex items-center min-w-[32px] text-center sm:text-left duration-100 whitespace-nowrap hover:shadow-md shadow-ocean-700 rounded-full py-1 px-3',

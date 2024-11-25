@@ -1,4 +1,4 @@
-import { BlockEditorCode } from '@najit-najist/ui/editor';
+import { BlockEditorCode } from '@components/common/editor';
 import {
   createContext,
   FC,

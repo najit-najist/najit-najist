@@ -23,10 +23,11 @@ let nextConfig = {
     ignoreDuringBuilds: false,
   },
   transpilePackages: [
-    '@najit-najist/ui',
+    '@najit-najist/comgate',
     '@najit-najist/database',
+    '@najit-najist/packeta',
     '@najit-najist/schemas',
-    '@najit-najist/tailwind-plugin',
+    '@najit-najist/security',
   ],
   webpack(config, { isServer, webpack, nextRuntime }) {
     config.externals.push('pino-pretty', 'thread-stream', 'encoding');

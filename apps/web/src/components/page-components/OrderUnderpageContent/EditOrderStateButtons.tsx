@@ -1,13 +1,14 @@
 'use client';
 
+import { Button } from '@components/common/Button';
 import { TrashIcon } from '@heroicons/react/24/outline';
 import { Order } from '@najit-najist/database/models';
-import { Button, toast } from '@najit-najist/ui';
 import { useMutation } from '@tanstack/react-query';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { updateOrderAction } from 'app/(with-visible-layout)/administrace/objednavky/[orderId]/updateAction';
 import { useRouter } from 'next/navigation';
 import { FC, MouseEventHandler, useCallback, useTransition } from 'react';
+import { toast } from 'sonner';
 
 type OrderState = Order['state'];
 

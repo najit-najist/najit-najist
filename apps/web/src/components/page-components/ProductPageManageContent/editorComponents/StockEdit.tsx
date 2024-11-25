@@ -1,13 +1,9 @@
 'use client';
 
+import { Checkbox, CheckboxProps } from '@components/common/form/Checkbox';
+import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { ProductStock } from '@najit-najist/database/models';
-import {
-  Checkbox,
-  CheckboxProps,
-  CheckboxWrapper,
-  Input,
-  inputPrefixSuffixStyles,
-} from '@najit-najist/ui';
 import { FC, useRef } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 

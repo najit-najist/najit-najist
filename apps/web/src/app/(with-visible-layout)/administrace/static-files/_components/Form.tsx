@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, Input } from '@najit-najist/ui';
+import { Button } from '@components/common/Button';
+import { Input } from '@components/common/form/Input';
 import { useMutation } from '@tanstack/react-query';
 import { ChangeEventHandler, FC } from 'react';
 import { FormProvider, useController, useForm } from 'react-hook-form';
@@ -14,7 +15,7 @@ export const Form: FC = () => {
         {
           method: 'POST',
           body: data,
-        }
+        },
       );
 
       if (!upload.ok) {

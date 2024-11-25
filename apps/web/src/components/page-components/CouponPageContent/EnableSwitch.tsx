@@ -1,6 +1,7 @@
 'use client';
 
-import { Label, Switch } from '@najit-najist/ui';
+import { Label } from '@components/common/form/Label';
+import { Switch } from '@components/common/form/Switch';
 import { ReactNode, useId } from 'react';
 import { Controller } from 'react-hook-form';
 

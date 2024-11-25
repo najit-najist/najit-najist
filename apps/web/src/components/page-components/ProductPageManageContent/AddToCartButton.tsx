@@ -1,11 +1,13 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Tooltip } from '@components/common/Tooltip';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { products } from '@najit-najist/database/models';
-import { Button, Tooltip, buttonStyles, toast } from '@najit-najist/ui';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { useQueryClient } from '@tanstack/react-query';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
@@ -13,6 +15,7 @@ import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FC, ReactElement, ReactNode, useCallback } from 'react';
+import { toast } from 'sonner';
 
 import { CustomImage } from './CustomImage';
 

@@ -1,9 +1,9 @@
+import { PaperHeader } from '@components/common/Paper';
 import { Section } from '@components/portal';
 import { DATETIME_LOCAL_INPUT_FORMAT } from '@constants';
 import { CouponWithRelations } from '@custom-types/CouponWithRelations';
 import { dayjs } from '@dayjs';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { PaperHeader } from '@najit-najist/ui';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 

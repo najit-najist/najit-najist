@@ -1,9 +1,9 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Alert } from '@components/common/Alert';
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { UserWithRelations } from '@custom-types';
-import { Alert } from '@najit-najist/ui';
 import { getChangedValues } from '@utils';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FC, ReactNode, useCallback } from 'react';
@@ -41,7 +41,7 @@ export const Content: FC<{
       });
       reset(undefined, { keepValues: true });
     },
-    [formState.dirtyFields, reset, updateProfile, user.address?.id, user.id]
+    [formState.dirtyFields, reset, updateProfile, user.address?.id, user.id],
   );
 
   const onDismissClick = () => {

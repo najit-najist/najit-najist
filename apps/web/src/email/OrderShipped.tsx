@@ -1,5 +1,5 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
-import { buttonStyles } from '@najit-najist/ui';
 import { Button, Column, Row, Section } from '@react-email/components';
 
 import { CenteredRow } from './_components/CenteredRow';
@@ -34,7 +34,7 @@ const localPickupInformation = {
 
 export const isLocalPickup = (
   // delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
-  delivery: any
+  delivery: any,
 ) => delivery?.slug === 'local-pickup';
 
 export default function OrderShipped({

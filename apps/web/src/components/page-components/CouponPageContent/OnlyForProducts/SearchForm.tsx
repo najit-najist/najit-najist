@@ -1,7 +1,15 @@
 'use client';
 
 import { trpc } from '@client/trpc';
+import { Paper } from '@components/common/Paper';
+import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { CouponWithRelations } from '@custom-types/CouponWithRelations';
+import {
+  Combobox,
+  ComboboxInput,
+  ComboboxOption,
+  ComboboxOptions,
+} from '@headlessui/react';
 import {
   ArrowPathIcon,
   CheckIcon,
@@ -10,13 +18,6 @@ import {
 } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { products } from '@najit-najist/database/models';
-import { Input, Paper, inputPrefixSuffixStyles } from '@najit-najist/ui';
-import {
-  Combobox,
-  ComboboxInput,
-  ComboboxOption,
-  ComboboxOptions,
-} from '@najit-najist/ui/headless';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import Image from 'next/image';
 import {

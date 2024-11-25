@@ -1,8 +1,10 @@
 import { trpc } from '@client/trpc';
+import { Button } from '@components/common/Button';
+import { Modal, ModalProps } from '@components/common/Modal';
+import { Input } from '@components/common/form/Input';
 import { ErrorCodes } from '@custom-types/ErrorCodes';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
-import { Button, Input, Modal, ModalProps } from '@najit-najist/ui';
 import { recipeResourceMetricCreateInputSchema } from '@server/schemas/recipeResourceMetricCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
 import { FC } from 'react';
@@ -34,7 +36,7 @@ export const AddMetricModal: FC<
           total: 1,
           ...currentQueryData,
           items: [...(currentQueryData?.items ?? []), result],
-        }
+        },
       );
       onCreated?.(result);
       onClose(false);

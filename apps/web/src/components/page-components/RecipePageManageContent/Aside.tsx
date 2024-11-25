@@ -1,9 +1,10 @@
 'use client';
 
+import { Paper } from '@components/common/Paper';
+import { Input } from '@components/common/form/Input';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { dayjs } from '@dayjs';
 import { Recipe } from '@najit-najist/database/models';
-import { Input, Paper } from '@najit-najist/ui';
 import { FC } from 'react';
 
 export const Aside: FC<Partial<Pick<Recipe, 'createdAt' | 'updatedAt'>>> = ({

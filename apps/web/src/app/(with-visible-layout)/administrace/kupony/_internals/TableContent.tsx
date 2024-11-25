@@ -1,7 +1,8 @@
+import { Badge } from '@components/common/Badge';
+import { Tooltip } from '@components/common/Tooltip';
 import { dayjs } from '@dayjs';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { database } from '@najit-najist/database';
-import { Badge, Tooltip } from '@najit-najist/ui';
 import { formatPrice } from '@utils';
 import { isCouponExpired } from '@utils/isCouponExpired';
 import Link from 'next/link';

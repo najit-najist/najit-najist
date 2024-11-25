@@ -1,6 +1,6 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { Order } from '@najit-najist/database/models';
-import { buttonStyles } from '@najit-najist/ui';
 import { Column, Row, Button, Section } from '@react-email/components';
 
 import { CenteredRow } from './_components/CenteredRow';

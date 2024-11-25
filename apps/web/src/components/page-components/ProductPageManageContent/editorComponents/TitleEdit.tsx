@@ -1,8 +1,9 @@
 'use client';
 
-import { Input } from '@najit-najist/ui';
+import { Input } from '@components/common/form/Input';
 import { FC } from 'react';
 import { useFormContext } from 'react-hook-form';
+
 import { ProductFormData } from '../_types';
 
 export const TitleEdit: FC = () => {

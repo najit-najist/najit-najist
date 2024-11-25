@@ -1,7 +1,7 @@
 'use client';
 
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { PageTitle } from '@components/common/PageTitle';
-import { buttonStyles } from '@najit-najist/ui';
 import Link from 'next/link';
 import { FC } from 'react';
 

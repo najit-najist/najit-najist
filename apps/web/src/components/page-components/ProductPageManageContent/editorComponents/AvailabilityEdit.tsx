@@ -1,8 +1,9 @@
 'use client';
 
+import { Checkbox, CheckboxProps } from '@components/common/form/Checkbox';
+import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
 import { AppRouterOutput, ProductWithRelationsLocal } from '@custom-types';
 import { OrderDeliveryMethod } from '@najit-najist/database/models';
-import { Checkbox, CheckboxProps, CheckboxWrapper } from '@najit-najist/ui';
 import { isLocalPickup } from '@utils';
 import { FC, useMemo } from 'react';
 import { useController } from 'react-hook-form';

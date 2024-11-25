@@ -1,5 +1,6 @@
 import { FC } from 'react';
-import { Text } from './Text.js';
+
+import { Text } from './Text';
 
 export const Waver: FC = () => {
   return (
