@@ -5,6 +5,7 @@ import { getCachedOrders } from '@server/utils/getCachedOrders';
 import Link from 'next/link';
 
 import { OrderPreviewItem } from '../_components/OrderPreviewItem';
+import { LogoutLink } from './LogoutLink';
 
 const MAX_NUMBER_OF_ORDERS = 6;
 export const revalidate = 0;
@@ -29,12 +30,7 @@ export default async function Page() {
             Vítejte, {user.firstName} {user.lastName}!
           </h1>
 
-          <Link
-            href="/logout"
-            className="text-red-500 hover:underline font-medium text-lg"
-          >
-            Odhlásit se
-          </Link>
+          <LogoutLink />
         </div>
       </Section>
       <Section>
