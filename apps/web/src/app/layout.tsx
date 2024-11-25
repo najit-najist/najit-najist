@@ -1,6 +1,6 @@
 import { CookieBanner } from '@components/common/CookieBanner';
 import { Toaster } from '@components/common/toast';
-import { ContextProviders } from '@contexts';
+import { ContextProviders } from '@contexts/ContextProviders';
 import { LayoutComponent } from '@custom-types';
 import clsx from 'clsx';
 import 'keen-slider/keen-slider.min.css';
