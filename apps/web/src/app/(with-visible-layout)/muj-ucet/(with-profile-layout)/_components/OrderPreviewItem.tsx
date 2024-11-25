@@ -3,8 +3,8 @@ import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { DATABASE_TIME_FORMAT, DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
-import { getTotalPrice } from '@najit-najist/comgate';
 import { formatPrice } from '@utils';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -40,7 +40,7 @@ export const OrderPreviewItem: FC<{
           <circle r={1} cx={1} cy={1} />
         </svg>
         <p className="whitespace-nowrap font-bold">
-          {formatPrice(getTotalPrice(order))}
+          {formatPrice(orderGetTotalPrice(order))}
         </p>
       </div>
     </div>

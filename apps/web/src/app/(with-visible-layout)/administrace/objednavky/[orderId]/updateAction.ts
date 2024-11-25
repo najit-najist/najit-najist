@@ -1,7 +1,7 @@
 'use server';
 
 import { OrderConfirmed, OrderShipped, render } from '@email';
-import { ComgateClient, ComgateResponseCode } from '@najit-najist/comgate';
+import { ComgateResponseCode } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import {
@@ -18,6 +18,9 @@ import { MailService } from '@server/services/Mail.service';
 import { getOrderById } from '@server/utils/server';
 import { isLocalPickup } from '@utils';
 import { getPerfTracker } from '@utils/getPerfTracker';
+import { orderGetComgateRefId } from '@utils/orderGetComgateRefId';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
+import { comgateClient } from 'comgateClient';
 import { revalidatePath } from 'next/cache';
 import { notFound } from 'next/navigation';
 import { z } from 'zod';
@@ -107,7 +110,7 @@ const onOrderDropped: OrderStateListener = async (order) => {
     });
 
     if (comgatePayment) {
-      const paymentCancelResponse = await ComgateClient.cancelPayment(
+      const paymentCancelResponse = await comgateClient.cancelPayment(
         comgatePayment.transactionId,
       );
 
@@ -117,11 +120,20 @@ const onOrderDropped: OrderStateListener = async (order) => {
           'Could not cancel payment, we will try to refund',
         );
 
-        const paymentRefundResponse = await ComgateClient.refundPaymentForOrder(
-          {
+        const { comgatePayment: orderComgatePayment } = order;
+
+        if (!orderComgatePayment) {
+          throw new Error(
+            'Could not find comgate payment in database for order',
+          );
+        }
+
+        const paymentRefundResponse = await comgateClient.refundPayment(
+          orderGetComgateRefId({
             ...order,
-            comgatePayment,
-          },
+            comgatePayment: orderComgatePayment,
+          }),
+          orderGetTotalPrice(order),
         );
 
         if (paymentRefundResponse.data.code !== ComgateResponseCode.OK) {
@@ -132,7 +144,7 @@ const onOrderDropped: OrderStateListener = async (order) => {
         }
       }
     } else {
-      logger.warn(
+      logger.fatal(
         { order },
         'Could not find comgate payment for dropped order event',
       );

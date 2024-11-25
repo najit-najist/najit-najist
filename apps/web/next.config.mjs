@@ -10,7 +10,6 @@ process.env.BUILD_TIMESTAMP = Date.now().toString();
 let nextConfig = {
   // reactStrictMode: true,
   output: process.env.STANDALONE === 'true' ? 'standalone' : undefined,
-  swcMinify: true,
   images: {
     remotePatterns: [
       {

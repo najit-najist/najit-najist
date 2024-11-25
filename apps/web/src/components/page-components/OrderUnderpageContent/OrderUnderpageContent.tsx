@@ -3,7 +3,8 @@ import { Skeleton } from '@components/common/Skeleton';
 import { Tooltip } from '@components/common/Tooltip';
 import { database } from '@najit-najist/database';
 import { Order, OrderState } from '@najit-najist/database/models';
-import { formatPrice, getTotalPrice } from '@utils';
+import { formatPrice } from '@utils';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { FC, Suspense } from 'react';
@@ -226,12 +227,12 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                     <>
                       <s>
                         {formatPrice(
-                          getTotalPrice(order, { applyDiscount: false }),
+                          orderGetTotalPrice(order, { applyDiscount: false }),
                         )}
                       </s>{' '}
                     </>
                   ) : null}
-                  {formatPrice(getTotalPrice(order))}
+                  {formatPrice(orderGetTotalPrice(order))}
                 </dd>
               </div>
             </dl>

@@ -3,7 +3,8 @@ import { DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
 import { OrderState } from '@najit-najist/database/models';
-import { formatPrice, getTotalPrice } from '@utils';
+import { formatPrice } from '@utils';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -42,7 +43,7 @@ export const Orders: FC<{
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
               <div className="text-gray-500">
-                {formatPrice(getTotalPrice(order))}
+                {formatPrice(orderGetTotalPrice(order))}
               </div>
             </td>
 

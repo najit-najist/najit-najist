@@ -6,8 +6,9 @@ import {
   OrderDeliveryMethod,
   OrderPaymentMethod,
 } from '@najit-najist/database/models';
-import { formatPrice, getTotalPrice } from '@utils';
+import { formatPrice } from '@utils';
 import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import clsx from 'clsx';
 import { FC } from 'react';
 import { useWatch } from 'react-hook-form';
@@ -128,7 +129,7 @@ export const PriceList: FC<{
         <span>Celkově</span>
         <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
           {formatPrice(
-            getTotalPrice({
+            orderGetTotalPrice({
               deliveryMethodPrice: deliveryMethodPrice.formatted,
               paymentMethodPrice: selectedPaymentMethodPrice,
               subtotal: subtotal,

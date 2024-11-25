@@ -29,6 +29,7 @@ export const getOrderById = async (orderId: Order['id']) => {
           },
         },
       },
+      comgatePayment: true,
       paymentMethod: {
         with: {
           exceptDeliveryMethods: true,

@@ -25,6 +25,7 @@
       "@email/*": ["./email/*"],
       "@email": ["./email"],
       "@dayjs": ["./day"],
+      "@comgate-client": ["./comgateClient"],
       "@app-components/*": ["./app/(with-visible-layout)/_components/*"]
     },
     "plugins": [

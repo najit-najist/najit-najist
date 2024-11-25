@@ -1,4 +1,4 @@
-import { Order, OrderDeliveryMethod } from '@najit-najist/database/models';
+import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import { getMediaTypeFromBase64Url } from '@server/utils/getMediaTypeFromBase64Url';
 import { setFileNameToBase64 } from '@server/utils/setFileNameToBase64';
 import Compressor from 'compressorjs';
@@ -71,21 +71,6 @@ export const isLocalPickup = (
 export const isPacketaDeveliveryMethod = (
   delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>,
 ) => delivery.slug === 'send';
-
-export const getTotalPrice = (
-  order: Pick<
-    Order,
-    'subtotal' | 'deliveryMethodPrice' | 'paymentMethodPrice' | 'discount'
-  >,
-  { applyDiscount = true }: { applyDiscount?: boolean } = {},
-) => {
-  return (
-    order.subtotal +
-    (order.deliveryMethodPrice ?? 0) +
-    (order.paymentMethodPrice ?? 0) -
-    (applyDiscount ? order.discount : 0)
-  );
-};
 
 const currencyFormat = new Intl.NumberFormat('cs-CZ', {
   style: 'currency',

@@ -1,10 +1,10 @@
 'use server';
 
+import { comgateClient } from '@comgate-client';
 import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
 import { ThankYouOrder, ThankYouOrderAdmin, render } from '@email';
-import { ComgateClient } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
-import { eq, inArray, sql } from '@najit-najist/database/drizzle';
+import { eq, sql } from '@najit-najist/database/drizzle';
 import {
   Order,
   OrderDeliveryMethodsSlug,
@@ -28,12 +28,14 @@ import { MailService } from '@server/services/Mail.service';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
 import { getLoggedInUserId, getOrderById } from '@server/utils/server';
-import { getTotalPrice } from '@utils';
 import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { getPerfTracker } from '@utils/getPerfTracker';
 import { getUserCart } from '@utils/getUserCart';
 import { isCouponExpired } from '@utils/isCouponExpired';
+import { orderCreateComgateRefId } from '@utils/orderCreateComgateRefId';
+import { orderGetComgateRefId } from '@utils/orderGetComgateRefId';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { FieldError } from 'react-hook-form';
@@ -157,7 +159,7 @@ const trackEvent = async (orderId: Order['id']) => {
         'payment method': order.paymentMethod.name,
       },
       revenue: {
-        amount: getTotalPrice(order),
+        amount: orderGetTotalPrice(order),
         currency: 'CZK',
       },
     });
@@ -320,8 +322,10 @@ export const doCheckoutAction = createActionWithValidation(
         // Handle comgate payment as last thing
         if (paymentMethod.slug === OrderPaymentMethodsSlugs.BY_CARD) {
           const comgatePerf = perf.track('contact-comgate');
-          const comgatePayment = await ComgateClient.createPayment({
-            order,
+          const comgatePayment = await comgateClient.createPayment({
+            amount: orderGetTotalPrice(order),
+            email: order.email,
+            refId: orderCreateComgateRefId(order),
           });
           comgatePerf.stop();
 
@@ -350,10 +354,11 @@ export const doCheckoutAction = createActionWithValidation(
             addressId: packetaMeta.id,
             // TODO: this should be calculated from items
             weight: 1,
-            value: order.subtotal - order.discount,
+            value:
+              order.subtotal - order.discount + (order.paymentMethodPrice ?? 0),
             ...(input.paymentMethod!.slug === OrderPaymentMethodsSlugs.COD
               ? {
-                  cod: getTotalPrice(order),
+                  cod: orderGetTotalPrice(order),
                 }
               : {}),
           });

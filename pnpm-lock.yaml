@@ -353,9 +353,6 @@ importers:
 
   packages/comgate:
     dependencies:
-      '@najit-najist/database':
-        specifier: workspace:*
-        version: link:../database
       query-string:
         specifier: ^9.1.1
         version: 9.1.1

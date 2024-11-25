@@ -1,5 +1,5 @@
+import { comgateClient } from '@comgate-client';
 import {
-  ComgateClient,
   ComgateOrderState,
   isComgateStatusSuccessfulRequest,
 } from '@najit-najist/comgate';
@@ -36,7 +36,7 @@ export const GET = async (
     notFound();
   }
 
-  const { data: stateFromComgate } = await ComgateClient.getStatus({
+  const { data: stateFromComgate } = await comgateClient.getStatus({
     transId: comgatePayment?.transactionId!,
   });
 

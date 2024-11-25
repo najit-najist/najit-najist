@@ -29,7 +29,6 @@
     "dev:package:types": "pnpm build:types --watch"
   },
   "dependencies": {
-    "@najit-najist/database": "workspace:*",
     "query-string": "^9.1.1",
     "soap": "^1.1.6"
   },
