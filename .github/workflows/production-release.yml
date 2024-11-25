@@ -85,6 +85,8 @@ jobs:
         run: pnpm build
         env:
           DATABASE_URL: 'just-a-placeholder'
+          COMGATE_MERCHANT_ID: 'test'
+          COMGATE_SECRET: 'test'
 
   deploy-web:
     name: '📍 Deploy web to dokku'
