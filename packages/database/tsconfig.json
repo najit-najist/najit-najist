@@ -7,10 +7,7 @@
     "jsx": "preserve",
     "declaration": true,
     "rootDir": "./src",
-    "outDir": "./dist",
-  },
-  "tsc-alias": {
-    "resolveFullPaths": true
+    "outDir": "./dist"
   },
   "include": ["src"]
 }

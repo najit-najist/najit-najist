@@ -7,9 +7,6 @@
     "outDir": "./dist",
     "rootDir": "./src"
   },
-  "tsc-alias": {
-    "resolveFullPaths": true
-  },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }

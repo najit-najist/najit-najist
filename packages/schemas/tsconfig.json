@@ -6,10 +6,7 @@
     "target": "ESNext",
     "jsx": "preserve",
     "rootDir": "./src",
-    "outDir": "./dist",
-  },
-  "tsc-alias": {
-    "resolveFullPaths": true
+    "outDir": "./dist"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

@@ -18,14 +18,12 @@
   ],
   "scripts": {
     "prebuild": "rimraf tsconfig.tsbuildinfo ./dist",
-    "build": "pnpm build:package && pnpm build:types && pnpm build:types:aliases",
+    "build": "pnpm build:package && pnpm build:types",
     "build:package": "swc ./src -d dist --strip-leading-paths ",
     "build:types": "tsc",
-    "build:types:aliases": "tsc-alias",
     "dev": "pnpm run --filter=@najit-najist/schemas \"/^dev:.*/\"",
     "dev:package": "pnpm build:package --watch",
     "dev:package:types": "pnpm build:types --watch",
-    "dev:package:types:aliases": "pnpm build:types:aliases --watch",
     "test": "vitest",
     "test:coverage": "vitest run --coverage"
   },
@@ -39,7 +37,6 @@
   },
   "devDependencies": {
     "@najit-najist/tsconfig": "workspace:*",
-    "tsc-alias": "^1.8.10",
     "vitest": "^2.1.5"
   }
 }
