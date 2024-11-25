@@ -55,7 +55,7 @@ export default async function Page({ params }: PageProps) {
             strokeWidth={3}
             className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
           />
-          Zpět na výpis objednávek
+          Zpět na moje objednávky
         </Link>
       </div>
       <Suspense fallback={<OrderUnderpageContentLoading />}>
