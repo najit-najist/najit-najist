@@ -102,11 +102,9 @@ COPY --from=builder --chown=nextjs:nodejs /workspace-builder/apps/web/private ./
 
 COPY --from=builder /workspace-builder/packages/comgate/ ./packages/comgate/
 COPY --from=builder /workspace-builder/packages/database/ ./packages/database/
-COPY --from=builder /workspace-builder/packages/najit-najist-tailwind-plugin/ ./packages/najit-najist-tailwind-plugin/
 COPY --from=builder /workspace-builder/packages/packeta/ ./packages/packeta/
 COPY --from=builder /workspace-builder/packages/schemas/ ./packages/schemas/
 COPY --from=builder /workspace-builder/packages/security/ ./packages/security/
-COPY --from=builder /workspace-builder/packages/ui/ ./packages/ui/
 
 # Copy node_modules
 COPY --from=builder /workspace-builder/node_modules             ./node_modules

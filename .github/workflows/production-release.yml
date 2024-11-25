@@ -34,7 +34,6 @@ jobs:
             web:
               - 'apps/web/**'
               - 'packages/api/**'
-              - 'packages/ui/**'
               - 'packages/schema/**'
               - 'packages/database/**'
 
