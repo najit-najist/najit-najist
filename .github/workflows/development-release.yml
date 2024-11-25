@@ -43,9 +43,6 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     needs: prepare
-    env:
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
     steps:
       # https://github.com/actions/checkout
       - name: Checkout Repo
@@ -120,8 +117,6 @@ jobs:
           push: true
           tags: ondrejlangr/najit-najist-web:dev-${{ github.sha }}
           build-args: |
-            TURBO_TEAM=${{ secrets.TURBO_TEAM }}
-            TURBO_TOKEN=${{ secrets.TURBO_TOKEN }}
             NEXT_PUBLIC_LOGTAIL_TOKEN=${{ secrets.NEXT_PUBLIC_LOGTAIL_TOKEN }}
             NEXT_PUBLIC_PACKETA_KEY=${{ secrets.NEXT_PUBLIC_PACKETA_KEY }}
           file: ./apps/web/Dockerfile
