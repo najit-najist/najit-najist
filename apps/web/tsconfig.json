@@ -13,15 +13,15 @@
       "@custom-types/*": ["./types/*"],
       "@custom-types": ["./types"],
       "@utils": ["./utils"],
-      "@hooks": ["./hooks"],
-      "@hooks/*": ["./hooks/*"],
+      "@hooks/*": ["./app/_hooks/*"],
       "@utils/*": ["./utils/*"],
       "@constants": ["./constants"],
       "@contexts": ["./contexts"],
       "@contexts/*": ["./contexts/*"],
       "@components/*": ["./components/*"],
       "@server/*": ["./server/*"],
-      "@client/*": ["./client/*"],
+      "@logger/*": ["./logger/*"],
+      "@trpc/web": ["./trpc/web"],
       "@email/*": ["./email/*"],
       "@email": ["./email"],
       "@dayjs": ["./day"],
@@ -43,9 +43,6 @@
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["out", "build", "node_modules"],
   "references": [
-    {
-      "path": "../../packages/ui"
-    },
     {
       "path": "../../packages/comgate"
     },

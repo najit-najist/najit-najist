@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { ErrorMessage } from '@components/common/form/ErrorMessage';
 import { Input } from '@components/common/form/Input';
@@ -8,6 +7,7 @@ import { Select } from '@components/common/form/Select';
 import { ExclamationCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
+import { trpc } from '@trpc/web';
 import { FC, useCallback, useMemo, useState } from 'react';
 import { useController, useFieldArray, useFormContext } from 'react-hook-form';
 

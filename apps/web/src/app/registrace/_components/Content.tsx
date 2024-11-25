@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { Checkbox } from '@components/common/form/Checkbox';
@@ -8,9 +7,10 @@ import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
 import { FormBreak } from '@components/common/form/FormBreak';
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePlausible } from '@hooks';
+import { usePlausible } from '@hooks/usePlausible';
 import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
 import { TRPCClientError } from '@trpc/client';
+import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { FieldError, FormProvider, useForm } from 'react-hook-form';

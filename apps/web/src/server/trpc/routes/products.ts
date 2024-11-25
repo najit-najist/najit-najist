@@ -1,9 +1,9 @@
 import { ErrorCodes } from '@custom-types';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { DrizzleError, and, ilike, sql } from '@najit-najist/database/drizzle';
 import { productCategories } from '@najit-najist/database/models';
 import { ApplicationError } from '@server/errors';
-import { logger } from '@server/logger';
 import { getProductCategoriesInputSchema } from '@server/schemas/getProductCategoriesInputSchema';
 import { getProductsInputSchema } from '@server/schemas/getProductsInputSchema';
 import { productAlergenCreateInputSchema } from '@server/schemas/productAlergenCreateInputSchema';

@@ -1,9 +1,9 @@
 import { logoImage } from '@components/common/Logo';
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 import { ADMIN_EMAIL, APP_BASE_URL } from '@constants';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { getLoggedInUser } from '@server/utils/server';

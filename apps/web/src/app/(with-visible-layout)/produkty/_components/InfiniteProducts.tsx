@@ -1,8 +1,8 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { AppRouterInput, AppRouterOutput } from '@custom-types/AppRouter';
+import { trpc } from '@trpc/web';
 import { FC, Fragment, useEffect } from 'react';
 
 import { Item } from './Item';

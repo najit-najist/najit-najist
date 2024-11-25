@@ -1,9 +1,9 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { userCarts } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { getLoggedInUserId } from '@server/utils/server';
 import { getUserCart } from '@utils/getUserCart';
 import { isCouponExpired } from '@utils/isCouponExpired';

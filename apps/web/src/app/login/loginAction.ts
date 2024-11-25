@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq, inArray } from '@najit-najist/database/drizzle';
 import {
@@ -9,7 +10,6 @@ import {
   UserStates,
 } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import { PasswordService } from '@server/services/Password.service';
 import { UserService } from '@server/services/UserService';

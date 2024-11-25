@@ -1,6 +1,6 @@
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
+import { logger } from '@logger/server';
 import { products } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getProduct } from '@server/utils/getProduct';

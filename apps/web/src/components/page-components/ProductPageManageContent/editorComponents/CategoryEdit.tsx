@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { Modal } from '@components/common/Modal';
 import { Input } from '@components/common/form/Input';
@@ -11,6 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { ProductCategory } from '@najit-najist/database/models';
 import { productCategoryCreateInputSchema } from '@server/schemas/productCategoryCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
+import { trpc } from '@trpc/web';
 import { FC, useState } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';
 

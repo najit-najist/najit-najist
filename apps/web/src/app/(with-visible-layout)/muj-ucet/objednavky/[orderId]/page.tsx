@@ -1,10 +1,10 @@
 import { OrderUnderpageContent } from '@components/page-components/OrderUnderpageContent';
 import { OrderUnderpageContentLoading } from '@components/page-components/OrderUnderpageContent/OrderUnderpageContentLoading';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { and, eq, sql } from '@najit-najist/database/drizzle';
 import { orders } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { getLoggedInUserId } from '@server/utils/server';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

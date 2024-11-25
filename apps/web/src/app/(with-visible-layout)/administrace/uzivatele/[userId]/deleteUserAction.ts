@@ -1,10 +1,10 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { UserRoles, userAddresses, users } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser, getLoggedInUserId } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
@@ -51,5 +51,5 @@ export const deleteUserAction = createActionWithValidation(
 
     redirect('/administrace/uzivatele');
     return null;
-  }
+  },
 );

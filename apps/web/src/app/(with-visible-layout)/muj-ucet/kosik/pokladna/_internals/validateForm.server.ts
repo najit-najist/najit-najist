@@ -1,3 +1,4 @@
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   OrderDeliveryMethodsSlug,
@@ -8,7 +9,6 @@ import {
   deliveryMethodSchema,
   userCartCheckoutInputSchema,
 } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { z } from 'zod';
 
 export const checkoutCartSchemaServer = userCartCheckoutInputSchema
@@ -29,7 +29,7 @@ export const checkoutCartSchemaServer = userCartCheckoutInputSchema
             },
           },
         },
-      })
+      }),
     ),
   })
   .superRefine(async (value, ctx) => {
@@ -46,10 +46,10 @@ export const checkoutCartSchemaServer = userCartCheckoutInputSchema
       value.paymentMethod.exceptDeliveryMethods
         .map(
           ({ deliveryMethod: exceptDeliveryMethod }) =>
-            exceptDeliveryMethod.slug
+            exceptDeliveryMethod.slug,
         )
         .includes(
-          value.deliveryMethod.fetched!.slug as OrderDeliveryMethodsSlug
+          value.deliveryMethod.fetched!.slug as OrderDeliveryMethodsSlug,
         )
     ) {
       ctx.addIssue({

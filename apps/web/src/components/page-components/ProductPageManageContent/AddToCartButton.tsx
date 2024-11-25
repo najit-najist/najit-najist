@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Tooltip } from '@components/common/Tooltip';
@@ -10,6 +9,7 @@ import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { useQueryClient } from '@tanstack/react-query';
+import { trpc } from '@trpc/web';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import clsx from 'clsx';
 import Link from 'next/link';

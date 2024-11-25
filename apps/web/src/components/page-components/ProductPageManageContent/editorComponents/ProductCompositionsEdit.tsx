@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Alert } from '@components/common/Alert';
 import { Badge } from '@components/common/Badge';
 import { Button } from '@components/common/Button';
@@ -25,6 +24,7 @@ import {
 } from '@heroicons/react/24/solid';
 import { ProductRawMaterial } from '@najit-najist/database/models';
 import { useMutation } from '@tanstack/react-query';
+import { trpc } from '@trpc/web';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { clsx } from 'clsx';
 import {

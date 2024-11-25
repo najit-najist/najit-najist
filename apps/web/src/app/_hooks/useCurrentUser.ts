@@ -1,5 +1,5 @@
-import { trpc } from '@client/trpc';
 import { AppRouterOutput } from '@custom-types/AppRouter';
+import { trpc } from '@trpc/web';
 
 export type UseCurrentUserOptions = Parameters<
   typeof trpc.profile.me.useQuery<AppRouterOutput['profile']['me']>

@@ -1,6 +1,6 @@
 'use server';
 
-import { logger } from '@server/logger';
+import { logger } from '@logger/server';
 import { userAddressUpdateInputSchema } from '@server/schemas/userAddressUpdateInputSchema';
 import { UserService } from '@server/services/UserService';
 import { getLoggedInUser } from '@server/utils/server';

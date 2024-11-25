@@ -1,3 +1,4 @@
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   SQL,
@@ -12,7 +13,6 @@ import {
 import { Post, posts, userLikedPosts } from '@najit-najist/database/models';
 import { isFileBase64, slugSchema } from '@najit-najist/schemas';
 import { EntityLink, entityLinkSchema } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { LibraryService } from '@server/services/LibraryService';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { slugifyString } from '@server/utils/slugifyString';
@@ -49,7 +49,7 @@ const getOneBy = async <V extends keyof Post>(by: V, value: Post[V]) => {
 const toggleLike = async (options: { user: EntityLink; post: EntityLink }) => {
   const filter = and(
     eq(userLikedPosts.userId, options.user.id),
-    eq(userLikedPosts.postId, options.post.id)
+    eq(userLikedPosts.postId, options.post.id),
   );
 
   const existing = await database.query.userLikedPosts.findFirst({
@@ -194,7 +194,7 @@ export const postsRoute = t.router({
               },
             },
           },
-          'Failed to update post'
+          'Failed to update post',
         );
 
         throw error;
@@ -222,7 +222,7 @@ export const postsRoute = t.router({
           perPage: z.number().min(1).default(20).optional(),
           query: z.string().optional(),
         })
-        .optional()
+        .optional(),
     )
     .query(async ({ ctx, input = { perPage: 20, query: '' } }) => {
       const conditions: SQL[] = [];
@@ -232,8 +232,8 @@ export const postsRoute = t.router({
         conditions.push(
           or(
             ilike(posts.title, `%${input.query}%`),
-            ilike(posts.description, `%${input.query}%`)
-          )!
+            ilike(posts.description, `%${input.query}%`),
+          )!,
         );
       }
 
@@ -292,7 +292,7 @@ export const postsRoute = t.router({
     .input(
       z.object({
         slug: slugSchema,
-      })
+      }),
     )
     .query(async ({ ctx, input }) => {
       const post = await getOneBy('slug', input.slug);

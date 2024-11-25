@@ -1,10 +1,10 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { UserRoles, recipes } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
@@ -41,5 +41,5 @@ export const deleteRecipeAction = createActionWithValidation(
     onHandlerError(error, input) {
       logger.error({ error, input }, 'Could not delete recipe');
     },
-  }
+  },
 );

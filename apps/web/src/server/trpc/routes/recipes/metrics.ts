@@ -1,8 +1,8 @@
 import { ErrorCodes } from '@custom-types/ErrorCodes';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { DrizzleError, sql } from '@najit-najist/database/drizzle';
 import { recipeResourceMetrics } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { onlyAdminProcedure } from '@server/trpc/procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@server/trpc/procedures/protectedProcedure';
 import generateCursor from 'drizzle-cursor';

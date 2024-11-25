@@ -1,14 +1,14 @@
 import bcrypt from 'bcrypt';
 
-import { config } from '../config';
+const SALT_ROUNDS_COUNT = 10;
 
 export class PasswordService {
   static hash(value: string) {
-    return bcrypt.hash(value, config.server.secrets.saltRounds);
+    return bcrypt.hash(value, SALT_ROUNDS_COUNT);
   }
 
   static hashSync(value: string) {
-    return bcrypt.hashSync(value, config.server.secrets.saltRounds);
+    return bcrypt.hashSync(value, SALT_ROUNDS_COUNT);
   }
 
   static validate(hashed: string, newPassword: string | Buffer) {

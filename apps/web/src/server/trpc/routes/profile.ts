@@ -1,7 +1,7 @@
 import { PostgresErrorCodes } from '@custom-types/PostgresErrorCodes';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { UserStates } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { PasswordService } from '@server/services/Password.service';
 import { ProfileService } from '@server/services/Profile.service';
 import { UserService, UserWithRelations } from '@server/services/UserService';

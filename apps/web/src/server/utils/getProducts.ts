@@ -1,3 +1,4 @@
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   and,
@@ -13,7 +14,6 @@ import {
   products,
   User,
 } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { getProductsInputSchema } from '@server/schemas/getProductsInputSchema';
 import generateCursor from 'drizzle-cursor';
 import { z } from 'zod';

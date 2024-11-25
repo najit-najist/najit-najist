@@ -1,8 +1,8 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { UserRoles } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { ProfileService } from '@server/services/Profile.service';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
@@ -42,7 +42,7 @@ export const createUserAction = createActionWithValidation(
         user: omit(user, ['_password']),
         input: omit(input, ['password']),
       },
-      'Registering user - user created'
+      'Registering user - user created',
     );
 
     revalidatePath('/administrace');
@@ -51,5 +51,5 @@ export const createUserAction = createActionWithValidation(
     redirect(`/administrace/uzivatele/${user.id}`);
 
     return;
-  }
+  },
 );

@@ -1,5 +1,5 @@
-import { trpc } from '@client/trpc';
 import { Municipality } from '@najit-najist/database/models';
+import { trpc } from '@trpc/web';
 import { FC } from 'react';
 import { useController } from 'react-hook-form';
 import { useDebounceValue } from 'usehooks-ts';

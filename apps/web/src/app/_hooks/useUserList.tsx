@@ -1,4 +1,4 @@
-import { trpc } from '@client/trpc';
+import { trpc } from '@trpc/web';
 
 export type UseUserListOptions = Parameters<
   typeof trpc.users.getMany.useQuery
@@ -10,5 +10,5 @@ export type UseUserListInput = Parameters<
 
 export const useUserList = (
   input?: UseUserListInput,
-  options?: UseUserListOptions
+  options?: UseUserListOptions,
 ) => trpc.users.getMany.useQuery(input ?? {}, options);

@@ -1,9 +1,9 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Alert } from '@components/common/Alert';
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { UserWithRelations } from '@custom-types';
+import { trpc } from '@trpc/web';
 import { getChangedValues } from '@utils';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { FC, ReactNode, useCallback } from 'react';

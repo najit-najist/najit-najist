@@ -11,7 +11,7 @@ import {
 } from '@constants';
 import { InformationCircleIcon } from '@heroicons/react/24/outline';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePlausible } from '@hooks';
+import { usePlausible } from '@hooks/usePlausible';
 import { userProfileLogInInputSchema } from '@server/schemas/userProfileLogInInputSchema';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';

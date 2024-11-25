@@ -5,7 +5,7 @@ import { PageTitle } from '@components/common/PageTitle';
 import { Section } from '@components/portal';
 import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
-import { logger } from '@server/logger';
+import { logger } from '@logger/server';
 import { UserService } from '@server/services/UserService';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';

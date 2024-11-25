@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Badge } from '@components/common/Badge';
 import { Button } from '@components/common/Button';
 import { Modal } from '@components/common/Modal';
@@ -21,6 +20,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/solid';
 import { useMutation } from '@tanstack/react-query';
+import { trpc } from '@trpc/web';
 import { clsx } from 'clsx';
 import {
   ChangeEventHandler,

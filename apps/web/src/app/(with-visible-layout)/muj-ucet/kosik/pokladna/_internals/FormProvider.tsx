@@ -2,7 +2,7 @@
 
 import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePlausible } from '@hooks';
+import { usePlausible } from '@hooks/usePlausible';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { useQueryClient } from '@tanstack/react-query';

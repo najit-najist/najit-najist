@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Paper } from '@components/common/Paper';
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { CouponWithRelations } from '@custom-types/CouponWithRelations';
@@ -19,6 +18,7 @@ import {
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
+import { trpc } from '@trpc/web';
 import Image from 'next/image';
 import {
   ChangeEventHandler,

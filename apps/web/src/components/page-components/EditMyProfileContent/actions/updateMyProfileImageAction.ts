@@ -1,7 +1,7 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { IMAGE_FILE_REGEX } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { UserService } from '@server/services/UserService';
 import { getLoggedInUser } from '@server/utils/server';
 import { setFileNameToBase64 } from '@server/utils/setFileNameToBase64';

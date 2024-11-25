@@ -1,11 +1,11 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { useEditorJSInstances } from '@contexts/editorJsInstancesContext';
 import { PostWithRelations } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { postCreateInputSchema } from '@server/schemas/postCreateInputSchema';
 import { postUpdateInputSchema } from '@server/schemas/postUpdateInputSchema';
+import { trpc } from '@trpc/web';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import { useRouter } from 'next/navigation';
 import { FC, PropsWithChildren, useCallback } from 'react';

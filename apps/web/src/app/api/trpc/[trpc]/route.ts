@@ -1,4 +1,4 @@
-import { logger } from '@server/logger';
+import { logger } from '@logger/server';
 import { appRouter } from '@server/trpc';
 import { createContext } from '@server/trpc/context';
 import { fetchRequestHandler } from '@trpc/server/adapters/fetch';
@@ -28,7 +28,7 @@ function handler(request: NextRequest) {
           path,
           userId: authContent?.userId,
         },
-        'An error happened in TRPC handlers'
+        'An error happened in TRPC handlers',
       );
     },
   }).then((resp) => {

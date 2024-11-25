@@ -1,8 +1,10 @@
 'use server';
 
 import { comgateClient } from '@comgate-client';
+import { APP_ORIGIN, ORDER_NOTIFICATION_EMAILS } from '@constants';
 import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
 import { ThankYouOrder, ThankYouOrderAdmin, render } from '@email';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq, sql } from '@najit-najist/database/drizzle';
 import {
@@ -22,8 +24,6 @@ import {
   userCarts,
 } from '@najit-najist/database/models';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
-import { config } from '@server/config';
-import { logger } from '@server/logger';
 import { MailService } from '@server/services/Mail.service';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
@@ -51,13 +51,19 @@ const sendEmails = (orderId: Order['id']) => {
 
     const renderComponentsPerf = perf.track('render');
     const adminNoticeContents = ThankYouOrderAdmin({
-      orderLink: `${config.app.origin}/administrace/objednavky/${order.id}`,
+      orderLink: new URL(
+        `/administrace/objednavky/${order.id}`,
+        APP_ORIGIN,
+      ).toString(),
       order,
-      siteOrigin: config.app.origin,
+      siteOrigin: APP_ORIGIN,
     });
     const userNotice = ThankYouOrder({
       needsPayment: false,
-      orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
+      orderLink: new URL(
+        `/muj-ucet/objednavky/${order.id}`,
+        APP_ORIGIN,
+      ).toString(),
       order: {
         ...order,
         address: order.address!,
@@ -70,7 +76,7 @@ const sendEmails = (orderId: Order['id']) => {
           },
         })),
       },
-      siteOrigin: config.app.origin,
+      siteOrigin: APP_ORIGIN,
     });
     renderComponentsPerf.stop();
 
@@ -82,29 +88,20 @@ const sendEmails = (orderId: Order['id']) => {
     renderHtmlPerf.stop();
 
     const sendAdminPerf = perf.track('send-admin');
-    await Promise.all([
-      MailService.send({
-        to: config.mail.baseEmail,
-        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-        body: adminNoticeHtml,
-      }).catch((error) => {
-        logger.error(
-          { error, order },
-          `Order flow - could not notify admin to its email with order information`,
-        );
-      }),
-      MailService.send({
-        // TODO: move this to configuration
-        to: 'prodejnahk@najitnajist.cz',
-        subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-        body: adminNoticeHtml,
-      }).catch((error) => {
-        logger.error(
-          { error, order },
-          `Order flow - could not notify admin to its email with order information`,
-        );
-      }),
-    ]);
+    await Promise.all(
+      ORDER_NOTIFICATION_EMAILS.map((notificationEmailAddress) =>
+        MailService.send({
+          to: notificationEmailAddress,
+          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+          body: adminNoticeHtml,
+        }).catch((error) => {
+          logger.error(
+            { error, order },
+            `Order flow - could not notify admin to its email with order information`,
+          );
+        }),
+      ),
+    );
     sendAdminPerf.stop();
 
     const sendUserPerf = perf.track('send-user');

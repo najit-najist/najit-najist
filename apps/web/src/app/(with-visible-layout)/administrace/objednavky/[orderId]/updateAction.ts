@@ -1,6 +1,8 @@
 'use server';
 
+import { APP_ORIGIN } from '@constants';
 import { OrderConfirmed, OrderShipped, render } from '@email';
+import { logger } from '@logger/server';
 import { ComgateResponseCode } from '@najit-najist/comgate';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
@@ -12,8 +14,6 @@ import {
 } from '@najit-najist/database/models';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { config } from '@server/config';
-import { logger } from '@server/logger';
 import { MailService } from '@server/services/Mail.service';
 import { getOrderById } from '@server/utils/server';
 import { isLocalPickup } from '@utils';
@@ -51,9 +51,12 @@ const onOrderConfirmed: OrderStateListener = async (
     subject: `Objednávka #${order.id} potvrzena`,
     body: await render(
       OrderConfirmed({
-        orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
+        orderLink: new URL(
+          `/muj-ucet/objednavky/${order.id}`,
+          APP_ORIGIN,
+        ).toString(),
         order,
-        siteOrigin: config.app.origin,
+        siteOrigin: APP_ORIGIN,
       }),
     ),
   });
@@ -68,7 +71,10 @@ const onOrderShipped: OrderStateListener = async (
     }`,
     body: await render(
       OrderShipped({
-        orderLink: `${config.app.origin}/muj-ucet/objednavky/${order.id}`,
+        orderLink: new URL(
+          `/muj-ucet/objednavky/${order.id}`,
+          APP_ORIGIN,
+        ).toString(),
         order: {
           ...order,
           deliveryMethod: order.deliveryMethod!,
@@ -83,7 +89,7 @@ const onOrderShipped: OrderStateListener = async (
             },
           })),
         },
-        siteOrigin: config.app.origin,
+        siteOrigin: APP_ORIGIN,
       }),
     ),
   });

@@ -1,12 +1,12 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { NumberInput } from '@components/common/form/NumberInput';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { UserCartProduct } from '@najit-najist/database/models';
 import { useQueryClient } from '@tanstack/react-query';
+import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
 import { useFormState } from 'react-hook-form';

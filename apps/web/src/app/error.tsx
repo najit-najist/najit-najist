@@ -2,7 +2,7 @@
 
 import { Logo } from '@components/common/Logo';
 import { footerNavigationItems } from '@components/layout/Footer';
-import { logger } from 'client/logger';
+import { logger } from '@logger/web';
 import Link from 'next/link';
 import { useEffect } from 'react';
 

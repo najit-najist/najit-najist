@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { MunicipalitySelect } from '@components/common/MunicipalitySelect';
 import { ErrorMessage } from '@components/common/form/ErrorMessage';
@@ -8,6 +7,7 @@ import { FormBreak } from '@components/common/form/FormBreak';
 import { loginPageCallbacks } from '@constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { verifyRegistrationFromPreviewInputSchema } from '@server/schemas/verifyRegistrationFromPreviewInputSchema';
+import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';

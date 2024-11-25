@@ -1,4 +1,4 @@
-import { logger } from '@server/logger';
+import { logger } from '@logger/server';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { getUserCart, type ProductFromCart } from '@utils/getUserCart';
 import { NextResponse } from 'next/server';

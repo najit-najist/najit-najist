@@ -1,4 +1,5 @@
 import { comgateClient } from '@comgate-client';
+import { logger } from '@logger/server';
 import {
   ComgateOrderState,
   isComgateStatusSuccessfulRequest,
@@ -11,7 +12,6 @@ import {
   orders,
   productStock,
 } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { notFound } from 'next/navigation';

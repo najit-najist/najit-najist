@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   UserRoles,
@@ -8,7 +9,6 @@ import {
   recipeSteps,
   recipes,
 } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { recipeCreateInputSchema } from '@server/schemas/recipeCreateInputSchema';
 import { LibraryService } from '@server/services/LibraryService';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
@@ -47,14 +47,14 @@ export const createRecipeAction = createActionWithValidation(
           .returning();
 
         const createdImages = await Promise.all(
-          images.map((encoded) => library.create(created, encoded))
+          images.map((encoded) => library.create(created, encoded)),
         );
 
         await tx.insert(recipeImages).values(
           createdImages.map(({ filename }) => ({
             file: filename,
             recipeId: created.id,
-          }))
+          })),
         );
 
         await tx.insert(recipeSteps).values(
@@ -62,7 +62,7 @@ export const createRecipeAction = createActionWithValidation(
             recipeId: created.id,
             title: step.title,
             parts: step.parts,
-          }))
+          })),
         );
 
         await tx.insert(recipeResources).values(
@@ -73,7 +73,7 @@ export const createRecipeAction = createActionWithValidation(
             title: resource.title,
             description: resource.description,
             optional: resource.optional,
-          }))
+          })),
         );
 
         await library.commit();
@@ -98,5 +98,5 @@ export const createRecipeAction = createActionWithValidation(
     onHandlerError(error, input) {
       logger.error({ error, input }, 'Could not create recipe');
     },
-  }
+  },
 );

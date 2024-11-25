@@ -1,12 +1,12 @@
+import { ADMIN_EMAIL, APP_ORIGIN } from '@constants';
 import { render, ContactUsAdminReply, ContactUsUserReply } from '@email';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { contactFormReplies } from '@najit-najist/database/models';
-import { logger } from '@server/logger';
 import { contactUsInputSchema } from '@server/schemas/contactUsInputSchema';
 import { MailService } from '@server/services/Mail.service';
 import { z } from 'zod';
 
-import { config } from '../../config';
 import { t } from '../instance';
 
 export const contactUsRoutes = t.router({
@@ -35,7 +35,7 @@ export const contactUsRoutes = t.router({
         });
 
       MailService.send({
-        to: config.mail.baseEmail,
+        to: ADMIN_EMAIL,
         subject: 'Odpověď v kontaktním formuláři najitnajist.cz',
         body: await render(
           ContactUsAdminReply({
@@ -43,7 +43,7 @@ export const contactUsRoutes = t.router({
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
-            siteOrigin: config.app.origin,
+            siteOrigin: APP_ORIGIN,
           }),
         ),
       }).catch((error) => {
@@ -62,7 +62,7 @@ export const contactUsRoutes = t.router({
             fullName: `${input.firstName} ${input.lastName}`,
             message: input.message,
             telephone: input.telephone ?? undefined,
-            siteOrigin: config.app.origin,
+            siteOrigin: APP_ORIGIN,
           }),
         ),
       }).catch((error) => {

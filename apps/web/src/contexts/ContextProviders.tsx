@@ -1,11 +1,10 @@
 'use client';
 
-import { trpc } from '@client/trpc';
-import { customTrpcLink } from '@constants';
-import { serverPort } from '@server/constants';
+import { customTrpcLink, serverPort } from '@constants';
 import { getSuperJson } from '@server/utils/getSuperJson';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
+import { trpc } from '@trpc/web';
 import { FC, PropsWithChildren, useState } from 'react';
 
 import { EditorJsInstancesProvider } from './editorJsInstancesContext';

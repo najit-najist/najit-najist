@@ -1,18 +1,23 @@
-import { logger } from '@server/logger';
+import { ADMIN_EMAIL } from '@constants';
+import { logger } from '@logger/server';
 import nodemailer from 'nodemailer';
 
-import { config } from '../config';
+const mailUser = String(process.env.MAIL_USERNAME);
+const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
+const mailPass = String(process.env.MAIL_PASSWORD);
+const mailHost = process.env.MAIL_HOST;
+const mailPort = Number(process.env.MAIL_PORT);
 
 export class MailService {
   private static transport = nodemailer.createTransport({
-    host: config.mail.host,
-    port: config.mail.port,
-    secure: config.mail.port === 465,
+    host: mailHost,
+    port: mailPort,
+    secure: mailPort === 465,
     auth: {
-      user: config.mail.user,
-      pass: config.mail.password,
+      user: mailUser,
+      pass: mailPass,
     },
-    from: `"Najít&Najist pošťák" <${config.mail.baseEmail}>`,
+    from: `"Najít&Najist pošťák" <${ADMIN_EMAIL}>`,
   });
 
   static async send({
@@ -27,11 +32,11 @@ export class MailService {
     let result;
     try {
       result = await this.transport.sendMail({
-        from: config.mail.baseEmail,
+        from: ADMIN_EMAIL,
         to,
         subject: subject,
         html: body,
-        replyTo: config.mail.baseEmail,
+        replyTo: ADMIN_EMAIL,
       });
 
       logger.info(
@@ -40,7 +45,7 @@ export class MailService {
           response: result?.response,
           payload: { bodyLength: body.length, subject, to },
         },
-        `MailService - success`
+        `MailService - success`,
       );
     } catch (error) {
       logger.error(
@@ -48,7 +53,7 @@ export class MailService {
           error,
           payload: { body, subject, to },
         },
-        'MailService - sending failed'
+        'MailService - sending failed',
       );
 
       throw Error('Posílání emailu nebylo úspěšné.');

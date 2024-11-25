@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   productAlergensToProducts,
@@ -10,7 +11,6 @@ import {
   UserRoles,
 } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
-import { logger } from '@server/logger';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { LibraryService } from '@server/services/LibraryService';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';

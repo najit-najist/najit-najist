@@ -1,4 +1,6 @@
+import { APP_ORIGIN } from '@constants';
 import { PasswordReset, WelcomeAndFinish, render } from '@email';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import {
@@ -9,13 +11,11 @@ import {
   users,
 } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import jwt from 'jsonwebtoken';
 import { jwtDecode } from 'jwt-decode';
 import crypto from 'node:crypto';
 import { z } from 'zod';
 
-import { config } from '../config';
 import { userRegisterInputSchema } from '../schemas/userRegisterInputSchema';
 import { MailService } from './Mail.service';
 import { UserService, UserWithRelations } from './UserService';
@@ -52,7 +52,7 @@ export class ProfileService {
     );
     const emailContent = await render(
       PasswordReset({
-        siteOrigin: config.app.origin,
+        siteOrigin: APP_ORIGIN,
         token,
       }),
     );
@@ -163,7 +163,7 @@ export class ProfileService {
     try {
       const emailContent = await render(
         WelcomeAndFinish({
-          siteOrigin: config.app.origin,
+          siteOrigin: APP_ORIGIN,
           token,
         }),
       );

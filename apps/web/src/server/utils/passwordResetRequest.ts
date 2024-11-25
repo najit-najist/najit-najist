@@ -1,4 +1,4 @@
-import { logger } from '@server/logger';
+import { logger } from '@logger/server';
 import { ProfileService } from '@server/services/Profile.service';
 import { UserWithRelations } from '@server/services/UserService';
 
@@ -8,7 +8,7 @@ export const passwordResetRequest = async (user: UserWithRelations) => {
   } catch (error) {
     logger.error(
       { userId: user.id, error },
-      'Request user password reset failed'
+      'Request user password reset failed',
     );
 
     throw error;

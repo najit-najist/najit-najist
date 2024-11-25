@@ -1,4 +1,3 @@
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { Modal, ModalProps } from '@components/common/Modal';
 import { Input } from '@components/common/form/Input';
@@ -7,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { RecipeResourceMetric } from '@najit-najist/database/models';
 import { recipeResourceMetricCreateInputSchema } from '@server/schemas/recipeResourceMetricCreateInputSchema';
 import { TRPCClientError } from '@trpc/client';
+import { trpc } from '@trpc/web';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 

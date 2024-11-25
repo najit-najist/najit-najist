@@ -1,10 +1,10 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { coupons, UserRoles } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
-import { logger } from '@server/logger';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';

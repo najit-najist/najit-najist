@@ -1,4 +1,5 @@
 import { ErrorCodes } from '@custom-types/ErrorCodes';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   DrizzleError,
@@ -7,7 +8,6 @@ import {
 } from '@najit-najist/database/drizzle';
 import { recipeDifficulties } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { t } from '@server/trpc/instance';
 import { onlyAdminProcedure } from '@server/trpc/procedures/onlyAdminProcedure';
 import { protectedProcedure } from '@server/trpc/procedures/protectedProcedure';
@@ -56,7 +56,7 @@ export const difficultiesRouter = t.router({
         .extend({
           perPage: z.number().min(1).default(40).optional(),
         })
-        .default({})
+        .default({}),
     )
     .query(async ({ input, ctx }) => {
       const cursor = generateCursor({

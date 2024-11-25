@@ -1,13 +1,13 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Alert } from '@components/common/Alert';
 import { Button } from '@components/common/Button';
 import { Input } from '@components/common/form/Input';
 import { Textarea } from '@components/common/form/Textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePlausible } from '@hooks';
+import { usePlausible } from '@hooks/usePlausible';
 import { contactUsInputSchema } from '@server/schemas/contactUsInputSchema';
+import { trpc } from '@trpc/web';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';

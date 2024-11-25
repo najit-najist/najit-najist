@@ -1,10 +1,10 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { PasswordInput } from '@components/common/form/PasswordInput';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userRegisterInputSchema } from '@server/schemas/userRegisterInputSchema';
+import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';

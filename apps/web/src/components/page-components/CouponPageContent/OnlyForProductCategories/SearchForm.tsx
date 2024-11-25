@@ -1,6 +1,5 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Badge } from '@components/common/Badge';
 import { Paper } from '@components/common/Paper';
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
@@ -17,6 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
 import { ProductCategory } from '@najit-najist/database/models';
+import { trpc } from '@trpc/web';
 import {
   ChangeEventHandler,
   FC,

@@ -1,13 +1,13 @@
 'use client';
 
-import { trpc } from '@client/trpc';
 import { Button } from '@components/common/Button';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Input } from '@components/common/form/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePlausible } from '@hooks';
+import { usePlausible } from '@hooks/usePlausible';
 import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import type { UserWithRelations } from '@server/services/UserService';
+import { trpc } from '@trpc/web';
 import Link from 'next/link';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';

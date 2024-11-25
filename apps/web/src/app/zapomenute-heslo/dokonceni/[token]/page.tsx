@@ -1,6 +1,6 @@
 import { Logo } from '@components/common/Logo';
+import { logger } from '@logger/server';
 import { EntityNotFoundError } from '@server/errors';
-import { logger } from '@server/logger';
 import { ProfileService } from '@server/services/Profile.service';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';

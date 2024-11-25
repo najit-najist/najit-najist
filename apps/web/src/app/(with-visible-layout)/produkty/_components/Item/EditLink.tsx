@@ -3,7 +3,7 @@
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Tooltip } from '@components/common/Tooltip';
 import { PencilIcon } from '@heroicons/react/24/solid';
-import { useCurrentUser } from '@hooks';
+import { useCurrentUser } from '@hooks/useCurrentUser';
 import { recipes } from '@najit-najist/database/models';
 import { canUser, UserActions } from '@server/utils/canUser';
 import { RouteType } from 'next/dist/lib/load-custom-routes';

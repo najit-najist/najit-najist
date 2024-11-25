@@ -1,7 +1,7 @@
+import { logger } from '@logger/server';
 import { getTableName } from '@najit-najist/database/drizzle';
 import { splitBase64Url } from '@najit-najist/schemas';
 import { EntityLink } from '@najit-najist/schemas';
-import { logger } from '@server/logger';
 import { PgTableWithColumns } from 'drizzle-orm/pg-core';
 import fs from 'fs-extra';
 import crypto from 'node:crypto';
@@ -31,12 +31,12 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
     try {
       await fs.outputFile(
         absoluteFilepath,
-        Buffer.from(base64Content, 'base64')
+        Buffer.from(base64Content, 'base64'),
       );
     } catch (error) {
       logger.error(
         { error, absoluteFilepath },
-        'Failed to commit file to file system'
+        'Failed to commit file to file system',
       );
 
       return error as Error;
@@ -49,7 +49,7 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
     } catch (error) {
       logger.error(
         { error, absoluteFilepath },
-        'Failed to delete file from file system'
+        'Failed to delete file from file system',
       );
 
       return error as Error;
@@ -63,7 +63,7 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
       'private',
       'uploads',
       getTableName(this.model),
-      String(owner.id)
+      String(owner.id),
     );
   }
 
@@ -129,8 +129,8 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
       this.actions.map((action) =>
         action.action === 'CREATE'
           ? this.commitFile(action.filepath, action.content)
-          : this.commitDelete(action.filepath)
-      )
+          : this.commitDelete(action.filepath),
+      ),
     );
     this.endTransaction();
   }
