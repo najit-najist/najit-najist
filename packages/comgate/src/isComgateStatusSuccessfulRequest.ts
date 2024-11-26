@@ -2,6 +2,6 @@ import { ComgateGetStatusSuccessResponse } from './ComgateGetStatusSuccessRespon
 import { ComgateResponseCode } from './ComgateResponseCode';
 
 export const isComgateStatusSuccessfulRequest = (
-  val: any
+  val: any,
 ): val is ComgateGetStatusSuccessResponse =>
   val.code === ComgateResponseCode.OK;

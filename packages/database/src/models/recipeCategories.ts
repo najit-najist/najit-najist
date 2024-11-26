@@ -7,7 +7,7 @@ export const recipeCategories = pgTable(
   withDefaultFields({
     title: varchar('title', { length: 256 }).unique().notNull(),
     slug: varchar('slug', { length: 256 }).unique().notNull(),
-  })
+  }),
 );
 
 export type RecipeCategory = typeof recipeCategories.$inferSelect;

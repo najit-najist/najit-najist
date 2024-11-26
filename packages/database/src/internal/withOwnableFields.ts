@@ -11,4 +11,4 @@ export const withOwnableFields = <T extends object>(rest: T) =>
       onDelete: 'set null',
     }),
     ...rest,
-  } as const);
+  }) as const;

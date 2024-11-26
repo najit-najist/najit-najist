@@ -15,7 +15,7 @@ export const userCarts = pgTable(
     couponId: integer('coupon_id').references(() => coupons.id, {
       onDelete: 'set null',
     }),
-  })
+  }),
 );
 
 export const userCartsRelations = relations(userCarts, ({ one, many }) => ({

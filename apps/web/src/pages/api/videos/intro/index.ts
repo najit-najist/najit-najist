@@ -14,7 +14,7 @@ const handler: NextApiHandler = (request, response) => {
       SHARED_STATIC_FILES_DIRECTORY_PATH,
       'videos',
       'intro',
-      file
+      file,
     ),
   })(request, response);
 };

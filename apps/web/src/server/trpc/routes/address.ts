@@ -20,7 +20,7 @@ export const municipalityGetRoutes = t.router({
             })
             .optional(),
         })
-        .optional()
+        .optional(),
     )
     .query(async ({ input }) => {
       const { page, perPage, query, filter: filterFromInput } = input ?? {};
@@ -30,14 +30,14 @@ export const municipalityGetRoutes = t.router({
         conditions.push(
           or(
             ilike(municipalities.name, `%${query}%`),
-            ilike(municipalities.slug, `%${query}%`)
-          )!
+            ilike(municipalities.slug, `%${query}%`),
+          )!,
         );
       }
 
       if (filterFromInput?.id) {
         conditions.push(
-          or(...filterFromInput.id.map((id) => eq(municipalities.id, id)))!
+          or(...filterFromInput.id.map((id) => eq(municipalities.id, id)))!,
         );
       }
 

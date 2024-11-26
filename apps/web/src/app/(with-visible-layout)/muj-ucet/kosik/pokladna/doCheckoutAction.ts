@@ -34,7 +34,6 @@ import { getPerfTracker } from '@utils/getPerfTracker';
 import { getUserCart } from '@utils/getUserCart';
 import { isCouponExpired } from '@utils/isCouponExpired';
 import { orderCreateComgateRefId } from '@utils/orderCreateComgateRefId';
-import { orderGetComgateRefId } from '@utils/orderGetComgateRefId';
 import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';

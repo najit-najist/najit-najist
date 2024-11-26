@@ -4,7 +4,7 @@ export class PacketaValidationFailed extends Error {
 
   constructor(
     area: 'FATAL' | 'INVALID_INPUT' | 'INVALID_API_KEY',
-    response: object
+    response: object,
   ) {
     super('Packeta validation failed');
     this.name = 'PacketaValidationFailed';

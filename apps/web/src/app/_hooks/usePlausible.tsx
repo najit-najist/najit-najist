@@ -9,7 +9,7 @@ type PlausibleFunctionOptions = {
 
 type Plausible = ((
   id: PLAUSIBLE_EVENTS,
-  options?: PlausibleFunctionOptions
+  options?: PlausibleFunctionOptions,
 ) => void) & { q: any[] };
 
 declare global {
@@ -45,6 +45,6 @@ export const usePlausible = () => {
         getPlausible().push(name, options);
       },
     }),
-    []
+    [],
   );
 };

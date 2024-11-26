@@ -29,9 +29,9 @@ export const recipeResources = pgTable(
   (schema) => ({
     uniqueTitleForRecipe: unique('title_for_recipe').on(
       schema.recipeId,
-      schema.title
+      schema.title,
     ),
-  })
+  }),
 );
 
 export const recipeResourcesRelations = relations(
@@ -45,7 +45,7 @@ export const recipeResourcesRelations = relations(
       fields: [recipeResources.metricId],
       references: [recipeResourceMetrics.id],
     }),
-  })
+  }),
 );
 
 export type RecipeResource = typeof recipeResources.$inferSelect;

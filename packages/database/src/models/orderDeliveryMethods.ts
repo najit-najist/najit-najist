@@ -23,7 +23,7 @@ export const orderDeliveryMethods = pgTable(
     description: text('description').notNull(),
     notes: text('notes'),
     price: integer('price').default(0),
-  })
+  }),
 );
 
 export type OrderDeliveryMethod = typeof orderDeliveryMethods.$inferSelect;

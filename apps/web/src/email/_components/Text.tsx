@@ -33,7 +33,7 @@ export const Text: FC<Props> = ({
       spacing ? 'my-5' : '',
       sizeToClassName[size],
       colorToClassName[color],
-      className
+      className,
     )}
     {...props}
   />

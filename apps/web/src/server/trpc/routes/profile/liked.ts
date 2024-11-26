@@ -9,7 +9,7 @@ export const userLikedRecipesRoutes = t.router({
   getMany: protectedProcedure.query(async ({ ctx }) =>
     database.query.userLikedRecipes.findMany({
       where: (schema, { eq }) => eq(schema.userId, ctx.sessionData.userId),
-    })
+    }),
   ),
 
   has: protectedProcedure
@@ -19,7 +19,7 @@ export const userLikedRecipesRoutes = t.router({
         where: (schema, { eq, and }) =>
           and(
             eq(schema.userId, ctx.sessionData.userId),
-            eq(schema.recipeId, input.id)
+            eq(schema.recipeId, input.id),
           ),
       });
 
@@ -41,7 +41,7 @@ export const userLikedRecipesRoutes = t.router({
         where: (schema, { eq, and }) =>
           and(
             eq(schema.userId, ctx.sessionData.userId),
-            eq(schema.recipeId, input.id)
+            eq(schema.recipeId, input.id),
           ),
       });
 
@@ -54,8 +54,8 @@ export const userLikedRecipesRoutes = t.router({
         .where(
           and(
             eq(userLikedRecipes.userId, ctx.sessionData.userId),
-            eq(userLikedRecipes.recipeId, input.id)
-          )
+            eq(userLikedRecipes.recipeId, input.id),
+          ),
         );
     }),
 });

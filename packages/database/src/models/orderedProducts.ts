@@ -17,7 +17,7 @@ export const orderedProducts = pgTable(
     count: integer('count').notNull(),
     totalPrice: integer('total_price').notNull(),
     discount: real('discount').notNull().default(0),
-  })
+  }),
 );
 
 export const orderedProductsRelations = relations(
@@ -31,7 +31,7 @@ export const orderedProductsRelations = relations(
       fields: [orderedProducts.orderId],
       references: [orders.id],
     }),
-  })
+  }),
 );
 
 export type OrderedProduct = typeof orderedProducts.$inferSelect;

@@ -6,5 +6,5 @@ export const streetNameSchema = z
   })
   .refine(
     (value) => !/\d/.test(value),
-    'Zadejte název ulice bez čísla popisného'
+    'Zadejte název ulice bez čísla popisného',
   );

@@ -6,7 +6,7 @@ export const Hr: FC<HrProps> = ({ className, ...props }) => (
   <HrBase
     className={clsx(
       'bg-slate-200 border-transparent h-[1px] my-6 mx-0',
-      className
+      className,
     )}
     {...props}
   />

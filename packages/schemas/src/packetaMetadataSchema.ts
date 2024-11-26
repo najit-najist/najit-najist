@@ -13,7 +13,7 @@ export const packetaMetadataSchema = z.object(
       .nullish()
       .refine(
         (error) => !error,
-        'Vybrané místo není dostupné. Vyberete prosím jiné'
+        'Vybrané místo není dostupné. Vyberete prosím jiné',
       ),
     // carrierId: z.string().nullish(),
     // carrierPickupPointId: z.string().nullish(),
@@ -21,5 +21,5 @@ export const packetaMetadataSchema = z.object(
   {
     required_error: 'Dokončete výber odběrného místa',
     invalid_type_error: 'Dokončete výber odběrného místa',
-  }
+  },
 );

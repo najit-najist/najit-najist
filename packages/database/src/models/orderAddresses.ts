@@ -11,7 +11,7 @@ export const orderAddresses = pgTable(
     orderId: integer('order_id')
       .references(() => orders.id)
       .notNull(),
-  })
+  }),
 );
 
 export const orderAddressesRelations = relations(orderAddresses, ({ one }) => ({

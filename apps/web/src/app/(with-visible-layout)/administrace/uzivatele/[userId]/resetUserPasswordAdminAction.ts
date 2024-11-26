@@ -16,7 +16,7 @@ export const resetUserPasswordAdminAction = createActionWithValidation(
       const loggedInUserId = await getLoggedInUserId();
 
       return await UserService.queryOneBy((s, { eq, not, and }) =>
-        and(eq(s.id, Number(link.id)), not(eq(s.id, loggedInUserId)))
+        and(eq(s.id, Number(link.id)), not(eq(s.id, loggedInUserId))),
       );
     }),
   }),
@@ -33,5 +33,5 @@ export const resetUserPasswordAdminAction = createActionWithValidation(
     redirect(pathname);
 
     return null;
-  }
+  },
 );

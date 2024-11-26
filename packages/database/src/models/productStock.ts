@@ -11,7 +11,7 @@ export const productStock = pgTable(
     productId: integer('product_id').references(() => products.id, {
       onDelete: 'cascade',
     }),
-  })
+  }),
 );
 
 export type ProductStock = typeof productStock.$inferSelect;

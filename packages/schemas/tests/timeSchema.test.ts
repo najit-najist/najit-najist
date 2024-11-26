@@ -12,7 +12,7 @@ describe('timeSchema', () => {
       if (!parsedString.success) {
         expect(parsedString.error).toMatchSnapshot();
       }
-    }
+    },
   );
 
   it.each([
@@ -40,6 +40,6 @@ describe('timeSchema', () => {
 
       expect(parsedString.success).toBeFalsy();
       expect((parsedString as any).error).toMatchSnapshot();
-    }
+    },
   );
 });

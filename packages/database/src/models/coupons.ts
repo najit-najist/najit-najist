@@ -27,7 +27,7 @@ export const coupons = pgTable(
     return {
       couponsNameIndex: index('coupons_name_idx').on(coupons.name),
     };
-  }
+  },
 );
 
 export const couponsRelations = relations(coupons, ({ many }) => ({

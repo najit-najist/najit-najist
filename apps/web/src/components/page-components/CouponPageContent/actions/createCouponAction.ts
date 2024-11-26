@@ -49,7 +49,7 @@ export const createCouponAction = createActionWithValidation(
             input.onlyForCategories.map((selectedCategory) => ({
               couponId: created.id,
               categoryId: selectedCategory.id,
-            }))
+            })),
           );
         }
 
@@ -58,7 +58,7 @@ export const createCouponAction = createActionWithValidation(
             input.onlyForProducts.map((selectedProduct) => ({
               couponId: created.id,
               productId: selectedProduct.id,
-            }))
+            })),
           );
         }
 
@@ -81,5 +81,5 @@ export const createCouponAction = createActionWithValidation(
 
     revalidatePath('/administrace/kupony');
     redirect(`/administrace/kupony/${createdId}`);
-  }
+  },
 );

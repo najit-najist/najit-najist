@@ -15,7 +15,7 @@ export const recipeUpdateInputSchema = recipeCreateInputSchema
             .nullable()
             .transform((val) => (val === null ? undefined : val))
             .optional(),
-        })
+        }),
       )
       .min(1, 'Alespoň jedna ingredience'),
     steps: z
@@ -26,7 +26,7 @@ export const recipeUpdateInputSchema = recipeCreateInputSchema
             .nullable()
             .transform((val) => (val === null ? undefined : val))
             .optional(),
-        })
+        }),
       )
       .min(1, 'Alespoň jeden krok'),
   })

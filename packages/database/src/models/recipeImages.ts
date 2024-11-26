@@ -12,7 +12,7 @@ export const recipeImages = pgTable(
       .references(() => recipes.id, { onDelete: 'cascade' })
       .notNull(),
     file: fileFieldType('file').notNull(),
-  })
+  }),
 );
 
 export const recipeImagesRelations = relations(recipeImages, ({ one }) => ({

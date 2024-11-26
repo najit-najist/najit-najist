@@ -13,5 +13,5 @@ export const userLikedPosts = pgTable(
     postId: integer('post_id')
       .references(() => posts.id, { onDelete: 'cascade' })
       .notNull(),
-  })
+  }),
 );

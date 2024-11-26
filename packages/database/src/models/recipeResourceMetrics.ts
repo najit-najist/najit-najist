@@ -8,14 +8,14 @@ export const recipeResourceMetrics = pgTable(
   'recipe_resource_metrics',
   withDefaultFields({
     name: varchar('name', { length: 256 }).unique().notNull(),
-  })
+  }),
 );
 
 export const recipeResourceMetricsRelations = relations(
   recipeResourceMetrics,
   ({ many }) => ({
     resources: many(recipeResources),
-  })
+  }),
 );
 
 export type RecipeResourceMetric = typeof recipeResourceMetrics.$inferSelect;

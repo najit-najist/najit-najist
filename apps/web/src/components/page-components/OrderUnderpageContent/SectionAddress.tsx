@@ -46,7 +46,7 @@ export const SectionAddress: FC<{ order: Order }> = async ({ order }) => {
                 className="hover:underline"
                 href={`+${telephone?.code}${telephone?.telephone.replaceAll(
                   ' ',
-                  ''
+                  '',
                 )}`}
               >
                 +{telephone?.code} {telephone?.telephone}

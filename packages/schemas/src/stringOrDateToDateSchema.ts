@@ -9,6 +9,6 @@ export const stringOrDateToDateSchema = z
   .transform((value) =>
     value instanceof Date || typeof value === 'string'
       ? dayjs(value).toDate()
-      : null
+      : null,
   )
   .optional();

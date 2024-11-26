@@ -7,7 +7,7 @@ declare global {
         pick(
           apiKey: string,
           callback: (point: PacketaPoint | null) => void,
-          options?: { language?: 'cs' | 'en' }
+          options?: { language?: 'cs' | 'en' },
         ): void;
       };
     };

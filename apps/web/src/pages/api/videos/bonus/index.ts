@@ -16,11 +16,11 @@ const handler: NextApiHandler = async (request, response) => {
     SHARED_STATIC_FILES_DIRECTORY_PATH,
     'videos',
     'bonus',
-    file
+    file,
   );
 
   const cookies = new RequestCookies(
-    new Headers({ ...request.headers } as any)
+    new Headers({ ...request.headers } as any),
   );
 
   const user = await getLoggedInUser({ cookies });

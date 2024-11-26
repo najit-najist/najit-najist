@@ -17,9 +17,9 @@ export const couponsForProducts = pgTable(
   }),
   (schema) => ({
     uniqueCouponProductCombination: unique(
-      'unique_coupon_product_combination'
+      'unique_coupon_product_combination',
     ).on(schema.couponId, schema.productId),
-  })
+  }),
 );
 
 export const couponsForProductsRelations = relations(
@@ -33,7 +33,7 @@ export const couponsForProductsRelations = relations(
       fields: [couponsForProducts.productId],
       references: [products.id],
     }),
-  })
+  }),
 );
 
 export type CouponForProduct = typeof couponsForProducts.$inferSelect;

@@ -12,7 +12,7 @@ export const userAddresses = pgTable(
       .references(() => users.id, { onDelete: 'cascade' })
       .unique()
       .notNull(),
-  })
+  }),
 );
 
 export const userAddressRelations = relations(userAddresses, ({ one }) => ({

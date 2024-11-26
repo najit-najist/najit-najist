@@ -11,7 +11,7 @@ export const previewSubscriberTokens = pgTable(
       onDelete: 'cascade',
     }),
     token: varchar('token', { length: 256 }),
-  })
+  }),
 );
 
 export const previewSubscriberTokensRelations = relations(
@@ -21,5 +21,5 @@ export const previewSubscriberTokensRelations = relations(
       fields: [previewSubscriberTokens.forUserId],
       references: [users.id],
     }),
-  })
+  }),
 );

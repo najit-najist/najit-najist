@@ -68,7 +68,7 @@ export const recipesRouter = t.router({
           typeSlug: slugSchema.optional(),
           difficultySlug: slugSchema.optional(),
         })
-        .default({})
+        .default({}),
     )
     .query(
       async ({
@@ -103,7 +103,7 @@ export const recipesRouter = t.router({
                 }
 
                 return conditions.push(eq(recipes.difficultyId, difficulty.id));
-              })
+              }),
           );
         }
 
@@ -119,7 +119,7 @@ export const recipesRouter = t.router({
                 }
 
                 return conditions.push(eq(recipes.categoryId, category.id));
-              })
+              }),
           );
         }
 
@@ -133,8 +133,8 @@ export const recipesRouter = t.router({
           conditions.push(
             or(
               ilike(recipes.title, `%${search}%`),
-              ilike(recipes.slug, `%${search}%`)
-            )!
+              ilike(recipes.slug, `%${search}%`),
+            )!,
           );
         }
 
@@ -176,7 +176,7 @@ export const recipesRouter = t.router({
               : null,
           total: count,
         };
-      }
+      },
     ),
 
   getOne: protectedProcedure
@@ -185,7 +185,7 @@ export const recipesRouter = t.router({
         .object({
           id: z.string(),
         })
-        .or(z.object({ slug: z.string() }))
+        .or(z.object({ slug: z.string() })),
     )
     .query(async ({ input }) => {
       try {
@@ -197,7 +197,7 @@ export const recipesRouter = t.router({
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
             message: `Recept pod daným polem '${Object.keys(
-              input
+              input,
             )}' nebyl nalezen`,
             origin: 'RecipesService',
           });

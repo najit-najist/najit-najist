@@ -38,7 +38,7 @@ export const badgeStyles = cva(
       size: 'normal',
       withNotification: false,
     },
-  }
+  },
 );
 
 const notificationStyles = cva('rounded-full block', {

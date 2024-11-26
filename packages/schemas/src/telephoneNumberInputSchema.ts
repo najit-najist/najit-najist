@@ -17,5 +17,5 @@ export const telephoneNumberInputSchema = z
     },
     {
       message: 'Musí být devět čísel bez mezer',
-    }
+    },
   );

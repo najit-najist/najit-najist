@@ -15,7 +15,7 @@ export const userCartProducts = pgTable(
     productId: integer('product_id')
       .references(() => products.id, { onDelete: 'cascade' })
       .notNull(),
-  })
+  }),
 );
 
 export type UserCartProduct = typeof userCartProducts.$inferSelect;
@@ -31,5 +31,5 @@ export const userCartProductsRelations = relations(
       fields: [userCartProducts.cartId],
       references: [userCarts.id],
     }),
-  })
+  }),
 );

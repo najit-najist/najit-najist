@@ -1,5 +1,5 @@
-import { FC } from 'react';
 import NextImage, { ImageProps } from 'next/image';
+import { FC } from 'react';
 
 export const CustomImage: FC<
   Omit<ImageProps, 'alt'> & { onlyImage?: boolean }

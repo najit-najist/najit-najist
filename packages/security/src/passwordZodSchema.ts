@@ -10,5 +10,5 @@ export const passwordZodSchema = z
     (value) => getPasswordStrength(value).score !== PasswordStrength.BAD,
     {
       message: 'Heslo je přiliš slabé',
-    }
+    },
   );

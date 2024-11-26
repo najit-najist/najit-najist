@@ -53,18 +53,18 @@ export const CookieBanner: FC = () => {
       setCookie(
         ANALYTICS_CONSENT_COOKIE_NAME,
         analytics ? 'true' : 'false',
-        cookieOptions
+        cookieOptions,
       );
       setCookie(
         MARKETING_CONSENT_COOKIE_NAME,
         marketing ? 'true' : 'false',
-        cookieOptions
+        cookieOptions,
       );
       setCookie(COOKIE_CONSENT_SHOWN, 'true', cookieOptions);
 
       toggle(false);
     },
-    [setCookie, toggle]
+    [setCookie, toggle],
   );
 
   return (

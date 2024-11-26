@@ -16,9 +16,9 @@ describe('timeSchema', () => {
     expect(
       extractTimeFromDate(
         getMinimumPickupTimeForDate(
-          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm')
-        )
-      )
+          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'),
+        ),
+      ),
     ).toBe('12:30');
   });
 
@@ -29,9 +29,9 @@ describe('timeSchema', () => {
     expect(
       extractTimeFromDate(
         getMinimumPickupTimeForDate(
-          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm')
-        )
-      )
+          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'),
+        ),
+      ),
     ).toBe('10:45');
   });
 
@@ -42,9 +42,9 @@ describe('timeSchema', () => {
     expect(
       extractTimeFromDate(
         getMinimumPickupTimeForDate(
-          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm')
-        )
-      )
+          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'),
+        ),
+      ),
     ).toBe('18:00');
   });
 
@@ -53,7 +53,9 @@ describe('timeSchema', () => {
     vi.setSystemTime(customNow.toDate());
 
     expect(
-      getMinimumPickupTimeForDate(dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'))
+      getMinimumPickupTimeForDate(
+        dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'),
+      ),
     ).toBe(null);
   });
 
@@ -64,9 +66,9 @@ describe('timeSchema', () => {
     expect(
       extractTimeFromDate(
         getMinimumPickupTimeForDate(
-          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm')
-        )
-      )
+          dayjs('2024/05/08 10:30', 'YYYY/MM/DD HH:mm'),
+        ),
+      ),
     ).toBe('10:00');
   });
 
@@ -77,9 +79,9 @@ describe('timeSchema', () => {
     expect(
       extractTimeFromDate(
         getMinimumPickupTimeForDate(
-          dayjs('2024/05/09 10:30', 'YYYY/MM/DD HH:mm')
-        )
-      )
+          dayjs('2024/05/09 10:30', 'YYYY/MM/DD HH:mm'),
+        ),
+      ),
     ).toBe('10:00');
   });
 });

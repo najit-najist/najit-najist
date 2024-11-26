@@ -80,7 +80,7 @@ export const validatePoint = async ({
         'X-Language': 'cs',
         'Content-Type': 'application/json',
       },
-    }
+    },
   );
 
   if (!res.ok || res.status >= 400) {
@@ -88,13 +88,13 @@ export const validatePoint = async ({
       res.status === 400
         ? 'INVALID_INPUT'
         : res.status === 401
-        ? 'INVALID_API_KEY'
-        : 'FATAL',
+          ? 'INVALID_API_KEY'
+          : 'FATAL',
       {
         status: res.status,
         statusText: res.statusText,
         text: res.status === 400 ? await res.json() : await res.text(),
-      }
+      },
     );
   }
 

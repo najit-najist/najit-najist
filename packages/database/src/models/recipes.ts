@@ -23,8 +23,8 @@ export const recipes = pgTable(
       difficultyId: integer('difficulty_id')
         .references(() => recipeDifficulties.id, { onDelete: 'restrict' })
         .notNull(),
-    })
-  )
+    }),
+  ),
 );
 
 export const recipesRelations = relations(recipes, ({ one, many }) => ({

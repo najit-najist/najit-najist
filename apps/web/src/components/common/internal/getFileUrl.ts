@@ -15,7 +15,7 @@ export const getFileUrl = <M extends PgTableWithColumns<any>>(
   model: M,
   ownerId: string | number,
   filename: string,
-  options?: GetFileUrlOptions
+  options?: GetFileUrlOptions,
 ) => {
   const parts = [];
   const { width, height } = options ?? {};

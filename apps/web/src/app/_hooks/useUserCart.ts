@@ -15,7 +15,7 @@ export const useUserCart = () =>
 
       if (!response.ok || response.status !== 200) {
         throw new Error(
-          'Uživatel není přihlášen nebo se stala jiná neočekávaná chyba'
+          'Uživatel není přihlášen nebo se stala jiná neočekávaná chyba',
         );
       }
 

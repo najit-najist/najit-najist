@@ -14,5 +14,5 @@ export const contactFormReplies = pgTable(
     userId: integer('user_id').references(() => users.id, {
       onDelete: 'cascade',
     }),
-  })
+  }),
 );

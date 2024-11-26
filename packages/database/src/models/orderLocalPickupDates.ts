@@ -12,7 +12,7 @@ export const orderLocalPickupTimes = pgTable(
       .references(() => orders.id, { onDelete: 'cascade' })
       .unique()
       .notNull(),
-  })
+  }),
 );
 
 export const orderLocalPickupTimesRelations = relations(
@@ -22,5 +22,5 @@ export const orderLocalPickupTimesRelations = relations(
       fields: [orderLocalPickupTimes.orderId],
       references: [orders.id],
     }),
-  })
+  }),
 );

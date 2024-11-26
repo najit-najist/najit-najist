@@ -13,5 +13,5 @@ export const useCookieBannerVisibility = create<CookieBannerVisibility>(
         visible: nextValue ?? !get().visible,
       });
     },
-  })
+  }),
 );

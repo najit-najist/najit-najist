@@ -28,9 +28,9 @@ export async function POST(request: NextRequest) {
       'shared-static-assets',
       'videos',
       ...root.split('/').filter(Boolean),
-      file.name
+      file.name,
     ),
-    buffer
+    buffer,
   );
 
   return NextResponse.json({ success: true });

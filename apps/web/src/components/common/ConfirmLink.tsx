@@ -12,7 +12,7 @@ export const ConfirmLink = forwardRef<
     } & React.RefAttributes<HTMLAnchorElement>
 >(function ConfirmLink(
   { children, onClick, message = 'Opravdu vymazat?', prefetch, ...props },
-  ref
+  ref,
 ) {
   const onClickRef = useRef(onClick);
 
@@ -30,7 +30,7 @@ export const ConfirmLink = forwardRef<
         event.preventDefault();
       }
     },
-    [message]
+    [message],
   );
 
   return (

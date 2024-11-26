@@ -30,7 +30,7 @@ export function Form({
         throw new Error('Submit failed because of errors on server');
       }
     },
-    [setError, couponId]
+    [setError, couponId],
   );
 
   return <form onSubmit={handleSubmit(onSubmit)}>{children}</form>;

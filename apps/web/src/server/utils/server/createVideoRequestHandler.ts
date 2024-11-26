@@ -18,7 +18,7 @@ export const createVideoRequestHandler = ({
   if (fs.pathExistsSync(videoPath) === false) {
     if (process.env.NODE_ENV === 'production') {
       throw new Error(
-        `File under absolute path "${videoPath}" to handle does not exist`
+        `File under absolute path "${videoPath}" to handle does not exist`,
       );
     }
 

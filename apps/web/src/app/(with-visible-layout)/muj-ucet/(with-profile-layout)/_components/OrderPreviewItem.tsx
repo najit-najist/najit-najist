@@ -1,5 +1,6 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { Skeleton } from '@components/common/Skeleton';
 import { DATABASE_TIME_FORMAT, DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
@@ -7,6 +8,16 @@ import { formatPrice } from '@utils';
 import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import Link from 'next/link';
 import { FC } from 'react';
+
+export const OrderPreviewItemSkeleton = () => (
+  <div className="flex items-center justify-between py-3">
+    <div className="">
+      <Skeleton className="w-10 h-5" />
+      <Skeleton className="w-20 h-5 mt-1" />
+    </div>
+    <Skeleton className="w-10 h-5" />
+  </div>
+);
 
 export const OrderPreviewItem: FC<{
   order: AppRouterOutput['orders']['get']['many']['items'][number];

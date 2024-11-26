@@ -89,7 +89,7 @@ export const Tooltip: FC<
             ref={arrowRef}
             className={cx(
               'w-2 h-2 bg-white rotate-45 absolute border-project-secondary',
-              placement === 'top' ? 'border-b border-r' : 'border-t border-l'
+              placement === 'top' ? 'border-b border-r' : 'border-t border-l',
             )}
             style={{
               left: middlewareData.arrow?.x,

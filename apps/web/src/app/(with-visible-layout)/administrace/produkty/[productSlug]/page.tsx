@@ -2,56 +2,11 @@ import { ProductPageManageContent } from '@components/page-components/ProductPag
 import { logger } from '@logger/server';
 import { products } from '@najit-najist/database/models';
 import { UserActions, canUser } from '@server/utils/canUser';
-import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { getProduct } from '@server/utils/getProduct';
 import { getLoggedInUser } from '@server/utils/server';
 import { notFound } from 'next/navigation';
 
 export const revalidate = 0;
-
-// TODO
-const jsonLd = {
-  '@context': 'http://schema.org',
-  '@type': 'Product',
-  name: 'Delicious Baguette',
-  image: [
-    'https://example.com/baguette-image1.jpg',
-    'https://example.com/baguette-image2.jpg',
-  ],
-  category: 'Baguettes',
-  offers: {
-    '@type': 'Offer',
-    price: '5.99',
-    priceCurrency: 'USD',
-  },
-  description:
-    'A freshly baked baguette with a crispy crust and soft interior. Perfect for any meal or occasion.',
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.5',
-    reviewCount: 20,
-  },
-  reviews: [
-    {
-      '@type': 'Review',
-      author: 'Customer1',
-      reviewBody: "Absolutely delicious! The best baguette I've ever had.",
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: '5',
-      },
-    },
-    {
-      '@type': 'Review',
-      author: 'Customer2',
-      reviewBody: 'Great texture and flavor. Will buy again.',
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: '4.5',
-      },
-    },
-  ],
-};
 
 type Params = {
   params: Promise<{ productSlug: string }>;

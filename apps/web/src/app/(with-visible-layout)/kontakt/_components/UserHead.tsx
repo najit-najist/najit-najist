@@ -22,7 +22,7 @@ export const UserHead: FC<{
           quality={100}
           className={clsx(
             'absolute top-0 left-0 object-cover h-full',
-            imagePosition === 'top' ? 'object-top' : 'object-center'
+            imagePosition === 'top' ? 'object-top' : 'object-center',
           )}
         />
       </div>

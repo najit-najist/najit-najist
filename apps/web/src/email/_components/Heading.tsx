@@ -39,7 +39,7 @@ export const Heading: FC<PropsWithChildren<HeadingProps>> = ({
       'leading-6 text-lg text-slate-700 tracking-wider',
       asToClassName[as],
       !noSpacing ? asToSpacingClassName[as] : '',
-      className
+      className,
     )}
     as={as}
     {...props}

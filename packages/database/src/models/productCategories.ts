@@ -10,7 +10,7 @@ export const productCategories = pgTable(
   withDefaultFields({
     name: varchar('title', { length: 256 }).unique().notNull(),
     slug: varchar('slug', { length: 256 }).unique().notNull(),
-  })
+  }),
 );
 
 export const productCategoriesRelations = relations(
@@ -18,7 +18,7 @@ export const productCategoriesRelations = relations(
   ({ many }) => ({
     products: many(products),
     onlyForCoupons: many(couponsForProductCategories),
-  })
+  }),
 );
 
 export type ProductCategory = typeof productCategories.$inferSelect;

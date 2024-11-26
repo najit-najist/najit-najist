@@ -12,10 +12,10 @@ export const municipalities = pgTable(
     return {
       nameSlugIndex: uniqueIndex('name_slug_idx').on(
         municipalities.name,
-        municipalities.slug
+        municipalities.slug,
       ),
     };
-  }
+  },
 );
 
 // export const municipalitiesRelations = relations(

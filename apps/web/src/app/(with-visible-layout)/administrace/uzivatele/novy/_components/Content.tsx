@@ -33,7 +33,7 @@ const resolver = zodResolver(
           path: ['passwordAgain'],
         });
       }
-    })
+    }),
 );
 
 export const Content: FC = () => {
@@ -57,7 +57,7 @@ export const Content: FC = () => {
           throw new Error('Formulář má chyby');
         }
       },
-      [setError]
+      [setError],
     );
 
   return (

@@ -12,7 +12,7 @@ export const comgatePayments = pgTable(
     orderId: integer('order_id')
       .references(() => orders.id)
       .notNull(),
-  })
+  }),
 );
 
 export type ComgatePayment = typeof comgatePayments.$inferSelect;
@@ -24,5 +24,5 @@ export const comgatePaymentsRelations = relations(
       fields: [comgatePayments.orderId],
       references: [orders.id],
     }),
-  })
+  }),
 );

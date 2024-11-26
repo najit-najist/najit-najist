@@ -57,7 +57,7 @@ export const zodTime = (options?: ZodTimeOptions) => {
           fatal: true,
           message,
         };
-      }
+      },
     )
     .transform((value) => {
       const [hours, minutes] = value.split(':');

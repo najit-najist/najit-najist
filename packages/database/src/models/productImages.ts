@@ -12,7 +12,7 @@ export const productImages = pgTable(
       onDelete: 'cascade',
     }),
     file: fileFieldType('file').notNull(),
-  })
+  }),
 );
 
 export const productImagesRelations = relations(productImages, ({ one }) => ({

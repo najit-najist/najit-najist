@@ -1,7 +1,6 @@
 import { logoImage } from '@components/common/Logo';
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 import { ADMIN_EMAIL, APP_BASE_URL } from '@constants';
-import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
 import { UserActions, canUser } from '@server/utils/canUser';
@@ -9,7 +8,12 @@ import { getFileUrl } from '@server/utils/getFileUrl';
 import { getLoggedInUser } from '@server/utils/server';
 import { isLocalPickup } from '@utils';
 import { notFound } from 'next/navigation';
-import { WithContext, Product as SchemaProduct } from 'schema-dts';
+import {
+  WithContext,
+  Product as SchemaProduct,
+  OfferShippingDetails,
+  MerchantReturnPolicy,
+} from 'schema-dts';
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
@@ -86,59 +90,27 @@ export default async function Page({ params }: Params) {
     return notFound();
   }
 
-  const jsonLd: WithContext<SchemaProduct> = {
+  const isLocalPickupOnly =
+    product.onlyForDeliveryMethod?.slug === 'local-pickup';
+
+  const orderShippingDetails = {
     '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: product.name,
-    image: product.images.map((productImage) =>
-      new URL(
-        getFileUrl(products, product.id, productImage.file),
-        APP_BASE_URL,
-      ).toString(),
-    ),
-    category: product.category?.name,
-    offers: {
-      '@type': 'Offer',
-      price: product.price ?? 0,
-      priceCurrency: 'CZK',
-      availability:
-        product.stock?.value === 0
-          ? 'https://schema.org/OutOfStock'
-          : isLocalPickup(product.onlyForDeliveryMethod)
-            ? 'https://schema.org/InStoreOnly'
-            : 'https://schema.org/InStock',
-      seller: {
-        '@type': 'GroceryStore',
-        currenciesAccepted: 'CZK',
-        priceRange: '$$',
-        email: ADMIN_EMAIL,
-        name: 'Najít & Najíst',
-        logo: new URL(logoImage.src, APP_BASE_URL).toString(),
-        hasMerchantReturnPolicy: {
-          '@type': 'MerchantReturnPolicy',
-          applicableCountry: 'CZ',
-          returnPolicyCategory: 'https://schema.org/MerchantReturnUnspecified',
-          returnMethod: 'https://schema.org/ReturnInStore',
-          returnFees: 'https://schema.org/FreeReturn',
-        },
-        address: {
-          "@type": "PostalAddress",
-          addressLocality: "Hradec Králové, Česká republika",
-          postalCode: '50003',
-          streetAddress: "Tomkova 1230/4a"
-        },
-      },
-      ...(firstShipping && {
-        shippingDetails: {
-          '@type': 'OfferShippingDetails',
+    '@type': 'OfferShippingDetails',
+    '@id': '#shipping_policy',
+    shippingDestination: {
+      '@type': 'DefinedRegion',
+      addressCountry: 'CZ',
+    },
+    ...(isLocalPickupOnly
+      ? {
+        doesNotShip: true
+        }
+      : {
+          doesNotShip: false,
           shippingRate: {
             '@type': 'MonetaryAmount',
-            value: firstShipping.price ?? 0,
+            value: firstShipping?.price ?? 0,
             currency: 'CZK',
-          },
-          shippingDestination: {
-            '@type': 'DefinedRegion',
-            addressCountry: 'CZ',
           },
           deliveryTime: {
             '@type': 'ShippingDeliveryTime',
@@ -155,11 +127,38 @@ export default async function Page({ params }: Params) {
               unitCode: 'DAY',
             },
           },
-        },
-      }),
-    },
+        }),
+  } satisfies WithContext<OfferShippingDetails>;
 
+  const productReturnPolicy = {
+    '@context': 'https://schema.org',
+    '@type': 'MerchantReturnPolicy',
+    '@id': '#return_policy',
+    applicableCountry: 'CZ',
+    ...(isLocalPickupOnly
+      ? {
+          returnPolicyCategory: 'https://schema.org/MerchantReturnNotPermitted',
+        }
+      : {
+          returnPolicyCategory:
+            'https://schema.org/MerchantReturnFiniteReturnWindow',
+          merchantReturnDays: 14,
+          returnMethod: 'https://schema.org/ReturnInStore',
+          returnFees: 'https://schema.org/FreeReturn',
+        }),
+  } satisfies WithContext<MerchantReturnPolicy>;
+
+  const productJsonLd: WithContext<SchemaProduct> = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
     description: product.description ?? '',
+    image: product.images.map((productImage) =>
+      new URL(
+        getFileUrl(products, product.id, productImage.file),
+        APP_BASE_URL,
+      ).toString(),
+    ),
     // aggregateRating: {
     //   '@type': 'AggregateRating',
     //   ratingValue: '4.5',
@@ -185,7 +184,41 @@ export default async function Page({ params }: Params) {
     //     },
     //   },
     // ],
+    category: product.category?.name,
+    offers: {
+      '@type': 'Offer',
+      price: product.price ?? 0,
+      priceCurrency: 'CZK',
+      availability:
+        product.stock?.value === 0
+          ? 'https://schema.org/OutOfStock'
+          : isLocalPickup(product.onlyForDeliveryMethod)
+            ? 'https://schema.org/InStoreOnly'
+            : 'https://schema.org/InStock',
+      seller: {
+        '@type': 'GroceryStore',
+        currenciesAccepted: 'CZK',
+        priceRange: '$$',
+        email: ADMIN_EMAIL,
+        name: 'Najít & Najíst',
+        logo: new URL(logoImage.src, APP_BASE_URL).toString(),
+        hasMerchantReturnPolicy: {
+          "@id": productReturnPolicy['@id']
+        },
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: 'Hradec Králové, Česká republika',
+          postalCode: '50003',
+          streetAddress: 'Tomkova 1230/4a',
+        },
+      },
+      shippingDetails: {
+        '@id': orderShippingDetails['@id'],
+      },
+    },
   };
+
+  const jsonLd = [productJsonLd, orderShippingDetails, productReturnPolicy];
 
   return (
     <>

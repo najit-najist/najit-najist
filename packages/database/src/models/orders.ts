@@ -70,9 +70,9 @@ export const orders = pgTable(
       () => couponPatches.id,
       {
         onDelete: 'restrict',
-      }
+      },
     ),
-  })
+  }),
 );
 
 export const ordersRelations = relations(orders, ({ one, many }) => ({

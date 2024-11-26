@@ -28,7 +28,7 @@ export const orderPaymentMethods = pgTable(
     }).notNull(),
     notes: text('notes'),
     paymentOnCheckout: boolean('payment_on_checkout').default(false),
-  })
+  }),
 );
 
 export type OrderPaymentMethod = typeof orderPaymentMethods.$inferSelect;
@@ -42,14 +42,14 @@ export const orderPaymentExceptDeliveryMethods = pgTable(
     deliveryMethodId: integer('delivery_method_id')
       .references(() => orderDeliveryMethods.id, { onDelete: 'cascade' })
       .notNull(),
-  }
+  },
 );
 
 export const orderPaymentMethodsRelations = relations(
   orderPaymentMethods,
   ({ many }) => ({
     exceptDeliveryMethods: many(orderPaymentExceptDeliveryMethods),
-  })
+  }),
 );
 
 export const orderPaymentExceptDeliveryMethodsRelations = relations(
@@ -63,5 +63,5 @@ export const orderPaymentExceptDeliveryMethodsRelations = relations(
       fields: [orderPaymentExceptDeliveryMethods.deliveryMethodId],
       references: [orderDeliveryMethods.id],
     }),
-  })
+  }),
 );

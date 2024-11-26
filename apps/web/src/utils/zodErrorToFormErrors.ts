@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const zodErrorToFormErrors = (
   zodErrors: z.ZodIssue[],
-  validateAllFieldCriteria: boolean
+  validateAllFieldCriteria: boolean,
 ) => {
   const errors: Record<string, FieldError> = {};
   for (; zodErrors.length; ) {
@@ -26,7 +26,7 @@ export const zodErrorToFormErrors = (
 
     if ('unionErrors' in error) {
       error.unionErrors.forEach((unionError) =>
-        unionError.errors.forEach((e) => zodErrors.push(e))
+        unionError.errors.forEach((e) => zodErrors.push(e)),
       );
     }
 
@@ -41,7 +41,7 @@ export const zodErrorToFormErrors = (
         code,
         messages
           ? ([] as string[]).concat(messages as string[], error.message)
-          : error.message
+          : error.message,
       ) as FieldError;
     }
 

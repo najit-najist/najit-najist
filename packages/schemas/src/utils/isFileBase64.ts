@@ -1,4 +1,5 @@
 import { Base64 } from 'js-base64';
+
 import { splitBase64Url } from './splitBase64Url';
 
 const BASE_64_SPLIT = ';base64,';

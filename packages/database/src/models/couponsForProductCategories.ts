@@ -17,9 +17,9 @@ export const couponsForProductCategories = pgTable(
   }),
   (schema) => ({
     uniqueCouponCategoryCombination: unique(
-      'unique_coupon_category_combination'
+      'unique_coupon_category_combination',
     ).on(schema.couponId, schema.categoryId),
-  })
+  }),
 );
 
 export const couponsForProductCategoriesRelations = relations(
@@ -33,7 +33,7 @@ export const couponsForProductCategoriesRelations = relations(
       fields: [couponsForProductCategories.categoryId],
       references: [productCategories.id],
     }),
-  })
+  }),
 );
 
 export type CouponsForProductCategory =

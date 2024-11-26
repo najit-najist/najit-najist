@@ -7,5 +7,5 @@ export const postCategories = pgTable(
   withDefaultFields({
     title: varchar('title', { length: 256 }).unique().notNull(),
     slug: varchar('slug', { length: 256 }).unique().notNull(),
-  })
+  }),
 );

@@ -15,7 +15,7 @@ export const recipeSteps = pgTable(
       .$type<{ content: string; duration: number }[]>()
       .notNull()
       .default([]),
-  })
+  }),
 );
 
 export const recipeStepsRelations = relations(recipeSteps, ({ one }) => ({

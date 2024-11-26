@@ -6,7 +6,7 @@ export const extractTimeFromSteps = (steps: RecipeStep[]) =>
       finalValue +
       parts.reduce(
         (partsFinalValue, { duration }) => partsFinalValue + duration,
-        0
+        0,
       ),
-    0
+    0,
   );

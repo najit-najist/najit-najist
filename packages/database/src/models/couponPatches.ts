@@ -13,7 +13,7 @@ export const couponPatches = pgTable(
       .notNull(),
     reductionPrice: integer('reduction_price').default(0),
     reductionPercentage: integer('reduction_percentage').default(0),
-  })
+  }),
 );
 
 export const couponPatchesRelations = relations(
@@ -24,7 +24,7 @@ export const couponPatchesRelations = relations(
       references: [coupons.id],
     }),
     orders: many(orders),
-  })
+  }),
 );
 
 export type CouponPatch = typeof couponPatches.$inferSelect;

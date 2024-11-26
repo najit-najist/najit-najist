@@ -1,6 +1,6 @@
 export const sendPlausibleEvent = (
   eventName: string,
-  payload: { props?: object; revenue?: object }
+  payload: { props?: object; revenue?: object },
 ) =>
   fetch('https://plausible.io/api/event', {
     method: 'POST',

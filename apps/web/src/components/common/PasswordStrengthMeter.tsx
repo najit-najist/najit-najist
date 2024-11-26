@@ -26,10 +26,10 @@ export const PasswordStrengthMeter: FC<{
   const passwordValue = useWatch({ name: fieldName, control });
   const passwordStrength = useMemo(
     () => (passwordValue ? getPasswordStrength(passwordValue) : undefined),
-    [passwordValue]
+    [passwordValue],
   );
   const maxItemsShown = passwordStrengths.findIndex(
-    (value) => value === passwordStrength?.score
+    (value) => value === passwordStrength?.score,
   );
 
   return passwordValue && passwordStrength ? (

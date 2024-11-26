@@ -55,7 +55,7 @@ export const typesRouter = t.router({
         .extend({
           perPage: z.number().min(1).default(99).optional(),
         })
-        .default({})
+        .default({}),
     )
     .query(async ({ input, ctx }) => {
       const cursor = generateCursor({

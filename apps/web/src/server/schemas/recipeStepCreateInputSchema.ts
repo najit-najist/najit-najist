@@ -7,6 +7,6 @@ export const recipeStepCreateInputSchema = z.object({
     z.object({
       content: nonEmptyStringSchema,
       duration: z.number().min(0),
-    })
+    }),
   ),
 });

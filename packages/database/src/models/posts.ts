@@ -22,8 +22,8 @@ export const posts = pgTable(
       content: text('content'),
       publishedAt: timestamp('published_at'),
       image: fileFieldType('image'),
-    })
-  )
+    }),
+  ),
 );
 
 export const postsRelations = relations(posts, ({ many }) => ({
@@ -50,7 +50,7 @@ export const postsToPostCategoriesRelations = relations(
       fields: [postsToPostCategories.categoryId],
       references: [postCategories.id],
     }),
-  })
+  }),
 );
 
 export type Post = typeof posts.$inferSelect;

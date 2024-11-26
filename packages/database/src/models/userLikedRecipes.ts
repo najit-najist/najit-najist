@@ -13,5 +13,5 @@ export const userLikedRecipes = pgTable(
     recipeId: integer('recipe_id')
       .references(() => recipes.id, { onDelete: 'cascade' })
       .notNull(),
-  })
+  }),
 );

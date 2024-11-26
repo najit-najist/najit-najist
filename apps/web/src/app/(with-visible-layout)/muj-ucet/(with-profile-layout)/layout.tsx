@@ -1,14 +1,12 @@
-import { Tooltip } from '@components/common/Tooltip';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { getAuthorizedUserOrRequestLogin } from '@server/utils/getAuthorizedUserOrRequestLogin';
-import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { PropsWithChildren } from 'react';
 
 import { WatchedLink } from './_components/WatchedLink';
 
 export default async function Layout({ children }: PropsWithChildren) {
   const user = await getAuthorizedUserOrRequestLogin();
-  const orders = await getCachedOrders({ user: { id: [user.id] } });
+
   const navigationItems = [
     {
       label: 'Můj profil',
@@ -18,18 +16,6 @@ export default async function Layout({ children }: PropsWithChildren) {
       label: (
         <>
           Moje objednávky
-          <Tooltip
-            trigger={
-              <span
-                className="ml-auto w-9 min-w-max whitespace-nowrap rounded-full bg-white px-2.5 py-0.5 text-center text-xs font-medium leading-5 text-gray-600 ring-1 ring-inset ring-gray-200"
-                aria-hidden="true"
-              >
-                {orders.totalItems}
-              </span>
-            }
-          >
-            Počet objednávek
-          </Tooltip>
         </>
       ),
       href: '/muj-ucet/objednavky',

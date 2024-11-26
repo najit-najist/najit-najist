@@ -15,10 +15,10 @@ export const telephoneNumbers = pgTable(
     return {
       telephoneWithCodeIndex: uniqueIndex('telephone_with_index_idx').on(
         userTelephoneNumbers.telephone,
-        userTelephoneNumbers.code
+        userTelephoneNumbers.code,
       ),
     };
-  }
+  },
 );
 
 export type TelephoneNumber = typeof telephoneNumbers.$inferSelect;

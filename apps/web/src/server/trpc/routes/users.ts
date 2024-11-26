@@ -35,7 +35,7 @@ export const usersRoute = t.router({
             })
             .optional(),
         })
-        .optional()
+        .optional(),
     )
     .query(async ({ ctx, input }) => {
       const {
@@ -52,8 +52,8 @@ export const usersRoute = t.router({
           or(
             ilike(users.firstName, `%${search}%`),
             ilike(users.lastName, `%${search}%`),
-            ilike(users.email, `%${search}%`)
-          )!
+            ilike(users.email, `%${search}%`),
+          )!,
         );
       }
 
@@ -63,7 +63,7 @@ export const usersRoute = t.router({
           where: (schema, { inArray }) =>
             inArray(
               schema.municipalityId,
-              filterFromOptions.address!.map((item) => item.id)
+              filterFromOptions.address!.map((item) => item.id),
             ),
           columns: {
             id: true,
@@ -118,7 +118,7 @@ export const usersRoute = t.router({
         .object({
           id: z.number(),
         })
-        .or(z.object({ preregisteredUserToken: z.string() }))
+        .or(z.object({ preregisteredUserToken: z.string() })),
     )
     .output(privateUserOutputSchema)
     .query(async ({ ctx, input }) => {
@@ -165,7 +165,7 @@ export const usersRoute = t.router({
           throw new ApplicationError({
             code: ErrorCodes.ENTITY_MISSING,
             message: `Uživatel pod daným polem '${Object.keys(
-              input
+              input,
             )}' nebyl nalezen`,
             origin: 'UserService',
           });

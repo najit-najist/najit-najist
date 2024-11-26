@@ -37,7 +37,7 @@ export const userCartCheckoutInputSchema = z.object({
   lastName: nonEmptyStringSchema,
   telephoneNumber: telephoneNumberInputSchema.refine(
     (value) => value.length >= 1,
-    'Zadejte telefonní číslo'
+    'Zadejte telefonní číslo',
   ),
   notes: z.string().optional(),
   address: z.object({

@@ -21,5 +21,5 @@ export const userNewslettersRelations = relations(
       fields: [userNewsletters.email],
       references: [users.email],
     }),
-  })
+  }),
 );

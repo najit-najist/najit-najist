@@ -32,7 +32,7 @@ export const getMinimumPickupTimeForDate = (date: Dayjs): Dayjs | null => {
     const hourNow = now.get('hour');
     const minimumAllowedHour = Math.min(
       ENDING_HOURS + 1,
-      Math.max(STARTING_HOURS, hourNow + 2)
+      Math.max(STARTING_HOURS, hourNow + 2),
     );
 
     if (minimumAllowedHour > ENDING_HOURS) {
@@ -43,7 +43,7 @@ export const getMinimumPickupTimeForDate = (date: Dayjs): Dayjs | null => {
       .set('hour', minimumAllowedHour)
       .set(
         'minute',
-        hourNow < STARTING_HOURS - 2 ? 0 : clampMinutes(minutesNow)
+        hourNow < STARTING_HOURS - 2 ? 0 : clampMinutes(minutesNow),
       );
   } else {
     return date.set('hour', STARTING_HOURS).set('minute', 0);

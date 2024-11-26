@@ -8,4 +8,4 @@ export const withDefaultFields = <T extends object>(rest: T) =>
     }).defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }),
     ...rest,
-  } as const);
+  }) as const;

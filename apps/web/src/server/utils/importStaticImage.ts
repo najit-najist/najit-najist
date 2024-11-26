@@ -6,10 +6,10 @@ import { StaticImageData } from 'next/image';
 export const importStaticImage = <M extends PgTableWithColumns<any>>(
   model: M,
   ownerId: EntityLink['id'],
-  filename: string
+  filename: string,
 ): Promise<StaticImageData> =>
   import(
     /* webpackIgnore: true */ `/private/uploads/${getTableName(
-      model
+      model,
     )}/${ownerId}/${filename}`
   ).then((value) => value.default);

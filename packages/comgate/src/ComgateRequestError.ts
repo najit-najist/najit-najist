@@ -11,13 +11,13 @@ export class ComgateRequestError extends Error {
     type: 'payload-not-ok',
     path: string,
     response: Response,
-    body: ComgateLikeResponse<any>
+    body: ComgateLikeResponse<any>,
   );
   constructor(
     type: ComgateRequestErrorType,
     path: string,
     response: Response,
-    body?: ComgateLikeResponse<any>
+    body?: ComgateLikeResponse<any>,
   ) {
     super('Failed to do request to comgate');
 
