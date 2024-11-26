@@ -16,6 +16,11 @@ export const productCreateInputSchema = z.object({
   category: entityLinkSchema.optional(),
   onlyForDeliveryMethod: entityLinkSchema.nullable().optional(),
   publishedAt: stringOrDateToDateSchema,
+  manufacturer: z
+    .string()
+    .trim()
+    .transform((value) => value || null)
+    .nullish(),
   price: z.coerce
     .number({ required_error: 'Požadovaná hodnota' })
     .min(0)

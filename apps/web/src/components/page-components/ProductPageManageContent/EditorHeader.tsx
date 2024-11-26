@@ -22,27 +22,31 @@ export const EditorHeader: FC<{
       {isEditorEnabled ? (
         <div className="container my-2">
           <Link
-            href="/administrace"
+            href={`/produkty/${encodeURIComponent(product?.slug ?? '')}`}
             className="text-red-400 hover:underline group text-sm"
           >
             <ArrowLeftIcon
               strokeWidth={3}
               className="w-4 h-4 inline-block relative group-hover:-translate-x-1 mr-1 duration-100 -mt-1"
             />
-            Zpět na rozcestník
+            Odejít z úpravy
           </Link>
         </div>
       ) : null}
-      <Alert heading="" color="warning" className="w-full">
+      <Alert
+        heading=""
+        color="warning"
+        className="w-full block sm:sticky top-24 left-0 z-20"
+      >
         <div className="container">
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center">
             {product && (
               <EditedAt
                 createdAt={product.createdAt}
                 updatedAt={product.updatedAt}
               />
             )}
-            <div className="ml-auto flex gap-3">
+            <div className="sm:ml-auto flex gap-3">
               {isEditorEnabled || viewType === 'create' ? (
                 <EditorButtons viewType={viewType} />
               ) : null}

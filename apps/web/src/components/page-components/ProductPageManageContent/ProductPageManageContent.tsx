@@ -23,6 +23,7 @@ import { DescriptionEdit } from './editorComponents/DescriptionEdit';
 import { EditorOnlyDeliveryMethodRenderer } from './editorComponents/EditorOnlyDeliveryMethodRenderer';
 import { Form } from './editorComponents/Form';
 import { ImagesEdit } from './editorComponents/ImagesEdit';
+import { ManufacturerEdit } from './editorComponents/ManufacturerEdit';
 import { OnlyDeliveryMethodBadge } from './editorComponents/OnlyDeliveryMethodBadge';
 import { PriceEditor } from './editorComponents/PriceEditor';
 import { ProductCompositionsEdit } from './editorComponents/ProductCompositionsEdit';
@@ -217,6 +218,12 @@ export const ProductPageManageContent: FC<
             </div>
           ) : null}
 
+          {isEditorEnabled ? (
+            <div className="mt-5">
+              <ManufacturerEdit />
+            </div>
+          ) : null}
+
           {product && viewType === 'view' ? (
             <div className="flex mt-10">
               <UserActions stock={product.stock} product={product} />
@@ -307,6 +314,12 @@ export const ProductPageManageContent: FC<
               )}
             </div>
           )}
+
+          {!isEditorEnabled && product?.manufacturer ? (
+            <div className="mt-12">
+              <Title>Výrobce: {product.manufacturer}</Title>
+            </div>
+          ) : null}
         </div>
 
         <aside

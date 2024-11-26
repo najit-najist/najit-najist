@@ -14,7 +14,7 @@ export const createProductRawMaterialAction = createActionWithValidation(
   createProductRawMaterialSchema.superRefine(async ({ name }, ctx) => {
     const existing = await getProductRawMaterial({ name });
 
-    if (!existing) {
+    if (existing) {
       ctx.addIssue({
         path: ['name'],
         code: 'custom',

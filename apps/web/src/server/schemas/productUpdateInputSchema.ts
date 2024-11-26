@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 import { productCreateInputSchema } from './productCreateInputSchema';
 import { productStockCreateInputSchema } from './productStockCreateInputSchema';
 

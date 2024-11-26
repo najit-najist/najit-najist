@@ -82,6 +82,7 @@ export const testOrder: OrderWithRelations = {
       product: {
         ...productBase,
         id: 2,
+        manufacturer: 'Test',
         images: [],
         name: 'Produkt moc dlouhy',
         slug: '/produkt',
@@ -108,6 +109,7 @@ export const testOrder: OrderWithRelations = {
         id: 4,
         images: [],
         name: 'Produkt moc dlouhy',
+        manufacturer: 'test',
         slug: '/produkt',
         description: 'Very loooooooong description',
         stock: {

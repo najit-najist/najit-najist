@@ -27,6 +27,7 @@ export const products = pgTable(
       price: integer('price').default(0).notNull(),
       description: text('description'),
       publishedAt: timestamp('published_at'),
+      manufacturer: varchar('manufacturer'),
       categoryId: integer('category_id').references(
         () => productCategories.id,
         {
