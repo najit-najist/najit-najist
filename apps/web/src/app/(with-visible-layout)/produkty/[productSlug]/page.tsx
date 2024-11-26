@@ -121,6 +121,12 @@ export default async function Page({ params }: Params) {
           returnMethod: 'https://schema.org/ReturnInStore',
           returnFees: 'https://schema.org/FreeReturn',
         },
+        address: {
+          "@type": "PostalAddress",
+          addressLocality: "Hradec Králové, Česká republika",
+          postalCode: '50003',
+          streetAddress: "Tomkova 1230/4a"
+        },
       },
       ...(firstShipping && {
         shippingDetails: {
