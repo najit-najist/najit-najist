@@ -94,7 +94,7 @@ export default async function Page({ params }: Params) {
 
   if (!product) {
     logger.error(
-      { productSlug, loggedInUser: !!loggedInUser },
+      { productSlug, loggedInUser: loggedInUser.email },
       'Could not find product to administrate',
     );
     notFound();
