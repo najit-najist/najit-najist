@@ -1,3 +1,4 @@
+import { Alert } from '@components/common/Alert';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { ArrowLeftIcon } from '@heroicons/react/24/solid';
@@ -17,42 +18,53 @@ export const EditorHeader: FC<{
   const isEditorEnabled = viewType === 'edit';
 
   return (
-    <div
-      className={clsx(
-        'bottom-0 left-0 fixed z-20 w-full bg-white border-t-2 border-gray-100',
-      )}
-    >
-      <div className="container mx-auto my-2 flex">
-        {viewType !== 'create' && product ? (
-          <div className="mr-auto flex items-center justify-center">
-            <Link
-              href={`${isEditorEnabled ? '' : '/administrace'}/produkty/${encodeURIComponent(product?.slug ?? '')}`}
-              className={buttonStyles({
-                color: isEditorEnabled ? 'subtleRed' : 'normal',
-                asLink: true,
-                appearance: 'small',
-              })}
-            >
-              {isEditorEnabled ? (
-                <ArrowLeftIcon className="inline w-5 -mt-1 mr-2" />
-              ) : null}
-              {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}
-            </Link>
-            <EditedAt
-              createdAt={product.createdAt}
-              updatedAt={product.updatedAt}
+    <>
+      {isEditorEnabled ? (
+        <div className="container my-2">
+          <Link
+            href="/administrace"
+            className="text-red-400 hover:underline group text-sm"
+          >
+            <ArrowLeftIcon
+              strokeWidth={3}
+              className="w-4 h-4 inline-block relative group-hover:-translate-x-1 mr-1 duration-100 -mt-1"
             />
-          </div>
-        ) : null}
-        <div className="ml-auto flex gap-4">
-          {isEditorEnabled || viewType === 'create' ? (
-            <EditorButtons viewType={viewType} />
-          ) : null}
-          {viewType === 'edit' && product ? (
-            <DeleteButton {...product} />
-          ) : null}
+            Zpět na rozcestník
+          </Link>
         </div>
-      </div>
-    </div>
+      ) : null}
+      <Alert heading="" color="warning" className="w-full">
+        <div className="container">
+          <div className="flex justify-between items-center">
+            {product && (
+              <EditedAt
+                createdAt={product.createdAt}
+                updatedAt={product.updatedAt}
+              />
+            )}
+            <div className="ml-auto flex gap-3">
+              {isEditorEnabled || viewType === 'create' ? (
+                <EditorButtons viewType={viewType} />
+              ) : null}
+              {viewType === 'edit' && product ? (
+                <DeleteButton {...product} />
+              ) : null}
+            </div>
+            {viewType !== 'create' && !isEditorEnabled ? (
+              <Link
+                href={`${isEditorEnabled ? '' : '/administrace'}/produkty/${encodeURIComponent(product?.slug ?? '')}`}
+                className={buttonStyles({
+                  color: isEditorEnabled ? 'subtleRed' : 'normal',
+                  asLink: true,
+                  appearance: 'extraSmall',
+                })}
+              >
+                {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </Alert>
+    </>
   );
 };

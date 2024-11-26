@@ -67,6 +67,9 @@ export const ProductPageManageContent: FC<
 
   const content = (
     <>
+      {isEditorHeaderShown ? (
+        <EditorHeader viewType={props.viewType} product={product} />
+      ) : null}
       <div className="container mt-6 mb-3">
         <Breadcrumbs
           items={[
@@ -313,9 +316,6 @@ export const ProductPageManageContent: FC<
           )}
         />
       </div>
-      {isEditorHeaderShown ? (
-        <EditorHeader viewType={props.viewType} product={product} />
-      ) : null}
     </>
   );
 

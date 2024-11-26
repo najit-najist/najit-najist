@@ -43,6 +43,7 @@ export const EditorButtons: FC<{ viewType: ViewType }> = ({ viewType }) => {
       <Button
         className="ml-auto"
         type="submit"
+        appearance="small"
         isLoading={formState.isSubmitting}
         onClick={onSaveClick}
       >

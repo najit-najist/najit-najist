@@ -31,7 +31,7 @@ export function EditedAt({
   }, [updatedAt]);
 
   return (
-    <div className="ml-5 text-gray-500 tet-sm flex flex-col">
+    <div className="text-gray-500 tet-sm flex flex-col">
       {updatedAtAsText ? (
         <>Upraveno: {updatedAtAsText}</>
       ) : (

@@ -1,6 +1,5 @@
-import { HomeIcon } from '@heroicons/react/24/outline';
 import { cx } from 'class-variance-authority';
-//@ts-ignore
+import { clsx } from 'clsx';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -13,11 +12,12 @@ export type BreadcrumbItem = {
 
 export type BreadcrumbsProps = {
   items: BreadcrumbItem[];
+  className?: string;
 };
 
-export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items }) => {
+export const Breadcrumbs: FC<BreadcrumbsProps> = ({ items, className }) => {
   return (
-    <nav className="flex" aria-label="Breadcrumb">
+    <nav className={clsx('hidden sm:flex', className)} aria-label="Breadcrumb">
       <ol role="list" className="flex items-center space-x-4">
         <li>
           <div>
