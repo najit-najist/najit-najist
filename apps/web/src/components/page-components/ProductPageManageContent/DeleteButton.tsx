@@ -19,9 +19,8 @@ export const DeleteButton = ({
 
   return (
     <Button
-      appearance="spaceless"
       color="red"
-      className="text-white aspect-square block h-9"
+      className="text-white aspect-square block h-9 w-9 !px-1"
       isLoading={isLoading}
       onClick={() => mutate({ id })}
     >

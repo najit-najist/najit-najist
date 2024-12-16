@@ -55,9 +55,9 @@ export const CountInput: FC<{
 
   return (
     <NumberInput
-      label="Počet"
       hideLabel
-      className="max-w-[4rem]"
+      label="Počet"
+      className="!w-[5rem] text-center"
       step={1}
       min={1}
       max={99}

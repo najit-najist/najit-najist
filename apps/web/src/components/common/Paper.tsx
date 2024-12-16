@@ -11,7 +11,7 @@ import {
 type PaperVariantProps = VariantProps<typeof paperStyles>;
 type PaperHeaderVariantProps = VariantProps<typeof paperHeaderStyles>;
 
-export const paperStyles = cva('border-project bg-white rounded-lg', {
+export const paperStyles = cva('border-project bg-white rounded-project', {
   variants: {
     shadow: {
       none: '',

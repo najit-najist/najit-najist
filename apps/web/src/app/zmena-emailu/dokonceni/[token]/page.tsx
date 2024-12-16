@@ -40,7 +40,7 @@ const ChangeEmailFinalizationPage: FC = () => {
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-8 px-4 shadow sm:rounded-project sm:px-10">
           <form className="space-y-6" onSubmit={onSubmit}>
             <div>
               <label
@@ -55,7 +55,7 @@ const ChangeEmailFinalizationPage: FC = () => {
                   type="email"
                   autoComplete="email"
                   required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="block w-full appearance-none rounded-project border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   {...register('email')}
                 />
               </div>
@@ -73,7 +73,7 @@ const ChangeEmailFinalizationPage: FC = () => {
                   id="password"
                   autoComplete="new-password"
                   required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="block w-full appearance-none rounded-project border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   {...register('password')}
                 />
               </div>
@@ -91,18 +91,14 @@ const ChangeEmailFinalizationPage: FC = () => {
                   id="password-again"
                   autoComplete="new-password"
                   required
-                  className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                  className="block w-full appearance-none rounded-project border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                   {...register('passwordAgain')}
                 />
               </div>
             </div>
 
             <div>
-              <Button
-                type="submit"
-                appearance="normal"
-                className="shadow-sm w-full font-title"
-              >
+              <Button type="submit" className="shadow-sm w-full font-title">
                 Registrovat
               </Button>
             </div>

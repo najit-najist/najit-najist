@@ -17,7 +17,7 @@ export interface ThankYouOrderAdminProps {
 }
 
 export default function ThankYouOrderAdmin({
-  order = testOrder,
+  order,
   orderLink,
   siteOrigin,
 }: ThankYouOrderAdminProps) {
@@ -36,7 +36,7 @@ export default function ThankYouOrderAdmin({
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="normal">
+          <Text className="text-center" size="medium">
             Dobrý den, uživatel {order.firstName} {order.lastName} vytvořil
             novou objednávku.
           </Text>
@@ -45,8 +45,7 @@ export default function ThankYouOrderAdmin({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={orderLink}
             >
@@ -63,3 +62,9 @@ export default function ThankYouOrderAdmin({
     </Layout>
   );
 }
+
+ThankYouOrderAdmin.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  order: testOrder,
+  orderLink: 'http://localhost:3000/test',
+} satisfies ThankYouOrderAdminProps;

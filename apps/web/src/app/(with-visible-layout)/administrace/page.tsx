@@ -1,3 +1,4 @@
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
 import { PageTitle } from '@components/common/PageTitle';
 import { paperStyles } from '@components/common/Paper';
 import { Skeleton } from '@components/common/Skeleton';
@@ -402,32 +403,40 @@ async function MaterialsGroup() {
 }
 
 export default async function Page() {
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/administrace', text: 'Administrace', active: true },
+  ];
   return (
-    <div className="container py-20">
-      <PageTitle>{metadata.title}</PageTitle>
-      <div className="flex flex-col gap-2 mt-5 items-center divide-y-2">
-        <Suspense fallback={<GroupSkeleton />}>
-          <OrdersGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <UserGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <RecipesGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <CouponsGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <PostsGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <ProductsGroup />
-        </Suspense>
-        <Suspense fallback={<GroupSkeleton />}>
-          <MaterialsGroup />
-        </Suspense>
+    <>
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
+        <Breadcrumbs items={breadcrumbs} />
       </div>
-    </div>
+      <div className="container pb-6 pt-3 sm:pb-20">
+        <PageTitle>{metadata.title}</PageTitle>
+        <div className="flex flex-col gap-2 items-center divide-y-2">
+          <Suspense fallback={<GroupSkeleton />}>
+            <OrdersGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <UserGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <RecipesGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <CouponsGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <PostsGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <ProductsGroup />
+          </Suspense>
+          <Suspense fallback={<GroupSkeleton />}>
+            <MaterialsGroup />
+          </Suspense>
+        </div>
+      </div>
+    </>
   );
 }

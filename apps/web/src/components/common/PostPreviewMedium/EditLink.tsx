@@ -1,10 +1,9 @@
 'use client';
 
 import { buttonStyles } from '@components/common/Button/buttonStyles';
-import { Tooltip } from '@components/common/Tooltip';
 import { PencilIcon } from '@heroicons/react/24/solid';
 import { useCurrentUser } from '@hooks/useCurrentUser';
-import { recipes } from '@najit-najist/database/models';
+import { products } from '@najit-najist/database/models';
 import { canUser, UserActions } from '@server/utils/canUser';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
 import Link, { LinkProps } from 'next/link';
@@ -27,7 +26,7 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
 
   const canEdit = canUser(loggedInUser, {
     action: UserActions.UPDATE,
-    onModel: recipes,
+    onModel: products,
   });
 
   if (!canEdit) {
@@ -35,22 +34,15 @@ export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
   }
 
   return (
-    <Tooltip
-      trigger={
-        <Link
-          // @ts-ignore
-          href={`/administrace${href}`}
-          className={buttonStyles({
-            appearance: 'spaceless',
-            color: 'blue',
-            className: 'h-11 w-11 flex',
-          })}
-        >
-          <PencilIcon className="w-5 h-5 m-auto" />
-        </Link>
-      }
+    <Link
+      href={href}
+      className={buttonStyles({
+        appearance: 'solid',
+        color: 'yellow',
+        className: 'h-11 w-11 flex !px-1',
+      })}
     >
-      Upravit
-    </Tooltip>
+      <PencilIcon className="w-5 h-5 m-auto" />
+    </Link>
   );
 };

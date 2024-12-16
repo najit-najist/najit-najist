@@ -1,3 +1,5 @@
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
@@ -34,8 +36,15 @@ export default async function Page({ searchParams }: Params) {
     query,
   });
 
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/clanky', text: 'Články', active: true },
+  ];
+
   return (
     <>
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center">
           <PageTitle>{metadata.title}</PageTitle>
@@ -44,7 +53,13 @@ export default async function Page({ searchParams }: Params) {
             action: UserActions.CREATE,
             onModel: postsModel,
           }) ? (
-            <Link href="/administrace/clanky/novy" className="">
+            <Link
+              href="/administrace/clanky/novy"
+              className={buttonStyles({
+                appearance: 'ghost',
+                className: 'w-16 h-16 !px-2',
+              })}
+            >
               <PlusIcon className="inline w-12" />
             </Link>
           ) : null}

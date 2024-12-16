@@ -61,7 +61,13 @@ export const RecipePageManageContent = async ({
 
   const content = (
     <>
-      <div className="container mt-6 mb-3">
+      {isEditorHeaderShown ? (
+        <EditorHeader
+          viewType={props.viewType}
+          recipe={recipe ? recipe : undefined}
+        />
+      ) : null}
+      <div className="container my-3 sm:my-6">
         <Breadcrumbs
           items={[
             { link: '/recepty', text: 'Recepty' },
@@ -101,7 +107,7 @@ export const RecipePageManageContent = async ({
                     props.recipe.images[0].file,
                   )}
                 />
-                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
+                <div className="m-1 absolute top-0 right-0 rounded-project p-1 flex gap-2">
                   <Suspense
                     fallback={
                       <>
@@ -211,19 +217,7 @@ export const RecipePageManageContent = async ({
             )}
           </div>
         </div>
-
-        <aside className="w-full lg:w-auto lg:col-span-2">
-          {isEditorEnabled ? (
-            <Aside createdAt={createdAt} updatedAt={updatedAt} />
-          ) : null}
-        </aside>
       </div>
-      {isEditorHeaderShown ? (
-        <EditorHeader
-          viewType={props.viewType}
-          recipe={recipe ? { id: recipe.id, slug: recipe.slug } : undefined}
-        />
-      ) : null}
     </>
   );
 

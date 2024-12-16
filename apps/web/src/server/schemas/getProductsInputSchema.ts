@@ -11,6 +11,7 @@ export const getProductsInputSchema = defaultGetManySchema
     sortBy: z
       .object({
         price: z.enum(['asc', 'desc']).optional(),
+        publishedAt: z.enum(['asc', 'desc']).optional(),
       })
       .optional(),
   });

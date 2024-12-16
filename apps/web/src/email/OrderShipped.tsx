@@ -38,7 +38,7 @@ export const isLocalPickup = (
 ) => delivery?.slug === 'local-pickup';
 
 export default function OrderShipped({
-  order = testOrder,
+  order,
   orderLink,
   siteOrigin,
 }: OrderShippedProps) {
@@ -59,7 +59,7 @@ export default function OrderShipped({
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="normal">
+          <Text className="text-center" size="medium">
             {isLocalPickup(order.deliveryMethod)
               ? `Vaši objednávku jsme zpracovali a objednané produkty jsme pro Vás připravili na prodejně!`
               : 'Vaši objednávku jsme zpracovali a objednané produkty jsme Vám odeslali! Již brzi vás bude kontaktovat doručovací společnost'}
@@ -69,8 +69,7 @@ export default function OrderShipped({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={orderLink}
             >
@@ -112,3 +111,9 @@ export default function OrderShipped({
     </Layout>
   );
 }
+
+OrderShipped.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  order: testOrder,
+  orderLink: 'http://localhost:3000/test',
+} satisfies OrderShippedProps;

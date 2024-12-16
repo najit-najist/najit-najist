@@ -74,13 +74,21 @@ export async function getProducts(
               schema: products.price,
             },
           ]
-        : [
-            {
-              order: 'ASC',
-              key: products.name.name,
-              schema: products.name,
-            },
-          ],
+        : sortBy?.publishedAt === 'asc' || sortBy?.publishedAt === 'desc'
+          ? [
+              {
+                order: sortBy?.publishedAt === 'asc' ? 'ASC' : 'DESC',
+                key: products.publishedAt.name,
+                schema: products.publishedAt,
+              },
+            ]
+          : [
+              {
+                order: 'ASC',
+                key: products.name.name,
+                schema: products.name,
+              },
+            ],
   });
 
   try {

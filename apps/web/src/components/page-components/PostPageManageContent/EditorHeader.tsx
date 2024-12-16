@@ -1,17 +1,17 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
 import { Button } from '@components/common/Button';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { GoBackButton } from '@components/common/GoBackButton';
 import { Switch } from '@components/common/form/Switch';
 import { PostWithRelations } from '@custom-types';
-import { TrashIcon } from '@heroicons/react/24/outline';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import { trpc } from '@trpc/web';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
 import { FC, useState } from 'react';
 import { useController, useFormContext } from 'react-hook-form';
 
+import { EditedAt } from '../ProductPageManageContent/EditedAt';
+import { DeleteButton } from './DeleteButton';
 import { ViewType } from './_types';
 
 const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
@@ -36,19 +36,21 @@ const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
 
   return (
     <>
-      <div className="flex items-center gap-2">
-        <span>Publikováno?</span>
-        <Switch
-          disabled={formState.isSubmitting}
-          value={isPublishedAtToggled}
-          onChange={toggleChangePublishedAt}
-          description="Publikovat"
-        />
-      </div>
-
+      {viewType !== 'create' ? (
+        <div className="flex items-center gap-2">
+          <span>Publikováno?</span>
+          <Switch
+            disabled={formState.isSubmitting}
+            value={isPublishedAtToggled}
+            onChange={toggleChangePublishedAt}
+            description="Publikovat"
+          />
+        </div>
+      ) : null}
       <Button
-        className="ml-auto"
+        className="ml-auto sm:w-32"
         type="submit"
+        size="sm"
         isLoading={formState.isSubmitting}
         onClick={onSaveClick}
       >
@@ -60,73 +62,48 @@ const Buttons: FC<{ viewType: ViewType }> = ({ viewType }) => {
 
 export const EditorHeader: FC<{
   viewType: ViewType;
-  post?: Pick<PostWithRelations, 'id' | 'slug'>;
+  post?: Pick<PostWithRelations, 'id' | 'slug' | 'createdAt' | 'updatedAt'>;
 }> = ({ viewType, post }) => {
-  const pathname = usePathname();
-  const router = useRouter();
-  const isEditorEnabled = viewType === 'edit';
-  const href = `${isEditorEnabled ? '' : '/administrace'}${pathname}`;
-
-  const {
-    mutateAsync: deleteItem,
-    isPending: isRemoving,
-    isSuccess: isRemoved,
-  } = trpc.posts.delete.useMutation();
-
-  const onLinkClick = () => {
-    router.refresh();
-  };
-
-  const onDeleteClick = async () => {
-    if (!post) {
-      throw new Error('No post provided');
-    }
-
-    if (confirm('Opravdu smazat článek?')) {
-      await deleteItem(post);
-
-      router.push('/clanky');
-    }
-  };
+  const isEditorEnabled = viewType === 'edit' || viewType === 'create';
 
   return (
-    <div className="bottom-0 left-0 fixed z-20 w-full bg-white border-t-2 border-gray-100">
-      <div className="container mx-auto my-2 flex">
-        {viewType === 'edit' || viewType === 'view' ? (
-          <Link
-            href={href as any}
-            onClick={onLinkClick}
-            className={buttonStyles({
-              color: isEditorEnabled ? 'subtleRed' : 'normal',
-              asLink: true,
-              appearance: 'small',
-            })}
-          >
-            {isEditorEnabled ? (
-              <ArrowLeftIcon className="inline w-5 -mt-1 mr-2" />
-            ) : null}
-            {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}
-          </Link>
-        ) : null}
-        <div className="ml-auto flex gap-4">
-          {isEditorEnabled || viewType === 'create' ? (
-            <Buttons viewType={viewType} />
-          ) : null}
-          {viewType === 'edit' ? (
-            <Button
-              appearance="spaceless"
-              color="red"
-              className="ml-3 text-white h-full aspect-square"
-              isLoading={isRemoving || isRemoved}
-              onClick={onDeleteClick}
-            >
-              {!(isRemoving || isRemoved) ? (
-                <TrashIcon className="w-5" />
-              ) : null}
-            </Button>
-          ) : null}
+    <>
+      {isEditorEnabled ? (
+        <div className="container my-2">
+          <GoBackButton
+            text="Odejít z úpravy"
+            href={`/clanky/${encodeURIComponent(post?.slug ?? '')}`}
+          />
         </div>
-      </div>
-    </div>
+      ) : null}
+      <Alert
+        heading=""
+        rounded={false}
+        color="warning"
+        className="w-full block sm:sticky top-0 left-0 z-20"
+      >
+        <div className="container">
+          <div className="flex flex-col sm:flex-row justify-between sm:items-center">
+            {post && (
+              <EditedAt createdAt={post.createdAt} updatedAt={post.updatedAt} />
+            )}
+            <div className="sm:ml-auto flex gap-3">
+              {isEditorEnabled ? <Buttons viewType={viewType} /> : null}
+              {viewType === 'edit' && post ? <DeleteButton {...post} /> : null}
+            </div>
+            {viewType !== 'create' && !isEditorEnabled ? (
+              <Link
+                href={`${isEditorEnabled ? '' : '/administrace'}/clanky/${encodeURIComponent(post?.slug ?? '')}`}
+                className={buttonStyles({
+                  size: 'sm',
+                })}
+              >
+                Upravit
+              </Link>
+            ) : null}
+          </div>
+        </div>
+      </Alert>
+    </>
   );
 };

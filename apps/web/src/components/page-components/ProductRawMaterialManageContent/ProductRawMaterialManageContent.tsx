@@ -35,10 +35,7 @@ async function UsedInProducts({ material }: { material: ProductRawMaterial }) {
       <div className="flex flex-col gap-3">
         {products.map(({ product }) => (
           <Link href={`/produkty/${encodeURIComponent(product.slug)}`}>
-            <Paper
-              key={product.id}
-              className="p-4 hover:scale-105 duration-200"
-            >
+            <Paper key={product.id} className="p-4">
               {product.name}{' '}
               <Badge color="blue">{product.category?.name}</Badge>
             </Paper>

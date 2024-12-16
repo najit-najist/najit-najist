@@ -1,25 +1,23 @@
 'use client';
 
+import { getFileUrl } from '@components/common/internal/getFileUrl';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-import { products } from '@najit-najist/database/models';
-import { getFileUrl } from '@server/utils/getFileUrl';
+import { recipes } from '@najit-najist/database/models';
 import clsx from 'clsx';
 import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC } from 'react';
 
-const arrowButtonClassName = clsx(
-  'bg-white p-2 hover:bg-green-50 first-of-type:rounded-l last-of-type:rounded-r',
-);
-const arrowClassName = clsx('w-4 h-4');
+import { Button } from '../Button';
+
+const arrowClassName = clsx('w-6 h-6 ');
 
 export const ImageSlider: FC<{
   imageUrls: string[];
   itemLink: string;
   itemId: number;
-  outOfStrock?: boolean;
-}> = ({ imageUrls, itemLink, itemId, outOfStrock }) => {
+}> = ({ imageUrls, itemLink, itemId }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     slides: { spacing: 10 },
@@ -29,44 +27,38 @@ export const ImageSlider: FC<{
   return (
     <>
       <Link href={itemLink as any}>
-        <div
-          ref={sliderRef}
-          className={clsx(
-            'keen-slider h-full rounded-lg overflow-hidden hover:shadow-2xl duration-200',
-            outOfStrock && 'opacity-50',
-          )}
-        >
+        <div ref={sliderRef} className="keen-slider h-full">
           {imageUrls.map((imageName) => (
             <div key={imageName} className="keen-slider__slide min-w-full">
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(products, itemId, imageName, { width: 300 })}
+                src={getFileUrl(recipes, itemId, imageName)}
                 alt=""
-                className="rounded-t-lg md:rounded-tr-none md:rounded-l-lg absolute top-0 left-0 w-full h-full object-center object-cover"
+                className="rounded-project absolute top-0 left-0 w-full h-full object-center object-cover"
               />
             </div>
           ))}
         </div>
       </Link>
       {imageUrls.length > 1 ? (
-        <div className="absolute flex m-4 bottom-0 right-0">
-          <button
+        <div className="absolute flex m-4 bottom-0 right-0 gap-2">
+          <Button
             onClick={() => {
               instanceRef.current?.prev();
             }}
-            className={arrowButtonClassName}
+            className="!px-1 !py-3 w-12 h-12"
           >
             <ArrowLeftIcon className={arrowClassName} />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => {
               instanceRef.current?.next();
             }}
-            className={arrowButtonClassName}
+            className="!px-1 !py-3 w-12 h-12"
           >
             <ArrowRightIcon className={arrowClassName} />
-          </button>
+          </Button>
         </div>
       ) : null}
     </>

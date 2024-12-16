@@ -73,7 +73,7 @@ export const Tooltip: FC<
         <Transition
           show={isOpen && !disabled}
           as="div"
-          className="bg-white rounded-md shadow px-2 py-0.5 border border-project-secondary/50"
+          className="bg-white rounded-project shadow px-2 py-0.5 border border-project-secondary/50"
           ref={refs.setFloating}
           style={floatingStyles}
           enter="transition-opacity duration-[400ms]"

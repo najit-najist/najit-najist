@@ -1,3 +1,4 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Logo } from '@components/common/Logo';
 import { ADMIN_EMAIL } from '@constants';
 import { TvIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
@@ -67,10 +68,10 @@ export const Footer: FC<PropsWithChildren> = () => {
       <h2 id="footer-heading" className="sr-only">
         Footer
       </h2>
-      <div className="mx-auto container py-12 g:py-16">
+      <div className="mx-auto container pb-12 pt-12 sm:pt-20">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           <div className="space-y-8 xl:col-span-1">
-            <Logo className="h-20 w-auto" />
+            <Logo className="h-32 w-auto" />
             <address className="text-base text-gray-500 not-italic">
               Tomkova 1230/4a
               <br />
@@ -192,7 +193,7 @@ export const Footer: FC<PropsWithChildren> = () => {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8 flex">
-          <p className="text-base text-project-accent xl:text-center">
+          <p className={buttonStyles({ appearance: 'link', size: 'sm' })}>
             &copy; {new Date().getFullYear()}{' '}
             <a href="https://najitnajist.cz">NajitNajist.cz</a>
           </p>

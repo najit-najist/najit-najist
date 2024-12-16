@@ -1,4 +1,7 @@
 import { Pagination } from '@app-components/Pagination';
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { AppRouterOutput } from '@custom-types/AppRouter';
@@ -47,6 +50,11 @@ const searchSchema = z.object({
 });
 
 export default async function Page({ searchParams }: Params) {
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/administrace', text: 'Administrace' },
+    { link: '/administrace/uzivatele', text: 'Uživatelé', active: true },
+  ];
+
   const {
     query,
     page: pageFromParams,
@@ -88,22 +96,22 @@ export default async function Page({ searchParams }: Params) {
 
   return (
     <>
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
       <div className="container mt-5 -mb-5">
-        <Link
-          href="/administrace"
-          className="text-red-400 hover:underline group"
-        >
-          <ArrowLeftIcon
-            strokeWidth={3}
-            className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
-          />
-          Zpět na rozcestník
-        </Link>
+        <GoBackButton href="/administrace" text="Zpět na rozcestník" />
       </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center mb-4">
           <PageTitle>{metadata.title}</PageTitle>
-          <Link href="/administrace/uzivatele/novy" className="">
+          <Link
+            href="/administrace/uzivatele/novy"
+            className={buttonStyles({
+              appearance: 'ghost',
+              className: 'w-16 h-16 !px-2',
+            })}
+          >
             <PlusIcon className="inline w-12" />
           </Link>
         </div>

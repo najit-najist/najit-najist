@@ -1,5 +1,6 @@
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Section } from '@components/portal';
+import { UserWithRelations } from '@server/services/UserService';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
@@ -8,11 +9,10 @@ import {
   OrderPreviewItem,
   OrderPreviewItemSkeleton,
 } from '../_components/OrderPreviewItem';
-import { UserWithRelations } from '@server/services/UserService';
 
 const MAX_NUMBER_OF_ORDERS = 6;
 
-const Orders: FC<{user: UserWithRelations}> = async ({user}) => {
+const Orders: FC<{ user: UserWithRelations }> = async ({ user }) => {
   const latestOrders = await getCachedOrders({
     user: { id: [user.id] },
     perPage: MAX_NUMBER_OF_ORDERS + 1,
@@ -38,18 +38,17 @@ const Orders: FC<{user: UserWithRelations}> = async ({user}) => {
   );
 };
 
-export const MyOrdersSection: FC<{user: UserWithRelations}> = ({user}) => {
+export const MyOrdersSection: FC<{ user: UserWithRelations }> = ({ user }) => {
   return (
     <Section>
-      <div className="px-5 flex items-center">
+      <div className="px-5 flex items-center mt-3">
         <h1 className="text-2xl font-title tracking-wide">Moje objednávky</h1>
 
         <Link
           href="/eshop"
           className={buttonStyles({
-            asLink: true,
             className: 'ml-auto',
-            appearance: 'small',
+            size: 'sm',
           })}
         >
           Jít nakupovat

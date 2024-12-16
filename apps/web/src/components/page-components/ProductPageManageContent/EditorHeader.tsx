@@ -1,8 +1,7 @@
 import { Alert } from '@components/common/Alert';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { GoBackButton } from '@components/common/GoBackButton';
 import { ProductWithRelationsLocal } from '@custom-types';
-import { ArrowLeftIcon } from '@heroicons/react/24/solid';
-import clsx from 'clsx';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -21,22 +20,17 @@ export const EditorHeader: FC<{
     <>
       {isEditorEnabled ? (
         <div className="container my-2">
-          <Link
+          <GoBackButton
+            text="Odejít z úpravy"
             href={`/produkty/${encodeURIComponent(product?.slug ?? '')}`}
-            className="text-red-400 hover:underline group text-sm"
-          >
-            <ArrowLeftIcon
-              strokeWidth={3}
-              className="w-4 h-4 inline-block relative group-hover:-translate-x-1 mr-1 duration-100 -mt-1"
-            />
-            Odejít z úpravy
-          </Link>
+          />
         </div>
       ) : null}
       <Alert
         heading=""
+        rounded={false}
         color="warning"
-        className="w-full block sm:sticky top-24 left-0 z-20"
+        className="w-full block sm:sticky top-0 left-0 z-20"
       >
         <div className="container">
           <div className="flex flex-col sm:flex-row justify-between sm:items-center">
@@ -58,9 +52,8 @@ export const EditorHeader: FC<{
               <Link
                 href={`${isEditorEnabled ? '' : '/administrace'}/produkty/${encodeURIComponent(product?.slug ?? '')}`}
                 className={buttonStyles({
-                  color: isEditorEnabled ? 'subtleRed' : 'normal',
-                  asLink: true,
-                  appearance: 'extraSmall',
+                  color: isEditorEnabled ? 'red' : 'primary',
+                  size: 'sm',
                 })}
               >
                 {isEditorEnabled ? 'Ukončit úpravu' : 'Upravit'}

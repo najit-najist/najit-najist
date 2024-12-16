@@ -44,8 +44,7 @@ export default function PasswordReset({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={finishUrl}
             >
@@ -59,3 +58,8 @@ export default function PasswordReset({
     </Layout>
   );
 }
+
+PasswordReset.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  token: '',
+} satisfies PasswordResetProps;

@@ -71,7 +71,7 @@ export const ProductPageManageContent: FC<
       {isEditorHeaderShown ? (
         <EditorHeader viewType={props.viewType} product={product} />
       ) : null}
-      <div className="container mt-6 mb-3">
+      <div className="container my-3 sm:my-6">
         <Breadcrumbs
           items={[
             { link: '/produkty', text: 'E-Shop' },
@@ -116,7 +116,7 @@ export const ProductPageManageContent: FC<
                     props.product.images[0].file,
                   )}
                 />
-                <div className="m-1 absolute top-0 right-0 rounded-md p-1 flex gap-2">
+                <div className="m-1 absolute top-0 right-0 rounded-project p-1 flex gap-2">
                   {!product?.publishedAt ? (
                     <Badge size="lg" color="red">
                       Nepublikováno
@@ -143,7 +143,7 @@ export const ProductPageManageContent: FC<
           )}
         </div>
 
-        <div className="w-full md:w-8/12 lg:w-auto lg:col-span-7">
+        <div className="w-full md:w-8/12 lg:w-auto lg:col-span-7 md:pl-5">
           {isEditorEnabled ? (
             <Alert
               outlined

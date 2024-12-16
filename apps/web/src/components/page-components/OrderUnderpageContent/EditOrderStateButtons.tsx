@@ -82,8 +82,6 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
             key={buttonConfig.text}
             data-next-state={buttonConfig.nextState}
             onClick={onButtonClickHandler}
-            appearance="small"
-            color="white"
             disabled={buttonsAreDisabled}
           >
             {buttonsAreDisabled ? 'Pracuji...' : buttonConfig.text}

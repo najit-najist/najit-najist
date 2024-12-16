@@ -67,7 +67,7 @@ export const FormProvider: FC<
       toast.promise(handlePromiseForToast(newOrderAsPromise), {
         loading: 'Vytvářím objednávku...',
         success:
-          'Objednávka vytvořena, děkujeme! Nyní Vás přesměrujeme dále, vyčkejte strpení...',
+          'Objednávka vytvořena, děkujeme! Brzy Vás budeme kontaktovat o dalších krocích',
         error(error) {
           return `Stala se chyba při vytváření objednávky: ${error.message}`;
         },

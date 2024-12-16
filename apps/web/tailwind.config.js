@@ -145,6 +145,10 @@ const tailwindConfig = {
           background: '#F8FCFA',
           text: '#052412',
           accents: '#052412',
+
+          '-primary': '#6CCC38',
+          '-secondary': '#9CDF81',
+          '-feature': '#D3F1CA',
         },
 
         deep: {
@@ -185,6 +189,10 @@ const tailwindConfig = {
       },
       screens: {
         xs: '460px',
+      },
+      borderRadius: {
+        project: '1.1rem',
+        'project-input': '0.8rem',
       },
     },
     fontFamily: {

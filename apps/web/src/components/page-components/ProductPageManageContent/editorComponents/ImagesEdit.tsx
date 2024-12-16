@@ -102,7 +102,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
   return (
     <div
       className={clsx([
-        'w-full aspect-square bg-gray-100 text-project-primary rounded-md col-span-3 relative ring-2 ring-offset-2',
+        'w-full aspect-square bg-gray-100 text-project-primary rounded-project col-span-3 relative ring-2 ring-offset-2',
         error ? 'ring-red-500' : 'ring-transparent',
       ])}
     >
@@ -121,9 +121,8 @@ const ImagePicker: FC<ImagePickerProps> = ({
         {value ? (
           <Button
             onClick={triggerFileSelect}
-            appearance="spaceless"
             color="blue"
-            className="py-1 px-1.5 flex-none"
+            className="py-1 w-10 h-10 !px-0 flex-none"
           >
             <PencilIcon className="w-5 h-5 -mb-1" />
           </Button>
@@ -131,9 +130,8 @@ const ImagePicker: FC<ImagePickerProps> = ({
         {value && !canBeOnlyEdited ? (
           <Button
             onClick={onRemove}
-            appearance="spaceless"
             color="red"
-            className="py-1 px-1.5 flex-none"
+            className="py-1 w-10 h-10 !px-0 flex-none"
           >
             <TrashIcon className="w-5 h-5 -mb-1" />
           </Button>

@@ -71,12 +71,12 @@ const OrderProduct: FC<{
               width={imageSize}
               height={imageSize}
               alt="Obrázek produktu"
-              className="rounded-lg"
+              className="rounded-project-input"
             />
           ) : (
             <Section
               style={{ height: imageSize, width: imageSize }}
-              className="bg-gray-100 border-gray-200 border border-solid rounded-lg"
+              className="bg-gray-100 border-gray-200 border border-solid rounded-project"
             >
               <Row>
                 <Column className="text-center">
@@ -241,7 +241,7 @@ export default function ThankYouOrder({
       <CenteredRow>
         <Heading as="h3">Položky</Heading>
       </CenteredRow>
-      <PaperCenteredRow className="pt-5">
+      <PaperCenteredRow>
         {order.orderedProducts.map((product: any) => (
           <OrderProduct
             key={product.id}
@@ -377,8 +377,7 @@ export default function ThankYouOrder({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={orderLink}
             >
@@ -401,3 +400,10 @@ export default function ThankYouOrder({
     </Layout>
   );
 }
+
+ThankYouOrder.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  order: testOrder,
+  orderLink: 'http://localhost:3000/test',
+  needsPayment: false,
+} satisfies ThankYouOrderProps;

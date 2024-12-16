@@ -190,7 +190,7 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
             <Popover.Button
               as={'button'}
               disabled={formState.isSubmitting || isActive}
-              className="flex justify-between items-center bg-white disabled:opacity-50 disabled:cursor-not-allowed w-full border-gray-300 focus:outline-none border py-[0.55rem] px-3 sm:text-sm placeholder-gray-300 rounded-l-md rounded-r-md shadow-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400 focus:border-green-400 "
+              className="flex justify-between items-center bg-white disabled:opacity-50 disabled:cursor-not-allowed w-full border-gray-300 focus:outline-none border py-[0.55rem] px-3 sm:text-sm placeholder-gray-300 rounded-l-project-input rounded-r-project-input shadow-sm focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-green-400 focus:border-green-400 "
             >
               {field.value ? (
                 <>
@@ -211,7 +211,7 @@ export const LocalPickupDeliveryTimePicker: FC = () => {
                 <Paper className="p-2">
                   <Button
                     onClick={() => close()}
-                    appearance="extraSmall"
+                    size="xsm"
                     className="ml-auto block"
                   >
                     Hotovo

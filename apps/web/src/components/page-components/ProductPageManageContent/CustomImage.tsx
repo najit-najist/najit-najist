@@ -16,7 +16,7 @@ export const CustomImage: FC<
       alt=""
       unoptimized={isPreview}
       className={clsx(
-        'absolute top-0 left-0 w-full h-full object-center object-cover rounded-md',
+        'absolute top-0 left-0 w-full h-full object-center object-cover rounded-project',
         className,
       )}
       {...rest}

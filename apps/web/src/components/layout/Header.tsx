@@ -1,9 +1,10 @@
-import { Logo } from '@components/common/Logo';
+import { Alert } from '@components/common/Alert';
+import { canUser, SpecialSections, UserActions } from '@server/utils/canUser';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
-import Link from 'next/link';
 import { FC } from 'react';
 
 import { DesktopMenuItem } from './DesktopMenuItem';
+import { HeaderLogo } from './HeaderLogo';
 import { TopHeader } from './TopHeader';
 
 const navLinks = [
@@ -15,11 +16,36 @@ const navLinks = [
   { text: 'Kontakt', href: '/kontakt' },
 ];
 
+const BonusUserNotification = async () => {
+  const loggedUser = await getCachedLoggedInUser();
+
+  if (
+    !loggedUser ||
+    canUser(loggedUser, {
+      action: UserActions.VIEW,
+      onModel: SpecialSections.OG_PREVIEW,
+    }) === false
+  ) {
+    return null;
+  }
+
+  return (
+    <Alert rounded={false} heading="" className="z-20 relative">
+      <div className="container">
+        Děkujeme za přízeň. Patříte mezi skupinu lidí, kteří projevili zájem o
+        náš web a přihlásili se k newsletteru na úvodním webu. Jako poděkování
+        máte přístup ke speciálním videu
+      </div>
+    </Alert>
+  );
+};
+
 export const Header: FC = async () => {
   const loggedUser = await getCachedLoggedInUser();
 
   return (
     <>
+      {/* <BonusUserNotification /> */}
       <TopHeader
         loggedInUser={
           loggedUser
@@ -29,12 +55,10 @@ export const Header: FC = async () => {
             : undefined
         }
       />
-      <header className="sm:block sm:sticky top-[-1px] left-0 z-20 backdrop-blur-sm bg-white bg-opacity-50">
+      <header className="block z-20 relative">
         <nav className="container hidden md:flex items-center">
-          <Link href="/" className="flex-none py-2">
-            <Logo className="h-20 w-auto" />
-          </Link>
-          <ul className="ml-auto flex text-right sm:text-left items-center gap-2 text-lg">
+          <HeaderLogo />
+          <ul className="ml-auto flex text-right sm:text-left items-center gap-4 text-lg">
             {navLinks.map(({ text, href }) => (
               <DesktopMenuItem key={href} href={href} text={text} />
             ))}

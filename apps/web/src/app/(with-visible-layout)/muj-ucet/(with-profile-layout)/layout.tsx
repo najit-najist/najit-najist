@@ -1,4 +1,6 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
+import { canUser, SpecialSections, UserActions } from '@server/utils/canUser';
 import { getAuthorizedUserOrRequestLogin } from '@server/utils/getAuthorizedUserOrRequestLogin';
 import { PropsWithChildren } from 'react';
 
@@ -13,11 +15,7 @@ export default async function Layout({ children }: PropsWithChildren) {
       href: '/muj-ucet/profil',
     },
     {
-      label: (
-        <>
-          Moje objednávky
-        </>
-      ),
+      label: <>Moje objednávky</>,
       href: '/muj-ucet/objednavky',
     },
     {
@@ -26,17 +24,32 @@ export default async function Layout({ children }: PropsWithChildren) {
     },
   ];
 
+  if (
+    canUser(user, {
+      action: UserActions.VIEW,
+      onModel: SpecialSections.OG_PREVIEW,
+    })
+  ) {
+    navigationItems.push({
+      label: 'Speciál',
+      href: '/preview-special',
+    });
+  }
+
   const userMenu = (
-    <nav className="flex flex-1 flex-col mx-auto mt-10" aria-label="Sidebar">
-      <ul role="list" className="-mx-2 space-y-1">
+    <nav className="flex flex-1 flex-col mx-auto mt-7" aria-label="Sidebar">
+      <ul role="list" className="-mx-2 space-y-2">
         {navigationItems.map((item) => (
           <li key={item.href}>
             <WatchedLink
               href={item.href as any}
-              activeClassName="bg-gray-100 text-project-accent"
-              inactiveClassName="text-gray-700 hover:text-project-accent hover:bg-gray-50"
+              activeClassName={buttonStyles({ size: 'sm' })}
+              inactiveClassName={buttonStyles({
+                size: 'sm',
+                appearance: 'ghost',
+              })}
               className={
-                'group flex gap-x-3 rounded-md p-2 pl-3 text-sm leading-6 font-semibold'
+                'group flex gap-x-3 rounded-project p-2 pl-3 text-sm leading-6 font-semibold'
               }
             >
               {item.label}
@@ -49,7 +62,7 @@ export default async function Layout({ children }: PropsWithChildren) {
 
   return (
     <div className="container grid grid-cols-1 md:grid-cols-7 mx-auto my-5">
-      <div className="col-span-2 px-5 sm:px-10 mb-5 md:mb-0 pt-5">
+      <div className="col-span-2 sm:px-5 mb-5 md:mb-0 ">
         <UserAvatarPicker user={{ avatar: user.avatar, id: user.id }} />
         {userMenu}
       </div>

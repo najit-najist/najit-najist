@@ -51,7 +51,7 @@ export const Pagination: FC<{
           className="h-8 w-8 flex items-center justify-center"
           onClick={goFirst}
           disabled={isLoading || isFirstPage}
-          appearance="spaceless"
+          size="sm"
         >
           <span className="sr-only">Jít na první stránku</span>
           <ChevronDoubleLeftIcon className="h-4 w-4" />
@@ -60,7 +60,7 @@ export const Pagination: FC<{
           className="h-8 w-8 flex items-center justify-center"
           onClick={goPrevious}
           disabled={isLoading || isFirstPage}
-          appearance="spaceless"
+          size="sm"
         >
           <span className="sr-only">Předešlá stránka</span>
           <ChevronLeftIcon className="h-4 w-4" />
@@ -69,7 +69,7 @@ export const Pagination: FC<{
           className="h-8 w-8 flex items-center justify-center"
           onClick={goNext}
           disabled={isLoading || isLastPage}
-          appearance="spaceless"
+          size="sm"
         >
           <span className="sr-only">Další stránka</span>
           <ChevronRightIcon className="h-4 w-4" />
@@ -78,7 +78,7 @@ export const Pagination: FC<{
           className="h-8 w-8 flex items-center justify-center"
           onClick={goLast}
           disabled={isLoading || isLastPage}
-          appearance="spaceless"
+          size="sm"
         >
           <span className="sr-only">Jít na poslední stránku</span>
           <ChevronDoubleRightIcon className="h-4 w-4" />

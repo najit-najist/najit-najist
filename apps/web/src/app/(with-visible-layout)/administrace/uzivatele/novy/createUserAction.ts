@@ -50,6 +50,6 @@ export const createUserAction = createActionWithValidation(
 
     redirect(`/administrace/uzivatele/${user.id}`);
 
-    return;
+    return {};
   },
 );

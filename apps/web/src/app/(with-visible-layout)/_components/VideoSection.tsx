@@ -5,7 +5,7 @@ import { FC } from 'react';
 export const VideoSection: FC = () => {
   return (
     <div className="container px-4 mx-auto mt-20" id="o-nas">
-      <div className="mx-auto text-center">
+      <div className="mx-auto sm:text-center">
         <h2 className="text-3xl sm:text-5xl font-bold mt-10 mb-7 font-title">
           Náš příběh
         </h2>
@@ -15,7 +15,7 @@ export const VideoSection: FC = () => {
         <video
           poster="/images/video-thumbnail.jpg"
           width="100%"
-          className="sm:aspect-video bg-black relative shadow-lg shadow-project-accent"
+          className="sm:aspect-video bg-black relative shadow-lg shadow-project-accent rounded-project"
           controls
         >
           <source src="/api/videos/intro" type="video/webm" />

@@ -87,7 +87,7 @@ export const PacketaPickupDelivery: FC = () => {
                     <div className="grid grid-cols-2 sm:grid-cols-4 w-full gap-2 mb-5">
                       {fieldValue.photo.map(({ normal, thumbnail }) => (
                         <div
-                          className="relative aspect-square overflow-hidden rounded-md"
+                          className="relative aspect-square overflow-hidden rounded-project"
                           key={normal}
                         >
                           <Image
@@ -130,7 +130,7 @@ export const PacketaPickupDelivery: FC = () => {
             )}
             <div className="flex gap-2 mt-4 items-center">
               <Button
-                color={fieldError || fieldValue?.error ? 'red' : 'sweet'}
+                color={fieldError || fieldValue?.error ? 'red' : 'yellow'}
                 disabled={!process.env.NEXT_PUBLIC_PACKETA_KEY || isDisabled}
                 isLoading={formState.isSubmitting}
                 onClick={() =>

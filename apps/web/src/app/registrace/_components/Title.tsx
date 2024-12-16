@@ -1,3 +1,4 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Logo } from '@components/common/Logo';
 import Link from 'next/link';
 import { FC } from 'react';
@@ -14,7 +15,7 @@ export const Title: FC = () => (
       Nebo{' '}
       <Link
         href="/login"
-        className="font-medium text-indigo-600 hover:text-indigo-500"
+        className={buttonStyles({ appearance: 'link', size: 'sm' })}
       >
         přihlásit se
       </Link>

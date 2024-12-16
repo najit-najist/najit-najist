@@ -15,7 +15,7 @@ export const SSO: FC = () => (
       <div>
         <a
           href="#"
-          className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+          className="inline-flex w-full justify-center rounded-project border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
         >
           <span className="sr-only">Sign in with Facebook</span>
           <svg
@@ -36,7 +36,7 @@ export const SSO: FC = () => (
       <div>
         <a
           href="#"
-          className="inline-flex w-full justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
+          className="inline-flex w-full justify-center rounded-project border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-500 shadow-sm hover:bg-gray-50"
         >
           <span className="sr-only">Sign in with Twitter</span>
           <svg

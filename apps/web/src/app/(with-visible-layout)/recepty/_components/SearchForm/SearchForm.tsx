@@ -77,7 +77,7 @@ export const SearchForm: FC<{
     <FormProvider {...formMethods}>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="container my-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end"
+        className="container mb-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end"
       >
         <Input
           placeholder="Vyhledávání..."

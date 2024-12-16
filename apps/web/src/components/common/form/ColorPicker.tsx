@@ -52,7 +52,7 @@ export const ColorPicker: FC<ColorPickerProps> = ({
       required={required}
       className={wrapperClassName}
     >
-      <div className="z-10 mt-3 w-full bg-white rounded-md">
+      <div className="z-10 mt-3 w-full bg-white rounded-project">
         <BaseColorPicker
           hideAlpha
           hideInput

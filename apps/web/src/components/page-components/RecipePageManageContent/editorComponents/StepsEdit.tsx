@@ -49,38 +49,41 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
       {parts.map((groupPart, groupItemIndex) => (
         <li key={groupPart.id} className="flex gap-2 mt-3">
           <div className="w-[40px] mt-6 flex-none flex flex-col gap-3">
-            <div className="bg-white aspect-square flex items-center justify-center w-full rounded-md border border-gray-300">
+            <div className="bg-white aspect-square flex items-center justify-center w-full rounded-project border border-gray-300">
               {groupItemIndex + 1}.
             </div>
-            <Button
-              onClick={onRemoveStep(groupItemIndex)}
-              color="softRed"
-              appearance="spaceless"
-              disabled={formState.isSubmitting}
-              className="px-2 pt-2 pb-1 flex-none"
-            >
-              <TrashIcon className="w-5 h-5" />
-            </Button>
           </div>
           <div className="w-full">
-            <Input
-              label="Délka kroku"
-              rootClassName="mb-3"
-              disabled={formState.isSubmitting}
-              type="number"
-              placeholder="v minutách"
-              error={
-                (formState.errors.steps as any)?.[groupIndex]?.parts?.[
-                  groupItemIndex
-                ]?.duration
-              }
-              {...register(
-                `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
-                {
-                  valueAsNumber: true,
-                },
-              )}
-            />
+            <div className="flex gap-3">
+              <Input
+                label="Délka kroku"
+                rootClassName="mb-3 w-full"
+                disabled={formState.isSubmitting}
+                type="number"
+                placeholder="v minutách"
+                min={1}
+                error={
+                  (formState.errors.steps as any)?.[groupIndex]?.parts?.[
+                    groupItemIndex
+                  ]?.duration
+                }
+                {...register(
+                  `steps.${groupIndex}.parts.${groupItemIndex}.duration`,
+                  {
+                    valueAsNumber: true,
+                  },
+                )}
+              />
+              <Button
+                onClick={onRemoveStep(groupItemIndex)}
+                disabled={formState.isSubmitting}
+                color="red"
+                appearance="ghost"
+                className="w-10 h-10 flex-none !px-1 mt-6"
+              >
+                <TrashIcon className="w-6 h-6" />
+              </Button>
+            </div>
             <Controller
               name={`steps.${groupIndex}.parts.${groupItemIndex}.content`}
               render={({ field: { ref, ...field }, fieldState }) => (
@@ -94,10 +97,10 @@ const GroupSteps: FC<{ groupIndex: number }> = ({ groupIndex }) => {
         <Button
           onClick={onAddStep}
           className="w-full !p-2"
-          color="white"
           disabled={formState.isSubmitting}
+          appearance="link"
         >
-          <PlusIcon className="w-5 h-5 inline -mt-1 mr-3" />
+          <PlusIcon className="w-6 h-6 inline -mt-1 mr-3" />
           Přidat další krok
         </Button>
       </li>
@@ -130,7 +133,7 @@ export const StepsEdit: FC = () => {
     <>
       {formState.errors.steps?.message ? (
         <ErrorMessage>
-          <ExclamationCircleIcon className="w-5 h-5 inline -mt-1" />{' '}
+          <ExclamationCircleIcon className="w-6 h-6 inline -mt-1" />{' '}
           {formState.errors.steps?.message}
         </ErrorMessage>
       ) : null}
@@ -147,12 +150,12 @@ export const StepsEdit: FC = () => {
 
               <Button
                 onClick={onRemoveGroup(groupIndex)}
-                color="softRed"
-                appearance="spaceless"
                 disabled={formState.isSubmitting}
-                className="w-10 h-10 flex-none"
+                color="red"
+                appearance="ghost"
+                className="w-10 h-10 flex-none !px-1 mt-6"
               >
-                <TrashIcon className="w-5 h-5 m-auto" />
+                <TrashIcon className="w-6 h-6 m-auto" />
               </Button>
             </div>
 
@@ -163,10 +166,10 @@ export const StepsEdit: FC = () => {
           <Button
             onClick={onAddGroup}
             className="w-full !p-2"
-            color="white"
             disabled={formState.isSubmitting}
+            appearance="link"
           >
-            <PlusIcon className="w-5 h-5 inline -mt-1 mr-3" />
+            <PlusIcon className="w-6 h-6 inline -mt-1 mr-3" />
             Přidat další skupinu
           </Button>
         </li>

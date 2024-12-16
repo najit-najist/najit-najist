@@ -1,5 +1,7 @@
 import { Pagination } from '@app-components/Pagination';
 import { Badge } from '@components/common/Badge';
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Skeleton } from '@components/common/Skeleton';
@@ -8,7 +10,6 @@ import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
 import { getCachedOrders } from '@server/utils/getCachedOrders';
 import { formatPrice } from '@utils';
-import { clsx } from 'clsx';
 import Link from 'next/link';
 import { FC, PropsWithChildren, Suspense } from 'react';
 
@@ -155,19 +156,18 @@ const Analytics: FC = async () => {
 };
 
 export default async function Page() {
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/administrace', text: 'Administrace' },
+    { link: '/administrace/objednavky', text: 'Objednávky', active: true },
+  ];
+
   return (
     <>
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
       <div className="container mt-5 -mb-5">
-        <Link
-          href="/administrace"
-          className="text-red-400 hover:underline group"
-        >
-          <ArrowLeftIcon
-            strokeWidth={3}
-            className="w-4 h-4 inline-block relative -top-0.5 group-hover:-translate-x-1 mr-1 duration-100"
-          />
-          Zpět na rozcestník
-        </Link>
+        <GoBackButton href="/administrace" text="Zpět na rozcestník" />
       </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center">

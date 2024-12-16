@@ -1,6 +1,5 @@
 'use client';
 
-import { updateMyAddressAction } from '@components/page-components/EditMyProfileContent/actions/updateMyAddressAction';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { userAddressUpdateInputSchema } from '@server/schemas/userAddressUpdateInputSchema';
 import { FC, PropsWithChildren, useCallback } from 'react';
@@ -12,6 +11,8 @@ import {
 } from 'react-hook-form';
 import { toast } from 'sonner';
 import { z } from 'zod';
+
+import { updateMyAddressAction } from '../../updateMyAddressAction';
 
 export function getChangedValues<G extends Record<any, any>>(
   allValues: G,

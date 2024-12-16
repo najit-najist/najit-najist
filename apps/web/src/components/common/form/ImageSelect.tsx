@@ -28,7 +28,7 @@ export interface ImageSelectProps
 }
 
 const rootStyles = cva(
-  'flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 bg-white w-full',
+  'flex justify-center rounded-project border border-dashed border-gray-900/25 px-6 bg-white w-full',
   {
     variants: {
       size: {
@@ -65,7 +65,7 @@ const PreviewImage: FC<
   }, [src, parentId, imageIsBase64, model]);
 
   return (
-    <div className="relative aspect-square rounded-md overflow-hidden">
+    <div className="relative aspect-square rounded-project overflow-hidden">
       <Image
         alt="image"
         src={url}
@@ -169,7 +169,7 @@ export const ImageSelect: FC<ImageSelectProps> = ({
             >
               <label
                 htmlFor={inputId}
-                className="relative cursor-pointer rounded-md bg-white font-semibold text-project-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-project-primary focus-within:ring-offset-2 hover:text-project-primary"
+                className="relative cursor-pointer rounded-project bg-white font-semibold text-project-primary focus-within:outline-none focus-within:ring-2 focus-within:ring-project-primary focus-within:ring-offset-2 hover:text-project-primary"
               >
                 <span>Nahrát obrázek</span>
                 <input

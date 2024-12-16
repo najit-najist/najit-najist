@@ -132,7 +132,7 @@ export default async function RecipesPage({
   return (
     <>
       {/* <N otice /> */}
-      <div className="container mx-auto my-2">
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
         <Breadcrumbs items={breadcrumbs} />
       </div>
       <PageHeader className="container !pb-5">
@@ -151,7 +151,13 @@ export default async function RecipesPage({
           }) ? (
             <Tooltip
               trigger={
-                <Link href="/administrace/produkty/novy" className="">
+                <Link
+                  href="/administrace/produkty/novy"
+                  className={buttonStyles({
+                    appearance: 'ghost',
+                    className: 'w-16 h-16 !px-2',
+                  })}
+                >
                   <PlusIcon className="inline w-12" />
                 </Link>
               }
@@ -175,9 +181,8 @@ export default async function RecipesPage({
             {categories.map((category) => (
               <Link
                 className={buttonStyles({
-                  padding: 'off',
                   className: 'py-2 px-4',
-                  appearance: 'spaceless',
+                  appearance: 'outlined',
                 })}
                 href={{ query: { 'category-slug': category.slug } }}
                 key={category.id}

@@ -32,7 +32,22 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
   const isImageShown = props.viewType !== 'view' || props.post.image;
   const content = (
     <>
-      <div className="container mt-6 mb-3">
+      {props.isEditorHeaderShown ? (
+        <EditorHeader
+          post={
+            'post' in props
+              ? {
+                  id: props.post.id,
+                  slug: props.post.slug,
+                  createdAt: props.post.createdAt,
+                  updatedAt: props.post.updatedAt,
+                }
+              : undefined
+          }
+          viewType={props.viewType}
+        />
+      ) : null}
+      <div className="container my-3 sm:my-6">
         <Breadcrumbs
           items={[
             { link: '/clanky', text: 'Články' },
@@ -87,7 +102,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           >
             <div
               className={clsx(
-                'bg-[#388659] h-full lg:rounded-r-lg shadow-lg p-4',
+                'bg-project-primary/80 h-full lg:rounded-r-project shadow-lg p-4',
                 isImageShown ? '' : 'col-span-2',
               )}
             >
@@ -108,7 +123,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
             </div>
             <div className="-order-1 lg:order-1 px-4 lg:px-0">
               {isImageShown ? (
-                <div className="w-full aspect-[16/10] mx-auto lg:mr-auto lg:ml-0 max-w-[640px] md:max-w-3xl lg:max-w-[900px] relative flex-none rounded-md overflow-hidden shadow-sm">
+                <div className="w-full aspect-[16/10] mx-auto lg:mr-auto lg:ml-0 max-w-[640px] md:max-w-3xl lg:max-w-[900px] relative flex-none rounded-project overflow-hidden shadow-sm">
                   {props.viewType === 'view' ? (
                     <Image
                       width={300}
@@ -116,7 +131,7 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
                       unoptimized
                       src={getFileUrl(posts, props.post.id, props.post.image!)}
                       alt=""
-                      className="absolute inset-0 h-full w-full rounded-lg bg-gray-50 object-cover shadow-md"
+                      className="absolute inset-0 h-full w-full rounded-project bg-gray-50 object-cover shadow-md"
                     />
                   ) : (
                     <ImageEdit
@@ -143,16 +158,6 @@ export const PostPageManageContent: FC<PostPageManageContent> = (props) => {
           </div>
         </div>
       </div>
-      {props.isEditorHeaderShown ? (
-        <EditorHeader
-          post={
-            props.viewType === 'edit'
-              ? { id: props.post.id, slug: props.post.slug }
-              : undefined
-          }
-          viewType={props.viewType}
-        />
-      ) : null}
     </>
   );
 

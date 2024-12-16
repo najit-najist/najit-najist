@@ -76,11 +76,11 @@ export const inputStyles = cva(
       },
       withPrefix: {
         true: '',
-        false: 'rounded-l-md',
+        false: 'rounded-l-project-input',
       },
       withSuffix: {
         true: '',
-        false: 'rounded-r-md',
+        false: 'rounded-r-project-input',
       },
       readOnly: {
         true: '!border-gray-200 !focus:border-gray-200 !ring-0 !shadow-none cursor-default',
@@ -128,8 +128,8 @@ export const inputPrefixSuffixStyles = cva(
   {
     variants: {
       type: {
-        prefix: 'rounded-l-md !border-r-0',
-        suffix: 'rounded-r-md !border-l-0',
+        prefix: 'rounded-l-project-input !border-r-0',
+        suffix: 'rounded-r-project-input !border-l-0',
       },
       centerContent: {
         true: 'flex items-center justify-center',
@@ -180,7 +180,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
       <div
         className={cx([
-          'flex rounded-md shadow-sm',
+          'flex rounded-project-input shadow-sm overflow-hidden',
           label ? 'mt-1' : '',
           wrapperClassName,
         ])}

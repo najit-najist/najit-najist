@@ -119,18 +119,14 @@ export const DifficultyEdit: FC<{ difficulties: RecipeDifficulty[] }> = ({
               wrapperClassName="mt-3"
               error={formState.errors.color}
             />
-            <div className="mt-5 flex gap-2">
-              <Button
-                isLoading={formState.isSubmitting}
-                type="submit"
-                appearance="small"
-              >
-                Přidat
+            <div className="mt-5 flex gap-4">
+              <Button isLoading={formState.isSubmitting} type="submit">
+                Vytvořit a zavřít
               </Button>
               <Button
                 disabled={formState.isSubmitting}
-                appearance="small"
-                color="white"
+                appearance="link"
+                color="red"
                 onClick={closeModal}
               >
                 Zavřít

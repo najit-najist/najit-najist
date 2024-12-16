@@ -71,7 +71,7 @@ const ContactPage: FC = async () => {
     <>
       <div className="container">
         <div className="mx-auto">
-          <h2 className="text-5xl font-bold font-title tracking-wide mt-10 mb-7">
+          <h2 className="text-4xl font-bold font-title tracking-wide mt-10 mb-7">
             {metadata.title}
           </h2>
         </div>
@@ -89,13 +89,49 @@ const ContactPage: FC = async () => {
         </div>
       </div>
 
-      <div className="container my-20" id="nas-team">
+      <div className="container" id="prodejny">
         <div className="mx-auto">
-          <h2 className="text-5xl font-bold mt-10 mb-7 font-title tracking-wide">
+          <h2 className="text-4xl font-bold mt-20 mb-7 font-title tracking-wide">
+            Naše prodejny
+          </h2>
+        </div>
+        <div className="grid grid-cols-1 gap-4">
+          {locations.map((item) => (
+            <div
+              key={item.name}
+              className="rounded-project flex gap-x-4 gap-y-3 flex-col sm:justify-end sm:flex-row-reverse"
+            >
+              <iframe
+                className="w-full sm:w-1/2 top-0 left-0 rounded-project shadow-white bg-white shadow-lg flex-none h-56"
+                scrolling="no"
+                frameBorder={0}
+                src={item.map.location}
+              ></iframe>
+
+              <div className="w-full sm:w-1/2">
+                <p className="text-project-primary text-3xl font-semibold mt-4 font-title">
+                  {item.name}
+                </p>
+
+                <address className="block mt-2 font-normal not-italic text-xl ">
+                  {item.address.street} <br />
+                  {item.address.city}
+                  <br />
+                  {item.address.postCode}
+                </address>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="container mt-16 mb-10" id="nas-team">
+        <div className="mx-auto">
+          <h2 className="text-4xl font-bold mt-20 mb-7 font-title tracking-wide">
             Náš tým
           </h2>
         </div>
-        <div className="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+        <div className="mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
           {teamMembers.map((memberInfo) => (
             <UserHead
               key={memberInfo.name}
@@ -104,39 +140,6 @@ const ContactPage: FC = async () => {
               position={memberInfo.title}
               imagePosition={memberInfo.imagePosition}
             />
-          ))}
-        </div>
-      </div>
-
-      <div className="container" id="prodejny">
-        <div className="mx-auto">
-          <h2 className="text-5xl font-bold mt-10 mb-7 font-title tracking-wide">
-            Prodejny
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-          {locations.map((item) => (
-            <div key={item.name} className="p-2 bg-white rounded-lg shadow-lg">
-              <iframe
-                className="w-full top-0 left-0 rounded-lg shadow-white bg-white aspect-square"
-                scrolling="no"
-                frameBorder={0}
-                src={item.map.location}
-              ></iframe>
-
-              <div className="p-2">
-                <p className="text-project-primary text-2xl font-semibold mt-4 font-title">
-                  {item.name}
-                </p>
-
-                <address className="block mt-1 font-normal not-italic">
-                  {item.address.street} <br />
-                  {item.address.city}
-                  <br />
-                  {item.address.postCode}
-                </address>
-              </div>
-            </div>
           ))}
         </div>
       </div>

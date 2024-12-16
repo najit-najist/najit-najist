@@ -1,3 +1,4 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Logo } from '@components/common/Logo';
 import { logger } from '@logger/server';
 import { EntityNotFoundError } from '@server/errors';
@@ -48,7 +49,7 @@ export default async function Page({
           <Title />
 
           <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-            <div className="bg-white py-6 px-4 shadow sm:rounded-lg sm:px-6">
+            <div className="bg-white py-6 px-4 shadow sm:rounded-project sm:px-6">
               <Form token={token} />
             </div>
             <BottomLinks />
@@ -66,13 +67,19 @@ export default async function Page({
           <p className="mt-8 text-center flex gap-4 justify-center flex-wrap text-sm w-full text-gray-600">
             <Link
               href="/"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className={buttonStyles({
+                appearance: 'link',
+                size: 'sm',
+              })}
             >
               domů
             </Link>
             <Link
               href="/login"
-              className="font-medium text-indigo-600 hover:text-indigo-500"
+              className={buttonStyles({
+                appearance: 'link',
+                size: 'sm',
+              })}
             >
               přihlásit se
             </Link>

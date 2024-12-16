@@ -21,7 +21,7 @@ export const CheckoutButton: FC = () => {
 
   return (
     <Button
-      className="mx-4"
+      className="ml-auto mr-2 sm:mr-auto sm:w-48"
       disabled={isDisabled}
       isLoading={isDisabled}
       type="submit"

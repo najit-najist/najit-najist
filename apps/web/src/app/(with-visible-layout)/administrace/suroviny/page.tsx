@@ -1,3 +1,4 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { ArrowLeftIcon, PlusIcon } from '@heroicons/react/24/outline';
@@ -37,7 +38,13 @@ export default function Page() {
       <PageHeader className="container">
         <div className="flex justify-between items-center mb-4">
           <PageTitle>{metadata.title}</PageTitle>
-          <Link href="/administrace/suroviny/novy" className="">
+          <Link
+            href="/administrace/suroviny/novy"
+            className={buttonStyles({
+              appearance: 'ghost',
+              className: 'w-16 h-16 !px-2',
+            })}
+          >
             <PlusIcon className="inline w-12" />
           </Link>
         </div>

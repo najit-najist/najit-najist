@@ -65,16 +65,12 @@ export const Content: FC<{
           />
         </div>
       ) : null}
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
-      >
-        <EditUserUnderPage
-          viewType="edit"
-          userId={user.id}
-          afterProfileImageSlot={asideContent}
-        />
-      </form>
+      <div className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5">
+        <div className="px-5 mb-5 md:mb-0 col-span-2">{asideContent}</div>
+        <form onSubmit={handleSubmit(onSubmit)} className="col-span-4">
+          <EditUserUnderPage viewType="edit" userId={user.id} />
+        </form>
+      </div>
     </FormProvider>
   );
 };

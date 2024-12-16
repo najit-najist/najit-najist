@@ -71,7 +71,7 @@ export const CookieBanner: FC = () => {
     <>
       {visible ? (
         <section className="fixed left-1/2 -translate-x-1/2 max-w-[calc(100vw-2rem)] bottom-0 md:max-w-3xl lg:max-w-5xl w-full z-10">
-          <div className="bg-white p-6 rounded-lg shadow-2xl mb-3 sm:mb-5 border-project-accent border-2">
+          <div className="bg-white p-6 rounded-project shadow-2xl mb-3 sm:mb-5 border-project-accent border-2">
             <h1 className="text-2xl font-semibold">Cookies?</h1>
 
             <p className="text-gray-400 font-medium text-lg max-w-md">

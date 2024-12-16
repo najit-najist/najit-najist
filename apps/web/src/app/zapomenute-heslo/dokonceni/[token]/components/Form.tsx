@@ -56,7 +56,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             required
             error={formState.errors.password}
             disabled={fieldsAreDisabled}
-            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+            className="block w-full appearance-none rounded-project border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             {...register('password')}
           />
           <PasswordStrengthMeter fieldName="password" control={control} />
@@ -77,7 +77,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             required
             error={formState.errors.password}
             disabled={fieldsAreDisabled}
-            className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+            className="block w-full appearance-none rounded-project border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
             {...register('passwordAgain')}
           />
         </div>
@@ -86,7 +86,6 @@ export const Form: FC<{ token: string }> = ({ token }) => {
       <div>
         <Button
           type="submit"
-          appearance="normal"
           className="shadow-sm w-full"
           disabled={fieldsAreDisabled}
         >

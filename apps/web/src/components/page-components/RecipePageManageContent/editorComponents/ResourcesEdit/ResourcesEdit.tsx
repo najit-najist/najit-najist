@@ -116,9 +116,9 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
         {(resources ?? []).map((item, index) => (
           <li
             key={item.id}
-            className=" gap-2 flex items-start rounded-md hover:bg-gray-50"
+            className=" gap-2 flex items-start rounded-project hover:bg-gray-50"
           >
-            <div className="bg-white aspect-square flex items-center justify-center h-10 border-gray-300 border rounded-md mt-6">
+            <div className="bg-white aspect-square flex items-center justify-center h-10 border-gray-300 border rounded-project mt-6">
               {index + 1}.
             </div>
             <Input
@@ -137,21 +137,21 @@ export const ResourcesEdit: FC<{ metrics: RecipeResourceMetric[] }> = ({
 
             <Button
               onClick={onRemove(index)}
-              color="softRed"
-              appearance="spaceless"
-              className="w-10 h-10 flex-none mt-6"
+              color="red"
+              appearance="ghost"
+              className="w-10 h-10 flex-none !px-1 mt-6"
               disabled={formState.isSubmitting}
             >
-              <TrashIcon className="w-5 h-5 m-auto" />
+              <TrashIcon className="w-6 h-6 m-auto" />
             </Button>
           </li>
         ))}
-        <li className="mt-5">
+        <li className="mt-3">
           <Button
             onClick={onAdd}
             className="w-full !p-2"
-            color="white"
             disabled={formState.isSubmitting}
+            appearance="link"
           >
             <PlusIcon className="w-5 h-5 inline -mt-1 mr-3" />
             Přidat další

@@ -1,3 +1,4 @@
+import { LatestProducts } from '@app-components/LatestProducts';
 import { NewsletterSubscribe } from '@components/layout';
 import { getCachedLoggedInUser } from '@server/utils/getCachedLoggedInUser';
 import { FC } from 'react';
@@ -17,10 +18,17 @@ const MainPage: FC = async () => {
     <>
       <HeroBanner />
       <QuickLinks />
-      <VideoSection />
+      <LatestProducts />
       <LatestPosts />
+      <VideoSection />
       <div className="mt-28" />
-      <NewsletterSubscribe user={loggedInUser} />
+      <NewsletterSubscribe
+        user={
+          loggedInUser?.newsletter
+            ? { newsletter: loggedInUser?.newsletter }
+            : undefined
+        }
+      />
     </>
   );
 };

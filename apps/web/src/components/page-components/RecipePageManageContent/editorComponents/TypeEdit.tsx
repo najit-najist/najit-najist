@@ -104,18 +104,19 @@ export const TypeEdit: FC<{ types: RecipeCategory[] }> = ({
               error={formState.errors.title}
               {...register('title')}
             />
-            <div className="mt-5 flex gap-2">
+            <div className="mt-5 flex gap-4">
               <Button
                 isLoading={formState.isSubmitting}
                 type="submit"
-                appearance="small"
+                size="sm"
               >
                 Přidat
               </Button>
               <Button
                 disabled={formState.isSubmitting}
-                appearance="small"
-                color="white"
+                size="sm"
+                appearance="link"
+                color="red"
                 onClick={closeModal}
               >
                 Zavřít

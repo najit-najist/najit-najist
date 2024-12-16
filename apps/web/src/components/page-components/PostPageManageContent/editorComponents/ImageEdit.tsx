@@ -72,9 +72,8 @@ export const ImageEdit: FC<{ postId?: Post['id'] }> = ({ postId }) => {
       <Tooltip
         trigger={
           <Button
-            padding={'off'}
             color="red"
-            className="absolute bottom-0 right-0 m-4 !px-4 pt-3"
+            className="absolute bottom-0 right-0 m-4 !px-4 !pt-3"
             onClick={() => setValue(FIELD_NAME, null)}
           >
             <TrashIcon width={30} height={30} />

@@ -1,4 +1,5 @@
 import { Badge } from '@components/common/Badge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { UserWithRelations } from '@custom-types';
 import { dayjs } from '@dayjs';
@@ -83,7 +84,10 @@ export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
                     ? `/muj-ucet/profil`
                     : `/administrace/uzivatele/${person.id}`
                 }
-                className="text-indigo-600 hover:text-indigo-900"
+                className={buttonStyles({
+                  appearance: 'ghost',
+                  className: 'inline-block',
+                })}
               >
                 Upravit
                 <span className="sr-only">

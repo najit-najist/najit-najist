@@ -2,6 +2,7 @@
 
 import { Alert } from '@components/common/Alert';
 import { Button } from '@components/common/Button';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Input } from '@components/common/form/Input';
 import { PasswordInput } from '@components/common/form/PasswordInput';
 import {
@@ -82,7 +83,7 @@ export const Content: FC = () => {
   );
 
   return (
-    <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto w-full">
+    <div className="flex min-h-full flex-col container justify-center w-full py-10">
       <Title />
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -139,7 +140,7 @@ export const Content: FC = () => {
             Přejeme hodně štěstí!
           </Alert>
         ) : null}
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+        <div className="bg-white py-5 px-4 shadow rounded-project sm:px-5">
           <form
             autoComplete="on"
             className="space-y-6"
@@ -166,12 +167,23 @@ export const Content: FC = () => {
             </div>
 
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Heslo
-              </label>
+              <div className="flex justify-between">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-medium text-gray-700"
+                >
+                  Heslo
+                </label>
+                <Link
+                  href="/zapomenute-heslo"
+                  className={buttonStyles({
+                    appearance: 'link',
+                    size: 'sm',
+                  })}
+                >
+                  Zapomenuté heslo?
+                </Link>
+              </div>
               <div className="mt-1">
                 <PasswordInput
                   id="password"
@@ -184,41 +196,11 @@ export const Content: FC = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
-              {/* TODO: is this really necessary */}
-              {/* <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <label
-                  htmlFor="remember-me"
-                  className="ml-2 block text-sm text-gray-900"
-                >
-                  Pamatuj si mě
-                </label>
-              </div> */}
-              {/* Just a placeholder */}
-              <div />
-
-              <div className="text-sm">
-                <Link
-                  href="/zapomenute-heslo"
-                  className="font-medium text-indigo-600 hover:text-indigo-500 hover:underline"
-                >
-                  Zapomenuté heslo?
-                </Link>
-              </div>
-            </div>
-
-            <div>
+            <div className="flex">
               <Button
                 isLoading={isSubmitting || isSubmitSuccessful}
                 type="submit"
-                appearance="normal"
-                className="shadow-sm w-full"
+                className="shadow-sm mx-auto w-full max-w-40"
               >
                 {isSubmitting || isSubmitSuccessful
                   ? 'Přihlašuji...'

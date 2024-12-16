@@ -43,8 +43,7 @@ export default function WelcomeAndFinish({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={finishUrl}
             >
@@ -53,7 +52,7 @@ export default function WelcomeAndFinish({
             </Button>
           </Column>
         </Row>
-        <Spacing size="lg" />
+        <Spacing size="md" />
         <CenteredRow>
           <Text
             color="warning"
@@ -68,3 +67,8 @@ export default function WelcomeAndFinish({
     </Layout>
   );
 }
+
+WelcomeAndFinish.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  token: '',
+} satisfies WelcomeAndFinishProps;

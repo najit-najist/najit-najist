@@ -70,7 +70,7 @@ export function Combobox<I extends Item>({
           onChange={onInputValueChange}
           displayValue={displayValue}
         />
-        <ComboboxDefault.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+        <ComboboxDefault.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-project-input px-2 focus:outline-none">
           <ChevronUpDownIcon
             className="h-5 w-5 text-gray-400"
             aria-hidden="true"
@@ -78,7 +78,7 @@ export function Combobox<I extends Item>({
         </ComboboxDefault.Button>
 
         {!!isLoading === false ? (
-          <ComboboxDefault.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <ComboboxDefault.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project bg-white p-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
             {items.length ? (
               <>
                 {items.map((item) => (
@@ -87,10 +87,10 @@ export function Combobox<I extends Item>({
                     value={item}
                     className={({ active }) =>
                       cx(
-                        'relative cursor-default select-none py-2 pl-3 pr-9',
+                        'relative cursor-default select-none py-2 pl-3 pr-9 rounded-project-input',
                         active
                           ? 'bg-project-primary text-white'
-                          : 'text-gray-900',
+                          : 'text-gray-900 focus:bg-project-primary/30 text-project-primary',
                       )
                     }
                   >

@@ -59,9 +59,8 @@ export const OrderPreviewItem: FC<{
       <Link
         href={`/muj-ucet/objednavky/${order.id}`}
         className={buttonStyles({
-          asLink: true,
-          appearance: 'extraSmall',
-          color: 'ghost',
+          size: 'xsm',
+          appearance: 'link',
         })}
       >
         Zobrazit<span className="sr-only">, objednávku číslo {order.id}</span>

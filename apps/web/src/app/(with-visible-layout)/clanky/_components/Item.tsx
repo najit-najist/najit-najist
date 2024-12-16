@@ -18,7 +18,7 @@ export const Item: FC<PostWithRelations> = async (post) => {
     <article className="relative isolate flex flex-col gap-6 lg:flex-row">
       <Link
         href={link}
-        className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0 block"
+        className="relative aspect-[16/9] sm:aspect-[2/1] lg:aspect-square lg:w-64 lg:shrink-0 block rounded-project overflow-hidden"
       >
         {importedImage ? (
           <Image
@@ -27,14 +27,14 @@ export const Item: FC<PostWithRelations> = async (post) => {
             unoptimized
             src={importedImage}
             alt=""
-            className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
+            className="absolute inset-0 h-full w-full bg-gray-50 object-cover"
           />
         ) : (
           <div className="flex w-full h-full bg-white">
             <PhotoIcon className="w-20 h-20 m-auto" />
           </div>
         )}
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
+        <div className="absolute inset-0 ring-1 ring-inset ring-gray-900/10 rounded-project" />
       </Link>
       <div>
         <div className="flex items-center gap-x-4 text-xs mt-2">

@@ -1,15 +1,13 @@
-import { XMarkIcon } from '@heroicons/react/24/outline';
 import { cva, VariantProps } from 'class-variance-authority';
 import {
   DetailedHTMLProps,
   FC,
   HTMLAttributes,
-  MouseEventHandler,
   PropsWithChildren,
 } from 'react';
 
 export const badgeStyles = cva(
-  'inline-flex gap-x-1.5 items-center rounded-md font-medium',
+  'inline-flex gap-x-1.5 items-center rounded-project font-medium',
   {
     variants: {
       color: {

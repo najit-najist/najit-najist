@@ -16,7 +16,7 @@ export const PaperColumn: FC<
   return (
     <Column
       className={clsx(
-        'border-solid border-2 border-gray-200 rounded-md bg-white',
+        'border-solid border-2 border-gray-200 rounded-project bg-white',
         className,
       )}
       {...rest}

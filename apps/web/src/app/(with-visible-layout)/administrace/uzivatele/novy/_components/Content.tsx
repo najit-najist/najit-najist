@@ -62,12 +62,11 @@ export const Content: FC = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5"
-      >
-        <EditUserUnderPage viewType="create" />
-      </form>
+      <div className="container grid grid-cols-1 md:grid-cols-6 mx-auto my-5">
+        <form onSubmit={handleSubmit(onSubmit)} className="col-span-full">
+          <EditUserUnderPage viewType="create" />
+        </form>
+      </div>
     </FormProvider>
   );
 };

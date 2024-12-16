@@ -1,103 +1,13 @@
-import { AppRouterOutput } from '@custom-types';
-import { dayjs } from '@dayjs';
-import { ArrowRightIcon, PhotoIcon } from '@heroicons/react/24/solid';
+import {
+  PostPreviewMedium,
+  PostPreviewMediumSkeleton,
+} from '@components/common/PostPreviewMedium';
+import { ArrowRightIcon } from '@heroicons/react/24/solid';
 import { database } from '@najit-najist/database';
-import { posts } from '@najit-najist/database/models';
-import { getFileUrl } from '@server/utils/getFileUrl';
-import HTMLReactParser from 'html-react-parser';
-import Image from 'next/image';
 import Link from 'next/link';
-import { FC } from 'react';
+import { FC, Suspense } from 'react';
 
-type PostWithRelations = AppRouterOutput['posts']['getMany']['items'][number];
-
-const Item: FC<PostWithRelations> = async ({
-  image,
-  id,
-  publishedAt,
-  createdAt,
-  categories,
-  description,
-  title,
-  slug,
-}) => {
-  const link: any = `/clanky/${slug}`;
-  const importedImage = image ? getFileUrl(posts, id, image) : null;
-
-  return (
-    <article className="relative isolate w-full">
-      <Link
-        href={link}
-        className="relative aspect-square w-full lg:shrink-0 block"
-      >
-        {importedImage ? (
-          <Image
-            width={300}
-            height={300}
-            unoptimized
-            src={importedImage}
-            alt=""
-            className="absolute inset-0 h-full w-full rounded-2xl bg-gray-50 object-cover"
-          />
-        ) : (
-          <div className="flex w-full h-full bg-white">
-            <PhotoIcon className="w-20 h-20 m-auto" />
-          </div>
-        )}
-        <div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
-      </Link>
-      <div className="px-2">
-        <div className="flex items-center gap-x-4 text-xs mt-2">
-          <time
-            dateTime={String(publishedAt) ?? createdAt}
-            className="text-gray-500 mt-1"
-          >
-            {dayjs
-              .tz(publishedAt ? publishedAt : createdAt)
-              .format('DD. MM. YYYY v HH:mm')}
-          </time>
-          <div className="flex space-x-3">
-            {categories.map(({ category }) => (
-              <button
-                key={category.id}
-                className="relative z-10 rounded-full bg-gray-50 py-1.5 px-3 font-medium text-gray-600 hover:bg-gray-100"
-              >
-                {category.title}
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="group relative max-w-xl">
-          <h3 className="font-title mt-3 text-2xl font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
-            <Link href={link}>
-              <span className="absolute inset-0" />
-              {title}
-            </Link>
-          </h3>
-          <div className="mt-5 text-sm leading-6 text-gray-600 line-clamp-5">
-            {HTMLReactParser(description)}
-          </div>
-        </div>
-        {/* <div className="mt-6 flex border-t border-gray-900/5 pt-6">
-<div className="relative flex items-center gap-x-4">
-  <div className="h-10 w-10 rounded-full bg-gray-50" />
-  <div className="text-sm leading-6">
-    <p className="font-semibold text-gray-900">
-      <a>
-        <span className="absolute inset-0" />
-        {post.author.name}
-      </a>
-    </p>
-    <p className="text-gray-600">{post.author.role}</p>
-  </div>
-</div>
-</div> */}
-      </div>
-    </article>
-  );
-};
-
-export const LatestPosts: FC = async () => {
+const Items: FC = async () => {
   const items = await database.query.posts.findMany({
     where: (schema, { isNotNull }) => isNotNull(schema.publishedAt),
     limit: 4,
@@ -109,24 +19,32 @@ export const LatestPosts: FC = async () => {
     },
   });
 
+  return items.map((post) => <PostPreviewMedium key={post.id} {...post} />);
+};
+
+export const LatestPosts: FC = () => {
   return (
-    <div className="container mx-auto mt-20" id="o-nas">
-      <div className="mx-auto flex flex-col sm:flex-row sm:items-center justify-between mt-10 mb-7 ">
+    <div className="container mx-auto mt-20">
+      <div className="mx-auto flex flex-col sm:flex-row sm:items-center justify-between mt-10 mb-2 sm:mb-7">
         <h2 className="text-3xl sm:text-4xl font-bold font-title">
           Nejnovější články
         </h2>
         <Link
           href="/clanky"
-          className="text-project-primary group hover:underline mt-3 sm:mt-0"
+          className="text-project-primary group hover:underline mt-3 sm:-mt-2"
         >
           Další články
           <ArrowRightIcon className="w-5 ml-3 inline-block -top-0.5 relative group-hover:translate-x-2 duration-150" />
         </Link>
       </div>
-      <div className="relative grid sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        {items.map((post) => (
-          <Item key={post.id} {...post} />
-        ))}
+      <div className="relative grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <Suspense
+          fallback={new Array(4).fill(1).map((_value, index) => (
+            <PostPreviewMediumSkeleton key={index} />
+          ))}
+        >
+          <Items />
+        </Suspense>
       </div>
     </div>
   );

@@ -7,10 +7,11 @@ import { Textarea } from '@components/common/form/Textarea';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks/usePlausible';
 import { contactUsInputSchema } from '@server/schemas/contactUsInputSchema';
-import { trpc } from '@trpc/web';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+
+import { contactUsAction } from '../contactUsAction';
 
 type FormValues = z.infer<typeof contactUsInputSchema>;
 
@@ -23,21 +24,24 @@ export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
   });
   const { trackEvent } = usePlausible();
   const { formState, register, handleSubmit, setError } = formMethods;
-  const { mutateAsync: sendContents } = trpc.contactSend.useMutation({
-    onError() {
-      setError('root', {
-        message: 'Stala se chyba při odesílání. Zkuste to znovu za chvíli',
-      });
-    },
-  });
 
   const onSubmit: Parameters<typeof handleSubmit>['0'] = async (values) => {
-    await sendContents(values);
+    const response = await contactUsAction(values);
     trackEvent('Contact form send');
+
+    if ('errors' in response) {
+      const { errors = {} } = response;
+
+      for (const [fieldName, error] of Object.entries(errors)) {
+        setError(fieldName as any, {
+          message: error.message,
+        });
+      }
+    }
   };
 
   return (
-    <div className="max-w-4xl">
+    <div>
       {formState.errors.root ? (
         <Alert
           heading="Chyba při odesílání"
@@ -49,28 +53,26 @@ export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
       ) : null}
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="bg-white rounded-lg p-5 relative overflow-hidden shadow-md"
+        className="bg-white rounded-project p-5 relative overflow-hidden shadow-xl"
       >
         <div className="grid sm:grid-cols-2 gap-7">
-          <Input
-            required
-            wrapperClassName="w-full"
-            label="Jméno"
-            placeholder="Tomáš"
-            error={formState.errors.firstName}
-            {...register('firstName', {})}
-          />
-          <Input
-            required
-            wrapperClassName="w-full"
-            label="Příjmení"
-            placeholder="Bezlepek"
-            error={formState.errors.lastName}
-            {...register('lastName', {})}
-          />
-        </div>
-        <div className="grid sm:grid-cols-2 gap-7 mt-4">
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
+            <Input
+              required
+              wrapperClassName="w-full"
+              label="Jméno"
+              placeholder="Tomáš"
+              error={formState.errors.firstName}
+              {...register('firstName', {})}
+            />
+            <Input
+              required
+              wrapperClassName="w-full"
+              label="Příjmení"
+              placeholder="Bezlepek"
+              error={formState.errors.lastName}
+              {...register('lastName', {})}
+            />
             <Input
               wrapperClassName="w-full"
               label="Email"
@@ -89,6 +91,7 @@ export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
           </div>
           <Textarea
             wrapperClassName="w-full"
+            className="min-h-52"
             label="Zpráva"
             rows={4}
             error={formState.errors.message}
@@ -96,7 +99,7 @@ export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
           />
         </div>
         <Button
-          className="mt-12"
+          className="mt-6 w-full sm:max-w-52"
           type="submit"
           disabled={formState.isSubmitSuccessful}
           isLoading={formState.isSubmitting}
@@ -105,8 +108,8 @@ export const ContactForm: FC<{ defaultValues?: Partial<FormValues> }> = ({
         </Button>
         {formState.errors.root ? (
           <div className="text-center text-red-600 font-bold font-xl">
-            {formState.errors.root.message} Ajaj... stala se chyba při
-            odesílání. Zkuste to znovy za chvíli
+            {formState.errors.root.message ??
+              'Ajaj... stala se chyba při odesílání. Zkuste to znovy za chvíli'}
           </div>
         ) : null}
         {formState.isSubmitSuccessful && (

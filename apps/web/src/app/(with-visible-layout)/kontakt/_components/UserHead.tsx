@@ -11,8 +11,8 @@ export const UserHead: FC<{
   imagePosition?: imagePosition;
 }> = ({ image, name, position, imagePosition = 'top' }) => {
   return (
-    <div className="text-center">
-      <div className="w-full aspect-square max-w-[225px] rounded-full shadow-md overflow-hidden relative mx-auto">
+    <div className="text-center mb-4">
+      <div className="w-full aspect-square max-w-[225px] rounded-project shadow-lg overflow-hidden relative mx-auto">
         <Image
           alt=""
           width={225}
@@ -26,7 +26,7 @@ export const UserHead: FC<{
           )}
         />
       </div>
-      <h3 className="text-lg mt-4 font-title">{name}</h3>
+      <h3 className="text-lg mt-2 font-title">{name}</h3>
       <p className="text-sm text-project-primary">{position}</p>
     </div>
   );

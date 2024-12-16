@@ -38,7 +38,7 @@ export const PasswordStrengthMeter: FC<{
         <div
           key={key}
           className={clsx([
-            'h-1 w-full rounded-md duration-300 transition-all',
+            'h-1 w-full rounded-project duration-300 transition-all',
             maxItemsShown < index
               ? 'bg-gray-200'
               : passwordStrengthToColor[passwordStrength.score],

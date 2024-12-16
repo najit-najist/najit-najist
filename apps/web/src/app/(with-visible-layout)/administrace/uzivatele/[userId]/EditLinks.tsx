@@ -18,11 +18,6 @@ type NavigationItem = {
   onClick: () => void;
 };
 
-const classnameForType: Record<NonNullable<NavigationItem['type']>, string> = {
-  delete: clsx('bg-red-50 hover:bg-red-100 text-red-600'),
-  normal: clsx('bg-gray-50 hover:bg-project-primary/10 text-project-accent'),
-};
-
 const Item: FC<NavigationItem & { disabled: boolean; isLoading: boolean }> = ({
   icon,
   label,
@@ -35,7 +30,8 @@ const Item: FC<NavigationItem & { disabled: boolean; isLoading: boolean }> = ({
     <li>
       <Button
         onClick={onClick}
-        color={type === 'delete' ? 'red' : 'ghost'}
+        color={type === 'delete' ? 'red' : 'primary'}
+        appearance={type === 'delete' ? 'filled' : 'ghost'}
         isLoading={isLoading}
         disabled={disabled}
         className="mt-2 w-full text-left"
@@ -65,7 +61,7 @@ export function EditLinks({ user }: { user: Pick<User, 'status' | 'id'> }) {
   };
 
   return (
-    <nav className="flex flex-1 flex-col mx-auto mt-10" aria-label="Sidebar">
+    <nav className="flex flex-1 flex-col mx-auto mt-5" aria-label="Sidebar">
       <ul role="list" className="-mx-2 space-y-1">
         <Item
           label={

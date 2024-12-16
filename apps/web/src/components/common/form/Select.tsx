@@ -7,7 +7,6 @@ import {
   PlusIcon,
 } from '@heroicons/react/20/solid';
 import { cva, cx } from 'class-variance-authority';
-import clsx from 'clsx';
 import { Fragment, ReactElement, ReactNode } from 'react';
 import { FieldError } from 'react-hook-form';
 
@@ -15,7 +14,7 @@ import { ErrorMessage } from './ErrorMessage';
 import { labelStyles } from './Label';
 
 const selectButtonStyles = cva(
-  'relative w-full cursor-default rounded-md bg-white disabled:bg-gray-100 text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
+  'relative w-full cursor-default rounded-project-input bg-white disabled:bg-gray-100 text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
   {
     variants: {
       size: {
@@ -109,7 +108,7 @@ export function Select<T extends ItemBase>({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project-input bg-white p-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
                 {items.map((item) => (
                   <Listbox.Option
                     key={item.id}
@@ -151,7 +150,7 @@ export function Select<T extends ItemBase>({
                 {onAddNewItem ? (
                   <Listbox.Option
                     className={
-                      'relative select-none py-2 pl-3 pr-9 hover:bg-project-secondary hover:text-white text-project-secondary w-full text-left group border-t-2 cursor-pointer'
+                      'relative select-none py-2 pl-3 pr-9 hover:bg-project-secondary hover:text-white text-project-secondary rounded-project-input w-full text-left group border-t-2 cursor-pointer'
                     }
                     onClick={onAddNewItem}
                     value={selected}

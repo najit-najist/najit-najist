@@ -65,8 +65,8 @@ const SuccessMessage: FC<
         <Link
           href="/muj-ucet/kosik/pokladna"
           className={buttonStyles({
-            className: 'mt-3 inline-block',
-            appearance: 'extraSmall',
+            className: 'mt-3 inline-block !text-xs',
+            size: 'xsm',
           })}
         >
           Přejít do košíku
@@ -138,11 +138,10 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
       disabled={disabled || !withoutText}
       trigger={
         <Button
-          notAnimated={disabled}
+          animations={!disabled}
           isLoading={isLoading}
           disabled={disabled}
-          appearance="spaceless"
-          className={clsx('p-3 relative', withoutText ? 'w-11 h-11' : 'px-6')}
+          className={clsx('!p-3 relative', withoutText ? 'w-11 h-11' : 'px-3')}
           onClick={handleAddToCartClick}
           icon={contentBeforeText ?? undefined}
         >

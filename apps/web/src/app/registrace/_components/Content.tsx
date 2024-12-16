@@ -78,11 +78,11 @@ export const Content: FC = () => {
 
   return (
     <FormProvider {...formMethods}>
-      <div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8 mx-auto w-full">
+      <div className="flex min-h-full flex-col container justify-center w-full py-10">
         <Title />
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-          <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+          <div className="bg-white p-5 shadow sm:rounded-project">
             <form className="space-y-6" onSubmit={onSubmit}>
               <Input
                 required
@@ -172,8 +172,7 @@ export const Content: FC = () => {
                 <Button
                   isLoading={fieldsAreDisabled}
                   type="submit"
-                  appearance="normal"
-                  className="shadow-sm w-full font-title"
+                  className="shadow-sm w-full"
                 >
                   Registrovat
                 </Button>

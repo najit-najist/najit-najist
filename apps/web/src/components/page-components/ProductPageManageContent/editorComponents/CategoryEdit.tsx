@@ -105,19 +105,20 @@ export const CategoryEdit: FC<{ categories: ProductCategory[] }> = ({
               error={formState.errors.name}
               {...register('name')}
             />
-            <div className="mt-5 flex gap-2">
+            <div className="mt-5 flex gap-4">
               <Button
                 isLoading={formState.isSubmitting}
                 type="submit"
-                appearance="small"
+                size="sm"
               >
-                Přidat
+                Vytvořit a zavřít
               </Button>
               <Button
                 disabled={formState.isSubmitting}
-                appearance="small"
-                color="white"
+                size="sm"
                 onClick={closeModal}
+                appearance="link"
+                color="red"
               >
                 Zavřít
               </Button>

@@ -1,4 +1,5 @@
 import { OrderStateBadge } from '@app-components/OrderStateBadge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { DEFAULT_DATE_FORMAT } from '@constants';
 import { AppRouterOutput } from '@custom-types/AppRouter';
 import { dayjs } from '@dayjs';
@@ -50,7 +51,10 @@ export const Orders: FC<{
             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
               <Link
                 href={`/muj-ucet/objednavky/${order.id}`}
-                className="text-indigo-600 hover:text-indigo-900"
+                className={buttonStyles({
+                  appearance: 'ghost',
+                  className: 'inline-block',
+                })}
               >
                 Ukázat
               </Link>

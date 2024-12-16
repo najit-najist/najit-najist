@@ -12,11 +12,12 @@ export interface AlertProps
     AlertRootVariantProps {
   heading: ReactNode;
   icon?: typeof HandRaisedIcon;
+  rounded?: boolean;
   iconClassName?: string;
   onDismissClick?: () => void;
 }
 
-const alertRootStyles = cva('rounded-md p-3 border-solid', {
+const alertRootStyles = cva('p-3 border-solid', {
   variants: {
     color: {
       default: 'bg-blue-50',
@@ -28,10 +29,15 @@ const alertRootStyles = cva('rounded-md p-3 border-solid', {
       true: cx('border-2'),
       false: '',
     },
+    rounded: {
+      true: 'rounded-project',
+      false: '',
+    },
   },
   defaultVariants: {
     color: 'default',
     outlined: true,
+    rounded: true,
   },
   compoundVariants: [
     {
@@ -108,10 +114,14 @@ export const Alert: FC<AlertProps> = ({
   iconClassName,
   onDismissClick,
   outlined,
+  rounded = true,
   ...rest
 }) => {
   return (
-    <div className={alertRootStyles({ className, color, outlined })} {...rest}>
+    <div
+      className={alertRootStyles({ className, color, outlined, rounded })}
+      {...rest}
+    >
       <div className="flex">
         <div className="w-full">
           <div className="flex justify-between items-start">

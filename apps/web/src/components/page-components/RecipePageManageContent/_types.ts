@@ -1,4 +1,5 @@
-import { createRecipeAction } from './actions/createRecipeAction';
+import type { recipeCreateInputSchema } from '@server/schemas/recipeCreateInputSchema';
+import { z } from 'zod';
 
 export type ViewType = 'create' | 'edit' | 'view';
-export type RecipeFormData = Parameters<typeof createRecipeAction>[0];
+export type RecipeFormData = z.input<typeof recipeCreateInputSchema>;

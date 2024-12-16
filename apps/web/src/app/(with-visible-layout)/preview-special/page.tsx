@@ -74,7 +74,7 @@ export default async function Page() {
         <video
           poster="/images/video-thumbnail.jpg"
           width="100%"
-          className="sm:aspect-video bg-black relative shadow-lg shadow-green-600"
+          className="sm:aspect-video bg-black relative shadow-lg shadow-project-accent rounded-project"
           controls
           controlsList="nodownload"
         >

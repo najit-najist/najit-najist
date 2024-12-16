@@ -17,7 +17,6 @@ import {
   finalizeResetPasswordSchema,
   resetPasswordSchema,
 } from '../../schemas/userProfileResetPasswordInputSchema';
-import { userProfileUpdateInputSchema } from '../../schemas/userProfileUpdateInputSchema';
 import { userRegisterInputSchema } from '../../schemas/userRegisterInputSchema';
 import { verifyRegistrationFromPreviewInputSchema } from '../../schemas/verifyRegistrationFromPreviewInputSchema';
 import { protectedProcedure } from '../procedures/protectedProcedure';

@@ -10,7 +10,7 @@ export type SkeletonProps = DetailedHTMLProps<
 const skeletonStyles = cva('animate-pulse bg-gray-200', {
   variants: {
     rounded: {
-      true: 'rounded-md',
+      true: 'rounded-project',
       false: '',
       full: 'rounded-full',
     },

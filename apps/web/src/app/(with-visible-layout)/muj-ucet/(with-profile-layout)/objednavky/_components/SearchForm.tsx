@@ -97,7 +97,6 @@ export const SearchForm: FC<{
           className="flex-none min-w-[300px]"
         />
         <Button
-          appearance="spaceless"
           color="red"
           className="px-2 flex items-center justify-center"
           disabled={!isRemoveFilterEnabled}

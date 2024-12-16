@@ -1,3 +1,4 @@
+import { UserAvatarPicker } from '@components/common/UserAvatarPicker';
 import { UserWithRelations } from '@custom-types';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { notFound } from 'next/navigation';
@@ -23,7 +24,15 @@ export default async function Page({ params }: Params) {
   return (
     <Content
       user={user}
-      asideContent={<EditLinks user={{ status: user.status, id: user.id }} />}
+      asideContent={
+        <>
+          <UserAvatarPicker
+            user={{ avatar: user.avatar ?? null, id: user.id }}
+          />
+
+          <EditLinks user={{ status: user.status, id: user.id }} />
+        </>
+      }
     />
   );
 }

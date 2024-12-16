@@ -1,6 +1,12 @@
+import { BreadcrumbItem, Breadcrumbs } from '@components/common/Breadcrumbs';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { PageDescription } from '@components/common/PageDescription';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
+import {
+  RecipePreviewMedium,
+  RecipePreviewMediumSkeleton,
+} from '@components/common/RecipePreviewMedium';
 import { Skeleton } from '@components/common/Skeleton';
 import { PlusIcon } from '@heroicons/react/24/solid';
 import {
@@ -14,8 +20,6 @@ import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import Link from 'next/link';
 import { FC, Suspense } from 'react';
 
-import { Item } from './_components/Item';
-import { ItemSkeleton } from './_components/ItemSkeleton';
 import { SearchForm } from './_components/SearchForm';
 
 type Params = {
@@ -69,7 +73,7 @@ const Items: FC<Params> = async ({ searchParams }) => {
 
   return recipes.length ? (
     recipes.map((props) => (
-      <Item
+      <RecipePreviewMedium
         key={props.id}
         loggedInUser={currentUser ? { role: currentUser.role } : undefined}
         {...props}
@@ -121,15 +125,28 @@ const AddNewButton: FC = async () => {
       action: UserActions.CREATE,
       onModel: recipesModel,
     }) ? (
-    <Link href="/administrace/recepty/novy" className="">
+    <Link
+      href="/administrace/recepty/novy"
+      className={buttonStyles({
+        appearance: 'ghost',
+        className: 'w-16 h-16 !px-2',
+      })}
+    >
       <PlusIcon className="inline w-12" />
     </Link>
   ) : null;
 };
 
 export default async function RecipesPage({ searchParams }: Params) {
+  const breadcrumbs: BreadcrumbItem[] = [
+    { link: '/recepty', text: 'Recepty', active: true },
+  ];
+
   return (
     <>
+      <div className="hidden sm:block container mx-auto mt-6 mb-2">
+        <Breadcrumbs items={breadcrumbs} />
+      </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center">
           <PageTitle>{metadata.title}</PageTitle>
@@ -141,7 +158,7 @@ export default async function RecipesPage({ searchParams }: Params) {
       </PageHeader>
       <Suspense
         fallback={
-          <div className="container my-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end">
+          <div className="container mb-10 flex flex-col-reverse md:flex-row w-full gap-5 items-end">
             <Skeleton className="w-full h-11" />
             <div className="md:max-w-[240px] w-full">
               <Skeleton className="h-4 w-10" />
@@ -157,10 +174,10 @@ export default async function RecipesPage({ searchParams }: Params) {
         <Form searchParams={searchParams} />
       </Suspense>
 
-      <div className="container grid gap-5 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
+      <div className="container grid gap-3 grid-cols-2 md:grid-cols-3 lg:grid-cols-4 my-10">
         <Suspense
           fallback={new Array(8).fill(true).map((_, index) => (
-            <ItemSkeleton key={index} />
+            <RecipePreviewMediumSkeleton key={index} />
           ))}
         >
           <Items searchParams={searchParams} />

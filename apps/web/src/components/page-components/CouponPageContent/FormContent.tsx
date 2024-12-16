@@ -142,14 +142,13 @@ export function FormContent({
               disabled={couldBeDeleted}
               trigger={
                 <Button
-                  appearance="spaceless"
                   color="red"
-                  className="px-2 py-1 ml-auto"
+                  className="ml-auto !py-1 !px-1 h-10 w-10"
                   disabled={!couldBeDeleted}
                   onClick={() => deleteCoupon(coupon)}
                   isLoading={isDeleting || data !== undefined}
                 >
-                  <TrashIcon className="w-6 h-6 top-0.5 relative" />
+                  <TrashIcon className="w-5 h-5 top-0.5 relative" />
                 </Button>
               }
             >

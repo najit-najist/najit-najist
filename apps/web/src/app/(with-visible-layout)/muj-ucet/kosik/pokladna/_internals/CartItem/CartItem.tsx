@@ -34,14 +34,14 @@ export const CartItem: FC<{
             height={120}
             src={mainImage}
             alt=""
-            className="w-20 rounded-md"
+            className="w-20 rounded-project"
           />
           <div className="absolute top-1 left-1">
             {product.stock?.value !== undefined &&
             product.stock.value < countInCart ? (
               <Tooltip
                 trigger={
-                  <div className="text-orange-700 bg-orange-200 rounded-md w-7 h-7 p-1">
+                  <div className="text-orange-700 bg-orange-200 rounded-project w-7 h-7 p-1">
                     <ExclamationTriangleIcon />
                   </div>
                 }
@@ -94,7 +94,7 @@ export const CartItem: FC<{
             <Price value={price - discount} />
           </div>
           <FormBreak className="w-full mt-1 mb-3" />
-          <div>
+          <div className="flex justify-end">
             <CountInput productId={product.id} countInCart={countInCart} />
           </div>
         </div>

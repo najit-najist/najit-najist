@@ -1,4 +1,4 @@
-import { Button } from '@react-email/components';
+import { Button, Column, Container, Row } from '@react-email/components';
 
 import { Heading } from './_components/Heading';
 import { Layout } from './_components/Layout';
@@ -23,18 +23,28 @@ export default function FinishRegistrationFromPreview({
         {title}
       </Heading>
 
-      <Text className="text-center">
+      <Text className="text-center text-lg">
         Děkujeme za projevení zájmu. <br />
         Spustili jsme pro Vás nový web kde už nyní můžete využít našich receptů
         a dočíst se více v našich článcích. Dále postupně připravujeme spoustu
         novinek a výhod!
-        <Button
-          href={`${siteOrigin}/registrace/dokonceni-vernostniku/${token}`}
-          className="px-3 py-3 bg-project-primary text-white font-semibold rounded-lg mt-5"
-        >
-          Pokračovat v registraci zde!
-        </Button>
       </Text>
+      <Row>
+        <Column align="center">
+          <Button
+            href={`${siteOrigin}/registrace/dokonceni-vernostniku/${token}`}
+            className="px-3 py-3 bg-project-primary text-white font-semibold rounded-project "
+          >
+            Pokračovat v registraci zde!
+          </Button>
+        </Column>
+      </Row>
     </Layout>
   );
 }
+
+FinishRegistrationFromPreview.PreviewProps = {
+  fullName: 'My Full Name',
+  siteOrigin: 'http://localhost:3000',
+  token: 'testtest',
+} satisfies FinishRegistrationFromPreviewProps;

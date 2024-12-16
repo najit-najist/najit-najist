@@ -69,18 +69,15 @@ export const AddMetricModal: FC<
           error={formState.errors.name}
           {...register('name')}
         />
-        <div className="mt-5 flex gap-2">
-          <Button
-            isLoading={formState.isSubmitting}
-            type="submit"
-            appearance="small"
-          >
+        <div className="mt-5 flex gap-4">
+          <Button isLoading={formState.isSubmitting} type="submit" size="sm">
             Přidat
           </Button>
           <Button
             disabled={formState.isSubmitting}
-            appearance="small"
-            color="white"
+            size="sm"
+            appearance="link"
+            color="red"
             onClick={() => {
               onClose(false);
               reset();

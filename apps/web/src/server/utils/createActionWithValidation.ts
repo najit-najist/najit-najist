@@ -7,7 +7,7 @@ import { isNextRedirect } from './isNextRedirect';
 
 export function createActionWithValidation<
   S extends z.Schema,
-  I extends z.input<S>,
+  I extends z.input<S> | FormData,
   O extends z.output<S>,
   R extends Promise<any> | any,
 >(
@@ -23,8 +23,13 @@ export function createActionWithValidation<
 ) {
   return async (
     input: I,
-  ): Promise<{ errors: Record<string, FieldError> } | Awaited<R>> => {
-    const validated = await schema.safeParseAsync(input);
+  ): Promise<
+    | (Awaited<R> & { errors?: Record<string, FieldError> })
+    | (Partial<Awaited<R>> & { errors: Record<string, FieldError> })
+  > => {
+    const inputAsObject =
+      input instanceof FormData ? Object.fromEntries(input) : input;
+    const validated = await schema.safeParseAsync(inputAsObject);
 
     if (!validated.success) {
       await Promise.resolve(options?.onValidationError?.(validated, input));
@@ -37,11 +42,11 @@ export function createActionWithValidation<
 
       return {
         errors,
-      };
+      } as any;
     }
 
     try {
-      return await action(validated.data);
+      return (await action(validated.data)) as any;
     } catch (error) {
       if (
         error instanceof Error &&

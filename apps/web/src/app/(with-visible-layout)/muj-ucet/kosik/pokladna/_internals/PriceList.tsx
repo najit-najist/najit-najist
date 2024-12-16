@@ -47,7 +47,7 @@ export const PriceList: FC<{
     paymentMethodsPrices[paymentMethod.slug];
 
   return (
-    <div className="px-4 text-gray-500">
+    <div className="px-4 text-gray-500 !mt-4">
       <div className="flex items-center justify-between py-5">
         <span>Mezisoučet</span>
         <span

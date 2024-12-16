@@ -1,6 +1,7 @@
 'use client';
 
-import { Button, ButtonProps } from '@components/common/Button';
+import { ButtonProps } from '@components/common/Button';
+import { Button } from '@headlessui/react';
 import { HeartIcon as HeartIconOutline } from '@heroicons/react/24/outline';
 import { HeartIcon } from '@heroicons/react/24/solid';
 import { usePlausible } from '@hooks/usePlausible';
@@ -25,10 +26,8 @@ const CustomButton: FC<
   ...rest
 }) => (
   <Button
-    color="noColor"
-    appearance="spaceless"
     className={clsx(
-      'group p-0.5 pb-0 rounded-md bg-white shadow-sm',
+      'group p-1 pb-1.5 rounded-project bg-white shadow-sm',
       className,
     )}
     {...rest}

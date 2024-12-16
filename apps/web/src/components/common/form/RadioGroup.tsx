@@ -35,12 +35,12 @@ export const radioRootStyles = cva('', {
   variants: {
     variant: {
       [RadioGroupVariants.Buttons]:
-        'relative flex rounded-lg px-5 py-4 shadow-md focus:outline-none w-full',
+        'relative flex rounded-project-input px-5 py-4 shadow-md focus:outline-none w-full',
       [RadioGroupVariants.Radios]: 'p-1 cursor-pointer',
     } satisfies Record<RadioGroupVariants, string>,
     disabled: {
       true: 'opacity-50 cursor-not-allowed',
-      false: 'cursor-pointer',
+      false: '!cursor-pointer',
     },
     active: {
       true: 'ring-2 ring-white/60 ring-offset-2 ring-project-accent',
@@ -55,7 +55,7 @@ export const radioRootStyles = cva('', {
     {
       variant: RadioGroupVariants.Buttons,
       checked: true,
-      className: 'bg-project-primary/75 text-white',
+      className: 'bg-project-primary text-white',
     },
     {
       variant: RadioGroupVariants.Buttons,

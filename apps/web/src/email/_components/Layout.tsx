@@ -44,14 +44,14 @@ export const Layout: FC<
           <div className="px-5 py-4">
             <Img
               src={`${siteOrigin}/logo.png`}
-              className="w-full max-w-[150px] h-auto mx-auto rounded-md block"
+              className="w-full max-w-[150px] h-auto mx-auto rounded-project block"
               alt="Najit&Najíst logo"
               title="Najit&Najíst logo"
               width="400"
               height="90"
             />
           </div>
-          <div className="rounded-md bg-white">{children}</div>
+          <div className="rounded-project bg-white">{children}</div>
           <footer className="text-center text-[#898989]">
             <Text
               className="italic my-3"

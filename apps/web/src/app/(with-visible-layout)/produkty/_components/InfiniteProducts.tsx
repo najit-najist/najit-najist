@@ -1,11 +1,10 @@
 'use client';
 
 import { Button } from '@components/common/Button';
+import { ProductPreviewMedium } from '@components/common/ProductPreviewMedium';
 import { AppRouterInput, AppRouterOutput } from '@custom-types/AppRouter';
 import { trpc } from '@trpc/web';
 import { FC, Fragment, useEffect } from 'react';
-
-import { Item } from './Item';
 
 export const InfiniteProducts: FC<{
   initialSearchResult: AppRouterOutput['products']['get']['many'];
@@ -45,7 +44,7 @@ export const InfiniteProducts: FC<{
         {pages?.map(({ items, nextCursor }) => (
           <Fragment key={nextCursor ?? 'end'}>
             {items.map((props) => (
-              <Item key={props.id} {...props} />
+              <ProductPreviewMedium key={props.id} {...props} />
             ))}
           </Fragment>
         ))}
@@ -63,7 +62,6 @@ export const InfiniteProducts: FC<{
       {hasNextPage ? (
         <div className="w-full">
           <Button
-            appearance="spaceless"
             size="lg"
             className="my-10 mx-auto block"
             isLoading={isFetchingNextPage}

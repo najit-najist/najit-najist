@@ -7,7 +7,7 @@ export const SaveButton = () => {
   const { formState } = useFormContext();
 
   return (
-    <Button isLoading={formState.isSubmitting} type="submit" appearance="small">
+    <Button isLoading={formState.isSubmitting} type="submit" size="sm">
       Uložit
     </Button>
   );

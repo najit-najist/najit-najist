@@ -49,7 +49,7 @@ export const Form: FC<{ token: string }> = ({ token }) => {
 
   return (
     <FormProvider {...formMethods}>
-      <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white shadow sm:rounded-lg py-8 px-4 sm:px-10">
+      <div className="sm:mx-auto sm:w-full sm:max-w-md bg-white shadow sm:rounded-project py-8 px-4 sm:px-10">
         <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <PasswordInputs />
           <FormBreak label="Adresa" />
@@ -69,7 +69,6 @@ export const Form: FC<{ token: string }> = ({ token }) => {
             <Button
               isLoading={fieldsAreDisabled}
               type="submit"
-              appearance="normal"
               className="shadow-sm w-full font-title"
             >
               Registrovat

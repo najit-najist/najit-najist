@@ -117,7 +117,7 @@ export function AlergensEdit(): ReactNode {
     );
 
     if ('errors' in result) {
-      for (const [key, value] of Object.entries(result.errors)) {
+      for (const [key, value] of Object.entries(result.errors ?? {})) {
         // @ts-ignore
         createAlergenForm.setError(key, value);
       }
@@ -234,7 +234,7 @@ export function AlergensEdit(): ReactNode {
             {/*  <button
                  onClick={handleItemEdit}
                  data-index={index}
-                 className="text-blue-800 hover:bg-blue-100 duration-300 p-1 -mr-1 rounded-md"
+                 className="text-blue-800 hover:bg-blue-100 duration-300 p-1 -mr-1 rounded-project"
                  type="button"
                >
                  <PencilIcon className="w-4 h-4 hover:rotate-12 duration-300" />
@@ -242,7 +242,7 @@ export function AlergensEdit(): ReactNode {
             <button
               onClick={handleItemRemove}
               data-index={index}
-              className="text-red-800 hover:bg-red-200 duration-300 p-1 -mr-1 rounded-md"
+              className="text-red-800 hover:bg-red-200 duration-300 p-1 -mr-1 rounded-project"
               type="button"
             >
               <XMarkIcon className="w-5 h-5 hover:rotate-90 duration-300" />

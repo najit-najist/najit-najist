@@ -1,3 +1,4 @@
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import Link from 'next/link';
 import { FC } from 'react';
 
@@ -6,28 +7,28 @@ export const BottomLinks: FC = () => {
     <div className="flex items-center justify-center mt-5 gap-5">
       <Link
         href="/"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
+        className={buttonStyles({ size: 'sm', appearance: 'link' })}
       >
         Domů
       </Link>
 
       <Link
         href="/login"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
+        className={buttonStyles({ size: 'sm', appearance: 'link' })}
       >
         Přihlášení
       </Link>
 
       <Link
         href="/registrace"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
+        className={buttonStyles({ size: 'sm', appearance: 'link' })}
       >
         Registrace
       </Link>
 
       <Link
         href="/kontakt"
-        className="font-medium text-indigo-600 hover:text-indigo-500 text-sm"
+        className={buttonStyles({ size: 'sm', appearance: 'link' })}
       >
         Kontakt
       </Link>

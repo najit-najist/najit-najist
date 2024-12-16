@@ -61,7 +61,7 @@ export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
           <Tooltip
             trigger={
               <Link
-                className={buttonStyles({ appearance: 'small' })}
+                className={buttonStyles({ size: 'sm' })}
                 href={`/administrace/objednavky/${order.id}/packeta/label-pdf`}
                 target="_blank"
               >

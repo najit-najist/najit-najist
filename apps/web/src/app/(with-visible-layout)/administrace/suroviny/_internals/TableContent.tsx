@@ -1,4 +1,5 @@
 import { Badge } from '@components/common/Badge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { database } from '@najit-najist/database';
 import Link from 'next/link';
 
@@ -28,7 +29,10 @@ export async function TableContent() {
                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <Link
                       href={`/administrace/suroviny/${item.id}`}
-                      className="text-indigo-600 hover:text-indigo-900"
+                      className={buttonStyles({
+                        size: 'sm',
+                        appearance: 'link',
+                      })}
                     >
                       Upravit
                       <span className="sr-only">, {item.name}</span>

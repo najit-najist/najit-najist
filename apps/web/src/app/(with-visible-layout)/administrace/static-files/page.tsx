@@ -26,7 +26,7 @@ export default async function Page() {
           Zpět na rozcestník
         </Link>
       </div>
-      <div className="container py-20">
+      <div className="container py-6 sm:py-2">
         <PageTitle>{metadata.title}</PageTitle>
         <div className="flex flex-wrap gap-5 mt-5 divide-x-2 items-center justify-start">
           <Form />

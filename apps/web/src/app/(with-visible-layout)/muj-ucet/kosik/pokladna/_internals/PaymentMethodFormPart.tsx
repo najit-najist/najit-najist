@@ -38,7 +38,7 @@ export const PaymentMethodFormPart: FC<{
 
               <a
                 href="https://www.comgate.cz/"
-                className="mt-3 inline-block p-1.5 bg-white rounded-lg shadow-lg border border-gray-100"
+                className="mt-3 inline-block p-1.5 bg-white rounded-project shadow-lg border border-gray-100"
                 title="Zprostředkovatel plateb je comgate.cz"
                 target="_blank"
               >

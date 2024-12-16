@@ -17,7 +17,7 @@ export interface OrderConfirmedProps {
 }
 
 export default function OrderConfirmed({
-  order = testOrder,
+  order,
   orderLink,
   siteOrigin,
 }: OrderConfirmedProps) {
@@ -36,7 +36,7 @@ export default function OrderConfirmed({
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="normal">
+          <Text className="text-center" size="medium">
             Gratulujeme! Vaši objednávku jsme potvrdili a začínáme na ní
             pracovat. <br />
             Již brzy Vás budeme informovat o dalších krocích.
@@ -46,8 +46,7 @@ export default function OrderConfirmed({
           <Column align="center">
             <Button
               className={buttonStyles({
-                appearance: 'spaceless',
-                className: 'px-5 py-4',
+                className: 'px-5 py-4 !inline-block',
               })}
               href={orderLink}
             >
@@ -64,3 +63,9 @@ export default function OrderConfirmed({
     </Layout>
   );
 }
+
+OrderConfirmed.PreviewProps = {
+  siteOrigin: 'http://localhost:3000',
+  order: testOrder,
+  orderLink: 'http://localhost:3000/test',
+} satisfies OrderConfirmedProps;

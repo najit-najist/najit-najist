@@ -48,7 +48,6 @@ export const Form: FC = () => {
       <div>
         <Button
           type="submit"
-          appearance="normal"
           className="shadow-sm w-full"
           isLoading={fieldsAreDisabled}
         >

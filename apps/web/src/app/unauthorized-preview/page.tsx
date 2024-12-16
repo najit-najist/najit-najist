@@ -23,7 +23,7 @@ export default function Page() {
         <form
           // @ts-ignore
           action={initiateSecretSession}
-          className="bg-white p-5 border-2 border-gray-100 space-y-5 rounded-lg flex w-full space-x-5"
+          className="bg-white p-5 border-2 border-gray-100 space-y-5 rounded-project flex w-full space-x-5"
         >
           <Input
             label="Přístupový kód"
@@ -31,7 +31,7 @@ export default function Page() {
             rootClassName="w-full"
             name="code"
           />
-          <Button type="submit" className="flex-none !px-3" appearance="small">
+          <Button type="submit" className="flex-none !px-3" size="sm">
             <ArrowRightIcon className="w-8 h-8" />{' '}
           </Button>
         </form>

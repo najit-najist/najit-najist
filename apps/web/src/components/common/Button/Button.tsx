@@ -21,15 +21,14 @@ export const Button = forwardRef<
   {
     children,
     className,
-    isLoading,
-    notRounded,
-    withoutRing,
-    color,
     contentWrapperClassName,
-    padding,
     icon: IconComponent,
-    notAnimated,
     disabled,
+    color,
+    appearance,
+    size,
+    animations,
+    isLoading,
     ...rest
   },
   ref,
@@ -38,13 +37,12 @@ export const Button = forwardRef<
     <HeadlessButton
       ref={ref}
       className={buttonStyles({
-        className,
-        isLoading,
-        notRounded,
         color,
-        withoutRing,
-        padding,
-        notAnimated: notAnimated || isLoading || disabled,
+        appearance,
+        size,
+        animations: !disabled || !isLoading || animations,
+        isLoading,
+        className,
         ...rest,
       })}
       type="button"

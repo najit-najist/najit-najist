@@ -12,7 +12,7 @@ export const TitleEdit: FC = () => {
   return (
     <Input
       size="lg"
-      className="!text-4xl font-title text-project-primary"
+      className="!text-4xl font-title text-project-primary overflow-hidden"
       disabled={formState.isSubmitting}
       placeholder="Název receptu"
       error={formState.errors.title}

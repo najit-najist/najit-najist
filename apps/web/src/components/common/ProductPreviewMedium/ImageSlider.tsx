@@ -1,8 +1,8 @@
 'use client';
 
-import { getFileUrl } from '@components/common/internal/getFileUrl';
 import { ArrowLeftIcon, ArrowRightIcon } from '@heroicons/react/24/solid';
-import { recipes } from '@najit-najist/database/models';
+import { products } from '@najit-najist/database/models';
+import { getFileUrl } from '@server/utils/getFileUrl';
 import clsx from 'clsx';
 import { useKeenSlider } from 'keen-slider/react.es';
 import Image from 'next/image';
@@ -18,7 +18,8 @@ export const ImageSlider: FC<{
   imageUrls: string[];
   itemLink: string;
   itemId: number;
-}> = ({ imageUrls, itemLink, itemId }) => {
+  outOfStrock?: boolean;
+}> = ({ imageUrls, itemLink, itemId, outOfStrock }) => {
   const [sliderRef, instanceRef] = useKeenSlider({
     loop: true,
     slides: { spacing: 10 },
@@ -28,15 +29,21 @@ export const ImageSlider: FC<{
   return (
     <>
       <Link href={itemLink as any}>
-        <div ref={sliderRef} className="keen-slider h-full">
+        <div
+          ref={sliderRef}
+          className={clsx(
+            'keen-slider h-full rounded-project overflow-hidden hover:shadow-xl duration-200',
+            outOfStrock && 'opacity-50',
+          )}
+        >
           {imageUrls.map((imageName) => (
             <div key={imageName} className="keen-slider__slide min-w-full">
               <Image
                 width={300}
                 height={300}
-                src={getFileUrl(recipes, itemId, imageName)}
+                src={getFileUrl(products, itemId, imageName, { width: 300 })}
                 alt=""
-                className="rounded-t-lg absolute top-0 left-0 w-full h-full object-center object-cover"
+                className="rounded-t-project md:rounded-tr-none md:rounded-l-project absolute top-0 left-0 w-full h-full object-center object-cover"
               />
             </div>
           ))}

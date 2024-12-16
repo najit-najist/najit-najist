@@ -1,108 +1,101 @@
 'use client';
 
+import { Alert } from '@components/common/Alert';
 import { Button } from '@components/common/Button';
-import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Input } from '@components/common/form/Input';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks/usePlausible';
-import { subscribeToNewsletterInputSchema } from '@najit-najist/schemas';
 import type { UserWithRelations } from '@server/services/UserService';
-import { trpc } from '@trpc/web';
+import { toggleNewsletterSubscriptionAction } from 'app/(with-visible-layout)/muj-ucet/toggleNewsletterSubscriptionAction';
+import { cx } from 'class-variance-authority';
 import Link from 'next/link';
-import { FC } from 'react';
-import { useForm } from 'react-hook-form';
+import { FC, useActionState } from 'react';
 
 export const NewsletterSubscribe: FC<{
-  user: UserWithRelations | undefined;
+  user: Pick<UserWithRelations, 'newsletter'> | undefined;
 }> = ({ user }) => {
-  const formMethods = useForm({
-    defaultValues: {
-      email: '',
-    },
-    resolver: zodResolver(subscribeToNewsletterInputSchema),
-  });
+  const [{ errors, subscribed, email }, submit, isSubmitting] = useActionState(
+    toggleNewsletterSubscriptionAction,
+    { subscribed: undefined, errors: {} },
+  );
+  const userIsSubscribed = subscribed ?? user?.newsletter?.enabled;
   const { trackEvent } = usePlausible();
-  const { handleSubmit, register, formState } = formMethods;
-
-  const { mutateAsync: subscribe } = trpc.newsletter.subscribe.useMutation();
-  const onSubmit: Parameters<typeof handleSubmit>['0'] = async ({ email }) => {
-    await subscribe({ email });
-    trackEvent('Newsletter subscription from footer');
-  };
 
   return (
-    <div className="relative container">
-      <div className="rounded-3xl bg-gradient-to-br from-project-primary to-deep-green-700 py-10 px-6 sm:py-16 sm:px-12 lg:flex lg:items-center lg:py-20 lg:px-20">
-        {formState.isSubmitSuccessful ? (
-          <>
-            <h2 className="text-3xl font-bold tracking-tight text-white">
-              Jste přihlášeni k novinkám
-              <br /> Děkujeme!
-            </h2>
-          </>
-        ) : (
-          <>
-            <div className="lg:w-0 lg:flex-1">
-              <h2 className="text-4xl font-bold tracking-tight text-white font-title">
-                Přihlašte se k našemu newsletteru
-              </h2>
-              <p className="mt-4 max-w-3xl text-lg text-cyan-100">
-                Buďte vždy v obraze o novinkách a akcích z našeho webu.
-              </p>
+    <form
+      onSubmit={() => {
+        trackEvent('Newsletter subscription from footer');
+      }}
+      action={submit}
+      className="relative bg-gradient-to-br from-project-primary to-deep-green-700 "
+    >
+      <div className="container py-10 sm:py-16 lg:flex lg:items-center lg:py-20">
+        <div className="lg:w-0 lg:flex-1">
+          <h2 className="text-4xl font-bold tracking-tight text-white font-title">
+            Přihlašte se k našemu newsletteru
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-cyan-100">
+            Buďte vždy v obraze o novinkách a akcích z našeho webu.
+          </p>
+        </div>
+        {!user ? (
+          <div className="mt-6 sm:mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
+            <div className="sm:flex">
+              <input
+                type="hidden"
+                name="nextValue"
+                value={!subscribed ? 'true' : 'false'}
+              />
+              <Input
+                name="email"
+                hideLabel
+                type="email"
+                placeholder="Váš email"
+                autoComplete="email"
+                size="md"
+                defaultValue={email}
+                label="Emailová adresa"
+                rootClassName={cx('w-full', subscribed ? 'hidden' : '')}
+                disabled={isSubmitting}
+              />
+              <Button
+                type="submit"
+                className={cx(
+                  'whitespace-nowrap mt-3 sm:mt-0 w-full',
+                  subscribed ? '' : 'sm:ml-2 sm:w-auto',
+                )}
+                isLoading={isSubmitting}
+              >
+                {subscribed ? 'Odhlásit se' : 'Přihlásit se'}
+              </Button>
             </div>
-            {!user ? (
-              <div className="mt-6 sm:mt-12 sm:w-full sm:max-w-md lg:mt-0 lg:ml-8 lg:flex-1">
-                <form onSubmit={handleSubmit(onSubmit)} className="sm:flex">
-                  <Input
-                    type="email"
-                    placeholder="Váš email"
-                    autoComplete="email"
-                    size="md"
-                    label="Emailová adresa"
-                    rootClassName="w-full"
-                    hideLabel
-                    error={formState.errors.email}
-                    {...register('email')}
-                  />
-                  <Button
-                    type="submit"
-                    color="sweet"
-                    className="whitespace-nowrap sm:ml-3 mt-3 sm:mt-0 w-full sm:w-auto"
-                    isLoading={formState.isSubmitting}
-                  >
-                    Přihlásit se
-                  </Button>
-                </form>
+            {errors?.email ? (
+              <Alert
+                color="error"
+                heading={errors?.email?.message}
+                className="mt-3"
+              />
+            ) : null}
 
-                <p className="mt-3 text-sm text-cyan-100">
-                  Záleží nám na vašich dat a jejich ochranu. Přečtě si naše{' '}
-                  <Link
-                    href="/gdpr"
-                    className="font-medium text-white underline"
-                  >
-                    GDPR.
-                  </Link>
-                </p>
-              </div>
-            ) : (
-              <div className="flex items-end flex-col gap-2">
-                <p className="text-white">
-                  {user.newsletter
-                    ? 'Jste již přihlášeni'
-                    : 'Zatím nejste přihlášeni'}{' '}
-                  k novinkám
-                </p>
-                <Link
-                  href="/muj-ucet/profil"
-                  className={buttonStyles({ color: 'sweet' })}
-                >
-                  Změnit
-                </Link>
-              </div>
-            )}
-          </>
+            <p className="mt-3 text-sm text-cyan-100">
+              Záleží nám na vašich dat a jejich ochranu. Přečtě si naše{' '}
+              <Link href="/gdpr" className="font-medium text-white underline">
+                GDPR.
+              </Link>
+            </p>
+          </div>
+        ) : (
+          <div className="flex items-end flex-col gap-2">
+            <Button
+              type="submit"
+              className="whitespace-nowrap sm:ml-3 mt-3 sm:mt-0 w-full sm:w-auto"
+              appearance="filled"
+              isLoading={isSubmitting}
+            >
+              {userIsSubscribed ? 'Odhlásit můj účet' : 'Přihlásit můj účet'}
+            </Button>
+          </div>
         )}
       </div>
-    </div>
+    </form>
   );
 };

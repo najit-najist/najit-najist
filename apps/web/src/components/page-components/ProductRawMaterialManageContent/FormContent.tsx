@@ -60,14 +60,13 @@ export function FormContent({
           </Button>
           {rawMaterial ? (
             <Button
-              appearance="spaceless"
               color="red"
-              className="px-2 py-1 ml-auto"
+              className="!px-1 py-1 ml-auto w-10 h-10"
               disabled={fieldsAreDisabled}
               onClick={() => deleteMaterial(rawMaterial)}
               isLoading={isDeleting || data !== undefined}
             >
-              <TrashIcon className="w-6 h-6 top-0.5 relative" />
+              <TrashIcon className="w-6 h-6 relative" />
             </Button>
           ) : null}
         </div>

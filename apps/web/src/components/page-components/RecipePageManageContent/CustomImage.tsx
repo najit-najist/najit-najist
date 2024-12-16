@@ -14,7 +14,7 @@ export const CustomImage: FC<
       src={src}
       alt=""
       unoptimized={isPreview}
-      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-md"
+      className="absolute top-0 left-0 w-full h-full object-center object-cover rounded-project"
       {...rest}
     />
   );

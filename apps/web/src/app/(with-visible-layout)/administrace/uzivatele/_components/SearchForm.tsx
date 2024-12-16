@@ -97,37 +97,37 @@ export const SearchForm: FC<{
           className="flex-none min-w-[300px]"
         />
         <Button
-          appearance="spaceless"
           color="red"
-          className="px-2 flex items-center justify-center"
+          className="!px-0 w-16 flex items-center justify-center scale"
           disabled={!isRemoveFilterEnabled}
           onClick={removeFilters}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="icon icon-tabler icon-tabler-adjustments-off"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            strokeWidth="2"
-            stroke="currentColor"
-            fill="none"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-            <path d="M4 10a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-            <path d="M6 6v2"></path>
-            <path d="M6 12v8"></path>
-            <path d="M10 16a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-            <path d="M12 4v4m0 4v2"></path>
-            <path d="M12 18v2"></path>
-            <path d="M16 7a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
-            <path d="M18 4v1"></path>
-            <path d="M18 9v5m0 4v2"></path>
-            <path d="M3 3l18 18"></path>
-          </svg>
-        </Button>
+          icon={
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="icon icon-tabler icon-tabler-adjustments-off"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              strokeWidth="2"
+              stroke="currentColor"
+              fill="none"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+              <path d="M4 10a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+              <path d="M6 6v2"></path>
+              <path d="M6 12v8"></path>
+              <path d="M10 16a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+              <path d="M12 4v4m0 4v2"></path>
+              <path d="M12 18v2"></path>
+              <path d="M16 7a2 2 0 1 0 4 0a2 2 0 0 0 -4 0"></path>
+              <path d="M18 4v1"></path>
+              <path d="M18 9v5m0 4v2"></path>
+              <path d="M3 3l18 18"></path>
+            </svg>
+          }
+        />
       </form>
     </FormProvider>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { Button } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { cva, cx } from 'class-variance-authority';
 import {
@@ -10,7 +11,6 @@ import {
   useRef,
 } from 'react';
 
-import { Button } from '../Button/Button';
 import { Input, InputProps } from './Input';
 
 const stepperButtonStyles = cva(
@@ -18,8 +18,8 @@ const stepperButtonStyles = cva(
   {
     variants: {
       type: {
-        plus: 'rounded-l-md border-r-0 ',
-        minus: 'rounded-r-md border-l-0',
+        plus: 'rounded-l-project-input border-r-0 ',
+        minus: 'rounded-r-project-input border-l-0',
       },
     },
   },
@@ -96,14 +96,9 @@ export const NumberInput = forwardRef<
     <>
       {prefixFromUpper}
       <Button
-        withoutRing
-        notRounded
-        appearance="spaceless"
-        color="noColor"
         onClick={onStepUpHandle}
         data-direction="up"
         className={stepperButtonStyles({ type: 'plus' })}
-        contentWrapperClassName="flex"
         onMouseUp={clearIntervals}
         onMouseLeave={clearIntervals}
         onMouseDown={onMouseDown}
@@ -118,14 +113,9 @@ export const NumberInput = forwardRef<
     <>
       {suffixFromUpper}
       <Button
-        withoutRing
-        notRounded
-        appearance="spaceless"
-        color="noColor"
         onClick={onStepDownHandle}
         data-direction="down"
         className={stepperButtonStyles({ type: 'minus' })}
-        contentWrapperClassName="flex"
         onMouseUp={clearIntervals}
         onMouseLeave={clearIntervals}
         onMouseDown={onMouseDown}
@@ -140,8 +130,8 @@ export const NumberInput = forwardRef<
     <Input
       prefix={prefix}
       suffix={suffix}
-      className={cx('rounded-none text-center', className)}
       type="number"
+      className={cx('rounded-none text-center', className)}
       {...rest}
       readOnly
       disabled={disabled}
