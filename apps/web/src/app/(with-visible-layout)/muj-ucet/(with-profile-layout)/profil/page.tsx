@@ -29,8 +29,8 @@ export default async function Page() {
       </Section>
       <MyOrdersSection user={user} />
       <NewsletterSection />
-      <hr />
-      <DeleteMyAccountSection />
+      {/* <hr />
+      <DeleteMyAccountSection /> */}
     </div>
   );
 }
