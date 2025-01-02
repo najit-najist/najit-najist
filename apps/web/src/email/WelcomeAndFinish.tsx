@@ -24,42 +24,34 @@ export default function WelcomeAndFinish({
       title={'Potvrzení registrace na najitnajist.cz'}
     >
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              Vítejte na najitnajist.cz
-            </Heading>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Heading as="h2" className="mb-0">
+            Vítejte na najitnajist.cz
+          </Heading>
+        </CenteredRow>
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="medium">
+          <Text>
             Děkujeme za Vaši registraci na najitnajist.cz. <br /> Pro dokončení
             registrace klikněte na tlačítko:
           </Text>
         </CenteredRow>
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={finishUrl}
-            >
-              <LinkIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
-              Dokončit registraci
-            </Button>
-          </Column>
-        </Row>
-        <Spacing size="md" />
         <CenteredRow>
-          <Text
-            color="warning"
-            className="text-center my-2"
-            size="normal"
-            spacing={false}
+          <Spacing size="md" />
+          <Button
+            className={buttonStyles({
+              className: 'px-5 py-4 !inline-block',
+            })}
+            href={finishUrl}
           >
+            <LinkIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Dokončit registraci
+          </Button>
+          <Spacing size="md" />
+        </CenteredRow>
+        <CenteredRow>
+          <Text color="warning" className=" my-2" size="normal" spacing={false}>
             Pokud jste o registraci nezažádali tak tento email ignorujte.
           </Text>
         </CenteredRow>

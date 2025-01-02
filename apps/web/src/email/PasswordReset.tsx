@@ -25,34 +25,29 @@ export default function PasswordReset({
       title={'Dokončení obnovy hesla na najitnajist.cz'}
     >
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              Dokončení obnovy hesla na najitnajist.cz
-            </Heading>
-          </Column>
-        </Row>
-      </Section>
-      <Section>
         <CenteredRow>
-          <Text className="text-center" size="medium">
+          <Heading as="h2" className="mb-0">
+            Dokončení obnovy hesla na najitnajist.cz
+          </Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text>
             Zažádali jste si o obnovu hesla. <br /> Pro dokončení obnovy hesla
             pokračujte klikem na toto tlačítko:
           </Text>
         </CenteredRow>
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={finishUrl}
-            >
-              <LinkIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
-              Dokončit
-            </Button>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Spacing size="md" />
+          <Button
+            className={buttonStyles({
+              className: 'px-5 py-4 !inline-block',
+            })}
+            href={finishUrl}
+          >
+            <LinkIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Dokončit
+          </Button>
+        </CenteredRow>
         <Spacing size="lg" />
       </Section>
     </Layout>

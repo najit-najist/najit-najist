@@ -62,39 +62,42 @@ export const Layout: FC<
             </CenteredRow>
           </Section>
           <div>{children}</div>
-          <footer className="text-center text-[#898989]">
-            <Text
-              className="italic my-3"
-              spacing={false}
-              color="subtle"
-              size="small"
-            >
-              Váš team{' '}
-              <Link className="text-project-accent" href={siteOrigin}>
-                najitnajist.cz
-              </Link>{' '}
-              {' @ '}
-              {new Date().getFullYear()}
-            </Text>
 
-            {newsletterUuid ? (
+          <Section>
+            <CenteredRow>
               <Text
+                className="italic my-3"
                 spacing={false}
                 color="subtle"
                 size="small"
-                className="mb-2 mt-10"
               >
-                Pokud již nemáte zájem o tento typ emailu tak je možné se
-                odhlásit{' '}
-                <a
-                  href={`${siteOrigin}/preference/newsletter/${newsletterUuid}?next_state=false`}
-                >
-                  zde
-                </a>
-                !
+                Váš team{' '}
+                <Link className="text-project-accent" href={siteOrigin}>
+                  najitnajist.cz
+                </Link>{' '}
+                {' @ '}
+                {new Date().getFullYear()}
               </Text>
-            ) : null}
-          </footer>
+
+              {newsletterUuid ? (
+                <Text
+                  spacing={false}
+                  color="subtle"
+                  size="small"
+                  className="mb-2 mt-10"
+                >
+                  Pokud již nemáte zájem o tento typ emailu tak je možné se
+                  odhlásit{' '}
+                  <a
+                    href={`${siteOrigin}/preference/newsletter/${newsletterUuid}?next_state=false`}
+                  >
+                    zde
+                  </a>
+                  !
+                </Text>
+              ) : null}
+            </CenteredRow>
+          </Section>
         </main>
       </Html>
     </Tailwind>

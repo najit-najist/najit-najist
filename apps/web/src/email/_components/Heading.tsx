@@ -10,8 +10,8 @@ export type HeadingProps = {
 };
 
 const asToClassName: Record<HeadingProps['as'], string> = {
-  h1: clsx('text-5xl'),
-  h2: clsx('mb-0 text-4xl'),
+  h1: clsx('text-4xl'),
+  h2: clsx('mb-0 text-3xl'),
   h3: clsx('text-lg text-project-primary'),
   h4: clsx(''),
   h5: clsx(''),

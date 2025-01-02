@@ -26,37 +26,31 @@ export default function ThankYouOrderAdmin({
   return (
     <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              {title}
-            </Heading>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Heading as="h2" className="mb-0">
+            {title}
+          </Heading>
+        </CenteredRow>
       </Section>
       <Section>
         <CenteredRow>
-          <Text className="text-center" size="medium">
+          <Text>
             Dobrý den, uživatel {order.firstName} {order.lastName} vytvořil
             novou objednávku.
           </Text>
         </CenteredRow>
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={orderLink}
-            >
-              <InformationCircleIcon
-                className="w-5 mr-2 -mb-1"
-                strokeWidth={2}
-              />
-              Zobrazit detail objednávky
-            </Button>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Spacing size="md" />
+          <Button
+            className={buttonStyles({
+              className: 'px-5 py-4 !inline-block',
+            })}
+            href={orderLink}
+          >
+            <InformationCircleIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Zobrazit detail objednávky
+          </Button>
+        </CenteredRow>
         <Spacing size="lg" />
       </Section>
     </Layout>

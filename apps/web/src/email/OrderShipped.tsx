@@ -49,39 +49,31 @@ export default function OrderShipped({
   return (
     <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              {title}
-            </Heading>
-          </Column>
-        </Row>
-      </Section>
-      <Section>
         <CenteredRow>
-          <Text className="text-center" size="medium">
+          <Heading as="h2" className="mb-0">
+            {title}
+          </Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text>
             {isLocalPickup(order.deliveryMethod)
               ? `Vaši objednávku jsme zpracovali a objednané produkty jsme pro Vás připravili na prodejně!`
               : 'Vaši objednávku jsme zpracovali a objednané produkty jsme Vám odeslali! Již brzi vás bude kontaktovat doručovací společnost'}
           </Text>
         </CenteredRow>
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={orderLink}
-            >
-              <InformationCircleIcon
-                className="w-5 mr-2 -mb-1"
-                strokeWidth={2}
-              />
-              Zobrazit detail objednávky
-            </Button>
-          </Column>
-        </Row>
-        <Spacing size="lg" />
+        <CenteredRow>
+          <Spacing size="md" />
+          <Button
+            className={buttonStyles({
+              className: 'px-5 py-4 !inline-block',
+            })}
+            href={orderLink}
+          >
+            <InformationCircleIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Zobrazit detail objednávky
+          </Button>
+          <Spacing size="md" />
+        </CenteredRow>
       </Section>
       {isLocalPickup(order.deliveryMethod) ? (
         <ColoredSection>

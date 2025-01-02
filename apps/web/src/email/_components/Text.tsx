@@ -15,7 +15,7 @@ const sizeToClassName: Record<NonNullable<Props['size']>, string> = {
 };
 
 const colorToClassName: Record<NonNullable<Props['color']>, string> = {
-  normal: 'text-slate-800',
+  normal: 'text-slate-700',
   subtle: 'text-slate-400',
   warning: 'text-orange-500',
 };

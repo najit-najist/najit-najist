@@ -26,38 +26,31 @@ export default function OrderConfirmed({
   return (
     <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              {title}
-            </Heading>
-          </Column>
-        </Row>
-      </Section>
-      <Section>
         <CenteredRow>
-          <Text className="text-center" size="medium">
+          <Heading as="h2" className="mb-0">
+            {title}
+          </Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text>
             Gratulujeme! Vaši objednávku jsme potvrdili a začínáme na ní
             pracovat. <br />
             Již brzy Vás budeme informovat o dalších krocích.
           </Text>
         </CenteredRow>
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={orderLink}
-            >
-              <InformationCircleIcon
-                className="w-5 mr-2 -mb-1"
-                strokeWidth={2}
-              />
-              Zobrazit detail objednávky
-            </Button>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Spacing size="md" />
+          <Button
+            className={buttonStyles({
+              className: 'px-5 py-4 !inline-block',
+            })}
+            href={orderLink}
+          >
+            <InformationCircleIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Zobrazit detail objednávky
+          </Button>
+          <Spacing size="md" />
+        </CenteredRow>
         <Spacing />
       </Section>
     </Layout>
