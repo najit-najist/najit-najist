@@ -25,6 +25,7 @@ export const getOrderById = async (orderId: Order['id']) => {
             with: {
               images: true,
               stock: true,
+              category: true,
             },
           },
         },

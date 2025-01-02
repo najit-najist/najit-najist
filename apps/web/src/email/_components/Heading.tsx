@@ -12,7 +12,7 @@ export type HeadingProps = {
 const asToClassName: Record<HeadingProps['as'], string> = {
   h1: clsx('text-5xl'),
   h2: clsx('mb-0 text-4xl'),
-  h3: clsx('text-xl text-project-primary'),
+  h3: clsx('text-lg text-project-primary'),
   h4: clsx(''),
   h5: clsx(''),
   h6: clsx(''),
@@ -21,7 +21,7 @@ const asToClassName: Record<HeadingProps['as'], string> = {
 const asToSpacingClassName = {
   h1: clsx('mt-0 mb-5'),
   h2: clsx('mt-7 mb-5'),
-  h3: clsx('mb-2 mt-5'),
+  h3: clsx('mb-0 mt-5'),
   h4: clsx(''),
   h5: clsx(''),
   h6: clsx(''),

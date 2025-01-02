@@ -8,7 +8,7 @@ export const CenteredRow: FC<PropsWithChildren<{ className?: string }>> = ({
   return (
     <Row>
       <Column className="w-auto px-0.5" />
-      <Column width={450} className={className}>
+      <Column width={600} className={className}>
         {children}
       </Column>
       <Column className="w-auto px-0.5" />

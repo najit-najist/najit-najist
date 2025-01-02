@@ -1,6 +1,7 @@
 import {
   OrderDeliveryMethodsSlug,
   OrderPaymentMethodsSlugs,
+  OrderPickupTime,
   OrderState,
   Product,
 } from '@najit-najist/database/models';
@@ -17,7 +18,7 @@ const productBase = {
   updateById: null,
 } satisfies Partial<Product>;
 
-export const testOrder: OrderWithRelations = {
+export const testOrder = {
   id: 0,
   userId: 1,
   deliveryMethodId: 1,
@@ -61,6 +62,7 @@ export const testOrder: OrderWithRelations = {
       minimalProductCount: 0,
     },
   },
+  pickupDate: null,
   paymentMethod: {
     description: 'sdfds',
     name: 'Převodem na účet',
@@ -134,4 +136,6 @@ export const testOrder: OrderWithRelations = {
     slug: OrderDeliveryMethodsSlug.BALIKOVNA,
     notes: '',
   },
+} satisfies OrderWithRelations & {
+  pickupDate: OrderPickupTime | null;
 };

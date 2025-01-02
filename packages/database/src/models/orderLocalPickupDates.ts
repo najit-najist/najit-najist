@@ -15,6 +15,8 @@ export const orderLocalPickupTimes = pgTable(
   }),
 );
 
+export type OrderPickupTime = typeof orderLocalPickupTimes.$inferSelect;
+
 export const orderLocalPickupTimesRelations = relations(
   orderLocalPickupTimes,
   ({ one }) => ({

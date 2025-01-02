@@ -10,7 +10,7 @@
     "dev": "next dev -p 3000",
     "lint": "next lint",
     "start": "next start -p 4000",
-    "start:preview": "npx email dev --dir=src/email"
+    "start:preview": "npx email dev --dir=src/email --port=3001"
   },
   "dependencies": {
     "@editorjs/editorjs": "^2.30.7",

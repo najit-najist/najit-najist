@@ -2,9 +2,12 @@ import { Alert } from '@components/common/Alert';
 import { Badge } from '@components/common/Badge';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Price } from '@components/common/Price';
+import { DEFAULT_DATE_FORMAT } from '@constants';
 import { dayjs } from '@dayjs';
+import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { InformationCircleIcon, PhotoIcon } from '@heroicons/react/24/outline';
-import { products } from '@najit-najist/database/models';
+import { EnvelopeIcon, PhoneIcon } from '@heroicons/react/24/solid';
+import { OrderPickupTime, products } from '@najit-najist/database/models';
 import {
   Column,
   Img,
@@ -12,15 +15,15 @@ import {
   Button,
   Link,
   Section,
+  Hr,
 } from '@react-email/components';
+import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import { FC, PropsWithChildren } from 'react';
 
 import { CenteredRow } from './_components/CenteredRow';
 import { ColoredSection } from './_components/ColoredSection';
 import { Heading } from './_components/Heading';
 import { Layout } from './_components/Layout';
-import { PaperCenteredRow } from './_components/PaperCenteredRow';
-import { PaperColumn } from './_components/PaperColumn';
 import { Spacing } from './_components/Spacing';
 import { Text } from './_components/Text';
 import { testOrder } from './constants';
@@ -30,7 +33,9 @@ import { OrderWithRelations } from './types';
 export interface ThankYouOrderProps {
   needsPayment: boolean;
   siteOrigin: string;
-  order: OrderWithRelations;
+  order: OrderWithRelations & {
+    pickupDate: OrderPickupTime | null;
+  };
   orderLink: string;
 }
 
@@ -40,11 +45,7 @@ const ItemListItem: FC<
   return (
     <Section className={className}>
       {skipSpacing ? null : <Spacing size="md" />}
-      <Row>
-        <Column className="w-4" />
-        {children}
-        <Column className="w-3" />
-      </Row>
+      <Row>{children}</Row>
     </Section>
   );
 };
@@ -54,7 +55,8 @@ const OrderProduct: FC<{
   siteOrigin: string;
 }> = ({ data, siteOrigin }) => {
   const productImage = data.product.images[0];
-  const imageSize = 40;
+  const imageSize = 50;
+
   return (
     <ItemListItem>
       <Column style={{ width: imageSize }}>
@@ -89,8 +91,12 @@ const OrderProduct: FC<{
       </Column>
       <Column className="w-4" />
       <Column>
+        <Badge size="small" color="green">
+          {data.product.category?.name ?? 'Neznámá kategorie'}
+        </Badge>
+        <br />
         <Link
-          className="underline"
+          className="underline mt-2 block"
           href={`https://najinajist.cz/produkty/${encodeURIComponent(
             data.product.slug,
           )}`}
@@ -136,265 +142,290 @@ export default function ThankYouOrder({
 }: ThankYouOrderProps) {
   const title = `Objednávka #${order.id} na najitnajist.cz`;
 
-  const orderInformationSection = (
-    <>
+  const shippingInformationSection = (
+    <Section>
       <CenteredRow>
-        <Section>
-          <Row>
-            <Column className="align-super">
-              <Heading as="h3">Obecné informace</Heading>
-              <Section>
-                <Row>
-                  <PaperColumn>
-                    <Section className="not-italic p-3 text-sm text-gray-700">
-                      <Row>
-                        <Column className="text-sm">Číslo objednávky:</Column>
-                        <Column className="text-right">
-                          <Link href={orderLink}>#{order.id}</Link>
-                        </Column>
-                      </Row>
-                      <Spacing size="sm" />
-                      <Row>
-                        <Column>Datum objednávky:</Column>
-                        <Column className="text-right">
-                          {dayjs
-                            .tz(order.createdAt)
-                            .format('DD. MM. YYYY v HH:mm')}
-                        </Column>
-                      </Row>
-                      <Spacing size="sm" />
-                      <Row>
-                        <Column>Typ dopravy:</Column>
-                        <Column className="text-right">
-                          {order.deliveryMethod.name}
-                        </Column>
-                      </Row>
-                      <Spacing size="sm" />
-                      <Row>
-                        <Column>Typ platby:</Column>
-                        <Column className="text-right">
-                          {order.paymentMethod.name}
-                        </Column>
-                      </Row>
-                      <Spacing size="sm" />
-                      {order.couponPatchId ? (
-                        <>
-                          <Row>
-                            <Column>Kupón:</Column>
-                            <Column className="text-right">
-                              <Badge color="blue">
-                                {order.couponPatch?.coupon.name}
-                              </Badge>
-                            </Column>
-                          </Row>
-                          <Spacing size="sm" />
-                        </>
-                      ) : null}
-                      <Row className="text-project-secondary">
-                        <Column>Cena celkem:</Column>
-                        <Column className="text-right">
-                          <Price
-                            size={'sm'}
-                            value={
-                              order.subtotal +
-                              (order.paymentMethodPrice ?? 0) +
-                              (order.deliveryMethodPrice ?? 0)
-                            }
-                          />
-                        </Column>
-                      </Row>
-                    </Section>
-                  </PaperColumn>
-                </Row>
-              </Section>
-            </Column>
-          </Row>
-          <Row>
-            <Column className="align-super">
-              <Heading as="h3">Adresa</Heading>
-              <Section>
-                <Row>
-                  <PaperColumn>
-                    <address className="not-italic p-3 text-sm text-gray-700">
-                      <span className="block">
-                        {order.firstName} {order.lastName}
-                      </span>
-                      <span className="block mt-2">
-                        {order.address.streetName}, {order.address.houseNumber}
-                      </span>
-                      <span className="block">
-                        {order.address.city} {order.address.postalCode}
-                      </span>
-                    </address>
-                  </PaperColumn>
-                </Row>
-              </Section>
-            </Column>
-          </Row>
-        </Section>
+        <Heading as="h3">Doručovací informace</Heading>
+        <Row>
+          <Column className="text-gray-700">
+            <address className="not-italic">
+              <span className="block">
+                {order.firstName} {order.lastName}
+              </span>
+              <span className="block">
+                {order.address?.streetName?.trim()},{' '}
+                {order.address?.houseNumber}
+              </span>
+              <span className="block">
+                {order.address?.city} {order.address?.postalCode}
+              </span>
+            </address>
+          </Column>
+          <Column>
+            <Text className="hover:underline !mb-0" spacing={false}>
+              <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
+              {order.email}
+            </Text>
+            <Text className="hover:underline !mt-0" spacing={false}>
+              <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
+              {order.telephoneNumber?.code} {order.telephoneNumber?.telephone}
+            </Text>
+          </Column>
+        </Row>
       </CenteredRow>
-    </>
+    </Section>
   );
 
-  const itemsSection = (
-    <>
+  const shippingMethodInformation = (
+    <Section>
       <CenteredRow>
-        <Heading as="h3">Položky</Heading>
-      </CenteredRow>
-      <PaperCenteredRow>
-        {order.orderedProducts.map((product: any) => (
-          <OrderProduct
-            key={product.id}
-            siteOrigin={siteOrigin}
-            data={product}
-          />
-        ))}
-        {/* footer */}
-        <hr className="border-none bg-gray-200 w-full mt-5 h-0.5 mb-0" />
-        <ItemListItem key="subtotal" className="text-gray-700">
-          <Column>Mezisoučet</Column>
-          <Column className="text-right">
-            <Price size={'sm'} value={order.subtotal} />
+        <Row className="table-fixed">
+          <Column>
+            <Heading as="h3" className="mt-0">
+              Doručovací Metoda
+            </Heading>
           </Column>
-        </ItemListItem>
-        {order.discount ? (
-          <ItemListItem key="discount" className="text-gray-700">
-            <Column>Sleva</Column>
-            <Column className="text-right">
-              <Price size={'sm'} value={order.discount * -1} />
-            </Column>
-          </ItemListItem>
-        ) : null}
-        <ItemListItem key="deliveryMethodPrice" className="text-gray-700">
-          <Column>{order.deliveryMethod.name}</Column>
-          <Column className="text-right">
-            <Price size={'sm'} value={order.deliveryMethodPrice ?? 0} />
+          <Column>
+            <Badge size="lg" color="green" className="mt-1">
+              {order.deliveryMethod.name}
+            </Badge>
           </Column>
-        </ItemListItem>
+        </Row>
+        <Row>
+          <Column>
+            {order.deliveryMethod ? (
+              <Section>
+                {order.pickupDate ? (
+                  <Row>
+                    <Column>
+                      <Text>
+                        {' '}
+                        v{' '}
+                        <strong>
+                          {dayjs
+                            .tz(order.pickupDate.date)
+                            .format(DEFAULT_DATE_FORMAT)}
+                        </strong>
+                      </Text>
+                    </Column>
+                  </Row>
+                ) : null}
+                <Row>
+                  <Text className="mt-1">
+                    {order.deliveryMethod.description}
+                  </Text>
+                </Row>
+              </Section>
+            ) : (
+              <Text>Neznámá doručovací metoda</Text>
+            )}
+          </Column>
+        </Row>
+
         {order.deliveryMethod.notes ? (
-          <ItemListItem
-            key="deliveryMethodNotes"
-            skipSpacing
-            className="text-gray-700"
-          >
-            <Column colSpan={2}>
-              <Alert
-                heading={
-                  <>
-                    <InformationCircleIcon className="w-4 inline -mb-1" />{' '}
-                    Poznámky k dopravě
-                  </>
-                }
-                color="warning"
-              >
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: order.deliveryMethod.notes,
-                  }}
-                />
-              </Alert>
-            </Column>
-          </ItemListItem>
-        ) : null}
-        <ItemListItem className="text-gray-700">
-          <Column>{order.paymentMethod.name}</Column>
-          <Column className="text-right">
-            <Price size={'sm'} value={order.paymentMethodPrice ?? 0} />
-          </Column>
-        </ItemListItem>
-        {order.paymentMethod.notes ? (
-          <ItemListItem skipSpacing className="text-gray-700">
-            <Column colSpan={2}>
-              <Alert
-                heading={
-                  <>
-                    <InformationCircleIcon className="w-4 inline -mb-1" />{' '}
-                    Poznámky k platbě
-                  </>
-                }
-                color="warning"
-              >
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: order.paymentMethod.notes,
-                  }}
-                />
-              </Alert>
-            </Column>
-          </ItemListItem>
-        ) : null}
-        <ItemListItem>
-          <Column className="font-semibold">Celkově</Column>
-          <Column className="text-right font-semibold">
-            <Price
-              size={'sm'}
-              value={
-                order.subtotal +
-                (order.paymentMethodPrice ?? 0) +
-                (order.deliveryMethodPrice ?? 0) -
-                order.discount
+          <Row>
+            <Alert
+              heading={
+                <>
+                  <InformationCircleIcon className="w-4 inline -mb-1" />{' '}
+                  Poznámky k dopravě
+                </>
               }
-            />
+              color="warning"
+            >
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: order.deliveryMethod.notes,
+                }}
+              />
+            </Alert>
+          </Row>
+        ) : null}
+      </CenteredRow>
+    </Section>
+  );
+
+  const paymentMethodSection = (
+    <Section>
+      <CenteredRow>
+        <Row className="table-fixed">
+          <Column>
+            <Heading as="h3" className="mt-0">
+              Platební metoda
+            </Heading>
           </Column>
-        </ItemListItem>
-        <Spacing size="md" />
-      </PaperCenteredRow>
-    </>
+          <Column>
+            <Badge size="lg" color="green" className="mt-1">
+              {order.paymentMethod.name}
+            </Badge>
+          </Column>
+        </Row>
+
+        {order.state === 'unpaid' && order.paymentMethod?.notes ? (
+          <Row>
+            <Alert
+              color="warning"
+              heading={
+                <>
+                  <ExclamationTriangleIcon className="w-4 h-4 inline" />{' '}
+                  Důležitá informace
+                </>
+              }
+              className="mt-3"
+            >
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: order.paymentMethod.notes,
+                }}
+              ></div>
+            </Alert>
+          </Row>
+        ) : null}
+      </CenteredRow>
+    </Section>
+  );
+
+  const descriptionSection = (
+    <Section>
+      <CenteredRow>
+        <Heading as="h3">Poznámky k obejdnávce</Heading>
+        <Row>
+          <Text className="text-gray-700">
+            {order.notes || 'Žádná poznámka'}
+          </Text>
+        </Row>
+      </CenteredRow>
+    </Section>
   );
 
   return (
     <Layout siteOrigin={siteOrigin} title={title}>
       <Section>
-        <Row>
-          <Column>
-            <Heading className="text-center" as="h2">
-              Děkujeme za objednávku!
-            </Heading>
-          </Column>
-        </Row>
-        <Row>
-          <Column>
-            <Text spacing={false} className="text-center">
-              Děkujeme za vytvoření objednávky s referenčním číslem{' '}
-              <Link href={orderLink}>#{order.id}</Link>!
-            </Text>
-          </Column>
-        </Row>
-        <Row>
-          <Column>
-            <Text className="text-center" spacing={false} style={{ margin: 0 }}>
-              O dalších krocích vás budeme zanedlouho informovat. <br /> Mezitím
-              si můžete Vaši objednávku sledovat na stránkách{' '}
-              <Link href={siteOrigin}>najitnajist.cz</Link> ve vašem účtě.
-            </Text>
-          </Column>
-        </Row>
+        <CenteredRow>
+          <Heading as="h2">Děkujeme za objednávku 🎉</Heading>
+        </CenteredRow>
+        <CenteredRow>
+          <Text spacing={false}>
+            Děkujeme za vytvoření objednávky s referenčním číslem{' '}
+            <Link href={orderLink}>#{order.id}</Link>!
+          </Text>
+        </CenteredRow>
+        <CenteredRow>
+          <Text spacing={false} style={{ margin: 0 }}>
+            O dalších krocích vás budeme zanedlouho informovat. <br /> Mezitím
+            si můžete Vaši objednávku sledovat na stránkách{' '}
+            <Link href={siteOrigin}>najitnajist.cz</Link> ve vašem účtě.
+          </Text>
+        </CenteredRow>
+        <Spacing size="lg" />
+
+        <CenteredRow>
+          <Section>
+            <Column>
+              <Text>
+                <span className="text-gray-900">
+                  Referenční číslo objednávky
+                </span>
+                <br />
+                <span className="mt-2 text-project-primary text-lg">
+                  #{order.id}
+                </span>
+              </Text>
+            </Column>
+            <Column>
+              <Text>
+                <span className="text-gray-900">Datum a čas objednávky</span>
+                <br />
+                <span className="mt-2 text-project-primary text-lg">
+                  {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
+                </span>
+              </Text>
+            </Column>
+          </Section>
+        </CenteredRow>
+
+        <Spacing size="lg" />
+
+        <CenteredRow>
+          <Button
+            className={buttonStyles({
+              className: '!inline-block',
+              size: 'lg',
+            })}
+            href={orderLink}
+          >
+            <InformationCircleIcon className="w-5 mr-2 -mb-1" strokeWidth={2} />
+            Zobrazit objednávku
+          </Button>
+        </CenteredRow>
+        <Spacing size="lg" />
       </Section>
 
-      <Section>
-        <Spacing size="lg" />
-        <Row>
-          <Column align="center">
-            <Button
-              className={buttonStyles({
-                className: 'px-5 py-4 !inline-block',
-              })}
-              href={orderLink}
-            >
-              <InformationCircleIcon
-                className="w-5 mr-2 -mb-1"
-                strokeWidth={2}
-              />
-              Zobrazit detail objednávky
-            </Button>
-          </Column>
-        </Row>
-        <Spacing size="lg" />
-      </Section>
+      {shippingInformationSection}
+      {shippingMethodInformation}
+      {paymentMethodSection}
+      {descriptionSection}
+
+      <Spacing size="lg" />
 
       <ColoredSection>
-        {orderInformationSection}
-        {itemsSection}
+        <CenteredRow>
+          {order.orderedProducts.map((product: any) => (
+            <OrderProduct
+              key={product.id}
+              siteOrigin={siteOrigin}
+              data={product}
+            />
+          ))}
+          {/* footer */}
+          <Hr className="!border-none bg-gray-200 w-full mt-5 h-[1px] mb-0" />
+          <ItemListItem key="subtotal" className="text-gray-700">
+            <Column>Mezisoučet</Column>
+            <Column className="text-right">
+              <Price size={'sm'} value={order.subtotal} />
+            </Column>
+          </ItemListItem>
+
+          {order.discount ? (
+            <ItemListItem key="discount" className="text-gray-700">
+              <Column>
+                Sleva
+                <Badge color="blue" size="small" className="ml-2">
+                  {order.couponPatch?.coupon.name}
+                </Badge>
+              </Column>
+              <Column className="text-right">
+                <Price size={'sm'} value={order.discount * -1} />
+              </Column>
+            </ItemListItem>
+          ) : null}
+
+          <ItemListItem key="deliveryMethodPrice" className="text-gray-700">
+            <Column>{order.deliveryMethod.name}</Column>
+            <Column className="text-right">
+              <Price size={'sm'} value={order.deliveryMethodPrice ?? 0} />
+            </Column>
+          </ItemListItem>
+
+          <ItemListItem
+            key="payment-method"
+            skipSpacing
+            className="text-gray-700"
+          >
+            <Column>{order.paymentMethod.name}</Column>
+            <Column className="text-right">
+              <Price size={'sm'} value={order.paymentMethodPrice ?? 0} />
+            </Column>
+          </ItemListItem>
+          <Hr className="!border-none bg-gray-200 w-full mt-5 h-[1px] mb-0" />
+          <ItemListItem>
+            <Column className="font-semibold">Celkově</Column>
+            <Column className="text-right font-semibold">
+              <Price size={'sm'} value={orderGetTotalPrice(order)} />
+            </Column>
+          </ItemListItem>
+          <Spacing size="md" />
+        </CenteredRow>
         <Spacing size="lg" />
       </ColoredSection>
     </Layout>

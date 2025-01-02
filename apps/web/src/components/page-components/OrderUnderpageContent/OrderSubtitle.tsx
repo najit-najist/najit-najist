@@ -106,5 +106,5 @@ export const OrderSubtitle: FC<
     contents = orderStateToSubtitle[order.state];
   }
 
-  return <p className="mt-2 text-base text-gray-500">{contents}</p>;
+  return <p className="mt-6 text-base text-gray-500">{contents}</p>;
 };

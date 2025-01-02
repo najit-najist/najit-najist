@@ -76,21 +76,18 @@ export const EditOrderStateButtons: FC<EditOrderStateButtonsProps> = ({
 
   return (
     <>
-      <div className="flex flex-col gap-2 mt-2">
-        {buttons.map((buttonConfig) => (
-          <Button
-            key={buttonConfig.text}
-            data-next-state={buttonConfig.nextState}
-            onClick={onButtonClickHandler}
-            disabled={buttonsAreDisabled}
-          >
-            {buttonsAreDisabled ? 'Pracuji...' : buttonConfig.text}
-          </Button>
-        ))}
-      </div>
-      <hr className="border-none bg-gray-100 h-0.5 my-3" />
+      {buttons.map((buttonConfig) => (
+        <Button
+          key={buttonConfig.text}
+          data-next-state={buttonConfig.nextState}
+          onClick={onButtonClickHandler}
+          disabled={buttonsAreDisabled}
+        >
+          {buttonsAreDisabled ? 'Pracuji...' : buttonConfig.text}
+        </Button>
+      ))}
       <Button
-        className="w-full"
+        className="w-full max-w-60"
         color="red"
         icon={<TrashIcon className="w-4 h-4 inline -mt-1 mr-2" />}
         data-next-state="dropped"

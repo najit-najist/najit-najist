@@ -1,3 +1,5 @@
+import { Badge } from '@components/common/Badge';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { database } from '@najit-najist/database';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
@@ -13,6 +15,7 @@ export const SectionProducts: FC<{ orderId: number }> = async ({ orderId }) => {
       product: {
         with: {
           images: true,
+          category: true,
         },
       },
     },
@@ -32,19 +35,24 @@ export const SectionProducts: FC<{ orderId: number }> = async ({ orderId }) => {
     return (
       <div
         key={orderedProduct.id}
-        className="flex space-x-6 border-b border-gray-200 py-10"
+        className="flex flex-col md:flex-row border-b border-gray-200 py-5 gap-2 md:gap-5"
       >
-        {mainImage ? (
-          <Image
-            src={mainImage}
-            alt={'Obrázek produktu'}
-            width={80}
-            height={80}
-            className="h-20 w-20 flex-none rounded-project bg-gray-100 object-cover object-center sm:h-40 sm:w-40"
-          />
-        ) : null}
-        <div className="flex flex-auto flex-col">
+        <div className="flex flex-auto gap-5 max-w-md w-full">
+          {mainImage ? (
+            <Image
+              src={mainImage}
+              alt={'Obrázek produktu'}
+              width={40}
+              height={40}
+              className="h-24 w-24 flex-none rounded-project bg-gray-100 object-cover object-center md:h-20 md:w-20"
+            />
+          ) : null}
           <div>
+            <div>
+              <Badge size="small" color="green">
+                {orderedProduct.product.category?.name ?? 'Ostatní'}
+              </Badge>
+            </div>
             <h4 className="font-medium text-gray-900 font-title text-2xl">
               <Link
                 href={`/produkty/${encodeURIComponent(
@@ -54,30 +62,33 @@ export const SectionProducts: FC<{ orderId: number }> = async ({ orderId }) => {
                 {orderedProduct.product.name}
               </Link>
             </h4>
-            {orderedProduct.product.description ? (
-              <div
-                className="mt-2 text-sm text-gray-600"
-                dangerouslySetInnerHTML={{
-                  __html: orderedProduct.product.description,
-                }}
-              ></div>
-            ) : null}
           </div>
-          <div className="mt-6 flex flex-1 items-end">
-            <dl className="flex space-x-4 divide-x divide-gray-200 text-sm sm:space-x-6">
-              <div className="flex">
-                <dt className="font-medium text-gray-900">Počet: </dt>
-                <dd className="ml-2 text-gray-700">{orderedProduct.count}x</dd>
-              </div>
-              <div className="flex pl-4 sm:pl-6">
-                <dt className="font-medium text-gray-900">
-                  Cena za produkt celkem:
-                </dt>
-                <dd className="ml-2 text-gray-700">
-                  {formatPrice(orderedProduct.totalPrice)}
-                </dd>
-              </div>
-            </dl>
+        </div>
+        <div className="flex flex-row-reverse md:flex-wrap gap-5 justify-between w-full pt-0 md:pt-7">
+          <dl className="flex gap-5 justify-between">
+            <div className="flex w-40">
+              <dd className="ml-2 text-gray-700">{orderedProduct.count} </dd>
+              <dt className="font-medium text-gray-900 ml-1">kusy</dt>
+            </div>
+            <div className="flex">
+              <dt className="font-medium text-gray-900 sr-only">Cena</dt>
+              <dd className="ml-2 text-gray-700 font-semibold">
+                {formatPrice(orderedProduct.totalPrice)}
+              </dd>
+            </div>
+          </dl>
+          <div className="mr-auto md:mr-0 md:ml-auto -mt-1">
+            <Link
+              href={`/produkty/${encodeURIComponent(
+                orderedProduct.product.slug,
+              )}`}
+              className={buttonStyles({
+                size: 'xsm',
+                className: 'inline-block w-24 md:w-28 text-center',
+              })}
+            >
+              Zobrazit
+            </Link>
           </div>
         </div>
       </div>

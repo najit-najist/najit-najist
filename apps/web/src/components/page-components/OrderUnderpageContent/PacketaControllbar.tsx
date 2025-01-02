@@ -26,7 +26,7 @@ export const PacketaControlbar: FC<{ order: Order }> = async ({ order }) => {
   ]);
 
   return (
-    <Paper className="mt-2 px-3 py-2 divide-y-2">
+    <Paper className="mt-2 px-3 py-2 divide-y-2 w-full">
       <p className="font-title text-lg pb-2">Info ze Zásilkovny</p>
       <ul role="list" className="space-y-6 pt-3 pb-3">
         {result.map((value, index, allItems) => (

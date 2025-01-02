@@ -77,8 +77,8 @@ export const EditOrderControllbar: FC<
     : null;
 
   return (
-    <Paper className="px-3 py-2 divide-y-2">
-      <p className="font-title text-lg pb-2">Upravit</p>
+    <Paper className="px-3 py-2 divide-y-2 w-full">
+      <p className="font-title text-lg pb-2">Administrace</p>
 
       <div
         className={clsx(
@@ -86,8 +86,6 @@ export const EditOrderControllbar: FC<
           'pt-3',
         )}
       >
-        <Label>Změna stavu objednávky</Label>
-
         {orderIsFinished || orderIsDropped ? (
           <Alert
             className="mt-2"
@@ -99,20 +97,22 @@ export const EditOrderControllbar: FC<
                   : 'Objednávka byla zrušena'}
               </>
             }
-          ></Alert>
+          />
         ) : (
           <>
-            <EditOrderStateButtons
-              buttons={activeButtons}
-              order={{ id: order.id }}
-            />
+            <div className="flex gap-5">
+              <EditOrderStateButtons
+                buttons={activeButtons}
+                order={{ id: order.id }}
+              />
+            </div>
 
             {pickupDateAsDayjs ? (
               <>
-                <hr className="border-none bg-gray-100 h-0.5 my-3" />
                 <Alert
                   color="warning"
                   icon={ClockIcon}
+                  className="mt-4"
                   heading={
                     Math.min(1, pickupDateAsDayjs.diff(dayjs.tz(), 'minutes')) <
                     1

@@ -7,7 +7,7 @@ export function ColoredSection({
   className,
 }: PropsWithChildren<{ className?: string }>) {
   return (
-    <Section className={clsx('rounded-project bg-gray-50', className)}>
+    <Section className={clsx('bg-white border-t border-gray-200', className)}>
       {children}
     </Section>
   );

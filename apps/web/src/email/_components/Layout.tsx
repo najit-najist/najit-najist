@@ -1,8 +1,16 @@
-import { Head, Html, Img, Link, Tailwind } from '@react-email/components';
+import {
+  Head,
+  Html,
+  Img,
+  Link,
+  Section,
+  Tailwind,
+} from '@react-email/components';
 import { FC, PropsWithChildren } from 'react';
 
 import tailwindTheme from '../../../tailwind.config';
 import { Attachment, BaseEmailProps } from '../types';
+import { CenteredRow } from './CenteredRow';
 import { Fonts } from './Fonts';
 import { Text } from './Text';
 
@@ -19,7 +27,7 @@ export const Layout: FC<
 > = ({ title, newsletterUuid, children, siteOrigin, attachments }) => {
   return (
     <Tailwind config={theme as any}>
-      <Html lang="cs">
+      <Html lang="cs" className="bg-project-background">
         <Head>
           <title>{title}</title>
           <Fonts />
@@ -40,18 +48,20 @@ export const Layout: FC<
             }}
           ></style>
         </Head>
-        <main className="bg-white px-4 py-10">
-          <div className="px-5 py-4">
-            <Img
-              src={`${siteOrigin}/logo.png`}
-              className="w-full max-w-[150px] h-auto mx-auto rounded-project block"
-              alt="Najit&Najíst logo"
-              title="Najit&Najíst logo"
-              width="400"
-              height="90"
-            />
-          </div>
-          <div className="rounded-project bg-white">{children}</div>
+        <main className="bg-project-background m-0">
+          <Section>
+            <CenteredRow className="">
+              <Img
+                src={`${siteOrigin}/logo.png`}
+                className="w-full max-w-[110px] h-auto rounded-project block mt-10"
+                alt="Najit&Najíst logo"
+                title="Najit&Najíst logo"
+                width="110"
+                height="81"
+              />
+            </CenteredRow>
+          </Section>
+          <div>{children}</div>
           <footer className="text-center text-[#898989]">
             <Text
               className="italic my-3"
