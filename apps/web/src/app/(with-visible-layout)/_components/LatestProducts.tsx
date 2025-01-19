@@ -10,6 +10,9 @@ import { FC, Suspense } from 'react';
 const Items: FC = async () => {
   const { items } = await getProducts({
     perPage: 4,
+    sortBy: {
+      publishedAt: 'desc',
+    },
   });
 
   return items.map((post) => <ProductPreviewMedium key={post.id} {...post} />);
