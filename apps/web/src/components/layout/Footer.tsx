@@ -2,6 +2,8 @@ import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Logo } from '@components/common/Logo';
 import { ADMIN_EMAIL } from '@constants';
 import { TvIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import { PhoneIcon } from '@heroicons/react/24/solid';
+import { DEFAULT_BRANDED_SHOP } from '@najit-najist/database/models';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 
@@ -31,17 +33,19 @@ export const footerNavigationItems: NavigationItems = {
       name: 'Mail',
       href: `mailto:${ADMIN_EMAIL}`,
       icon: EnvelopeIcon,
+      iconSize: 23,
     },
-    // {
-    //   name: 'Telefon',
-    //   href: `tel:+420123456789`,
-    //   icon: PhoneIcon,
-    // },
     {
       name: 'Instagram',
       href: `https://www.instagram.com/najitnajist/`,
       icon: InstagramIcon,
       iconSize: 23,
+    },
+    {
+      name: 'Telefon',
+      href: `tel:+420792651408`,
+      icon: PhoneIcon,
+      iconSize: 20,
     },
   ],
   main: {

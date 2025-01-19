@@ -1,3 +1,5 @@
+import { AtSymbolIcon } from '@heroicons/react/24/outline';
+import { PhoneIcon } from '@heroicons/react/24/solid';
 import { brandedShops } from '@najit-najist/database/models';
 import { getLoggedInUser } from '@server/utils/server';
 import { StaticImageData } from 'next/image';
@@ -119,6 +121,28 @@ const ContactPage: FC = async () => {
                   <br />
                   {item.address.postCode}
                 </address>
+
+                {item.emailAddress ? (
+                  <a
+                    href={`mailto:${item.emailAddress}`}
+                    className="mt-2 block hover:underline text-project-accent"
+                  >
+                    <AtSymbolIcon className="w-4 h-4 inline-block mr-2" />{' '}
+                    {item.emailAddress.replace('@', '(at)')}
+                  </a>
+                ) : null}
+
+                {item.telephoneNumbers.length
+                  ? item.telephoneNumbers.map(({ code, telephone }) => (
+                      <a
+                        href={`tel:${code.replaceAll(' ', '')}${telephone.replaceAll(' ', '')}`}
+                        className="mt-2 block hover:underline text-project-accent"
+                      >
+                        <PhoneIcon className="w-4 h-4 inline-block mr-2" /> +
+                        {code} {telephone}
+                      </a>
+                    ))
+                  : null}
               </div>
             </div>
           ))}
