@@ -27,6 +27,20 @@ type NavigationItems = {
   };
 };
 
+const YoutubeIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+    className="-mt-0.5"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+    <path d="M18 3a5 5 0 0 1 5 5v8a5 5 0 0 1 -5 5h-12a5 5 0 0 1 -5 -5v-8a5 5 0 0 1 5 -5zm-9 6v6a1 1 0 0 0 1.514 .857l5 -3a1 1 0 0 0 0 -1.714l-5 -3a1 1 0 0 0 -1.514 .857z" />
+  </svg>
+);
+
 export const footerNavigationItems: NavigationItems = {
   social: [
     {
@@ -39,6 +53,12 @@ export const footerNavigationItems: NavigationItems = {
       name: 'Instagram',
       href: `https://www.instagram.com/najitnajist/`,
       icon: InstagramIcon,
+      iconSize: 22,
+    },
+    {
+      name: 'YouTube',
+      href: `https://www.youtube.com/@NajitNajist/videos`,
+      icon: YoutubeIcon,
       iconSize: 23,
     },
     {
@@ -73,34 +93,36 @@ export const Footer: FC<PropsWithChildren> = () => {
         Footer
       </h2>
       <div className="mx-auto container pb-12 pt-12 sm:pt-20">
-        <div className="xl:grid xl:grid-cols-3 xl:gap-8">
-          <div className="space-y-8 xl:col-span-1">
-            <Logo className="h-32 w-auto" />
-            <address className="text-base text-gray-500 not-italic">
-              Tomkova 1230/4a
-              <br />
-              Hradec Králové
-              <br />
-              500 03
-            </address>
-            <div className="flex space-x-6">
-              {footerNavigationItems.social.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href as any}
-                  className="text-project-accent/60 hover:text-project-accent"
-                >
-                  <span className="sr-only">{item.name}</span>
-                  <item.icon
-                    width={item.iconSize ?? iconSize}
-                    height={item.iconSize ?? iconSize}
-                    aria-hidden="true"
-                  />
-                </Link>
-              ))}
+        <div className="lg:grid lg:grid-cols-3 lg:gap-8">
+          <div className="flex flex-wrap gap-y-8 gap-x-10 lg:block lg:col-span-1">
+            <Logo className="h-28 w-auto flex-none" />
+            <div className="lg:mt-6">
+              <address className="text-base text-gray-500 not-italic">
+                {DEFAULT_BRANDED_SHOP.address.street}
+                <br />
+                {DEFAULT_BRANDED_SHOP.address.city}
+                <br />
+                {DEFAULT_BRANDED_SHOP.address.postCode}
+              </address>
+              <div className="flex space-x-6 mt-4">
+                {footerNavigationItems.social.map((item) => (
+                  <Link
+                    key={item.name}
+                    href={item.href as any}
+                    className="text-project-accent/60 hover:text-project-accent"
+                  >
+                    <span className="sr-only">{item.name}</span>
+                    <item.icon
+                      width={item.iconSize ?? iconSize}
+                      height={item.iconSize ?? iconSize}
+                      aria-hidden="true"
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
           </div>
-          <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
+          <div className="mt-12 grid grid-cols-2 gap-8 lg:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-base font-medium text-project-secondary font-title">
@@ -141,37 +163,37 @@ export const Footer: FC<PropsWithChildren> = () => {
             </div>
             <div className="md:grid md:grid-cols-2 md:gap-8">
               {/* <div>
-                <h3 className="text-base font-medium text-gray-900">Company</h3>
-                <ul role="list" className="mt-4 space-y-4">
-                  {navigation.company.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.href}
-                        className="text-base text-gray-500 hover:text-gray-900"
-                      >
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div> */}
+                  <h3 className="text-base font-medium text-gray-900">Company</h3>
+                  <ul role="list" className="mt-4 space-y-4">
+                    {navigation.company.map((item) => (
+                      <li key={item.name}>
+                        <a
+                          href={item.href}
+                          className="text-base text-gray-500 hover:text-gray-900"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div> */}
               {/* <div className="mt-12 md:mt-0">
-                <h3 className="text-base font-medium text-gray-900">Legal</h3>
-                <ul role="list" className="mt-4 space-y-4">
-                  {navigation.legal.map((item) => (
-                    <li key={item.name}>
-                      <a
-                        href={item.href}
-                        className="text-base text-gray-500 hover:text-gray-900"
-                      >
-                        {item.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                  <h3 className="text-base font-medium text-gray-900">Legal</h3>
+                  <ul role="list" className="mt-4 space-y-4">
+                    {navigation.legal.map((item) => (
+                      <li key={item.name}>
+                        <a
+                          href={item.href}
+                          className="text-base text-gray-500 hover:text-gray-900"
+                        >
+                          {item.name}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
 
-            </div> */}
+              </div> */}
               <div>
                 <h3 className="text-base font-medium text-project-secondary font-title">
                   Ostatní
