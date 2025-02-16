@@ -6,14 +6,19 @@ import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Skeleton } from '@components/common/Skeleton';
 import { dayjs } from '@dayjs';
-import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
-import { getCachedOrders } from '@server/utils/getCachedOrders';
+import { OrderState } from '@najit-najist/database/models';
+import { getOrders } from '@server/utils/getOrders';
 import { formatPrice } from '@utils';
-import Link from 'next/link';
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 import { FC, PropsWithChildren, Suspense } from 'react';
+import { z } from 'zod';
 
+import { Filters } from './Filters';
 import { Orders } from './_components/Orders';
+import { ADMIN_LIST_VIEW_COOKIE_NAME } from './_constants';
+import { OrderPageListView } from './_types';
 
 export const metadata = {
   title: 'Objednávky',
@@ -21,6 +26,25 @@ export const metadata = {
 
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
+const getListViewFromCookies = async (): Promise<OrderPageListView> => {
+  const cookie = await cookies();
+  let view = cookie.get(ADMIN_LIST_VIEW_COOKIE_NAME)?.value as
+    | OrderPageListView
+    | undefined;
+
+  if (!view || !Object.values(OrderPageListView).includes(view)) {
+    view = OrderPageListView.ALL;
+  }
+
+  return view;
+};
+
+type PageProps = {
+  searchParams: Promise<{
+    listView: string;
+  }>;
+  page: string;
+};
 
 const Th: FC<PropsWithChildren> = ({ children }) => (
   <th
@@ -31,8 +55,26 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
   </th>
 );
 
-const List: FC = async () => {
-  const orders = await getCachedOrders();
+const List: FC<{ page: number }> = async ({ page }) => {
+  const listView = await getListViewFromCookies();
+
+  let state: OrderState[] | undefined = undefined;
+
+  if (listView === OrderPageListView.CANCELED) {
+    state = [OrderState.DROPPED];
+  } else if (listView === OrderPageListView.FINISHED) {
+    state = [OrderState.FINISHED];
+  } else if (listView === OrderPageListView.NEW) {
+    state = [OrderState.UNCONFIRMED, OrderState.UNPAID, OrderState.NEW];
+  } else if (listView === OrderPageListView.UNFINISHED) {
+    state = [OrderState.CONFIRMED, OrderState.SHIPPED];
+  }
+
+  const orders = await getOrders({
+    page,
+    perPage: 35,
+    state,
+  });
 
   return (
     <table className="min-w-full divide-y divide-gray-300">
@@ -155,7 +197,21 @@ const Analytics: FC = async () => {
   );
 };
 
-export default async function Page() {
+export default async function Page({
+  searchParams: getSearchParams,
+}: PageProps) {
+  const listViewFromCookies = await getListViewFromCookies();
+  const { listView: listViewFromQuery, page: pageAsString } =
+    await getSearchParams;
+  const page = z.coerce.number().min(1).safeParse(pageAsString).data ?? 1;
+
+  if (listViewFromQuery !== listViewFromCookies) {
+    let route = '/administrace/objednavky';
+    route += `?listView=${listViewFromCookies}`;
+
+    throw redirect(route);
+  }
+
   const breadcrumbs: BreadcrumbItem[] = [
     { link: '/administrace', text: 'Administrace' },
     { link: '/administrace/objednavky', text: 'Objednávky', active: true },
@@ -183,6 +239,13 @@ export default async function Page() {
         /> */}
       </PageHeader>
       <Analytics />
+
+      <Filters
+        initialValues={{
+          listView: listViewFromCookies,
+        }}
+      />
+
       <div className="mt-8 flow-root !border-t-0 container">
         <div className="overflow-x-auto mb-10">
           <div className="inline-block min-w-full py-2 align-middle">
@@ -200,7 +263,7 @@ export default async function Page() {
                 </>
               }
             >
-              <List />
+              <List page={page} />
             </Suspense>
           </div>
         </div>
