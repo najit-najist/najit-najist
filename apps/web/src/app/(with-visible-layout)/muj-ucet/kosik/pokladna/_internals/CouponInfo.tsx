@@ -81,7 +81,7 @@ export function CouponInfo({
   const minimalProductCount = selectedCoupon?.minimalProductCount;
 
   return (
-    <div className="px-4">
+    <div>
       <div className="pt-3 flex gap-2">
         <Input
           label="Kupón"

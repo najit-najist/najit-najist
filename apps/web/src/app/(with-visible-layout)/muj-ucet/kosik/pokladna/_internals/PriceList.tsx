@@ -47,97 +47,98 @@ export const PriceList: FC<{
     paymentMethodsPrices[paymentMethod.slug];
 
   return (
-    <div className="px-4 text-gray-500 !mt-4">
-      <div className="flex items-center justify-between py-5">
-        <span>Mezisoučet</span>
-        <span
-          className={clsx(
-            'text-gray-900',
-            transitionIsHappening ? 'blur-sm' : '',
-          )}
-        >
-          {formatPrice(subtotal)}
-        </span>
-      </div>
-      {!!totalDiscount ? (
-        <>
-          <hr />
+    <>
+      <div className="border-y-2 border-dashed text-gray-500">
+        <div className="container divide-y">
           <div className="flex items-center justify-between py-5">
-            <span>Sleva</span>
-            <span
-              className={clsx(
-                'text-project-primary',
-                transitionIsHappening ? 'blur-sm' : '',
-              )}
-            >
-              - {formatPrice(totalDiscount)}
-            </span>
-          </div>
-        </>
-      ) : null}
-      {selectedDeliveryMethodPrice !== undefined ? (
-        <>
-          <hr />
-          <div className="flex items-center justify-between py-5">
-            <span>Doprava</span>
+            <span className="text-sm">Mezisoučet</span>
             <span
               className={clsx(
                 'text-gray-900',
                 transitionIsHappening ? 'blur-sm' : '',
               )}
             >
-              {formatPrice(deliveryMethodPrice.formatted)}
+              {formatPrice(subtotal)}
+            </span>
+          </div>
+          {!!totalDiscount ? (
+            <div className="flex items-center justify-between py-5">
+              <span className="text-sm">Sleva</span>
+              <span
+                className={clsx(
+                  'text-project-primary',
+                  transitionIsHappening ? 'blur-sm' : '',
+                )}
+              >
+                - {formatPrice(totalDiscount)}
+              </span>
+            </div>
+          ) : null}
+          {selectedDeliveryMethodPrice !== undefined ? (
+            <div>
+              <div className="flex items-center justify-between py-5">
+                <span className="text-sm">Doprava</span>
+                <span
+                  className={clsx(
+                    'text-gray-900',
+                    transitionIsHappening ? 'blur-sm' : '',
+                  )}
+                >
+                  {formatPrice(deliveryMethodPrice.formatted)}
+                  {deliveryMethodPrice.formatted !==
+                  deliveryMethodPrice.original ? (
+                    <span className="text-gray-300">
+                      {' '}
+                      (<s>{formatPrice(selectedDeliveryMethodPrice)}</s>)
+                    </span>
+                  ) : null}
+                </span>
+              </div>
               {deliveryMethodPrice.formatted !==
               deliveryMethodPrice.original ? (
-                <span className="text-gray-300">
-                  {' '}
-                  (<s>{formatPrice(selectedDeliveryMethodPrice)}</s>)
-                </span>
+                <Alert
+                  heading="Gratulujeme! 🎉"
+                  color="success"
+                  className="mb-4 -mt-2"
+                >
+                  Získáváte dopravu zdarma, jelikož Vaše objednávka překračuje
+                  hodnotu {formatPrice(formatDeliveryMethodPrice.limit)}
+                </Alert>
               ) : null}
-            </span>
-          </div>
-          {deliveryMethodPrice.formatted !== deliveryMethodPrice.original ? (
-            <Alert
-              heading="Gratulujeme!"
-              color="success"
-              className="mb-4 -mt-2"
-            >
-              Získáváte dopravu zdarma, jelikož Vaše objednávka překračuje
-              hodnotu {formatPrice(formatDeliveryMethodPrice.limit)}
-            </Alert>
+            </div>
           ) : null}
-        </>
-      ) : null}
-      {selectedPaymentMethodPrice !== undefined ? (
-        <>
-          <hr />
-          <div className="flex items-center justify-between py-5">
-            <span>Platební metoda</span>
-            <span
-              className={clsx(
-                'text-gray-900',
-                transitionIsHappening ? 'blur-sm' : '',
-              )}
-            >
-              {formatPrice(selectedPaymentMethodPrice)}
-            </span>
-          </div>
-        </>
-      ) : null}
-      <hr />
-      <div className="flex items-center justify-between py-5 font-semibold text-gray-900">
-        <span>Celkově</span>
-        <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
-          {formatPrice(
-            orderGetTotalPrice({
-              deliveryMethodPrice: deliveryMethodPrice.formatted,
-              paymentMethodPrice: selectedPaymentMethodPrice,
-              subtotal: subtotal,
-              discount: totalDiscount,
-            }),
-          )}
-        </span>
+          {selectedPaymentMethodPrice !== undefined ? (
+            <>
+              <div className="flex items-center justify-between py-5">
+                <span className="text-sm">Platební metoda</span>
+                <span
+                  className={clsx(
+                    'text-gray-900',
+                    transitionIsHappening ? 'blur-sm' : '',
+                  )}
+                >
+                  {formatPrice(selectedPaymentMethodPrice)}
+                </span>
+              </div>
+            </>
+          ) : null}
+        </div>
       </div>
-    </div>
+      <div className="container text-gray-500">
+        <div className="flex items-center justify-between py-5 font-semibold text-gray-900">
+          <span>Celkově</span>
+          <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
+            {formatPrice(
+              orderGetTotalPrice({
+                deliveryMethodPrice: deliveryMethodPrice.formatted,
+                paymentMethodPrice: selectedPaymentMethodPrice,
+                subtotal: subtotal,
+                discount: totalDiscount,
+              }),
+            )}
+          </span>
+        </div>
+      </div>
+    </>
   );
 };

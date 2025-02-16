@@ -9,18 +9,15 @@ import { useQueryClient } from '@tanstack/react-query';
 import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { ChangeEventHandler, FC, useCallback } from 'react';
-import { useFormState } from 'react-hook-form';
 import { useDebounceCallback } from 'usehooks-ts';
 
 export const CountInput: FC<{
   productId: ProductWithRelationsLocal['id'];
   countInCart: UserCartProduct['count'];
 }> = ({ productId, countInCart: initialCountInCart }) => {
-  const formState = useFormState();
-  const { isSubmitting } = formState;
-  const { startTransition, isActive: isChangingRoutes } =
+  const { startTransition, isActive: isSyncingServerState } =
     useReactTransitionContext();
-  const disabled = isChangingRoutes || isSubmitting;
+  const disabled = isSyncingServerState;
   const router = useRouter();
   const queryClient = useQueryClient();
 

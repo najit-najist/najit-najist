@@ -63,7 +63,7 @@ const SuccessMessage: FC<
           </b>
         </p>
         <Link
-          href="/muj-ucet/kosik/pokladna"
+          href="/muj-ucet/kosik"
           className={buttonStyles({
             className: 'mt-3 inline-block !text-xs',
             size: 'xsm',
@@ -97,7 +97,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
         await queryClient.invalidateQueries({
           queryKey: useUserCartQueryKey,
         });
-        router.prefetch('/muj-ucet/kosik/pokladna');
+        router.prefetch('/muj-ucet/kosik');
       },
     );
 

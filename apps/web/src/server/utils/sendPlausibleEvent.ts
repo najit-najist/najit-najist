@@ -10,8 +10,8 @@ export const sendPlausibleEvent = (
     body: JSON.stringify({
       domain: 'najitnajist.cz',
       name: eventName,
-      referrer: 'https://najitnajist.cz/muj-ucet/kosik/pokladna',
-      url: 'https://najitnajist.cz/muj-ucet/kosik/pokladna',
+      referrer: 'https://najitnajist.cz/muj-ucet/kosik',
+      url: 'https://najitnajist.cz/muj-ucet/kosik',
       ...payload,
     }),
   });

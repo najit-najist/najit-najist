@@ -1,7 +1,5 @@
 'use client';
 
-import { Checkbox } from '@components/common/form/Checkbox';
-import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
 import { FormBreak } from '@components/common/form/FormBreak';
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { Textarea } from '@components/common/form/Textarea';
@@ -19,6 +17,8 @@ export const UserContactFormPart: FC = () => {
 
   return (
     <div className="flex flex-col gap-3">
+      <FormBreak label="Kontaktní informace" className="mt-5 mb-2" />
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Input
           required
@@ -41,8 +41,6 @@ export const UserContactFormPart: FC = () => {
           {...register('lastName')}
         />
       </div>
-
-      <FormBreak className="mt-5 mb-2" />
 
       <Input
         required
@@ -77,7 +75,7 @@ export const UserContactFormPart: FC = () => {
         {...register('telephoneNumber')}
       />
 
-      <FormBreak className="mt-5 mb-2" />
+      <FormBreak label="Doručovací a fakturační adresa" className="mt-5 mb-2" />
 
       <AddressFields
         required
@@ -92,18 +90,7 @@ export const UserContactFormPart: FC = () => {
         }}
       />
 
-      <CheckboxWrapper
-        childId="save-current-address"
-        title="Uložit adresu na příště"
-      >
-        <Checkbox
-          id="save-current-address"
-          disabled={fieldsAreDisabled}
-          {...register('saveAddressToAccount')}
-        />
-      </CheckboxWrapper>
-
-      <FormBreak className="mt-4 mb-2" />
+      <FormBreak label="Doplňující informace" className="mt-4 mb-2" />
 
       <Textarea
         disabled={fieldsAreDisabled}

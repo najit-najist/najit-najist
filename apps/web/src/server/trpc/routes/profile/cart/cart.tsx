@@ -72,7 +72,7 @@ export const userCartRoutes = t.router({
           });
         }
 
-        revalidatePath('/muj-ucet/kosik/pokladna');
+        revalidatePath('/muj-ucet/kosik');
       }),
 
     update: publicProcedure
@@ -110,7 +110,7 @@ export const userCartRoutes = t.router({
           }
         }
 
-        revalidatePath('/muj-ucet/kosik/pokladna');
+        revalidatePath('/muj-ucet/kosik');
 
         return {
           count: input.count,
@@ -137,7 +137,7 @@ export const userCartRoutes = t.router({
             );
         }
 
-        revalidatePath('/muj-ucet/kosik/pokladna');
+        revalidatePath('/muj-ucet/kosik');
       }),
   }),
 });

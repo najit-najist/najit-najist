@@ -200,7 +200,7 @@ const ShoppingBagButton: FC = () => {
         appearance: 'outlined',
         className: 'h-8 w-8 !px-1.5',
       })}
-      href="/muj-ucet/kosik/pokladna"
+      href="/muj-ucet/kosik"
     >
       <div className="relative -z-0">
         <ShoppingBagIcon className="w-4 h-4" />

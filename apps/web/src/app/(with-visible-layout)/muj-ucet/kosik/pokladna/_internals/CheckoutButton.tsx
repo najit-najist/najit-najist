@@ -16,12 +16,12 @@ export const CheckoutButton: FC = () => {
   const buttonText = isDisabled
     ? 'Pracuji...'
     : paymentMethod.payment_on_checkout
-      ? 'Odeslat a zaplatit'
-      : 'Odeslat';
+      ? 'Objednat a zaplatit'
+      : 'Objednat';
 
   return (
     <Button
-      className="ml-auto mr-2 sm:mr-auto sm:w-48"
+      className="ml-auto sm:w-48"
       disabled={isDisabled}
       isLoading={isDisabled}
       type="submit"

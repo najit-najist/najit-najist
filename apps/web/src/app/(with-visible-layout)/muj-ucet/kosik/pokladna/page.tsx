@@ -1,8 +1,9 @@
 import { Alert } from '@components/common/Alert';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
-import { Section } from '@components/portal';
+import { FormBreak } from '@components/common/form/FormBreak';
 import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { logger } from '@logger/server';
@@ -12,19 +13,16 @@ import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { formatPrice } from '@utils';
 import { getUserCart } from '@utils/getUserCart';
-import clsx from 'clsx';
 import { cookies as getCookies } from 'next/headers';
 import Link from 'next/link';
-import { DetailedHTMLProps, FC, HTMLAttributes } from 'react';
+import { redirect } from 'next/navigation';
 
-import { CartItem } from './_internals/CartItem/CartItem';
 import { CheckoutButton } from './_internals/CheckoutButton';
 import { CouponInfo } from './_internals/CouponInfo';
 import {
   DeliveryMethodFormPart,
   DeliveryMethodFormPartProps,
 } from './_internals/DeliveryMethodFormPart';
-import { EmptyCart } from './_internals/EmptyCart';
 import { FormProvider } from './_internals/FormProvider';
 import { PaymentMethodFormPart } from './_internals/PaymentMethodFormPart';
 import { PriceList } from './_internals/PriceList';
@@ -36,17 +34,6 @@ export const dynamic = 'force-dynamic';
 export const metadata = {
   title: 'Dokončení objednávky',
 };
-
-const SectionTitle: FC<
-  DetailedHTMLProps<HTMLAttributes<HTMLHeadingElement>, HTMLHeadingElement>
-> = ({ children, className, ...rest }) => (
-  <h2
-    className={clsx('text-2xl font-title tracking-wide mb-3 mt-5', className)}
-    {...rest}
-  >
-    {children}
-  </h2>
-);
 
 // TODO: this page should be behind dynamic page - each cart should have its own subpage. that way it will be faster for user
 export default async function Page() {
@@ -62,7 +49,7 @@ export default async function Page() {
   });
 
   if (!cart?.products.length) {
-    return <EmptyCart />;
+    return redirect('/muj-ucet/kosik');
   }
 
   const [deliveryMethods, paymentMethods] = await Promise.all([
@@ -157,6 +144,9 @@ export default async function Page() {
 
   return (
     <>
+      <div className="container mt-5 sm:-mb-5">
+        <GoBackButton href="/muj-ucet/kosik" text="Zpět do košíku" />
+      </div>
       <PageHeader className="container">
         <div className="flex justify-between items-center">
           <PageTitle>{metadata.title}</PageTitle>
@@ -178,97 +168,86 @@ export default async function Page() {
           firstName: loggedInUser?.firstName ?? '',
           lastName: loggedInUser?.lastName ?? '',
           telephoneNumber: loggedInUser?.telephone?.telephone ?? '',
-          saveAddressToAccount: false,
         }}
       >
-        <div className="container flex flex-col lg:flex-row gap-10">
-          <div className="w-full">
-            {loggedInUser && defaultDeliveryMethod ? (
-              <>
-                <SectionTitle>Kontaktní adresa</SectionTitle>
-                <UserContactFormPart />
-                <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
-                  Výběr dopravy
-                </SectionTitle>
-                <DeliveryMethodFormPart
-                  paymentMethods={paymentMethods}
-                  deliveryMethods={deliverMethodsAsArray}
-                />
-                <SectionTitle className="border-t border-gray-200 pt-8 mt-8">
-                  Výběr platby
-                </SectionTitle>
-                <PaymentMethodFormPart paymentMethods={paymentMethods} />
-              </>
-            ) : null}
-            {!loggedInUser ? (
-              <Alert
-                outlined
-                color="warning"
-                icon={ExclamationTriangleIcon}
-                heading="Pro dokončení objednávky se prosím přihlašte!"
-              >
-                <div className="flex gap-2 mt-2">
-                  <Link
-                    className={buttonStyles()}
-                    href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
-                  >
-                    Přihlásit se
-                  </Link>
-                  <Link
-                    className={buttonStyles()}
-                    href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
-                  >
-                    Registrovat se
-                  </Link>
-                </div>
-              </Alert>
-            ) : null}
-            {!defaultDeliveryMethod ? (
-              <Alert
-                outlined
-                color="error"
-                icon={ExclamationTriangleIcon}
-                heading="Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat. Neváhejte nás kontaktovat."
+        <section className="container">
+          {loggedInUser && defaultDeliveryMethod ? (
+            <>
+              <UserContactFormPart />
+              <FormBreak label="Doručovací metoda" className="mt-12 mb-6" />
+              <DeliveryMethodFormPart
+                paymentMethods={paymentMethods}
+                deliveryMethods={deliverMethodsAsArray}
               />
-            ) : null}
-          </div>
-          <div className="w-full lg:max-w-md">
-            <SectionTitle className="mb-3">Souhrn objednávky</SectionTitle>
-            <Section>
-              <ul role="list" className="divide-y divide-gray-200">
-                {cart.products.map((cartItem) => (
-                  <CartItem key={cartItem.id} data={cartItem} />
-                ))}
-              </ul>
+              <FormBreak label="Platební metoda" className="mt-12 mb-6" />
+              <PaymentMethodFormPart paymentMethods={paymentMethods} />
+            </>
+          ) : null}
+          {!loggedInUser ? (
+            <Alert
+              outlined
+              color="warning"
+              icon={ExclamationTriangleIcon}
+              heading="Pro dokončení objednávky se prosím přihlašte!"
+            >
+              <div className="flex gap-2 mt-2">
+                <Link
+                  className={buttonStyles()}
+                  href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                >
+                  Přihlásit se
+                </Link>
+                <Link
+                  className={buttonStyles()}
+                  href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                >
+                  Registrovat se
+                </Link>
+              </div>
+            </Alert>
+          ) : null}
+          {!defaultDeliveryMethod ? (
+            <Alert
+              outlined
+              color="error"
+              icon={ExclamationTriangleIcon}
+              heading="Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat. Neváhejte nás kontaktovat."
+            />
+          ) : null}
+        </section>
+
+        <section className="w-full bg-white mt-10">
+          <h2 className="sr-only">Souhrn objednávky</h2>
+          <div className="mt-2 mb-7">
+            <div className="container mb-6">
               {loggedInUser ? <CouponInfo cartCupon={cart.coupon} /> : null}
-              <PriceList
-                paymentMethodsPrices={paymentMethodPrices}
-                deliveryMethodsPrices={deliveryMethodsPrices}
-                subtotal={cart.subtotal}
-                totalDiscount={cart.discount}
-              />
-              {loggedInUser ? (
-                <>
-                  <hr className="!mt-0" />
-                  {cartHasProductMoreThanStock ? (
-                    <div className="mx-4">
-                      <Alert
-                        heading="Upozornění"
-                        color="warning"
-                        icon={ExclamationTriangleIcon}
-                      >
-                        Jeden z produktů ve Vašem košíku přesahuje naše skladové
-                        možnosti a tak nemůžeme zajistit úplné dodání. Budeme
-                        Vás po vytvoření objednávky kontaktovat.
-                      </Alert>
-                    </div>
-                  ) : null}
-                  <CheckoutButton />
-                </>
-              ) : null}
-            </Section>
+            </div>
+            <PriceList
+              paymentMethodsPrices={paymentMethodPrices}
+              deliveryMethodsPrices={deliveryMethodsPrices}
+              subtotal={cart.subtotal}
+              totalDiscount={cart.discount}
+            />
+            {loggedInUser ? (
+              <div className="container pb-8">
+                {cartHasProductMoreThanStock ? (
+                  <div className="my-4">
+                    <Alert
+                      heading="Upozornění"
+                      color="warning"
+                      icon={ExclamationTriangleIcon}
+                    >
+                      Jeden z produktů ve Vašem košíku přesahuje naše skladové
+                      možnosti a tak nemůžeme zajistit úplné dodání. Budeme Vás
+                      po vytvoření objednávky kontaktovat.
+                    </Alert>
+                  </div>
+                ) : null}
+                <CheckoutButton />
+              </div>
+            ) : null}
           </div>
-        </div>
+        </section>
       </FormProvider>
     </>
   );

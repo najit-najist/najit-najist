@@ -53,7 +53,6 @@ export const userCartCheckoutInputSchema = z.object({
       .string({ required_error: MESSAGES.requiredPostalCode })
       .min(1, MESSAGES.requiredPostalCode),
   }),
-  saveAddressToAccount: z.boolean().default(false),
   paymentMethod: z.object({ slug: z.string() }),
   deliveryMethod: deliveryMethodSchema,
 });

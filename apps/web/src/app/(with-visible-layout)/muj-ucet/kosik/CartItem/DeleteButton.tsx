@@ -16,14 +16,11 @@ export const DeleteButton: FC<{
 }> = ({ productId }) => {
   const queryClient = useQueryClient();
   const router = useRouter();
-  const formState = useFormState();
-  const { isSubmitting } = formState;
   const { startTransition, isActive: isChangingRoutes } =
     useReactTransitionContext();
 
   const { mutateAsync: removeItem, isPending: isRemoving } =
     trpc.profile.cart.products.remove.useMutation();
-  const disabled = isChangingRoutes || isSubmitting;
 
   // todo revalidate items after morph
   const handleItemDelete = useCallback(async () => {
@@ -48,12 +45,12 @@ export const DeleteButton: FC<{
 
   return (
     <Tooltip
-      disabled={disabled}
+      disabled={isRemoving || isChangingRoutes}
       trigger={
         <button
           type="button"
           className="-m-2.5 flex items-center justify-center bg-white p-2.5 text-red-300 hover:text-red-500 flex-none"
-          disabled={isRemoving || disabled}
+          disabled={isRemoving || isChangingRoutes}
           onClick={handleItemDelete}
         >
           <span className="sr-only">Odstranit</span>

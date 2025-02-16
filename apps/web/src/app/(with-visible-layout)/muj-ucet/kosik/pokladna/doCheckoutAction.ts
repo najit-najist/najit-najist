@@ -20,7 +20,6 @@ import {
   packetaParcels,
   productStock,
   telephoneNumbers,
-  userAddresses,
   userCarts,
 } from '@najit-najist/database/models';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
@@ -284,16 +283,6 @@ export const doCheckoutAction = createActionWithValidation(
             .where(eq(productStock.id, productInCart.product.stock.id));
         }
 
-        if (input.saveAddressToAccount) {
-          await tx
-            .update(userAddresses)
-            .set({
-              ...addressPayload,
-              municipalityId: input.address.municipality.id,
-            })
-            .where(eq(userAddresses.userId, userId));
-        }
-
         await tx.insert(orderedProducts).values(
           cart.products.map((productInCart) => {
             const { value: totalPrice, discount } = getCartItemPrice(
@@ -391,7 +380,7 @@ export const doCheckoutAction = createActionWithValidation(
         trackEvent(newOrderId);
       }
 
-      revalidatePath('/muj-ucet/kosik/pokladna');
+      revalidatePath('/muj-ucet/kosik');
       revalidatePath('/produkty');
       revalidatePath('/muj-ucet/objednavky');
       revalidatePath('/administrace/objednavky');
