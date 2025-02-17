@@ -27,6 +27,7 @@ export const testOrder = {
   telephoneId: 1,
   updatedAt: null,
   discount: 40,
+  addressId: 1,
   address: {
     city: 'City',
     houseNumber: '12',
@@ -37,6 +38,18 @@ export const testOrder = {
     postalCode: '50801',
     streetName: 'Jičín',
   },
+  invoiceAddress: {
+    city: 'City',
+    houseNumber: '12',
+    municipality: {
+      name: 'Hradec Kralové',
+      slug: 'hradec-kralove',
+    },
+    postalCode: '50801',
+    streetName: 'Jičín',
+  },
+  ico: 'tests',
+  dic: 'testststs',
   createdAt: new Date(),
   email: 'test@example.com',
   firstName: 'Otaka',
@@ -90,6 +103,7 @@ export const testOrder = {
         slug: '/produkt',
         description: 'Very loooooooong description',
         weight: 0,
+        discontinued: false,
         stock: {
           value: 1,
           productId: 2,
@@ -114,6 +128,7 @@ export const testOrder = {
         manufacturer: 'test',
         slug: '/produkt',
         description: 'Very loooooooong description',
+        discontinued: false,
         stock: {
           value: 1,
           productId: 4,
@@ -136,6 +151,7 @@ export const testOrder = {
     slug: OrderDeliveryMethodsSlug.BALIKOVNA,
     notes: '',
   },
+  invoiceAddressId: null,
 } satisfies OrderWithRelations & {
   pickupDate: OrderPickupTime | null;
 };

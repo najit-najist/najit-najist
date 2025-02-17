@@ -65,6 +65,11 @@ export type OrderWithRelations = Order & {
   address: Omit<UnsignedModel<OrderedAddress>, 'municipalityId' | 'orderId'> & {
     municipality: Pick<Municipality, 'name' | 'slug'>;
   };
+  invoiceAddress?:
+    | (Omit<UnsignedModel<OrderedAddress>, 'municipalityId' | 'orderId'> & {
+        municipality: Pick<Municipality, 'name' | 'slug'>;
+      })
+    | null;
   telephoneNumber?: UnsignedModel<TelephoneNumber> | null;
   couponPatch:
     | (CouponPatch & {

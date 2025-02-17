@@ -17,6 +17,7 @@ import { OrderSubtitleSkeleton } from './OrderSubtitleSkeleton';
 import { PacketaControlbar } from './PacketaControllbar';
 import { ProductSkeleton } from './ProductSkeleton';
 import { SectionAddressAndShipping } from './SectionAddressAndShipping';
+import { SectionInvoiceAddress } from './SectionInvoiceAddress';
 import { SectionPayment } from './SectionPayment';
 import { SectionProducts } from './SectionProducts';
 import { SectionShipping } from './SectionShipping';
@@ -142,6 +143,47 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <SectionAddressAndShipping order={order} />
             </Suspense>
           </section>
+
+          {order.invoiceAddressId ? (
+            <section aria-labelledby="address-heading">
+              <h4 className="sr-only" id="address-heading">
+                Fakturační informace
+              </h4>
+              <Suspense
+                fallback={
+                  <div className="grid gap-x-6">
+                    <Skeleton className="h-5 w-full max-w-32" />
+                    <Skeleton className="mt-2 h-16 w-full max-w-64" />
+                    <Skeleton className="mt-4 h-11 w-full max-w-32" />
+                  </div>
+                }
+              >
+                <SectionInvoiceAddress order={order} />
+              </Suspense>
+            </section>
+          ) : null}
+
+          <section
+            aria-labelledby="more-information-heading"
+            className={order.invoiceAddressId ? '' : 'sm:col-span-2'}
+          >
+            <h4 className="sr-only" id="more-information-heading">
+              Další informace
+            </h4>
+            <dl className="text-sm">
+              <dt className="font-semibold text-project-secondary">
+                Poznámky k objednávce
+              </dt>
+              <dd className="mt-2 text-gray-700">
+                <p>
+                  {order.notes || (
+                    <span className="opacity-50">Žádná poznámka</span>
+                  )}
+                </p>
+              </dd>
+            </dl>
+          </section>
+
           <section aria-labelledby="shipping-heading">
             <h4 className="sr-only" id="shipping-heading">
               Způsob odeslání
@@ -174,24 +216,6 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
             </Suspense>
           </section>
         </div>
-
-        <section aria-labelledby="more-information-heading">
-          <h4 className="sr-only" id="more-information-heading">
-            Další informace
-          </h4>
-          <dl className="text-sm">
-            <dt className="font-semibold text-project-secondary">
-              Poznámky k objednávce
-            </dt>
-            <dd className="mt-2 text-gray-700">
-              <p>
-                {order.notes || (
-                  <span className="opacity-50">Žádná poznámka</span>
-                )}
-              </p>
-            </dd>
-          </dl>
-        </section>
       </div>
 
       <div className="bg-white border-t border-gray-200">

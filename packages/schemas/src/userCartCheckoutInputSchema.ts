@@ -31,6 +31,20 @@ export const deliveryMethodSchema = z.discriminatedUnion('slug', [
   }),
 ]);
 
+export const orderAddressSchema = z.object({
+  municipality: entityLinkSchema,
+  houseNumber: z
+    .string({ required_error: MESSAGES.requiredHouseNumber })
+    .min(1, MESSAGES.requiredHouseNumber),
+  streetName: streetNameSchema,
+  city: z
+    .string({ required_error: MESSAGES.requiredCity })
+    .min(1, MESSAGES.requiredCity),
+  postalCode: z
+    .string({ required_error: MESSAGES.requiredPostalCode })
+    .min(1, MESSAGES.requiredPostalCode),
+});
+
 export const userCartCheckoutInputSchema = z.object({
   email: z.string().email(),
   firstName: nonEmptyStringSchema,
@@ -40,19 +54,14 @@ export const userCartCheckoutInputSchema = z.object({
     'Zadejte telefonní číslo',
   ),
   notes: z.string().optional(),
-  address: z.object({
-    municipality: entityLinkSchema,
-    houseNumber: z
-      .string({ required_error: MESSAGES.requiredHouseNumber })
-      .min(1, MESSAGES.requiredHouseNumber),
-    streetName: streetNameSchema,
-    city: z
-      .string({ required_error: MESSAGES.requiredCity })
-      .min(1, MESSAGES.requiredCity),
-    postalCode: z
-      .string({ required_error: MESSAGES.requiredPostalCode })
-      .min(1, MESSAGES.requiredPostalCode),
-  }),
+  address: orderAddressSchema,
+  invoiceAddress: orderAddressSchema.optional(),
   paymentMethod: z.object({ slug: z.string() }),
   deliveryMethod: deliveryMethodSchema,
+  businessInformations: z
+    .object({
+      ico: z.string().min(1, 'Vyplňte prosím vaše IČO'),
+      dic: z.string().nullish(),
+    })
+    .optional(),
 });

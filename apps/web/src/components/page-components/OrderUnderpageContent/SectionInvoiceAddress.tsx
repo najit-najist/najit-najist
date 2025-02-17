@@ -3,26 +3,28 @@ import { database } from '@najit-najist/database';
 import { Order } from '@najit-najist/database/models';
 import { FC } from 'react';
 
-export const SectionAddressAndShipping: FC<{ order: Order }> = async ({
+export const SectionInvoiceAddress: FC<{ order: Order }> = async ({
   order,
 }) => {
+  const invoiceAddressId = order.invoiceAddressId;
+
+  if (!invoiceAddressId) {
+    return null;
+  }
+
   const [address, telephone] = await Promise.all([
     database.query.orderAddresses.findFirst({
-      where: (s, { eq }) => eq(s.id, order.addressId),
+      where: (s, { eq }) => eq(s.id, invoiceAddressId),
     }),
     database.query.telephoneNumbers.findFirst({
       where: (s, { eq }) => eq(s.id, order.telephoneId),
     }),
   ]);
 
-  const hasAlsoInvoiceAddress = !!order.invoiceAddressId;
-
   return (
     <dl className="text-sm">
       <dt className="font-semibold text-project-secondary">
-        {hasAlsoInvoiceAddress
-          ? 'Doručovací informace'
-          : 'Doručovací a fakturační informace'}
+        Fakturační informace
       </dt>
       <dd className="mt-2 text-gray-700">
         <address className="not-italic">
@@ -59,7 +61,7 @@ export const SectionAddressAndShipping: FC<{ order: Order }> = async ({
           </span>
         </div>
       </dd>
-      {order.ico && !hasAlsoInvoiceAddress ? (
+      {order.ico ? (
         <dd className="mt-3 text-gray-700">
           {order.ico ? (
             <div>

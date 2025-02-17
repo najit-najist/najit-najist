@@ -1,8 +1,11 @@
+import { Alert } from '@components/common/Alert';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Price } from '@components/common/Price';
+import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
+import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { UserService } from '@server/services/UserService';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { getUserCart } from '@utils/getUserCart';
@@ -82,14 +85,40 @@ export default async function Page() {
                 />
               </WithBlurOnTransition>
             </div>
-            <Link
-              className={buttonStyles({
-                className: 'ml-auto sm:w-48 text-center mt-3',
-              })}
-              href="/muj-ucet/kosik/pokladna"
-            >
-              Objednat
-            </Link>
+            {!loggedInUser ? (
+              <Alert
+                outlined
+                color="warning"
+                icon={ExclamationTriangleIcon}
+                heading="Pro dokončení objednávky se prosím přihlašte!"
+                className="mt-3"
+              >
+                <div className="flex gap-2 mt-2">
+                  <Link
+                    className={buttonStyles()}
+                    href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                  >
+                    Přihlásit se
+                  </Link>
+                  <Link
+                    className={buttonStyles()}
+                    href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+                  >
+                    Registrovat se
+                  </Link>
+                </div>
+              </Alert>
+            ) : null}
+            {loggedInUser ? (
+              <Link
+                className={buttonStyles({
+                  className: 'ml-auto sm:w-48 text-center mt-3',
+                })}
+                href="/muj-ucet/kosik/pokladna"
+              >
+                Objednat
+              </Link>
+            ) : null}
           </div>
         </div>
       </section>

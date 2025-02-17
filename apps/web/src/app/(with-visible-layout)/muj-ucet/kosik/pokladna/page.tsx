@@ -1,12 +1,11 @@
 import { Alert } from '@components/common/Alert';
-import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { FormBreak } from '@components/common/form/FormBreak';
-import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { logger } from '@logger/server';
+import { database } from '@najit-najist/database';
 import { UserService } from '@server/services/UserService';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
@@ -14,8 +13,8 @@ import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { formatPrice } from '@utils';
 import { getUserCart } from '@utils/getUserCart';
 import { cookies as getCookies } from 'next/headers';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { ComponentProps } from 'react';
 
 import { CheckoutButton } from './_internals/CheckoutButton';
 import { CouponInfo } from './_internals/CouponInfo';
@@ -24,6 +23,7 @@ import {
   DeliveryMethodFormPartProps,
 } from './_internals/DeliveryMethodFormPart';
 import { FormProvider } from './_internals/FormProvider';
+import { OtherInformationsFormPart } from './_internals/OtherInformationsFormPart';
 import { PaymentMethodFormPart } from './_internals/PaymentMethodFormPart';
 import { PriceList } from './_internals/PriceList';
 import { UserContactFormPart } from './_internals/UserContactFormPart';
@@ -48,11 +48,11 @@ export default async function Page() {
     value: Number(loggedInUser?.id ?? session.cartId ?? '0'),
   });
 
-  if (!cart?.products.length) {
+  if (!cart?.products.length || !loggedInUser) {
     return redirect('/muj-ucet/kosik');
   }
 
-  const [deliveryMethods, paymentMethods] = await Promise.all([
+  const [deliveryMethods, paymentMethods, lastOrder] = await Promise.all([
     (
       getCachedDeliveryMethods() as Promise<
         DeliveryMethodFormPartProps['deliveryMethods']
@@ -74,6 +74,25 @@ export default async function Page() {
         return d;
       }),
     ),
+    database.query.orders.findFirst({
+      where: (schema, { eq }) => eq(schema.userId, loggedInUser.id),
+      orderBy: (schema, { desc }) => desc(schema.createdAt),
+      with: {
+        telephone: true,
+        address: {
+          with: {
+            municipality: true,
+          },
+        },
+        deliveryMethod: true,
+        paymentMethod: true,
+        invoiceAddress: {
+          with: {
+            municipality: true,
+          },
+        },
+      },
+    }),
   ]);
 
   // Sometimes user can have product in cart which limits their choices of delivery methods
@@ -142,6 +161,54 @@ export default async function Page() {
       product.stock ? product.stock.value < countInCart : false,
   );
 
+  const defaultFormValues: ComponentProps<
+    typeof FormProvider
+  >['defaultFormValues'] = lastOrder
+    ? {
+        deliveryMethod: { slug: lastOrder.deliveryMethod.slug ?? null },
+        paymentMethod: { slug: lastOrder.paymentMethod.slug ?? null },
+        address: {
+          ...lastOrder.address,
+          city: lastOrder.address?.city ?? '',
+          houseNumber: lastOrder?.address?.houseNumber ?? '',
+          postalCode: lastOrder?.address?.postalCode ?? '',
+          streetName: lastOrder?.address?.streetName ?? '',
+        },
+        businessInformations: lastOrder.ico
+          ? { ico: lastOrder.ico, dic: lastOrder.dic }
+          : undefined,
+        invoiceAddress: lastOrder.invoiceAddress
+          ? {
+              ...lastOrder.invoiceAddress,
+              city: lastOrder.invoiceAddress?.city ?? '',
+              houseNumber: lastOrder?.invoiceAddress?.houseNumber ?? '',
+              postalCode: lastOrder?.invoiceAddress?.postalCode ?? '',
+              streetName: lastOrder?.invoiceAddress?.streetName ?? '',
+            }
+          : undefined,
+        notes: lastOrder.notes ?? undefined,
+        email: loggedInUser?.email ?? '',
+        firstName: loggedInUser?.firstName ?? '',
+        lastName: loggedInUser?.lastName ?? '',
+        telephoneNumber: lastOrder?.telephone?.telephone ?? '',
+      }
+    : {
+        deliveryMethod: { slug: defaultDeliveryMethod?.slug ?? null },
+        paymentMethod: { slug: defaultPaymentMethod?.slug ?? null },
+        address: {
+          municipality: { id: null as any },
+          ...loggedInUser?.address,
+          city: loggedInUser?.address?.city ?? '',
+          houseNumber: loggedInUser?.address?.houseNumber ?? '',
+          postalCode: loggedInUser?.address?.postalCode ?? '',
+          streetName: loggedInUser?.address?.streetName ?? '',
+        },
+        email: loggedInUser?.email ?? '',
+        firstName: loggedInUser?.firstName ?? '',
+        lastName: loggedInUser?.lastName ?? '',
+        telephoneNumber: loggedInUser?.telephone?.telephone ?? '',
+      };
+
   return (
     <>
       <div className="container mt-5 sm:-mb-5">
@@ -152,27 +219,11 @@ export default async function Page() {
           <PageTitle>{metadata.title}</PageTitle>
         </div>
       </PageHeader>
-      <FormProvider
-        defaultFormValues={{
-          deliveryMethod: { slug: defaultDeliveryMethod?.slug ?? null },
-          paymentMethod: { slug: defaultPaymentMethod?.slug ?? null },
-          address: {
-            municipality: { id: null as any },
-            ...loggedInUser?.address,
-            city: loggedInUser?.address?.city ?? '',
-            houseNumber: loggedInUser?.address?.houseNumber ?? '',
-            postalCode: loggedInUser?.address?.postalCode ?? '',
-            streetName: loggedInUser?.address?.streetName ?? '',
-          },
-          email: loggedInUser?.email ?? '',
-          firstName: loggedInUser?.firstName ?? '',
-          lastName: loggedInUser?.lastName ?? '',
-          telephoneNumber: loggedInUser?.telephone?.telephone ?? '',
-        }}
-      >
+      <FormProvider defaultFormValues={defaultFormValues}>
         <section className="container">
           {loggedInUser && defaultDeliveryMethod ? (
             <>
+              <FormBreak label="Kontaktní informace" className="mb-6" />
               <UserContactFormPart />
               <FormBreak label="Doručovací metoda" className="mt-12 mb-6" />
               <DeliveryMethodFormPart
@@ -181,30 +232,9 @@ export default async function Page() {
               />
               <FormBreak label="Platební metoda" className="mt-12 mb-6" />
               <PaymentMethodFormPart paymentMethods={paymentMethods} />
+              <FormBreak label="Doplňující informace" className="mt-12 mb-6" />
+              <OtherInformationsFormPart />
             </>
-          ) : null}
-          {!loggedInUser ? (
-            <Alert
-              outlined
-              color="warning"
-              icon={ExclamationTriangleIcon}
-              heading="Pro dokončení objednávky se prosím přihlašte!"
-            >
-              <div className="flex gap-2 mt-2">
-                <Link
-                  className={buttonStyles()}
-                  href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
-                >
-                  Přihlásit se
-                </Link>
-                <Link
-                  className={buttonStyles()}
-                  href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
-                >
-                  Registrovat se
-                </Link>
-              </div>
-            </Alert>
           ) : null}
           {!defaultDeliveryMethod ? (
             <Alert
@@ -220,7 +250,7 @@ export default async function Page() {
           <h2 className="sr-only">Souhrn objednávky</h2>
           <div className="mt-2 mb-7">
             <div className="container mb-6">
-              {loggedInUser ? <CouponInfo cartCupon={cart.coupon} /> : null}
+              <CouponInfo cartCupon={cart.coupon} />
             </div>
             <PriceList
               paymentMethodsPrices={paymentMethodPrices}
@@ -228,24 +258,23 @@ export default async function Page() {
               subtotal={cart.subtotal}
               totalDiscount={cart.discount}
             />
-            {loggedInUser ? (
-              <div className="container pb-8">
-                {cartHasProductMoreThanStock ? (
-                  <div className="my-4">
-                    <Alert
-                      heading="Upozornění"
-                      color="warning"
-                      icon={ExclamationTriangleIcon}
-                    >
-                      Jeden z produktů ve Vašem košíku přesahuje naše skladové
-                      možnosti a tak nemůžeme zajistit úplné dodání. Budeme Vás
-                      po vytvoření objednávky kontaktovat.
-                    </Alert>
-                  </div>
-                ) : null}
-                <CheckoutButton />
-              </div>
-            ) : null}
+
+            <div className="container pb-8">
+              {cartHasProductMoreThanStock ? (
+                <div className="my-4">
+                  <Alert
+                    heading="Upozornění"
+                    color="warning"
+                    icon={ExclamationTriangleIcon}
+                  >
+                    Jeden z produktů ve Vašem košíku přesahuje naše skladové
+                    možnosti a tak nemůžeme zajistit úplné dodání. Budeme Vás po
+                    vytvoření objednávky kontaktovat.
+                  </Alert>
+                </div>
+              ) : null}
+              <CheckoutButton />
+            </div>
           </div>
         </section>
       </FormProvider>

@@ -1,5 +1,6 @@
 import { relations } from 'drizzle-orm';
 import {
+  boolean,
   integer,
   pgTable,
   text,
@@ -28,6 +29,7 @@ export const products = pgTable(
       description: text('description'),
       publishedAt: timestamp('published_at'),
       manufacturer: varchar('manufacturer'),
+      discontinued: boolean('discontinued').default(false),
       categoryId: integer('category_id').references(
         () => productCategories.id,
         {

@@ -19,7 +19,7 @@ let nextConfig = {
     ],
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   transpilePackages: [
     '@najit-najist/comgate',

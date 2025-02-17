@@ -62,6 +62,22 @@ export const orders = pgTable(
       .notNull(),
     state: userState('state').default(OrderState.NEW).notNull(),
 
+    addressId: integer('address_id')
+      .references(() => orderAddresses.id, {
+        onDelete: 'restrict',
+      })
+      .notNull(),
+
+    invoiceAddressId: integer('invoice_address_id').references(
+      () => orderAddresses.id,
+      {
+        onDelete: 'restrict',
+      },
+    ),
+
+    ico: varchar('ico'),
+    dic: varchar('dic'),
+
     notes: text('notes'),
     deliveryMethodPrice: integer('delivery_method_price').default(0),
     paymentMethodPrice: integer('payment_method_price').default(0),
@@ -92,7 +108,16 @@ export const ordersRelations = relations(orders, ({ one, many }) => ({
     fields: [orders.couponPatchId],
     references: [couponPatches.id],
   }),
-  address: one(orderAddresses),
+  address: one(orderAddresses, {
+    fields: [orders.addressId],
+    references: [orderAddresses.id],
+    relationName: 'order_to_address_relation',
+  }),
+  invoiceAddress: one(orderAddresses, {
+    fields: [orders.invoiceAddressId],
+    references: [orderAddresses.id],
+    relationName: 'order_to_invoice_address_relation',
+  }),
   orderedProducts: many(orderedProducts),
   user: one(users, { fields: [orders.userId], references: [users.id] }),
   pickupDate: one(orderLocalPickupTimes),

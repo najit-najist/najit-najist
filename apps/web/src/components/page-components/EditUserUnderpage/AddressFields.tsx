@@ -9,6 +9,7 @@ import {
   FieldPath,
   FieldValues,
   useFormContext,
+  get as getWithDotNotation,
 } from 'react-hook-form';
 
 /**
@@ -46,7 +47,9 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
           autoComplete="street-address"
           placeholder="Název ulice"
           error={
-            formState.errors[fieldMap.streetName] as FieldError | undefined
+            getWithDotNotation(formState.errors, fieldMap.streetName) as
+              | FieldError
+              | undefined
           }
           disabled={fieldsAreDisabled}
           {...register(fieldMap.streetName)}
@@ -58,7 +61,9 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
           placeholder="Čp."
           // autoComplete="email"
           error={
-            formState.errors[fieldMap.houseNumber] as FieldError | undefined
+            getWithDotNotation(formState.errors, fieldMap.houseNumber) as
+              | FieldError
+              | undefined
           }
           disabled={fieldsAreDisabled}
           {...register(fieldMap.houseNumber)}
@@ -72,7 +77,11 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
           placeholder="Název města"
           rootClassName="md:col-span-3"
           autoComplete="address-level2"
-          error={formState.errors[fieldMap.city] as FieldError | undefined}
+          error={
+            getWithDotNotation(formState.errors, fieldMap.city) as
+              | FieldError
+              | undefined
+          }
           disabled={fieldsAreDisabled}
           {...register(fieldMap.city)}
         />
@@ -83,7 +92,9 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
           placeholder="123 45"
           autoComplete="postal-code"
           error={
-            formState.errors[fieldMap.postalCode] as FieldError | undefined
+            getWithDotNotation(formState.errors, fieldMap.postalCode) as
+              | FieldError
+              | undefined
           }
           disabled={fieldsAreDisabled}
           {...register(fieldMap.postalCode)}

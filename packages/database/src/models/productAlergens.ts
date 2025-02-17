@@ -2,7 +2,7 @@ import { relations } from 'drizzle-orm';
 import { pgTable, varchar } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
-import { productRawMaterialsToProducts } from './productRawMaterialsToProducts';
+import { productAlergensToProducts } from './productAlergensToProducts';
 
 export const productAlergens = pgTable(
   'product_alergens',
@@ -16,6 +16,6 @@ export const productAlergens = pgTable(
 export const productAlergensRelations = relations(
   productAlergens,
   ({ many }) => ({
-    toProducts: many(productRawMaterialsToProducts),
+    toProducts: many(productAlergensToProducts),
   }),
 );

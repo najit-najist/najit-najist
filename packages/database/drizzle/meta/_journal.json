@@ -204,6 +204,55 @@
       "when": 1732654433430,
       "tag": "0028_silky_revanche",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "7",
+      "when": 1736586786734,
+      "tag": "0029_classy_siren",
+      "breakpoints": true
+    },
+    {
+      "idx": 30,
+      "version": "7",
+      "when": 1737302262580,
+      "tag": "0030_nostalgic_oracle",
+      "breakpoints": true
+    },
+    {
+      "idx": 31,
+      "version": "7",
+      "when": 1737304938645,
+      "tag": "0031_square_mindworm",
+      "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1739695576039,
+      "tag": "0032_low_lorna_dane",
+      "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1739737138679,
+      "tag": "0033_cooing_masked_marvel",
+      "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "7",
+      "when": 1739738982453,
+      "tag": "0034_confused_sabra",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "7",
+      "when": 1739739274335,
+      "tag": "0035_freezing_triton",
+      "breakpoints": true
     }
   ]
 }

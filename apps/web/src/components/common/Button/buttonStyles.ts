@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority';
 
 export const buttonStyles = cva(
-  'duration-100 outline-none focus:outline-none disabled:shadow-none disabled:cursor-not-allowed whitespace-nowrap disabled:bg-opacity-50 content-center',
+  'duration-100 outline-none focus:outline-none aria-disabled:shadow-none disabled:shadow-none aria-disabled:cursor-not-allowed disabled:cursor-not-allowed whitespace-nowrap disabled:bg-opacity-50 aria-disabled:bg-opacity-50 content-center',
   {
     variants: {
       color: {

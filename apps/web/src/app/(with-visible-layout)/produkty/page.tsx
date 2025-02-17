@@ -76,6 +76,8 @@ const fallbackCategories: ProductCategory = {
   name: 'Všechny',
   createdAt: new Date(),
   updatedAt: new Date(),
+  order: 0,
+  parentId: null,
 };
 
 export default async function RecipesPage({

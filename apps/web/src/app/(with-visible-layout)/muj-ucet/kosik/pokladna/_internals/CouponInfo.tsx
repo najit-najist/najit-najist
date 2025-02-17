@@ -128,10 +128,11 @@ export function CouponInfo({
         <Alert
           color="warning"
           icon={ExclamationTriangleIcon}
-          heading={'Vybraný kupón má omezení'}
+          heading={'Kupón uplatnitelný pouze na vybrané produkty'}
           className="mt-2"
         >
-          Vybraný kupón je uplatnitelný pouze pokud máte{' '}
+          Vybraný kupón má omezení na určité produkty a proto je uplatnitelný
+          pouze pokud máte{' '}
           {[
             shouldBeGrouped && 'potřebné produkty',
             minimalProductCount &&
@@ -139,7 +140,8 @@ export function CouponInfo({
           ]
             .filter(Boolean)
             .join(' a ')}{' '}
-          v košíku.
+          v košíku. Proto mějte na paměti, že i když máte kupón s omezením tak
+          se nemusí vždy uplatnit na produkty v košíku!
         </Alert>
       ) : null}
     </div>

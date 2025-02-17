@@ -235,6 +235,25 @@ export const doCheckoutAction = createActionWithValidation(
             .returning();
         }
 
+        // Update stock values
+        const [orderAddress] = await tx
+          .insert(orderAddresses)
+          .values({
+            ...input.address,
+            municipalityId: input.address.municipality.id,
+          })
+          .returning();
+
+        const [invoiceAddress] = input.invoiceAddress
+          ? await tx
+              .insert(orderAddresses)
+              .values({
+                ...input.invoiceAddress,
+                municipalityId: input.invoiceAddress.municipality.id,
+              })
+              .returning()
+          : [];
+
         const [order] = await tx
           .insert(orders)
           .values({
@@ -254,21 +273,16 @@ export const doCheckoutAction = createActionWithValidation(
               deliveryMethod.price ?? 0,
               cart,
             ).formatted,
+            invoiceAddressId: invoiceAddress?.id,
+            ico: input.businessInformations?.ico,
+            dic: input.businessInformations?.dic,
+            addressId: orderAddress.id,
             subtotal: cart.subtotal,
             discount: cart.discount,
             // Only assign discount when user is actually eligible
             couponPatchId: cart.discount ? cart.coupon?.patches[0].id : null,
           })
           .returning();
-
-        const { municipality, ...addressPayload } = input.address;
-
-        // Update stock values
-        await tx.insert(orderAddresses).values({
-          ...addressPayload,
-          orderId: order.id,
-          municipalityId: input.address.municipality.id,
-        });
 
         for (const productInCart of cart.products) {
           if (!productInCart.product.stock) {

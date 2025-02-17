@@ -42,8 +42,8 @@ const getListViewFromCookies = async (): Promise<OrderPageListView> => {
 type PageProps = {
   searchParams: Promise<{
     listView: string;
+    page: string;
   }>;
-  page: string;
 };
 
 const Th: FC<PropsWithChildren> = ({ children }) => (

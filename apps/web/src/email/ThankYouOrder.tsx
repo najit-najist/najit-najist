@@ -18,6 +18,7 @@ import {
   Hr,
 } from '@react-email/components';
 import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
+import { cx } from 'class-variance-authority';
 import { FC, PropsWithChildren } from 'react';
 
 import { CenteredRow } from './_components/CenteredRow';
@@ -142,38 +143,108 @@ export default function ThankYouOrder({
 }: ThankYouOrderProps) {
   const title = `Objednávka #${order.id} na najitnajist.cz`;
 
-  const shippingInformationSection = (
-    <Section>
-      <CenteredRow>
-        <Heading as="h3">Doručovací informace</Heading>
-        <Row>
-          <Column className="text-gray-700">
-            <address className="not-italic">
-              <span className="block">
-                {order.firstName} {order.lastName}
-              </span>
-              <span className="block">
-                {order.address?.streetName?.trim()},{' '}
-                {order.address?.houseNumber}
-              </span>
-              <span className="block">
-                {order.address?.city} {order.address?.postalCode}
-              </span>
-            </address>
-          </Column>
-          <Column>
-            <Text className="hover:underline !mb-0" spacing={false}>
-              <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
-              {order.email}
-            </Text>
-            <Text className="hover:underline !mt-0" spacing={false}>
-              <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
-              {order.telephoneNumber?.code} {order.telephoneNumber?.telephone}
-            </Text>
-          </Column>
-        </Row>
-      </CenteredRow>
-    </Section>
+  const hasInvoiceAddress = !!order.invoiceAddress;
+  const icoAndDic = order.ico ? (
+    <>
+      <Text className="hover:underline !mt-0 !mb-0" spacing={false}>
+        <span className="mr-2 -mt-0.5">IČO</span> {order.ico}
+      </Text>
+      {order.dic ? (
+        <Text className="hover:underline  !mt-0 !mb-0" spacing={false}>
+          <span className="mr-2 -mt-0.5">DIČ</span> {order.dic}
+        </Text>
+      ) : null}
+    </>
+  ) : null;
+
+  const shippingAndInvoiceInformationSection = (
+    <>
+      <Section>
+        <CenteredRow>
+          <Heading as="h3">
+            {hasInvoiceAddress
+              ? 'Doručovací informace'
+              : 'Doručovací a fakturační informace'}
+          </Heading>
+          <Row className={hasInvoiceAddress ? '' : 'mb-5'}>
+            <Column className="text-gray-700 content-start">
+              <address className="not-italic mt-5">
+                <span className="block">
+                  {order.firstName} {order.lastName}
+                </span>
+                <span className="block">
+                  {order.address?.streetName?.trim()},{' '}
+                  {order.address?.houseNumber}
+                </span>
+                <span className="block">
+                  {order.address?.city} {order.address?.postalCode}
+                </span>
+              </address>
+            </Column>
+            <Column>
+              <Text className="hover:underline !mb-0" spacing={false}>
+                <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
+                {order.email}
+              </Text>
+              <Text
+                className={cx(
+                  'hover:underline !mt-0',
+                  icoAndDic && !hasInvoiceAddress ? '!mb-0' : '',
+                )}
+                spacing={false}
+              >
+                <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
+                {order.telephoneNumber?.code} {order.telephoneNumber?.telephone}
+              </Text>
+              {hasInvoiceAddress ? null : icoAndDic}
+            </Column>
+          </Row>
+        </CenteredRow>
+      </Section>
+
+      {hasInvoiceAddress ? (
+        <Section>
+          <CenteredRow>
+            <Heading as="h3">Fakturační informace</Heading>
+            <Row className="mb-5">
+              <Column className="text-gray-700 content-start">
+                <address className="not-italic mt-5">
+                  <span className="block">
+                    {order.firstName} {order.lastName}
+                  </span>
+                  <span className="block">
+                    {order.invoiceAddress?.streetName?.trim()},{' '}
+                    {order.invoiceAddress?.houseNumber}
+                  </span>
+                  <span className="block">
+                    {order.invoiceAddress?.city}{' '}
+                    {order.invoiceAddress?.postalCode}
+                  </span>
+                </address>
+              </Column>
+              <Column>
+                <Text className="hover:underline !mb-0" spacing={false}>
+                  <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
+                  {order.email}
+                </Text>
+                <Text
+                  className={cx(
+                    'hover:underline !mt-0',
+                    icoAndDic ? '!mb-0' : '',
+                  )}
+                  spacing={false}
+                >
+                  <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
+                  {order.telephoneNumber?.code}{' '}
+                  {order.telephoneNumber?.telephone}
+                </Text>
+                {icoAndDic}
+              </Column>
+            </Row>
+          </CenteredRow>
+        </Section>
+      ) : null}
+    </>
   );
 
   const shippingMethodInformation = (
@@ -361,7 +432,7 @@ export default function ThankYouOrder({
         <Spacing size="lg" />
       </Section>
 
-      {shippingInformationSection}
+      {shippingAndInvoiceInformationSection}
       {shippingMethodInformation}
       {paymentMethodSection}
       {descriptionSection}
