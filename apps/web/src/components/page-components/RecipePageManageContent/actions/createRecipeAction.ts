@@ -23,7 +23,7 @@ export const createRecipeAction = createActionWithValidation(
     const loggedInUser = await getLoggedInUser();
 
     if (loggedInUser.role !== UserRoles.ADMIN) {
-      logger.error('NON ADMIN - tried to create recipe');
+      logger.error('[RECIPES] NON ADMIN - tried to create recipe');
       throw new Error('Not authorized');
     }
 
@@ -96,7 +96,7 @@ export const createRecipeAction = createActionWithValidation(
   },
   {
     onHandlerError(error, input) {
-      logger.error({ error, input }, 'Could not create recipe');
+      logger.error('[RECIPES] Could not create recipe', { error, input });
     },
   },
 );

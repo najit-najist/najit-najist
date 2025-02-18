@@ -66,7 +66,9 @@ export const metricsRouter = t.router({
         return result[0]!;
       } catch (error) {
         if (error instanceof DrizzleError) {
-          logger.error(error, 'Failed to create recipe resource metric');
+          logger.error('[RECIPES] Failed to create recipe resource metric', {
+            error,
+          });
 
           if (error.message.includes('name')) {
             throw new ApplicationError({

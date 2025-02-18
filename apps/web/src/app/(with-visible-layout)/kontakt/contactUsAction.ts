@@ -44,10 +44,9 @@ export const contactUsAction = createActionWithValidation(
       })
       .returning()
       .catch((error) => {
-        logger.error(
-          { error },
-          `Contact Us Flow - Failed to create entry in database`,
-        );
+        logger.error(`[CONTACT_US] failed to create entry in database`, {
+          error,
+        });
 
         throw new Error('Error happened');
       });
@@ -66,8 +65,8 @@ export const contactUsAction = createActionWithValidation(
       ),
     }).catch((error) => {
       logger.error(
+        `[CONTACT_US] Failed to send email with contact form, but should be created in database`,
         { error, createdResponse },
-        `Contact Us Flow - Failed to send email with contact form, but should be created in database`,
       );
     });
 
@@ -84,13 +83,13 @@ export const contactUsAction = createActionWithValidation(
         }),
       ),
     }).catch((error) => {
-      logger.error(
-        { error, input },
-        `Contact Us Flow - email sending to user failed`,
-      );
+      logger.error(`[CONTACT_US] email sending to user failed`, {
+        error,
+        input,
+      });
     });
 
-    logger.info({ input }, 'Contact Us Flow - finished');
+    logger.info('[CONTACT_US] finished', { input });
 
     return { didSubmit: true };
   },

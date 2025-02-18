@@ -74,10 +74,10 @@ export class ProfileService {
         });
       })
       .catch((error) => {
-        logger.error(
-          { error, userId: this.forUser.id },
-          'Failed to init reset user password',
-        );
+        logger.error('[PROFILE] Failed to init reset user password', {
+          error,
+          userId: this.forUser.id,
+        });
 
         throw error;
       });

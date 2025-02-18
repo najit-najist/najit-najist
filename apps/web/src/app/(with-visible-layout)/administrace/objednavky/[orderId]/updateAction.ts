@@ -104,8 +104,8 @@ const onOrderDropped: OrderStateListener = async (order) => {
       await PacketaSoapClient.cancelPacket(packetaParcel?.packetId);
     } else {
       logger.warn(
+        '[ORDER] Could not find packeta parcel for dropped order event',
         { order },
-        'Could not find packeta parcel for dropped order event',
       );
     }
   }
@@ -121,10 +121,10 @@ const onOrderDropped: OrderStateListener = async (order) => {
       );
 
       if (paymentCancelResponse.data.code !== ComgateResponseCode.OK) {
-        logger.warn(
-          { order, resp: paymentCancelResponse.data },
-          'Could not cancel payment, we will try to refund',
-        );
+        logger.warn('[ORDER] Could not cancel payment, we will try to refund', {
+          order,
+          resp: paymentCancelResponse.data,
+        });
 
         const { comgatePayment: orderComgatePayment } = order;
 
@@ -150,9 +150,11 @@ const onOrderDropped: OrderStateListener = async (order) => {
         }
       }
     } else {
-      logger.fatal(
-        { order },
-        'Could not find comgate payment for dropped order event',
+      logger.error(
+        '[ORDER] Could not find comgate payment for dropped order event',
+        {
+          order,
+        },
       );
     }
   }
@@ -189,15 +191,15 @@ export async function updateOrderAction(options: UpdateOrderActionOption) {
       await methodForNewState(order)
         .catch((error) => {
           logger.error(
+            `[ORDER] Order flow ${newState} - could not finish listener due to some errors`,
             { error, order },
-            `Order flow ${newState} - could not finish listener due to some errors`,
           );
         })
         .finally(() => {
-          logger.warn(
-            { perf: perf.summarize(), newState },
-            'Perf of order state hooks',
-          );
+          logger.warn('[ORDER] Perf of order state hooks', {
+            perf: perf.summarize(),
+            newState,
+          });
         });
     }
   }

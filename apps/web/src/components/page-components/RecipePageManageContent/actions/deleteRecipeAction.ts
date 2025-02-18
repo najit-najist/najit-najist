@@ -16,7 +16,7 @@ export const deleteRecipeAction = createActionWithValidation(
     const loggedInUser = await getLoggedInUser();
 
     if (loggedInUser.role !== UserRoles.ADMIN) {
-      logger.error('NON ADMIN - tried to delete recipe');
+      logger.error('[RECIPES] NON ADMIN - tried to delete recipe');
       throw new Error('Not authorized');
     }
 
@@ -39,7 +39,7 @@ export const deleteRecipeAction = createActionWithValidation(
   },
   {
     onHandlerError(error, input) {
-      logger.error({ error, input }, 'Could not delete recipe');
+      logger.error('[RECIPES] Could not delete recipe', { error, input });
     },
   },
 );

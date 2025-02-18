@@ -53,7 +53,7 @@ export const updateMyProfileImageAction = async (
       image: imageAsBase64Url,
     };
   } catch (error) {
-    logger.error({ error }, 'Failed to update user profile image');
+    logger.error('[PROFILE] Failed to update user profile image', { error });
 
     return {
       success: false,

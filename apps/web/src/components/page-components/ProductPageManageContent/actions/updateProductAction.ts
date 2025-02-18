@@ -204,7 +204,9 @@ export const updateProductAction = createActionWithValidation(
   },
   {
     onHandlerError(error) {
-      logger.error(error, 'Failed to update product');
+      logger.error('[PRODUCTS] Failed to update product', {
+        error,
+      });
     },
   },
 );

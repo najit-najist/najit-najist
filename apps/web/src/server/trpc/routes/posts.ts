@@ -105,7 +105,7 @@ export const postsRoute = t.router({
       } catch (error) {
         library.endTransaction();
 
-        logger.error({ error, input }, 'Failed to create post');
+        logger.error('[POSTS] Failed to create post', { error, input });
 
         throw error;
       }
@@ -183,19 +183,16 @@ export const postsRoute = t.router({
       } catch (error) {
         library.endTransaction();
 
-        logger.error(
-          {
-            error,
-            input: {
-              ...input,
-              data: {
-                ...input.data,
-                image: null,
-              },
+        logger.error('[POSTS] Failed to update post', {
+          error,
+          input: {
+            ...input,
+            data: {
+              ...input.data,
+              image: null,
             },
           },
-          'Failed to update post',
-        );
+        });
 
         throw error;
       }

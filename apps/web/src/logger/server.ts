@@ -1,10 +1,5 @@
-import pino from 'pino';
+import { Node as Logtail } from '@logtail/js';
 
-const transport = process.env.NEXT_PUBLIC_LOGTAIL_TOKEN
-  ? pino.transport({
-      target: '@logtail/pino',
-      options: { sourceToken: process.env.NEXT_PUBLIC_LOGTAIL_TOKEN },
-    })
-  : undefined;
-
-export const logger = pino(transport);
+export const logger = process.env.NEXT_PUBLIC_LOGTAIL_TOKEN
+  ? new Logtail(process.env.NEXT_PUBLIC_LOGTAIL_TOKEN, {})
+  : ({} as InstanceType<typeof Logtail>);

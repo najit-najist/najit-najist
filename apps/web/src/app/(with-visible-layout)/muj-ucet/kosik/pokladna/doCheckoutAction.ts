@@ -93,10 +93,10 @@ const sendEmails = (orderId: Order['id']) => {
           subject: `Nová objednávka #${order.id} na najitnajist.cz`,
           body: adminNoticeHtml,
         }).catch((error) => {
-          logger.error(
-            { error, order },
-            `Order flow - could not notify admin to its email with order information`,
-          );
+          logger.error(`[CHECKOUT] admin notification failed to be sent`, {
+            error,
+            order,
+          });
         }),
       ),
     );
@@ -108,14 +108,16 @@ const sendEmails = (orderId: Order['id']) => {
       subject: `Objednávka #${order.id} na najitnajist.cz`,
       body: userNoticeHtml,
     }).catch((error) => {
-      logger.error(
-        { error, order },
-        `Order flow - could not notify user to its email with order information`,
-      );
+      logger.error(`[CHECKOUT] user notification failed to be sent`, {
+        error,
+        order,
+      });
     });
     sendUserPerf.stop();
 
-    logger.warn(perf.summarize(), 'Order email');
+    logger.warn('[CHECKOUT] email duration', {
+      duration: perf.summarize(),
+    });
   });
 };
 
@@ -170,12 +172,15 @@ const trackEvent = async (orderId: Order['id']) => {
       });
     }
     productsEventPerf.stop();
-    logger.warn(perf.summarize(), 'Order event duration summarize');
+    logger.warn('[CHECKOUT] tracking event finished', {
+      duration: perf.summarize(),
+    });
   } catch (error) {
-    logger.error(
-      { orderId, error, performance: perf.summarize() },
-      'Failed to track event for new order',
-    );
+    logger.error('[CHECKOUT] tracking event failed', {
+      orderId,
+      error,
+      performance: perf.summarize(),
+    });
   }
 };
 
@@ -399,12 +404,14 @@ export const doCheckoutAction = createActionWithValidation(
       revalidatePath('/muj-ucet/objednavky');
       revalidatePath('/administrace/objednavky');
 
-      logger.warn(perf.summarize(), 'Order duration');
+      logger.warn('[CHECKOUT] duration', {
+        duration: perf.summarize(),
+      });
     } catch (error) {
-      logger.error(
-        { error, performance: perf.summarize() },
-        'Failed to create order',
-      );
+      logger.error('Failed to create order', {
+        error,
+        performance: perf.summarize(),
+      });
       throw error;
     }
 

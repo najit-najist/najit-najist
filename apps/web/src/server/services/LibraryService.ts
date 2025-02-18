@@ -34,10 +34,10 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
         Buffer.from(base64Content, 'base64'),
       );
     } catch (error) {
-      logger.error(
-        { error, absoluteFilepath },
-        'Failed to commit file to file system',
-      );
+      logger.error('[LIBRARY] Failed to commit file to file system', {
+        error,
+        absoluteFilepath,
+      });
 
       return error as Error;
     }
@@ -47,10 +47,10 @@ export class LibraryService<M extends PgTableWithColumns<any>> {
     try {
       await fs.remove(absoluteFilepath);
     } catch (error) {
-      logger.error(
-        { error, absoluteFilepath },
-        'Failed to delete file from file system',
-      );
+      logger.error('[LIBRARY] Failed to delete file from file system', {
+        error,
+        absoluteFilepath,
+      });
 
       return error as Error;
     }

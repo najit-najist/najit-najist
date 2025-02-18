@@ -31,7 +31,7 @@ export const deleteUserAction = createActionWithValidation(
     const loggedInUser = await getLoggedInUser();
 
     if (loggedInUser.role !== UserRoles.ADMIN) {
-      logger.error('NON ADMIN - tried to delete user');
+      logger.error('[USERS] not eligible user tried to delete an user');
       throw new Error('Not authorized');
     }
 
@@ -42,7 +42,10 @@ export const deleteUserAction = createActionWithValidation(
         await tx.delete(users).where(eq(users.id, user.id));
       });
     } catch (error) {
-      logger.error({ userId: user.id, error }, 'User cannot be deleted');
+      logger.error('[USERS] User cannot be deleted', {
+        userId: user.id,
+        error,
+      });
 
       redirect(`${pathname}?failed-to-delete`);
     }

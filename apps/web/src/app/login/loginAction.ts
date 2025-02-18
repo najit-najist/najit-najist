@@ -38,8 +38,8 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
       });
 
       logger.warn(
+        '[LOGIN] Subscribed user tried to login, but we showed message',
         { email: input.email },
-        'Subscribed user tried to login, but we showed message',
       );
 
       return;
@@ -59,14 +59,16 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
         path: ['password'],
       });
       logger.warn(
-        { email: input.email },
         userForInput
-          ? 'User gave invalid credentials'
-          : 'User tried to log in under non existing email',
+          ? '[LOGIN] User gave invalid credentials'
+          : '[LOGIN] User tried to log in under non existing email',
+        { email: input.email },
       );
     } else {
       if (userForInput.status === UserStates.INVITED) {
-        logger.warn({ email: input.email }, 'Unverified user tried to log in');
+        logger.warn('[LOGIN] Unverified user tried to log in', {
+          email: input.email,
+        });
 
         ctx.addIssue({
           code: 'custom',
@@ -75,10 +77,10 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
           path: ['root'],
         });
       } else if (userForInput.status === UserStates.BANNED) {
-        logger.warn(
-          { email: input.email, status: userForInput.status },
-          'User banned tried to log in',
-        );
+        logger.warn('[LOGIN] Banned user tried to log in', {
+          email: input.email,
+          status: userForInput.status,
+        });
 
         ctx.addIssue({
           code: 'custom',
@@ -88,10 +90,10 @@ const inputValidation = userProfileLogInInputSchema.superRefine(
           path: ['root'],
         });
       } else if (userForInput.status === UserStates.DEACTIVATED) {
-        logger.warn(
-          { email: input.email, status: userForInput.status },
-          'User deactivated tried to log in',
-        );
+        logger.warn('[LOGIN] User deactivated tried to log in', {
+          email: input.email,
+          status: userForInput.status,
+        });
 
         ctx.addIssue({
           code: 'custom',
@@ -186,15 +188,12 @@ export async function loginAction(options: LoginActionOptions) {
   const validatedInput = await inputValidation.safeParseAsync(options);
 
   if (!validatedInput.success) {
-    logger.warn(
-      {
-        input: {
-          email: options.email,
-        },
-        errors: validatedInput.error.format(),
+    logger.warn('[LOGIN] Invalid input', {
+      input: {
+        email: options.email,
       },
-      'User failed to log in, but tried',
-    );
+      errors: validatedInput.error.format(),
+    });
 
     return {
       errors: zodErrorToFormErrors(validatedInput.error.errors, true),
@@ -207,10 +206,7 @@ export async function loginAction(options: LoginActionOptions) {
       email: validatedInput.data.email,
     });
 
-    logger.info(
-      { email: validatedInput.data.email },
-      'User successfully logged in',
-    );
+    logger.info('[LOGIN] Success', { email: validatedInput.data.email });
 
     // No need to wait
     user
@@ -218,10 +214,10 @@ export async function loginAction(options: LoginActionOptions) {
         lastLoggedIn: new Date(),
       })
       .catch((error) =>
-        logger.error(
-          { email: validatedInput.data.email, error },
-          'Cannot update user lastLoggedIn',
-        ),
+        logger.error('[LOGIN] Cannot update user lastLoggedIn', {
+          email: validatedInput.data.email,
+          error,
+        }),
       );
 
     const userId = user.getFor().id;
@@ -231,8 +227,8 @@ export async function loginAction(options: LoginActionOptions) {
         await mergeCartsUponLogin(userId, cartId);
       } catch (error) {
         logger.error(
+          '[LOGIN] Failed to merge anonymous cart with the logged in user cart',
           { error, user: { id: userId }, anonymousCartId: cartId },
-          'Failed to merge anonymous cart with the logged in user cart',
         );
       }
     }
@@ -252,7 +248,7 @@ export async function loginAction(options: LoginActionOptions) {
       errors: null,
     };
   } catch (error) {
-    logger.error({ error, validatedInput }, 'Fatal fail during login');
+    logger.error('[LOGIN] Fatal fail during login', { error, validatedInput });
 
     throw error;
   }

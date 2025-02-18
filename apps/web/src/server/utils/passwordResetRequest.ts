@@ -6,15 +6,17 @@ export const passwordResetRequest = async (user: UserWithRelations) => {
   try {
     await ProfileService.forUser(user).resetPassword();
   } catch (error) {
-    logger.error(
-      { userId: user.id, error },
-      'Request user password reset failed',
-    );
+    logger.error('[FORGOTTEN_PASSWORD] Request user password reset failed', {
+      userId: user.id,
+      error,
+    });
 
     throw error;
   }
 
-  logger.info({ userId: user.id }, 'Request user password reset done');
+  logger.info('[FORGOTTEN_PASSWORD] Request user password reset done', {
+    userId: user.id,
+  });
 
   return null;
 };

@@ -40,7 +40,9 @@ export default async function Page({ params }: PageProps) {
   );
 
   if (!exists) {
-    logger.error({ orderId }, 'Failed to find order under account');
+    logger.error('[PROFILE/ORDERS] Failed to find order under account', {
+      orderId,
+    });
     return notFound();
   }
 

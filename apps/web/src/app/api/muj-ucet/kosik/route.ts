@@ -27,7 +27,7 @@ export const GET = async (): Promise<NextResponse> => {
       status: 200,
     });
   } catch (error) {
-    logger.error({ error }, 'Cannot get user cart');
+    logger.error('[CART] Cannot get for user', { error });
 
     return NextResponse.json(null, { status: 500 });
   }

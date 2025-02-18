@@ -109,7 +109,10 @@ export const difficultiesRouter = t.router({
           .returning();
       } catch (error) {
         if (error instanceof DrizzleError) {
-          logger.error(error, 'Failed to create recipe difficulty');
+          logger.error(
+            '[RECIPES/DIFFICULTIES] Failed to create recipe difficulty',
+            { error },
+          );
 
           if (
             error.message.includes('name') ||

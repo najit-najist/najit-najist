@@ -35,8 +35,8 @@ export default async function Page({
     }
 
     logger.error(
+      '[FORGOTTEN_PASSWORD] Failed to get user from token, its expired or invalid',
       { error, token },
-      'Failed to get user from token, its expired or invalid',
     );
 
     return undefined;

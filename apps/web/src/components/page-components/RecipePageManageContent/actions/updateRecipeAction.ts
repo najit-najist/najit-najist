@@ -24,7 +24,7 @@ export const updateRecipeAction = createActionWithValidation(
     const loggedInUser = await getLoggedInUser();
 
     if (loggedInUser.role !== UserRoles.ADMIN) {
-      logger.error('NON ADMIN - tried to update recipe');
+      logger.error('[RECIPES] NON ADMIN - tried to update recipe');
       throw new Error('Not authorized');
     }
 

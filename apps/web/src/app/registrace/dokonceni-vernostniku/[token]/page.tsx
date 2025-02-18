@@ -36,8 +36,8 @@ const RegistrationFinalizationPage = async ({
     }
   } catch (error) {
     logger.error(
+      '[REGISTER/PREVIEW_FINISH] Could not finish preview user registration from token',
       { error },
-      'Could not finish preview user registration from token',
     );
 
     notFound();

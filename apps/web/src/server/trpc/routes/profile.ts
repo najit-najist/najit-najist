@@ -31,8 +31,8 @@ const passwordResetRoutes = t.router({
       forUser = await UserService.getOneBy('email', input.email);
     } catch (error) {
       logger.error(
+        '[FORGOTTEN_PASSWORD] User tried to reset password but no user has been found under email',
         { input, error },
-        'User tried to reset password but no user has been found under email',
       );
 
       return null;
@@ -44,8 +44,8 @@ const passwordResetRoutes = t.router({
       forUser.status !== UserStates.SUBSCRIBED
     ) {
       logger.error(
+        '[FORGOTTEN_PASSWORD] User tried to reset password but its not active or in password reset mode',
         { input },
-        'User tried to reset password but its not active or in password reset mode',
       );
       throw new Error(
         'Váš účet nemůže resetovat heslo jelikož není dokončená registrace nebo byl Váš účet zablokován',
@@ -53,7 +53,9 @@ const passwordResetRoutes = t.router({
     }
 
     if (forUser.status === UserStates.SUBSCRIBED) {
-      logger.warn({ input }, 'Subscribed user reset their password');
+      logger.warn('[FORGOTTEN_PASSWORD] Subscribed user reset their password', {
+        input,
+      });
     }
 
     const result = await passwordResetRequest(forUser);
@@ -69,12 +71,12 @@ const passwordResetRoutes = t.router({
 
         await profileServiceForToken.finalizePasswordReset(input.password);
       } catch (error) {
-        logger.error({ error }, 'User password reset finalize failed');
+        logger.error('[FORGOTTEN_PASSWORD] fail', { error });
 
         throw error;
       }
 
-      logger.info({}, 'User password reset finalize done');
+      logger.info('[FORGOTTEN_PASSWORD] success');
 
       return null;
     }),
@@ -108,28 +110,25 @@ export const profileRouter = t.router({
           assignCartId: ctx.sessionData?.cartId,
         });
 
-        logger.info(
-          {
-            user: omit(user, ['_password']),
-            input: omit(input, ['password']),
-          },
-          'Registering user - user created',
-        );
+        logger.info('[REGISTER] user created', {
+          user: omit(user, ['_password']),
+          input: omit(input, ['password']),
+        });
 
         return {
           email: user.email,
         };
       } catch (error) {
-        logger.error(error, 'Registering user - failed');
+        logger.error('[REGISTER] failed', { error });
 
         if (
           error instanceof DatabaseError &&
           error.code === PostgresErrorCodes.DUPLICATE_KEY
         ) {
-          logger.error(
-            { error, email: input.email },
-            'Registering user - user already exists',
-          );
+          logger.error('[REGISTER] user already exists', {
+            error,
+            email: input.email,
+          });
 
           throw new TRPCError({
             code: 'CONFLICT',
@@ -152,11 +151,11 @@ export const profileRouter = t.router({
         );
         await user.finishRegistration();
 
-        logger.info({}, 'Registering user - verify - finished');
+        logger.info('[REGISTER/VERIFY] fiinished');
 
         return true;
       } catch (error) {
-        logger.error(error, 'Registering user - verify - error');
+        logger.error('[REGISTER/VERIFY] failed');
 
         throw error;
       }

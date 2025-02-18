@@ -123,12 +123,9 @@ export const createProductAction = createActionWithValidation(
   },
   {
     onHandlerError(error) {
-      logger.error(
-        {
-          error,
-        },
-        'Failed to create product',
-      );
+      logger.error('[PRODUCTS] Failed to create product', {
+        error,
+      });
     },
   },
 );

@@ -34,7 +34,7 @@ export const updateMyAddressAction = async (
       message: 'Vaše adresa je uložená',
     };
   } catch (error) {
-    logger.error({ error }, 'Failed to update user address');
+    logger.error('[PROFILE/ADDRESS] Failed to update', { error });
 
     return {
       errors: {},

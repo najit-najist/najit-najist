@@ -30,20 +30,17 @@ export const createUserAction = createActionWithValidation(
     const loggedInUser = await getLoggedInUser();
 
     if (loggedInUser.role !== UserRoles.ADMIN) {
-      logger.error('NON ADMIN - tried to create user');
+      logger.error('[USERS] ineligible user tried to create user');
       throw new Error('Not authorized');
     }
 
     // TODO: Require telephone!!!!!
     const user = await ProfileService.registerOne(input as any);
 
-    logger.info(
-      {
-        user: omit(user, ['_password']),
-        input: omit(input, ['password']),
-      },
-      'Registering user - user created',
-    );
+    logger.info('[USERS] new user created', {
+      user: omit(user, ['_password']),
+      input: omit(input, ['password']),
+    });
 
     revalidatePath('/administrace');
     revalidatePath('/administrace/uzivatele');

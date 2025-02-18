@@ -41,7 +41,7 @@ const categoriesRoutes = t.router({
           })
           .returning();
       } catch (error) {
-        logger.error(error, 'Failed to create product category');
+        logger.error('[PRODUCTS] Failed to create product category', { error });
         if (error instanceof DrizzleError) {
           if (
             error.message.includes('title') ||
@@ -55,7 +55,7 @@ const categoriesRoutes = t.router({
           }
         }
 
-        logger.error(error, 'Could not create product category');
+        logger.error('[PRODUCTS] Could not create product category', { error });
 
         throw error;
       }

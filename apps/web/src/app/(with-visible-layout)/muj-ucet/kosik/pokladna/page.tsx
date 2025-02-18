@@ -128,6 +128,7 @@ export default async function Page() {
 
   if (!defaultDeliveryMethod) {
     logger.error(
+      '[PRECHECKOUT] Wrong cart product x delivery method combination',
       {
         cart: {
           id: cart.id,
@@ -138,7 +139,6 @@ export default async function Page() {
         })),
         deliveryMethods: deliverMethodsAsArray.map((d) => ({ id: d.id })),
       },
-      'Wrong cart product x delivery method combination',
     );
   }
 

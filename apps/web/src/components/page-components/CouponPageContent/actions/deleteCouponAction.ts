@@ -40,10 +40,9 @@ export const deleteCouponAction = createActionWithValidation(
     const wasUsedInOrder = coupon.patches.some(({ orders }) => orders.length);
 
     if (wasUsedInOrder) {
-      logger.error(
-        { coupon: { id: coupon.id } },
-        'Tried to delete coupon but it was used',
-      );
+      logger.error('[COUPONS] Tried to delete coupon but it was used', {
+        coupon: { id: coupon.id },
+      });
 
       notFound();
     }

@@ -17,19 +17,16 @@ function handler(request: NextRequest) {
         return;
       }
 
-      logger.error(
-        {
-          type,
-          error: {
-            ...error,
-            message: error.message,
-            stack: error.stack,
-          },
-          path,
-          userId: authContent?.userId,
+      logger.error('[TRPC] An error happened', {
+        type,
+        error: {
+          ...error,
+          message: error.message,
+          stack: error.stack,
         },
-        'An error happened in TRPC handlers',
-      );
+        path,
+        userId: authContent?.userId,
+      });
     },
   }).then((resp) => {
     return resp;

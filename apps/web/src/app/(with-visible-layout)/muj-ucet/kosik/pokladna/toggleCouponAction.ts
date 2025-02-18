@@ -40,8 +40,8 @@ export const toggleCouponAction = async (input: { name?: string }) => {
 
   if (!cart) {
     logger.warn(
+      '[PRECHECKOUT] User tried to pick coupon, but has no items in cart. This is probably bug',
       { loggedInUserId },
-      'User tried to pick coupon, but has no items in cart. This is probably bug',
     );
 
     throw new Error('Žádné produkty v košíku');
@@ -58,10 +58,11 @@ export const toggleCouponAction = async (input: { name?: string }) => {
         delete errors[''];
       }
 
-      logger.warn(
-        { errors, input, loggedInUserId },
-        'User tried to pick coupon, but validation failed',
-      );
+      logger.warn('[PRECHECKOUT] User tried to pick invalid coupon', {
+        errors,
+        input,
+        loggedInUserId,
+      });
 
       return {
         errors,

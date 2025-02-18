@@ -48,10 +48,10 @@ export default async function Page({ params }: Params) {
   );
 
   if (!product) {
-    logger.error(
-      { productSlug, loggedInUser: loggedInUser.email },
-      'Could not find product to administrate',
-    );
+    logger.error('[PRODUCTS] Could not find product to administrate', {
+      productSlug,
+      loggedInUser: loggedInUser.email,
+    });
     notFound();
   }
 

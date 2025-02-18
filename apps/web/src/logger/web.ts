@@ -1,4 +1,4 @@
-import { Logtail } from '@logtail/browser';
+import { Browser as Logtail } from '@logtail/js';
 
 export const logger =
   process.env.NEXT_PUBLIC_LOGTAIL_TOKEN &&

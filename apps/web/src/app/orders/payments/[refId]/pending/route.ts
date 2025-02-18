@@ -24,8 +24,8 @@ export const GET = async (
 
   if (!comgatePayment) {
     logger.error(
+      '[ORDER/PAYMENTS] User tried to hit pending redirect on order that does not exist',
       { params },
-      'User tried to hit pending redirect on order that does not exist',
     );
 
     notFound();
@@ -40,8 +40,8 @@ export const GET = async (
     stateFromComgate.status !== ComgateOrderState.PENDING
   ) {
     logger?.error(
+      '[ORDER/PAYMENTS] User tried to hit pending redirect on order is not pending or does not exist',
       { params, stateFromComgate },
-      'User tried to hit pending redirect on order is not pending or does not exist',
     );
 
     notFound();

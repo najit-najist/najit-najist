@@ -75,7 +75,9 @@ export const checkoutCartSchemaServer = userCartCheckoutInputSchema
           fatal: true,
           path: ['deliveryMethod.meta'],
         });
-        logger.error({ error }, 'Failed the validation of pickup point');
+        logger.error('[CHECKOUT] pickup point validation failed', {
+          error,
+        });
       }
     }
   });

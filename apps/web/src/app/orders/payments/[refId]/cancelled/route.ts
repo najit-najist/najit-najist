@@ -44,8 +44,8 @@ export const GET = async (
 
   if (!comgatePayment) {
     logger.error(
+      '[ORDER/PAYMENTS] User tried to hit cancelled redirect on order that does not exist',
       { params },
-      'User tried to hit cancelled redirect on order that does not exist',
     );
 
     notFound();
@@ -60,8 +60,8 @@ export const GET = async (
     stateFromComgate.status !== ComgateOrderState.CANCELLED
   ) {
     logger?.error(
+      '[ORDER/PAYMENTS] User tried to hit cancelled redirect on order is not cancelled or does not exist',
       { params, stateFromComgate },
-      'User tried to hit cancelled redirect on order is not cancelled or does not exist',
     );
 
     notFound();
@@ -92,8 +92,8 @@ export const GET = async (
     );
   } catch (error) {
     logger.error(
+      '[ORDER/PAYMENTS] Failed to return products on dropped payment',
       { error, params },
-      'Failed to return products on dropped payment',
     );
   }
 

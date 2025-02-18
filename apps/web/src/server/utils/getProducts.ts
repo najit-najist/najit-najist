@@ -120,7 +120,7 @@ export async function getProducts(
       total: count,
     };
   } catch (error) {
-    logger.error(error, 'Failed to get many products');
+    logger.error('[PRODUCTS] Failed to get many products', { error });
 
     throw error;
   }

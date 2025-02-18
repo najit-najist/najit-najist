@@ -39,22 +39,16 @@ export class MailService {
         replyTo: ADMIN_EMAIL,
       });
 
-      logger.info(
-        {
-          rejected: result?.rejected,
-          response: result?.response,
-          payload: { bodyLength: body.length, subject, to },
-        },
-        `MailService - success`,
-      );
+      logger.info(`[EMAIL] Success`, {
+        rejected: result?.rejected,
+        response: result?.response,
+        payload: { bodyLength: body.length, subject, to },
+      });
     } catch (error) {
-      logger.error(
-        {
-          error,
-          payload: { body, subject, to },
-        },
-        'MailService - sending failed',
-      );
+      logger.error(`[EMAIL] Error`, {
+        error,
+        payload: { body, subject, to },
+      });
 
       throw Error('Posílání emailu nebylo úspěšné.');
     }
