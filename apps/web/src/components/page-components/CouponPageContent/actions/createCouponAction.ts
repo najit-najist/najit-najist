@@ -8,8 +8,11 @@ import {
   couponsForProductCategories,
   couponsForProducts,
 } from '@najit-najist/database/models';
+import { InsufficientRoleError } from '@server/errors';
+import { canUser, UserActions } from '@server/utils/canUser';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { isDatabaseDuplicateError } from '@server/utils/isDatabaseDuplicateError';
+import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { FieldError } from 'react-hook-form';
@@ -19,6 +22,12 @@ import { createCouponSchema } from '../schemas/createCouponSchema';
 export const createCouponAction = createActionWithValidation(
   createCouponSchema,
   async (input) => {
+    const user = await getLoggedInUser();
+
+    if (!canUser(user, UserActions.CREATE, coupons)) {
+      throw new InsufficientRoleError();
+    }
+
     let createdId: number;
 
     try {

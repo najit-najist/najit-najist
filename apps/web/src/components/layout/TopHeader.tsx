@@ -62,6 +62,10 @@ const adminLinks: Array<{ label: string; href: string }> = [
     href: '/administrace/uzivatele',
   },
   {
+    label: 'Možnosti dopravy',
+    href: '/administrace/doprava',
+  },
+  {
     label: 'Recepty',
     href: '/recepty',
   },

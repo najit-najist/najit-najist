@@ -9,8 +9,11 @@ import {
   couponsForProductCategories,
   couponsForProducts,
 } from '@najit-najist/database/models';
+import { InsufficientRoleError } from '@server/errors';
+import { canUser, UserActions } from '@server/utils/canUser';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { isDatabaseDuplicateError } from '@server/utils/isDatabaseDuplicateError';
+import { getLoggedInUser } from '@server/utils/server';
 import { revalidatePath } from 'next/cache';
 import { notFound, redirect } from 'next/navigation';
 import { FieldError } from 'react-hook-form';
@@ -21,6 +24,12 @@ import { updateCouponSchema } from '../schemas/updateCouponSchema';
 export const updateCouponAction = createActionWithValidation(
   z.object({ id: z.number(), values: updateCouponSchema }),
   async ({ id, values }) => {
+    const user = await getLoggedInUser();
+
+    if (!canUser(user, UserActions.UPDATE, coupons)) {
+      throw new InsufficientRoleError();
+    }
+
     const coupon = await database.query.coupons.findFirst({
       where: (s, { eq }) => eq(s.id, id),
     });
