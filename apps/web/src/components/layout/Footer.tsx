@@ -122,7 +122,7 @@ export const Footer: FC<PropsWithChildren> = () => {
               </div>
             </div>
           </div>
-          <div className="mt-12 grid grid-cols-2 gap-8 lg:col-span-2 xl:mt-0">
+          <div className="mt-12 lg:mt-0 grid grid-cols-2 gap-8 lg:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-base font-medium text-project-secondary font-title">
