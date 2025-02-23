@@ -225,8 +225,23 @@ export const ProductPageManageContent: FC<
           ) : null}
 
           {product && viewType === 'view' ? (
-            <div className="flex mt-10">
-              <UserActions stock={product.stock} product={product} />
+            <div>
+              <div className="flex mt-10">
+                <UserActions stock={product.stock} product={product} />
+              </div>
+              <p className="font-semibold pt-1">
+                {product.stock ? (
+                  product.stock.value > 0 ? (
+                    <small className="text-project-primary">
+                      Produkt máme skladem
+                    </small>
+                  ) : null
+                ) : (
+                  <small className="text-orange-400">
+                    Pouze na objednávku!
+                  </small>
+                )}
+              </p>
             </div>
           ) : null}
 
