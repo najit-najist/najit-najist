@@ -1,6 +1,7 @@
 'use server';
 
 import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import {
@@ -106,6 +107,7 @@ export const updateCouponAction = createActionWithValidation(
           }
         }
       });
+      logger.info('[PRODUCT] Updated', { input: { id, values } });
     } catch (error) {
       if (isDatabaseDuplicateError(error)) {
         return {

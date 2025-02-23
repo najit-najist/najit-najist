@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { productRawMaterials, UserRoles } from '@najit-najist/database/models';
@@ -42,6 +43,8 @@ export const updateProductRawMaterialAction = createActionWithValidation(
       })
       .where(eq(productRawMaterials.id, input.id))
       .returning();
+
+    logger.info('[MATERIAL] Updated', { input });
 
     return { success: true, data };
   },

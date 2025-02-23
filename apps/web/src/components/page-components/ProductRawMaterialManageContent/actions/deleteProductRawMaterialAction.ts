@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import {
@@ -39,6 +40,7 @@ export const deleteProductRawMaterialAction = createActionWithValidation(
     }
 
     await database.delete(productRawMaterials).where(eq(coupons.id, item.id));
+    logger.info('[MATERIAL] Deleted', { input });
 
     revalidatePath('/administrace/suroviny');
     for (const { product } of item.partOf) {

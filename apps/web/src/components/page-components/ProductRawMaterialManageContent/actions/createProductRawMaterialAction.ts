@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { productRawMaterials, UserRoles } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
@@ -37,6 +38,8 @@ export const createProductRawMaterialAction = createActionWithValidation(
         slug: slugifyString(input.name),
       })
       .returning();
+
+    logger.info('[MATERIAL] Created', { input });
 
     return { success: true, data };
   },

@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { productAlergens, UserRoles } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
@@ -33,6 +34,8 @@ export const createProductAlergen = createActionWithValidation(
         description: input.description,
       })
       .returning();
+
+    logger.info('[PRODUCT_ALERGEN] Created', { input });
 
     return { success: true, data };
   },

@@ -81,6 +81,8 @@ export const createRecipeAction = createActionWithValidation(
         return created;
       });
 
+      logger.info('[RECIPES] Created', { input, id: recipe.id });
+
       const adminRoute = `/administrace/recepty/${recipe.slug}`;
       revalidatePath(`/recepty/${recipe.slug}`);
       revalidatePath(adminRoute);

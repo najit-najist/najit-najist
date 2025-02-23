@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { posts } from '@najit-najist/database/models';
@@ -30,6 +31,7 @@ export const deletePostAction = createActionWithValidation(
     }
 
     await database.delete(posts).where(eq(posts.id, input.id));
+    logger.info('[POSTS] Delete', { input });
 
     revalidatePath(`/clanky/${encodeURIComponent(existing.slug)}`);
     revalidatePath('/clanky');

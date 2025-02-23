@@ -185,6 +185,7 @@ export const updateProductAction = createActionWithValidation(
       });
 
       const adminPath = `/administrace/produkty/${encodeURIComponent(updated.slug)}`;
+      logger.info('[PRODUCT] Updated', { input });
 
       revalidatePath('/muj-ucet/kosik');
       revalidatePath(`/produkty/${encodeURIComponent(updated.slug)}`);

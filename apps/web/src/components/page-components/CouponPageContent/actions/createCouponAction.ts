@@ -1,6 +1,7 @@
 'use server';
 
 import { DEFAULT_TIMEZONE, dayjs } from '@dayjs';
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import {
   couponPatches,
@@ -73,6 +74,8 @@ export const createCouponAction = createActionWithValidation(
 
         return created.id;
       });
+
+      logger.info('[COUPON] Created', { input });
     } catch (error) {
       if (isDatabaseDuplicateError(error)) {
         return {

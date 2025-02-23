@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { products } from '@najit-najist/database/models';
@@ -30,6 +31,7 @@ export const deleteProductAction = createActionWithValidation(
     }
 
     await database.delete(products).where(eq(products.id, input.id));
+    logger.info('[PRODUCT] Deleted', { input });
 
     revalidatePath(`/produkty/${encodeURIComponent(existing.slug)}`);
     revalidatePath('/administrace/produkty');

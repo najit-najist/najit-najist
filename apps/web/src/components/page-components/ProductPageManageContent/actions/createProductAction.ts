@@ -110,6 +110,8 @@ export const createProductAction = createActionWithValidation(
       revalidatePath(`/produkty`);
       revalidatePath(`/administrace`);
 
+      logger.info('[PRODUCT] Created', { input });
+
       redirect(`/administrace/produkty/${encodeURIComponent(created.slug)}`);
 
       return created;

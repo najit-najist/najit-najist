@@ -145,6 +145,8 @@ export const updateRecipeAction = createActionWithValidation(
         }
       });
 
+      logger.info('[RECIPES] Updated', { input });
+
       revalidatePath(`/recepty/${existing.slug}`);
       revalidatePath(`/administrace/recepty/${existing.slug}`);
       revalidatePath(`/recepty`);

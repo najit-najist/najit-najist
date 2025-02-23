@@ -30,6 +30,8 @@ export const deleteRecipeAction = createActionWithValidation(
 
     await database.delete(recipes).where(eq(recipes.id, input.id));
 
+    logger.info('[RECIPES] Deleted', { input });
+
     revalidatePath(`/administrace/recepty/${existing.slug}`);
     revalidatePath(`/recepty/${existing.slug}`);
     revalidatePath(`/recepty`);

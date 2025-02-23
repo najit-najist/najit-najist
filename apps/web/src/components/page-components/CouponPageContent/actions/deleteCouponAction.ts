@@ -48,6 +48,7 @@ export const deleteCouponAction = createActionWithValidation(
     }
 
     await database.delete(coupons).where(eq(coupons.id, coupon.id));
+    logger.info('[PRODUCT] Deleted', { input });
 
     revalidatePath('/administrace/kupony');
     redirect('/administrace/kupony');

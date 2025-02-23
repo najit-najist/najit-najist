@@ -1,5 +1,6 @@
 'use server';
 
+import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { orderDeliveryMethods } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
@@ -39,6 +40,11 @@ export const updateShipmentMethodAction = createActionWithValidation(
       })
       .where(eq(orderDeliveryMethods.id, id))
       .returning();
+
+    logger.info('[SHIPPING] Updated', {
+      id,
+      values,
+    });
 
     revalidatePath(`/administrace/doprava`);
     revalidatePath(`/administrace/doprava/${updated.id}`);
