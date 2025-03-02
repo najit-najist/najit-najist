@@ -1,11 +1,14 @@
+import { relations } from 'drizzle-orm';
 import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
+import { productsToDeliveryMethods } from './productsToDeliveryMethods';
 
 export enum OrderDeliveryMethodsSlug {
   PACKETA = 'send',
   BALIKOVNA = 'send-balikovna',
   LOCAL_PICKUP = 'local-pickup',
+  DELIVERY_HRADEC_KRALOVE = 'delivery-hradec-kralove',
 }
 
 export const orderDeliveryMethods = pgTable(

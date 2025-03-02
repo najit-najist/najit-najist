@@ -10,6 +10,7 @@ export * from './newsletterSubscriptions';
 
 export * from './orderAddresses';
 export * from './orderDeliveryMethods';
+export * from './orderDeliveryMethodsRelations';
 export * from './orderedProducts';
 export * from './orderLocalPickupDates';
 export * from './orderPaymentMethods';
@@ -29,6 +30,8 @@ export * from './productImages';
 export * from './productDiscounts';
 export * from './products';
 export * from './productStock';
+export * from './productsToDeliveryMethods';
+export * from './productToDeliveryMethodsRelations';
 
 export * from './recipeCategories';
 export * from './recipeDifficulties';
