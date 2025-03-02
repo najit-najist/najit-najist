@@ -40,6 +40,7 @@ export const MunicipalitySelect: FC<
       error={fieldState.error}
       disabled={rest.disabled ?? false}
       {...rest}
+      ref={field.ref}
     />
   );
 };

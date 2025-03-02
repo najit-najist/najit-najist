@@ -37,13 +37,13 @@ export const StockEdit: FC = () => {
       <CheckboxWrapper
         childId="product-stock-enabled"
         title="U produktu vedeme sklad"
-        className="font-title !text-base"
+        className="!text-sm"
       >
         <Checkbox
           id="product-stock-enabled"
           checked={stockEnabled}
           onChange={onStockToggle}
-          size="md"
+          size="normal"
         />
       </CheckboxWrapper>
       {stockEnabled ? (

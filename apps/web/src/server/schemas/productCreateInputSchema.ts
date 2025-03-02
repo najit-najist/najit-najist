@@ -1,3 +1,4 @@
+import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import {
   encodedImageSchema,
   stringOrDateToDateSchema,
@@ -14,7 +15,15 @@ export const productCreateInputSchema = z.object({
     .min(1, 'Toto pole je povinné'),
   description: z.string().trim().nullish(),
   category: entityLinkSchema.optional(),
-  onlyForDeliveryMethod: entityLinkSchema.nullable().optional(),
+  toDeliveryMethods: z
+    .record(z.nativeEnum(OrderDeliveryMethodsSlug), z.boolean())
+    .transform((value) =>
+      Object.fromEntries(
+        Object.entries(value).filter(([, enabled]) => enabled),
+      ),
+    )
+    .nullable()
+    .optional(),
   publishedAt: stringOrDateToDateSchema,
   manufacturer: z
     .string()

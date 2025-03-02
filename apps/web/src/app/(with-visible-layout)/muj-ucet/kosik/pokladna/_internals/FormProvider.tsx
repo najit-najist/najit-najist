@@ -4,6 +4,7 @@ import { reactTransitionContext } from '@contexts/reactTransitionContext';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { usePlausible } from '@hooks/usePlausible';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
+import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import { userCartCheckoutInputSchema } from '@najit-najist/schemas';
 import { useQueryClient } from '@tanstack/react-query';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
@@ -21,6 +22,7 @@ import {
   useForm,
 } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 import { doCheckoutAction } from '../doCheckoutAction';
 import { FormValues } from './types';
@@ -33,6 +35,24 @@ type OptionalFormValues = Omit<
   deliveryMethod: { slug: null | string };
 };
 
+const resolver = zodResolver(
+  userCartCheckoutInputSchema.superRefine((value, ctx) => {
+    if (
+      value.deliveryMethod.slug ===
+        OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE &&
+      value.address.municipality.slug !== 'hradec-kralove'
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Pro dopravu kurýrem musíte mít dodací adresu v Hradci Králové',
+        fatal: true,
+        path: ['address.municipality'],
+      });
+    }
+  }),
+);
+
 export const FormProvider: FC<
   PropsWithChildren<{
     defaultFormValues?: OptionalFormValues;
@@ -44,7 +64,7 @@ export const FormProvider: FC<
   const plausible = usePlausible();
   const formMethods = useForm({
     defaultValues: defaultFormValues,
-    resolver: zodResolver(userCartCheckoutInputSchema),
+    resolver: resolver,
   });
   const { handleSubmit, setError } = formMethods;
 
@@ -52,8 +72,8 @@ export const FormProvider: FC<
     async (formValues) => {
       const newOrderAsPromise = doCheckoutAction(formValues).then(
         async (response) => {
+          console.log({ response });
           if (response?.errors) {
-            console.log(response);
             const errorsAsArray = Object.entries(response.errors);
             for (const [key, value] of errorsAsArray) {
               setError(key as any, value);

@@ -56,17 +56,7 @@ export const PacketaPickupDelivery: FC = () => {
       />
       <Alert
         className="w-full"
-        heading={
-          <>
-            Vybrání místa vyzvednutí
-            {fieldError || fieldValue?.error ? (
-              <ExclamationTriangleIcon
-                className="w-4 h-4 inline-block ml-2 text-red-500"
-                title="Upravte nebo dokončete výběr"
-              />
-            ) : null}
-          </>
-        }
+        heading={<>Výběr místa vyzvednutí</>}
         color="warning"
         icon={TruckIcon}
       >
@@ -129,6 +119,7 @@ export const PacketaPickupDelivery: FC = () => {
             )}
             <div className="flex gap-2 mt-4 items-center">
               <Button
+                ref={field.ref}
                 color={fieldError || fieldValue?.error ? 'red' : 'yellow'}
                 disabled={!process.env.NEXT_PUBLIC_PACKETA_KEY || isDisabled}
                 isLoading={formState.isSubmitting}

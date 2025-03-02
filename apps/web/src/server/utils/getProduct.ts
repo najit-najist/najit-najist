@@ -32,7 +32,6 @@ export async function getProduct(
         orderBy: (schema, { asc }) => asc(schema.createdAt),
       },
       category: true,
-      onlyForDeliveryMethod: true,
       stock: true,
       composedOf: {
         with: {
@@ -45,6 +44,11 @@ export async function getProduct(
           alergen: true,
         },
         // orderBy: (schema, {asc}) => asc(schema.)
+      },
+      limitedToDeliveryMethods: {
+        with: {
+          deliveryMethod: true,
+        },
       },
     },
   });

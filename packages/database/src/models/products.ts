@@ -37,9 +37,6 @@ export const products = pgTable(
           onDelete: 'restrict',
         },
       ),
-      onlyForDeliveryMethodId: integer(
-        'only_for_delivery_method_id',
-      ).references(() => orderDeliveryMethods.id, { onDelete: 'cascade' }),
       weight: integer('weight').default(0),
     }),
   ),
@@ -50,10 +47,6 @@ export const productsRelations = relations(products, ({ one, many }) => ({
   category: one(productCategories, {
     fields: [products.categoryId],
     references: [productCategories.id],
-  }),
-  onlyForDeliveryMethod: one(orderDeliveryMethods, {
-    fields: [products.onlyForDeliveryMethodId],
-    references: [orderDeliveryMethods.id],
   }),
   discount: one(productDiscounts),
   stock: one(productStock),

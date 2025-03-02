@@ -29,10 +29,19 @@ export const deliveryMethodSchema = z.discriminatedUnion('slug', [
   z.object({
     slug: z.literal(OrderDeliveryMethodsSlug.BALIKOVNA),
   }),
+  z.object({
+    slug: z.literal(OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE),
+  }),
 ]);
 
-export const orderAddressSchema = z.object({
-  municipality: entityLinkSchema,
+const orderAddressSchema = z.object({
+  municipality: entityLinkSchema
+    .extend({
+      slug: z.string().nullish(),
+    })
+    .refine((value) => !!value.slug, {
+      message: 'Prosím vyhledejte kraj a vyberte z nabídky',
+    }),
   houseNumber: z
     .string({ required_error: MESSAGES.requiredHouseNumber })
     .min(1, MESSAGES.requiredHouseNumber),

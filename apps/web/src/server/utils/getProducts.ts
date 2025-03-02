@@ -101,8 +101,12 @@ export async function getProducts(
         with: {
           category: true,
           images: true,
-          onlyForDeliveryMethod: true,
           stock: true,
+          limitedToDeliveryMethods: {
+            with: {
+              deliveryMethod: true,
+            },
+          },
         },
       }),
       database

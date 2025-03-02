@@ -80,4 +80,18 @@ export const checkoutCartSchemaServer = userCartCheckoutInputSchema
         });
       }
     }
+
+    if (
+      value.deliveryMethod.fetched?.slug ===
+        OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE &&
+      value.address.municipality.slug !== 'hradec-kralove'
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message:
+          'Pro dopravu kurýrem musíte mít dodací adresu v Hradci Králové',
+        fatal: true,
+        path: ['address.municipality'],
+      });
+    }
   });

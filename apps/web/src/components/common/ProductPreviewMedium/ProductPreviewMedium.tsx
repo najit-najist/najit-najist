@@ -1,6 +1,7 @@
 import { Badge } from '@components/common/Badge';
 import { Price } from '@components/common/Price';
 import { AddToCartButton } from '@components/page-components/ProductPageManageContent/AddToCartButton';
+import { OnlyDeliveryMethodBadge } from '@components/page-components/ProductPageManageContent/editorComponents/OnlyDeliveryMethodBadge';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { TruckIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
@@ -26,7 +27,7 @@ export const ProductPreviewMedium: FC<
   publishedAt,
   stock,
   category,
-  onlyForDeliveryMethod,
+  limitedToDeliveryMethods,
 }) => {
   const linkHref = `/produkty/${encodeURIComponent(slug)}`;
   let descriptionPreview = stripHtml(description ?? '').result;
@@ -57,11 +58,13 @@ export const ProductPreviewMedium: FC<
           {!publishedAt ? (
             <Badge className="whitespace-nowrap">Nepublikováno</Badge>
           ) : null}
-          {onlyForDeliveryMethod && !outOfStock ? (
-            <Badge color="yellow">
-              <TruckIcon className="w-4 h-4" />
-              Pouze {onlyForDeliveryMethod.name.toLowerCase()}
-            </Badge>
+          {limitedToDeliveryMethods.length && !outOfStock ? (
+            <OnlyDeliveryMethodBadge
+              size="normal"
+              onlyDeliveryMethods={limitedToDeliveryMethods.map((item) =>
+                item.deliveryMethod.name.toLowerCase(),
+              )}
+            />
           ) : null}
           {outOfStock ? <Badge color="red">Vyprodáno</Badge> : null}
         </div>

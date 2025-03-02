@@ -1,5 +1,12 @@
 import { relations } from 'drizzle-orm';
-import { boolean, integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  serial,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
 import { orderDeliveryMethods } from './orderDeliveryMethods';
@@ -36,6 +43,7 @@ export type OrderPaymentMethod = typeof orderPaymentMethods.$inferSelect;
 export const orderPaymentExceptDeliveryMethods = pgTable(
   'order_payment_methods_except_delivery_methods',
   {
+    id: serial('id').primaryKey(),
     paymentMethodId: integer('payment_method_id')
       .references(() => orderPaymentMethods.id, { onDelete: 'cascade' })
       .notNull(),

@@ -62,10 +62,7 @@ export function getChangedValues<G extends Record<any, any>>(
 }
 
 export const isLocalPickup = (
-  delivery:
-    | Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>
-    | undefined
-    | null,
+  delivery: Pick<OrderDeliveryMethod, 'slug'> | undefined | null,
 ) => delivery?.slug === 'local-pickup';
 
 export const isPacketaDeveliveryMethod = (

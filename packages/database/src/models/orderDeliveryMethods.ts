@@ -1,8 +1,6 @@
-import { relations } from 'drizzle-orm';
-import { integer, pgTable, text, varchar } from 'drizzle-orm/pg-core';
+import { integer, pgTable, text, unique, varchar } from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
-import { productsToDeliveryMethods } from './productsToDeliveryMethods';
 
 export enum OrderDeliveryMethodsSlug {
   PACKETA = 'send',
@@ -21,12 +19,14 @@ export const orderDeliveryMethods = pgTable(
         OrderDeliveryMethodsSlug.PACKETA,
         OrderDeliveryMethodsSlug.BALIKOVNA,
         OrderDeliveryMethodsSlug.LOCAL_PICKUP,
+        OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE,
       ],
     }).notNull(),
     description: text('description').notNull(),
     notes: text('notes'),
     price: integer('price').default(0),
   }),
+  (schema) => [unique().on(schema.slug)],
 );
 
 export type OrderDeliveryMethod = typeof orderDeliveryMethods.$inferSelect;

@@ -75,8 +75,8 @@
     bordercolor: theme('colors.gray.200');
 
     .ql-toolbar {
-      margintop: -40px;
-      opacity: 0;
+      margintop: 0;
+      opacity: 1;
       transitionproperty: opacity, margin;
       transitiontimingfunction: cubic-bezier(0.4, 0, 0.2, 1);
       transitionduration: 150ms;
@@ -88,13 +88,6 @@
 
     .ql-editor {
       minheight: 300px;
-    }
-
-    &.is-focusing {
-      .ql-toolbar {
-        opacity: 1;
-        margintop: 0px;
-      }
     }
   }
   .ql-container,

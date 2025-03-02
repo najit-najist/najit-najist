@@ -1,53 +1,34 @@
 'use client';
 
-import { Checkbox, CheckboxProps } from '@components/common/form/Checkbox';
+import { Checkbox } from '@components/common/form/Checkbox';
 import { CheckboxWrapper } from '@components/common/form/CheckboxWrapper';
-import { AppRouterOutput, ProductWithRelationsLocal } from '@custom-types';
-import { OrderDeliveryMethod } from '@najit-najist/database/models';
-import { isLocalPickup } from '@utils';
-import { FC, useMemo } from 'react';
-import { useController } from 'react-hook-form';
+import { AppRouterOutput } from '@custom-types';
+import { FC } from 'react';
+import { useFormContext } from 'react-hook-form';
+
+import { ProductFormData } from '../_types';
 
 export const AvailibilityEdit: FC<{
   deliveryMethods: AppRouterOutput['orders']['deliveryMethods']['get']['many'];
 }> = ({ deliveryMethods }) => {
-  const localPickup = useMemo(
-    () => deliveryMethods.find((d) => isLocalPickup(d)),
-    [deliveryMethods],
-  );
-  if (!localPickup) {
-    throw new Error('No local pickup in database');
-  }
-
-  const onlyForDeliveryMethodInput = useController<
-    Pick<ProductWithRelationsLocal, 'onlyForDeliveryMethod'>
-  >({ name: 'onlyForDeliveryMethod' });
-  const onlyForDeliveryMethodValue = onlyForDeliveryMethodInput.field
-    .value as null | OrderDeliveryMethod;
-
-  const hasLocalPickupSelected =
-    onlyForDeliveryMethodValue?.id === localPickup?.id;
-
-  const handleLocalPickupToggle: CheckboxProps['onChange'] = (event) => {
-    const checked = event.target.checked;
-
-    onlyForDeliveryMethodInput.field.onChange(checked ? localPickup : null);
-  };
+  const { register } = useFormContext<ProductFormData>();
 
   return (
-    <>
-      <CheckboxWrapper
-        childId="local-pickup-only"
-        title="Pouze osobně"
-        className="font-title !text-base"
-      >
-        <Checkbox
-          id="local-pickup-only"
-          checked={hasLocalPickupSelected}
-          onChange={handleLocalPickupToggle}
-          size="md"
-        />
-      </CheckboxWrapper>
-    </>
+    <div className="grid grid-cols-1 gap-2">
+      {Object.values(deliveryMethods).map((item) => (
+        <CheckboxWrapper
+          key={item.id}
+          childId={`limit-to-${item.slug}`}
+          title={`Omezit dopravu na ${item.name}`}
+          className="!text-sm"
+        >
+          <Checkbox
+            id={`limit-to-${item.slug}`}
+            size="normal"
+            {...register(`toDeliveryMethods.${item.slug}`)}
+          />
+        </CheckboxWrapper>
+      ))}
+    </div>
   );
 };

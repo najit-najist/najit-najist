@@ -6,6 +6,7 @@ import { FormBreak } from '@components/common/form/FormBreak';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
+import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import { UserService } from '@server/services/UserService';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedPaymentMethods } from '@server/utils/getCachedPaymentMethods';
@@ -63,7 +64,7 @@ export default async function Page() {
           methods.map((d) => {
             d.name = `${d.name} (${formatPrice(d.price ?? 0)})`;
 
-            return [d.id, d];
+            return [d.slug, d];
           }),
         ),
     ),
@@ -96,32 +97,45 @@ export default async function Page() {
   ]);
 
   // Sometimes user can have product in cart which limits their choices of delivery methods
-  let productsInCartLimitDeliveryMethods = false;
+  const hasProductsWithLimitedDelivery = cart.products.some(
+    ({ product }) => product.limitedToDeliveryMethods.length,
+  );
 
   // Create new set for delivery method
-  for (const productInCart of cart.products) {
-    if (productInCart.product.onlyForDeliveryMethod) {
-      const deliveryMethod = deliveryMethods.get(
-        productInCart.product.onlyForDeliveryMethod.id,
-      );
+  const methodSettings = new Map<OrderDeliveryMethodsSlug, number>();
+  if (hasProductsWithLimitedDelivery) {
+    let numberOfProductsThatMustBeSupported = 0;
 
-      if (deliveryMethod) {
-        deliveryMethod.disabled = false;
+    for (const { product } of cart.products) {
+      if (!product.limitedToDeliveryMethods.length) {
+        continue;
+      }
 
-        if (!productsInCartLimitDeliveryMethods) {
-          productsInCartLimitDeliveryMethods = true;
-        }
+      numberOfProductsThatMustBeSupported += 1;
+
+      for (const {
+        deliveryMethod: { slug },
+      } of product.limitedToDeliveryMethods) {
+        methodSettings.set(slug, (methodSettings.get(slug) ?? 0) + 1);
+      }
+    }
+
+    for (const [, deliveryMethod] of deliveryMethods) {
+      const occurencesCountForMethod =
+        methodSettings.get(deliveryMethod.slug) ?? 0;
+
+      // Delivery method must be supported by every product with limited availability
+      if (occurencesCountForMethod === numberOfProductsThatMustBeSupported) {
+        deliveryMethod.disabled ??= false;
+      } else {
+        deliveryMethod.disabled ??= true;
       }
     }
   }
 
-  if (productsInCartLimitDeliveryMethods) {
-    for (const [, deliveryMethod] of deliveryMethods) {
-      deliveryMethod.disabled ??= true;
-    }
-  }
-
-  const deliverMethodsAsArray = [...deliveryMethods.values()];
+  const deliverMethodsAsArray = [...deliveryMethods.values()].sort(
+    ({ disabled }) => (disabled ? 1 : -1),
+  );
   const defaultDeliveryMethod = deliverMethodsAsArray
     .filter((d) => !d.disabled)
     .at(0);
@@ -135,7 +149,6 @@ export default async function Page() {
         },
         products: cart.products.map((p) => ({
           id: p.product,
-          onlyForDeliveryMethod: p.product.onlyForDeliveryMethod,
         })),
         deliveryMethods: deliverMethodsAsArray.map((d) => ({ id: d.id })),
       },
@@ -165,7 +178,10 @@ export default async function Page() {
     typeof FormProvider
   >['defaultFormValues'] = lastOrder
     ? {
-        deliveryMethod: { slug: lastOrder.deliveryMethod.slug ?? null },
+        deliveryMethod: deliveryMethods.get(lastOrder.deliveryMethod.slug)
+          ?.disabled
+          ? { slug: defaultDeliveryMethod?.slug ?? null }
+          : { slug: lastOrder.deliveryMethod.slug ?? null },
         paymentMethod: { slug: lastOrder.paymentMethod.slug ?? null },
         address: {
           ...lastOrder.address,
@@ -228,9 +244,7 @@ export default async function Page() {
 
               <DeliveryMethodFormPart
                 paymentMethods={paymentMethods}
-                deliveryMethods={deliverMethodsAsArray.sort(({ disabled }) =>
-                  disabled ? 1 : -1,
-                )}
+                deliveryMethods={deliverMethodsAsArray}
               />
               <FormBreak label="Platební metoda" className="mt-12 mb-6" />
               <PaymentMethodFormPart paymentMethods={paymentMethods} />
@@ -243,42 +257,44 @@ export default async function Page() {
               outlined
               color="error"
               icon={ExclamationTriangleIcon}
-              heading="Omlouváme se, ale kombinací produktů ve vašem košíku nemůžeme momentálně dodat. Neváhejte nás kontaktovat."
+              heading="Omlouváme se, ale kombinaci produktů ve Cašem košíku nemůžeme momentálně dodat. Kontaktujte nás prosím co nejdříve."
             />
           ) : null}
         </section>
 
-        <section className="w-full bg-white mt-10">
-          <h2 className="sr-only">Souhrn objednávky</h2>
-          <div className="mt-2 mb-7">
-            <div className="container mb-6">
-              <CouponInfo cartCupon={cart.coupon} />
-            </div>
-            <PriceList
-              paymentMethodsPrices={paymentMethodPrices}
-              deliveryMethodsPrices={deliveryMethodsPrices}
-              subtotal={cart.subtotal}
-              totalDiscount={cart.discount}
-            />
+        {defaultDeliveryMethod ? (
+          <section className="w-full bg-white mt-10">
+            <h2 className="sr-only">Souhrn objednávky</h2>
+            <div className="mt-2 mb-7">
+              <div className="container mb-6">
+                <CouponInfo cartCupon={cart.coupon} />
+              </div>
+              <PriceList
+                paymentMethodsPrices={paymentMethodPrices}
+                deliveryMethodsPrices={deliveryMethodsPrices}
+                subtotal={cart.subtotal}
+                totalDiscount={cart.discount}
+              />
 
-            <div className="container pb-8">
-              {cartHasProductMoreThanStock ? (
-                <div className="my-4">
-                  <Alert
-                    heading="Upozornění"
-                    color="warning"
-                    icon={ExclamationTriangleIcon}
-                  >
-                    Jeden z produktů ve Vašem košíku přesahuje naše skladové
-                    možnosti a tak nemůžeme zajistit úplné dodání. Budeme Vás po
-                    vytvoření objednávky kontaktovat.
-                  </Alert>
-                </div>
-              ) : null}
-              <CheckoutButton />
+              <div className="container pb-8">
+                {cartHasProductMoreThanStock ? (
+                  <div className="my-4">
+                    <Alert
+                      heading="Upozornění"
+                      color="warning"
+                      icon={ExclamationTriangleIcon}
+                    >
+                      Jeden z produktů ve Vašem košíku přesahuje naše skladové
+                      možnosti a tak nemůžeme zajistit úplné dodání. Budeme Vás
+                      po vytvoření objednávky kontaktovat.
+                    </Alert>
+                  </div>
+                ) : null}
+                <CheckoutButton />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        ) : null}
       </FormProvider>
     </>
   );

@@ -1,0 +1,1 @@
+ALTER TABLE "products_to_delivery_methods" ADD CONSTRAINT "products_to_delivery_methods_product_id_method_slug_unique" UNIQUE("product_id","method_slug");

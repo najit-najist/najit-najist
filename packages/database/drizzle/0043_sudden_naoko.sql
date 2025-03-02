@@ -1,0 +1,1 @@
+ALTER TABLE "order_payment_methods_except_delivery_methods" ADD COLUMN "id" serial PRIMARY KEY NOT NULL;

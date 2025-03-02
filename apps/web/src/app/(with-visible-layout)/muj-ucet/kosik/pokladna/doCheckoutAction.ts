@@ -197,13 +197,17 @@ export const doCheckoutAction = createActionWithValidation(
 
       const cartPerf = perf.track('get-cart');
       const cart = await getUserCart({ type: 'user', value: userId });
+      cartPerf.stop();
+
       if (!cart) {
         throw new Error(
           'User has no cart during checkout, this is probably bug',
         );
       }
 
-      cartPerf.stop();
+      if (!cart.products.length) {
+        throw new Error('Žádné produkty v košíku');
+      }
 
       if (
         cart.coupon &&
@@ -219,20 +223,53 @@ export const doCheckoutAction = createActionWithValidation(
         };
       }
 
-      if (process.env.NODE_ENV === 'development') {
-        return {
-          errors: {
-            root: {
-              type: 'validate',
-              message: 'Pouze vývoj!',
-            } satisfies FieldError,
-          },
-        };
+      const hasProductsWithLimitedDelivery = cart.products.some(
+        ({ product }) => product.limitedToDeliveryMethods.length,
+      );
+      const methodSettings = new Map<OrderDeliveryMethodsSlug, number>();
+      if (hasProductsWithLimitedDelivery) {
+        let numberOfProductsThatMustBeSupported = 0;
+
+        for (const { product } of cart.products) {
+          if (!product.limitedToDeliveryMethods.length) {
+            continue;
+          }
+
+          numberOfProductsThatMustBeSupported += 1;
+
+          for (const {
+            deliveryMethod: { slug },
+          } of product.limitedToDeliveryMethods) {
+            methodSettings.set(slug, (methodSettings.get(slug) ?? 0) + 1);
+          }
+        }
+
+        if (
+          methodSettings.get(input.deliveryMethod.fetched!.slug) !==
+          numberOfProductsThatMustBeSupported
+        ) {
+          return {
+            errors: {
+              deliveryMethod: {
+                type: 'validate',
+                message:
+                  'Vámi vybraná doprava není podporována všemi produkty. Prosím vyberte jinou nebo nás kontaktujte.',
+              } satisfies FieldError,
+            },
+          };
+        }
       }
 
-      if (!cart.products.length) {
-        throw new Error('Žádné produkty v košíku');
-      }
+      // if (process.env.NODE_ENV === 'development') {
+      //   return {
+      //     errors: {
+      //       root: {
+      //         type: 'validate',
+      //         message: 'Pouze vývoj!',
+      //       } satisfies FieldError,
+      //     },
+      //   };
+      // }
 
       const createOrderPerf = perf.track('create-order-all');
       const newOrderId = await database.transaction(async (tx) => {

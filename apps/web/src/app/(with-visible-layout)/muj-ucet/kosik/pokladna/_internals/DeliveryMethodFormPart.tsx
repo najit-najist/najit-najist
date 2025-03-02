@@ -178,32 +178,37 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
                           disabled ? 'cursor-not-allowed' : 'cursor-pointer',
                         )}
                       >
-                        {item.name}
+                        {item.name}{' '}
+                        {disabled ? (
+                          <span className="text-sm text-orange-500">
+                            {' '}
+                            - pro tuto objednávku nedostupné
+                          </span>
+                        ) : null}
                       </Label>
-                      {item.description ? (
-                        <Description as="div">
+                      <Description as="div">
+                        {item.description ? (
                           <div className="mt-1 block text-gray-500">
                             {item.description}
                           </div>
+                        ) : null}
 
-                          {checked ? (
-                            <>
-                              {item.slug ===
-                              OrderDeliveryMethodsSlug.LOCAL_PICKUP ? (
-                                <div className="mt-2 w-full">
-                                  <LocalPickupDeliveryTimePicker />
-                                </div>
-                              ) : null}
-                              {item.slug ===
-                              OrderDeliveryMethodsSlug.PACKETA ? (
-                                <div className="mt-2 w-full">
-                                  <PacketaPickupDelivery />
-                                </div>
-                              ) : null}
-                            </>
-                          ) : null}
-                        </Description>
-                      ) : null}
+                        {checked ? (
+                          <>
+                            {item.slug ===
+                            OrderDeliveryMethodsSlug.LOCAL_PICKUP ? (
+                              <div className="mt-2 w-full">
+                                <LocalPickupDeliveryTimePicker />
+                              </div>
+                            ) : null}
+                            {item.slug === OrderDeliveryMethodsSlug.PACKETA ? (
+                              <div className="mt-2 w-full">
+                                <PacketaPickupDelivery />
+                              </div>
+                            ) : null}
+                          </>
+                        ) : null}
+                      </Description>
                     </div>
                   </div>
                 </>

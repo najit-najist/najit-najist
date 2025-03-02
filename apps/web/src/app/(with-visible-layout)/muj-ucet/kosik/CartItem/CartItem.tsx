@@ -1,12 +1,9 @@
 import { Badge } from '@components/common/Badge';
 import { Price } from '@components/common/Price';
 import { Tooltip } from '@components/common/Tooltip';
+import { OnlyDeliveryMethodBadge } from '@components/page-components/ProductPageManageContent/editorComponents/OnlyDeliveryMethodBadge';
 import { TransitionProvider } from '@contexts/reactTransitionContext';
-import {
-  ExclamationTriangleIcon,
-  TagIcon,
-  TruckIcon,
-} from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon, TagIcon } from '@heroicons/react/24/outline';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { ProductFromCart } from '@utils/getUserCart';
@@ -74,11 +71,13 @@ export const CartItem: FC<{
                   <TagIcon className="w-3 h-3" />{' '}
                   {product.category?.name ?? 'Ostatní'}
                 </Badge>
-                {product.onlyForDeliveryMethod ? (
-                  <Badge color="yellow">
-                    <TruckIcon className="w-3 h-3" /> Pouze{' '}
-                    {product.onlyForDeliveryMethod!.name.toLowerCase()}
-                  </Badge>
+                {product.limitedToDeliveryMethods.length ? (
+                  <OnlyDeliveryMethodBadge
+                    size="small"
+                    onlyDeliveryMethods={product.limitedToDeliveryMethods.map(
+                      (item) => item.deliveryMethod.name.toLowerCase(),
+                    )}
+                  />
                 ) : null}
               </div>
             </div>

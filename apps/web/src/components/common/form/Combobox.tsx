@@ -24,6 +24,7 @@ export type ComboboxProps<I extends Item = Item> = Pick<
   placeholder?: string;
   className?: string;
   nullable?: false;
+  ref?: any;
 
   itemLabelFormatter: (item: I) => string;
 
@@ -48,6 +49,7 @@ export function Combobox<I extends Item>({
   className,
   size,
   disabled,
+  ref,
 }: ComboboxProps<I>): ReturnType<FC<ComboboxProps<I>>> {
   return (
     <ComboboxDefault
@@ -69,6 +71,7 @@ export function Combobox<I extends Item>({
           className={inputStyles({ size, disabled })}
           onChange={onInputValueChange}
           displayValue={displayValue}
+          ref={ref}
         />
         <ComboboxDefault.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-project-input px-2 focus:outline-none">
           <ChevronUpDownIcon

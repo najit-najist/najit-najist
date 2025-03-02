@@ -93,6 +93,12 @@ export const PaymentMethodFormPart: FC<{
                         )}
                       >
                         {item.name}
+                        {disabled ? (
+                          <span className="text-sm text-orange-500">
+                            {' '}
+                            - pro tuto objednávku a dopravu nedostupné
+                          </span>
+                        ) : null}
                       </Label>
                       {item.description ? (
                         <Description as="div">
@@ -101,19 +107,18 @@ export const PaymentMethodFormPart: FC<{
                               <>
                                 <p>{item.description}</p>
 
-                                <a
-                                  href="https://www.comgate.cz/"
-                                  className="mt-3 inline-block p-1.5 bg-white rounded-project shadow-lg border border-gray-100"
-                                  title="Zprostředkovatel plateb je comgate.cz"
-                                  target="_blank"
-                                >
-                                  <Image
-                                    alt="Comgate logo"
-                                    width={100}
-                                    height={24}
-                                    src="https://www.comgate.cz/files/logo-web-280.png"
-                                  />
-                                </a>
+                                <span className="mt-2 block">
+                                  Poznámka: Veškeré platební transakce
+                                  zprostředkovává společnost{' '}
+                                  <a
+                                    href="https://www.comgate.cz/"
+                                    className="inline-block underline text-red-700"
+                                    title="Zprostředkovatel plateb je comgate.cz"
+                                    target="_blank"
+                                  >
+                                    comgate.cz
+                                  </a>
+                                </span>
                               </>
                             ) : (
                               item.description

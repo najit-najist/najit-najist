@@ -13,7 +13,6 @@ const productBase = {
   updatedAt: null,
   categoryId: 4,
   createdById: null,
-  onlyForDeliveryMethodId: null,
   publishedAt: null,
   updateById: null,
 } satisfies Partial<Product>;

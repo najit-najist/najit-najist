@@ -5,7 +5,11 @@ import { Price } from '@components/common/Price';
 import { Tooltip } from '@components/common/Tooltip';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { StarIcon, TagIcon } from '@heroicons/react/24/solid';
-import { products } from '@najit-najist/database/models';
+import {
+  OrderDeliveryMethod,
+  OrderDeliveryMethodsSlug,
+  products,
+} from '@najit-najist/database/models';
 import { getCachedDeliveryMethods } from '@server/utils/getCachedDeliveryMethods';
 import { getCachedTrpcCaller } from '@server/utils/getCachedTrpcCaller';
 import { getFileUrl } from '@server/utils/getFileUrl';
@@ -15,6 +19,7 @@ import { FC, PropsWithChildren } from 'react';
 
 import { CustomImage } from './CustomImage';
 import { EditorHeader } from './EditorHeader';
+import { ProductMetadata } from './ProductMetadata';
 import { UserActions } from './UserActions';
 import { AlergensEdit } from './editorComponents/AlergensEdit';
 import { AvailibilityEdit } from './editorComponents/AvailabilityEdit';
@@ -62,8 +67,8 @@ export const ProductPageManageContent: FC<
   ]);
 
   const deliveryMethodsAsObject = Object.fromEntries(
-    deliveryMethods.map((d) => [d.id, d]),
-  );
+    deliveryMethods.map((d) => [d.slug, d]),
+  ) as Record<OrderDeliveryMethodsSlug, OrderDeliveryMethod>;
   const star = <StarIcon className="text-gray-400 w-5" />;
 
   const content = (
@@ -147,7 +152,7 @@ export const ProductPageManageContent: FC<
           {isEditorEnabled ? (
             <Alert
               outlined
-              heading="Administrace"
+              heading={<p className="font-title">Administrace</p>}
               color="warning"
               className="p-3 mb-4"
             >
@@ -165,17 +170,6 @@ export const ProductPageManageContent: FC<
                 <TagIcon className="w-4 h-4" />
                 {product.category?.name ?? 'Ostatní'}
               </Badge>
-            ) : null}
-            {isEditorEnabled ? (
-              <EditorOnlyDeliveryMethodRenderer
-                deliveryMethods={deliveryMethodsAsObject}
-              />
-            ) : product && !!product.onlyForDeliveryMethod ? (
-              <OnlyDeliveryMethodBadge
-                onlyDeliveryMethods={[
-                  product.onlyForDeliveryMethod.name.toLowerCase(),
-                ]}
-              />
             ) : null}
           </div>
 
@@ -224,25 +218,29 @@ export const ProductPageManageContent: FC<
             </div>
           ) : null}
 
+          {/* <div className="mt-5">
+            {isEditorEnabled ? (
+              <EditorOnlyDeliveryMethodRenderer
+                deliveryMethods={deliveryMethodsAsObject}
+              />
+            ) : product && !!product.limitedToDeliveryMethods.length ? (
+              <OnlyDeliveryMethodBadge
+                onlyDeliveryMethods={product.limitedToDeliveryMethods.map(
+                  (item) => item.deliveryMethod.name.toLowerCase(),
+                )}
+              />
+            ) : null}
+          </div> */}
           {product && viewType === 'view' ? (
-            <div>
+            <>
               <div className="flex mt-10">
                 <UserActions stock={product.stock} product={product} />
               </div>
-              <p className="font-semibold pt-1">
-                {product.stock ? (
-                  product.stock.value > 0 ? (
-                    <small className="text-project-primary">
-                      Produkt máme skladem
-                    </small>
-                  ) : null
-                ) : (
-                  <small className="text-orange-400">
-                    Pouze na objednávku!
-                  </small>
-                )}
-              </p>
-            </div>
+              <ProductMetadata
+                limitedToDeliveryMethods={product.limitedToDeliveryMethods}
+                stock={product.stock}
+              />
+            </>
           ) : null}
 
           <div className="mb-10 mt-12">

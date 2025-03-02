@@ -10,6 +10,7 @@ import {
   productRawMaterialsToProducts,
   products,
   productStock,
+  productsToDeliveryMethods,
   userCartProducts,
   UserRoles,
 } from '@najit-najist/database/models';
@@ -50,9 +51,9 @@ export const updateProductAction = createActionWithValidation(
           images,
           stock,
           category,
-          onlyForDeliveryMethod,
           composedOf,
           alergens,
+          toDeliveryMethods,
           ...updatePayload
         } = input.payload;
 
@@ -64,9 +65,6 @@ export const updateProductAction = createActionWithValidation(
               ? { slug: slugifyString(updatePayload.name) }
               : {}),
             ...(category?.id ? { categoryId: category.id } : {}),
-            ...(typeof onlyForDeliveryMethod !== 'undefined'
-              ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
-              : {}),
             updatedAt: dayjs().toDate(),
           })
           .where(eq(products.id, existing.id))
@@ -79,6 +77,19 @@ export const updateProductAction = createActionWithValidation(
               value: stock.value,
             })
             .where(eq(productStock.productId, existing.id));
+        }
+
+        if (toDeliveryMethods) {
+          await tx
+            .delete(productsToDeliveryMethods)
+            .where(eq(productsToDeliveryMethods.productId, updated.id));
+
+          await tx.insert(productsToDeliveryMethods).values(
+            Object.entries(toDeliveryMethods).map(([slug]) => ({
+              deliveryMethodSlug: slug,
+              productId: updated.id,
+            })),
+          );
         }
 
         if (composedOf) {

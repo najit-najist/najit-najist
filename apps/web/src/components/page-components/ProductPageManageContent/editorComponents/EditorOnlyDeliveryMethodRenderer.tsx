@@ -1,30 +1,35 @@
 'use client';
 
-import { ProductWithRelationsLocal } from '@custom-types';
 import { OrderDeliveryMethod } from '@najit-najist/database/models';
 import { FC } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
+import { ProductFormData } from '../_types';
 import { OnlyDeliveryMethodBadge } from './OnlyDeliveryMethodBadge';
 
 export const EditorOnlyDeliveryMethodRenderer: FC<{
-  deliveryMethods: Record<OrderDeliveryMethod['id'], OrderDeliveryMethod>;
+  deliveryMethods: Record<OrderDeliveryMethod['slug'], OrderDeliveryMethod>;
 }> = ({ deliveryMethods }) => {
-  const pickedDeliveryMethod = useWatch<
-    Pick<ProductWithRelationsLocal, 'onlyForDeliveryMethod'>
-  >({
-    name: 'onlyForDeliveryMethod',
-  }) as { id: number | null } | null;
+  const { control } = useFormContext<ProductFormData>();
+  const pickedDeliveryMethod = useWatch({
+    name: 'toDeliveryMethods',
+    control,
+  });
 
-  if (!pickedDeliveryMethod?.id) {
+  const asKeys = pickedDeliveryMethod
+    ? Object.entries(pickedDeliveryMethod)
+        .filter(([, enabled]) => enabled)
+        .map(([slug]) => slug as OrderDeliveryMethod['slug'])
+    : null;
+  if (!asKeys?.length) {
     return null;
   }
 
   return (
     <OnlyDeliveryMethodBadge
-      onlyDeliveryMethods={[
-        deliveryMethods[pickedDeliveryMethod.id].name.toLowerCase(),
-      ]}
+      onlyDeliveryMethods={asKeys.map((slug) =>
+        deliveryMethods[slug]!.name.toLowerCase(),
+      )}
     />
   );
 };

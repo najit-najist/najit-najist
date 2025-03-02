@@ -1,6 +1,6 @@
 import { database } from '@najit-najist/database';
 import { asc } from '@najit-najist/database/drizzle';
-import { orderedProducts, userCarts } from '@najit-najist/database/models';
+import { orderedProducts } from '@najit-najist/database/models';
 import { EntityLink } from '@najit-najist/schemas';
 
 import { getCartItemPrice } from './getCartItemPrice';
@@ -31,7 +31,11 @@ export const getUserCart = async (options: GetUserCartOptions) => {
               stock: true,
               images: true,
               category: true,
-              onlyForDeliveryMethod: true,
+              limitedToDeliveryMethods: {
+                with: {
+                  deliveryMethod: true,
+                },
+              },
             },
           },
         },

@@ -12,8 +12,8 @@ export const productToDeliveryMethodsRelations = relations(
       fields: [productsToDeliveryMethods.productId],
     }),
     deliveryMethod: one(orderDeliveryMethods, {
-      references: [orderDeliveryMethods.id],
-      fields: [productsToDeliveryMethods.deliveryMethodId],
+      references: [orderDeliveryMethods.slug],
+      fields: [productsToDeliveryMethods.deliveryMethodSlug],
     }),
   }),
 );

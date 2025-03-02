@@ -2,6 +2,7 @@
 
 import { ProductWithRelationsLocal } from '@custom-types';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import { productCreateInputSchema } from '@server/schemas/productCreateInputSchema';
 import { productUpdateInputSchema } from '@server/schemas/productUpdateInputSchema';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
@@ -30,6 +31,12 @@ export const Form: FC<
       composedOf: product?.composedOf ?? [],
       alergens: product?.alergens ?? [],
       manufacturer: product?.manufacturer ?? null,
+      toDeliveryMethods: product?.limitedToDeliveryMethods.reduce<
+        Partial<Record<OrderDeliveryMethodsSlug, boolean>>
+      >((result, iteration) => {
+        result[iteration.deliveryMethod.slug] = true;
+        return result;
+      }, {}),
     },
     resolver: zodResolver(
       viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema,
@@ -56,7 +63,7 @@ export const Form: FC<
             stock: values.stock,
             publishedAt,
             category: values.category,
-            onlyForDeliveryMethod: values.onlyForDeliveryMethod,
+            toDeliveryMethods: values.toDeliveryMethods,
             weight: values.weight,
             composedOf: values.composedOf,
             alergens: values.alergens,
@@ -80,7 +87,7 @@ export const Form: FC<
           stock: values.stock,
           publishedAt,
           category: values.category,
-          onlyForDeliveryMethod: values.onlyForDeliveryMethod,
+          toDeliveryMethods: values.toDeliveryMethods,
           weight: values.weight,
           composedOf: values.composedOf,
           alergens: values.alergens,

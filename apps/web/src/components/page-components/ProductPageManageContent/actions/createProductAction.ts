@@ -8,6 +8,7 @@ import {
   productRawMaterialsToProducts,
   products,
   productStock,
+  productsToDeliveryMethods,
   UserRoles,
 } from '@najit-najist/database/models';
 import { InsufficientRoleError } from '@server/errors';
@@ -37,12 +38,12 @@ export const createProductAction = createActionWithValidation(
 
       const created = await database.transaction(async (tx) => {
         const {
-          onlyForDeliveryMethod,
           images,
           category,
           stock,
           composedOf,
           alergens,
+          toDeliveryMethods,
           ...createPayload
         } = input;
 
@@ -52,9 +53,6 @@ export const createProductAction = createActionWithValidation(
             ...createPayload,
             slug: slugifyString(input.name),
             categoryId: input.category?.id,
-            ...(typeof onlyForDeliveryMethod !== 'undefined'
-              ? { onlyForDeliveryMethodId: onlyForDeliveryMethod?.id ?? null }
-              : {}),
           })
           .returning();
 
@@ -66,6 +64,15 @@ export const createProductAction = createActionWithValidation(
               notes,
               order,
               description,
+            })),
+          );
+        }
+
+        if (toDeliveryMethods) {
+          await tx.insert(productsToDeliveryMethods).values(
+            Object.entries(toDeliveryMethods).map(([slug]) => ({
+              deliveryMethodSlug: slug,
+              productId: createdProduct.id,
             })),
           );
         }

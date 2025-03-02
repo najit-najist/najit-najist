@@ -2,7 +2,10 @@ import { logoImage } from '@components/common/Logo';
 import { ProductPageManageContent } from '@components/page-components/ProductPageManageContent';
 import { ADMIN_EMAIL, APP_BASE_URL } from '@constants';
 import { database } from '@najit-najist/database';
-import { products } from '@najit-najist/database/models';
+import {
+  OrderDeliveryMethodsSlug,
+  products,
+} from '@najit-najist/database/models';
 import { UserActions, canUser } from '@server/utils/canUser';
 import { getFileUrl } from '@server/utils/getFileUrl';
 import { getLoggedInUser } from '@server/utils/server';
@@ -64,8 +67,12 @@ export default async function Page({ params }: Params) {
         orderBy: (schema, { asc }) => asc(schema.createdAt),
       },
       category: true,
-      onlyForDeliveryMethod: true,
       stock: true,
+      limitedToDeliveryMethods: {
+        with: {
+          deliveryMethod: true,
+        },
+      },
       composedOf: {
         with: {
           rawMaterial: true,
@@ -91,7 +98,11 @@ export default async function Page({ params }: Params) {
   }
 
   const isLocalPickupOnly =
-    product.onlyForDeliveryMethod?.slug === 'local-pickup';
+    product.limitedToDeliveryMethods.some((item) =>
+      isLocalPickup({
+        slug: item.deliveryMethodSlug as OrderDeliveryMethodsSlug,
+      }),
+    ) && Object.keys(product.limitedToDeliveryMethods).length === 1;
 
   const orderShippingDetails = {
     '@context': 'https://schema.org',
@@ -103,7 +114,7 @@ export default async function Page({ params }: Params) {
     },
     ...(isLocalPickupOnly
       ? {
-        doesNotShip: true
+          doesNotShip: true,
         }
       : {
           doesNotShip: false,
@@ -192,7 +203,7 @@ export default async function Page({ params }: Params) {
       availability:
         product.stock?.value === 0
           ? 'https://schema.org/OutOfStock'
-          : isLocalPickup(product.onlyForDeliveryMethod)
+          : isLocalPickupOnly
             ? 'https://schema.org/InStoreOnly'
             : 'https://schema.org/InStock',
       seller: {
@@ -203,7 +214,7 @@ export default async function Page({ params }: Params) {
         name: 'Najít & Najíst',
         logo: new URL(logoImage.src, APP_BASE_URL).toString(),
         hasMerchantReturnPolicy: {
-          "@id": productReturnPolicy['@id']
+          '@id': productReturnPolicy['@id'],
         },
         address: {
           '@type': 'PostalAddress',

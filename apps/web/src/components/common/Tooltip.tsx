@@ -77,7 +77,7 @@ export const Tooltip: FC<
   trigger,
   children,
   disabled,
-  color,
+  color = 'default',
   placement: userPlacement = 'top',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
