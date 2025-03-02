@@ -122,7 +122,7 @@ export function RadioGroup<ItemType extends RadioGroupItem>({
                         className={cx(
                           'h-2 w-2 rounded-full top-1 left-1 bg-project-primary m-auto duration-200',
                           checked ? 'opacity-100' : 'opacity-0',
-                          active ? '!bg-gray-200 opacity-100' : '',
+                          active ? '!bg-gray-100 opacity-100' : '',
                         )}
                       />
                     </div>

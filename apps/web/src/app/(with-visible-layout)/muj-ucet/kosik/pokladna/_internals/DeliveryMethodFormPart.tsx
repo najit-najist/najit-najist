@@ -1,18 +1,25 @@
 'use client';
 
 import { Alert } from '@components/common/Alert';
+import { Tooltip } from '@components/common/Tooltip';
 import { ErrorMessage } from '@components/common/form/ErrorMessage';
-import {
-  RadioGroup,
-  RadioGroupProps,
-} from '@components/common/form/RadioGroup';
+import { FormBreak } from '@components/common/form/FormBreak';
 import { useReactTransitionContext } from '@contexts/reactTransitionContext';
 import { OrderPaymentMethodWithRelations } from '@custom-types';
+import {
+  Description,
+  Label,
+  Radio,
+  RadioGroup,
+  RadioGroupProps,
+} from '@headlessui/react';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
+import { ExclamationTriangleIcon as ExclamationTriangleIconSolid } from '@heroicons/react/24/solid';
 import {
   OrderDeliveryMethod,
   OrderDeliveryMethodsSlug,
 } from '@najit-najist/database/models';
+import { cx } from 'class-variance-authority';
 import { FC, useCallback, useMemo } from 'react';
 import { useController, useFormContext, useFormState } from 'react-hook-form';
 
@@ -58,7 +65,7 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
   }, [paymentMethods, deliveryMethods]);
 
   const handleChange = useCallback<
-    NonNullable<RadioGroupProps<OrderDeliveryMethod>['onChange']>
+    NonNullable<RadioGroupProps<'div', OrderDeliveryMethod>['onChange']>
   >(
     (nextItem) => {
       const { onChange } = controller.field;
@@ -90,44 +97,124 @@ export const DeliveryMethodFormPart: FC<DeliveryMethodFormPartProps> = ({
     [deliveryMethods],
   );
   const fieldValue = controller.field.value;
+  const disabled = formState.isSubmitting || isActive;
+  const hasDisabledItems = !!deliveryMethods.some((d) => d.disabled);
 
   return (
     <>
-      <RadioGroup<OrderDeliveryMethod>
+      <FormBreak
+        label={
+          <>
+            {hasDisabledItems ? (
+              <Tooltip
+                placement="top-start"
+                color="warning"
+                trigger={
+                  <ExclamationTriangleIconSolid className="mr-3 w-4.5 h-4.5 inline text-orange-500" />
+                }
+              >
+                <div className="px-2 py-3 text-sm max-w-sm text-yellow-700">
+                  <p className="font-semibold">
+                    <ExclamationTriangleIcon className="w-4 h-4 inline" /> Pouze{' '}
+                    {disabledOnlyDeliveryMethods
+                      .map((d) => d.name.toLowerCase())
+                      .join(', ')}
+                    !
+                  </p>
+                  <p className="text-sm mt-2">
+                    Váš košík obsahuje produkty, které mají omezení na dopravu a
+                    proto nemusíte mít dostupné všechny možnosti dopravy.
+                  </p>
+                </div>
+              </Tooltip>
+            ) : null}
+            Doručovací metoda
+          </>
+        }
+        className="mt-12 mb-6"
+      />
+
+      <RadioGroup
+        as="div"
         by="slug"
-        disabled={formState.isSubmitting || isActive}
         value={fieldValue}
         onChange={handleChange}
         onBlur={controller.field.onBlur}
-        items={deliveryMethods}
-        itemsWrapperClassName="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-3"
-      />
+        disabled={disabled}
+      >
+        <div className="grid grid-cols-1 gap-8">
+          {deliveryMethods.map((item) => (
+            <Radio
+              key={item.name}
+              value={item}
+              disabled={disabled || item.disabled}
+              className={({ disabled }) =>
+                cx('flex w-full items-start', disabled ? 'opacity-50' : '')
+              }
+            >
+              {({ checked, focus, disabled }) => (
+                <>
+                  <div
+                    className={cx(
+                      'duration-200 flex-none mr-2 -bottom-[1px] relative flex h-4.5 w-4.5 rounded-full border-2',
+                      disabled ? 'bg-gray-100' : 'bg-white',
+                      checked ? 'border-project-primary' : 'border-project',
+                    )}
+                  >
+                    <div
+                      className={cx(
+                        'h-2 w-2 rounded-full top-1 left-1 bg-project-primary m-auto duration-200',
+                        checked ? 'opacity-100' : 'opacity-0',
+                        focus ? '!bg-project-primary/50 opacity-100' : '',
+                      )}
+                    />
+                  </div>
+                  <div className="flex items-center w-full">
+                    <div className="text-sm pl-1 w-full">
+                      <Label
+                        as="p"
+                        className={cx(
+                          'font-medium text-gray-900 text-lg -mt-1',
+                          disabled ? 'cursor-not-allowed' : 'cursor-pointer',
+                        )}
+                      >
+                        {item.name}
+                      </Label>
+                      {item.description ? (
+                        <Description as="div">
+                          <div className="mt-1 block text-gray-500">
+                            {item.description}
+                          </div>
+
+                          {checked ? (
+                            <>
+                              {item.slug ===
+                              OrderDeliveryMethodsSlug.LOCAL_PICKUP ? (
+                                <div className="mt-2 w-full">
+                                  <LocalPickupDeliveryTimePicker />
+                                </div>
+                              ) : null}
+                              {item.slug ===
+                              OrderDeliveryMethodsSlug.PACKETA ? (
+                                <div className="mt-2 w-full">
+                                  <PacketaPickupDelivery />
+                                </div>
+                              ) : null}
+                            </>
+                          ) : null}
+                        </Description>
+                      ) : null}
+                    </div>
+                  </div>
+                </>
+              )}
+            </Radio>
+          ))}
+        </div>
+      </RadioGroup>
+
       {controller.fieldState.error?.message ? (
         <ErrorMessage>{controller.fieldState.error?.message}</ErrorMessage>
-      ) : null}
-      {fieldValue.slug === OrderDeliveryMethodsSlug.LOCAL_PICKUP ? (
-        <LocalPickupDeliveryTimePicker />
-      ) : null}
-      {fieldValue.slug === OrderDeliveryMethodsSlug.PACKETA ? (
-        <PacketaPickupDelivery />
-      ) : null}
-      {deliveryMethods.filter((d) => d.disabled).length ? (
-        <Alert
-          className="mt-5"
-          heading={
-            <>
-              <ExclamationTriangleIcon className="w-4 h-4 inline" /> Pouze{' '}
-              {disabledOnlyDeliveryMethods
-                .map((d) => d.name.toLowerCase())
-                .join(', ')}
-              !
-            </>
-          }
-          color="warning"
-        >
-          Váš košík obsahuje produkty, které mají omezení na dopravu a proto
-          nemusíte mít dostupné všechny možnosti dopravy.
-        </Alert>
       ) : null}
     </>
   );

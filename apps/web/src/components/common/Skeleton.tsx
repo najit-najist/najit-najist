@@ -7,7 +7,7 @@ export type SkeletonProps = DetailedHTMLProps<
 > &
   VariantProps<typeof skeletonStyles>;
 
-const skeletonStyles = cva('animate-pulse bg-gray-200', {
+const skeletonStyles = cva('animate-pulse bg-gray-100', {
   variants: {
     rounded: {
       true: 'rounded-project',

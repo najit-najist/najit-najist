@@ -56,7 +56,7 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
         />
         <Input
           required={required}
-          rootClassName="flex-none w-26"
+          rootClassName="flex-none w-full"
           label="Číslo popisné"
           placeholder="Čp."
           // autoComplete="email"
@@ -87,7 +87,7 @@ export function AddressFields<TFieldValues extends FieldValues = FieldValues>({
         />
         <Input
           required={required}
-          rootClassName="flex-none w-26"
+          rootClassName="flex-none w-full"
           label="PSČ"
           placeholder="123 45"
           autoComplete="postal-code"

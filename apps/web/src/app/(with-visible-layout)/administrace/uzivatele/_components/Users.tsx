@@ -41,7 +41,7 @@ export const Users: FC<{ users: UserWithRelations[] }> = async ({ users }) => {
                       alt=""
                     />
                   ) : (
-                    <div className="w-full h-full bg-gray-200 flex rounded-full">
+                    <div className="w-full h-full bg-gray-100 flex rounded-full">
                       <UserIcon className="w-5 text-gray-400 m-auto" />
                     </div>
                   )}

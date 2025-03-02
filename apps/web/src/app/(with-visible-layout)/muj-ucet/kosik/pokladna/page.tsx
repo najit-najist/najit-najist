@@ -225,10 +225,12 @@ export default async function Page() {
             <>
               <FormBreak label="Kontaktní informace" className="mb-6" />
               <UserContactFormPart />
-              <FormBreak label="Doručovací metoda" className="mt-12 mb-6" />
+
               <DeliveryMethodFormPart
                 paymentMethods={paymentMethods}
-                deliveryMethods={deliverMethodsAsArray}
+                deliveryMethods={deliverMethodsAsArray.sort(({ disabled }) =>
+                  disabled ? 1 : -1,
+                )}
               />
               <FormBreak label="Platební metoda" className="mt-12 mb-6" />
               <PaymentMethodFormPart paymentMethods={paymentMethods} />

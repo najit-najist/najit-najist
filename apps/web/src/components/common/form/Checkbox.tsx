@@ -3,10 +3,10 @@ import { DetailedHTMLProps, forwardRef, InputHTMLAttributes } from 'react';
 
 type CheckboxVariantProps = VariantProps<typeof checkboxStyles>;
 
-export const checkboxStyles = cva('h-4 w-4 rounded', {
+export const checkboxStyles = cva('rounded', {
   variants: {
     size: {
-      normal: 'h-4 w-4',
+      normal: 'h-4.5 w-4.5',
       md: 'h-5 w-5',
       lg: 'h-6.5 w-6.5',
     },

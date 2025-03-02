@@ -63,12 +63,12 @@ export default async function Page() {
         </div>
       </PageHeader>
       <section className="bg-white pt-5 pb-10">
-        <ul role="list" className="divide-y container">
+        <ul role="list" className="divide-y divide-gray-200 container">
           {cart.products.map((cartItem) => (
             <CartItem key={cartItem.id} data={cartItem} />
           ))}
         </ul>
-        <div className="border-t-2 border-dashed">
+        <div className="border-t-2 border-gray-200 border-dashed">
           <div className="container pt-3">
             <div className="flex items-center justify-between font-semibold text-gray-900">
               <span>Celkově za produkty</span>

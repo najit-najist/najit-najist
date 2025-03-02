@@ -38,11 +38,11 @@ export const ConsentForm: FC<ConsentFormProps> = ({
           <Checkbox id="functional-cookies" disabled checked />
         </CheckboxWrapper>
 
-        <div className="h-4 w-[2px] bg-gray-200 mx-2 hidden md:block" />
+        <div className="h-4 w-[2px] bg-gray-100 mx-2 hidden md:block" />
         <CheckboxWrapper childId="analytics-cookies" title="Analytické cookies">
           <Checkbox id="analytics-cookies" {...register('analytics', {})} />
         </CheckboxWrapper>
-        <div className="h-4 w-[2px] bg-gray-200 mx-2 hidden md:block" />
+        <div className="h-4 w-[2px] bg-gray-100 mx-2 hidden md:block" />
         <CheckboxWrapper
           childId="marketing-cookies"
           title="Marketingové cookies"

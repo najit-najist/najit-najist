@@ -26,7 +26,7 @@ const alertRootStyles = cva('p-3 border-solid', {
       success: 'bg-green-50',
     },
     outlined: {
-      true: cx('border-2'),
+      true: cx('border-1'),
       false: '',
     },
     rounded: {

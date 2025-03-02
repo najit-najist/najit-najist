@@ -54,7 +54,6 @@ export const PacketaPickupDelivery: FC = () => {
           setIsLoaded(true);
         }}
       />
-      <hr className="mt-8 mb-5 border-t border-gray-200" />
       <Alert
         className="w-full"
         heading={

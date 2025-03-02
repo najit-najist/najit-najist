@@ -22,6 +22,7 @@ export const buttonStyles = cva(
         ghost: '',
         // Without specific padding, margins etc. Just the color is applied to text
         link: 'hover:underline focus:underline',
+        unstyled: '',
       },
       size: {
         xsm: 'text-sm',

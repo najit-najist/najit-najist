@@ -8,7 +8,7 @@ import {
 } from '@react-email/components';
 import { FC, PropsWithChildren } from 'react';
 
-import tailwindTheme from '../../../tailwind.config';
+import tailwindTheme from '../../../tailwind.config.mjs';
 import { Attachment, BaseEmailProps } from '../types';
 import { CenteredRow } from './CenteredRow';
 import { Fonts } from './Fonts';

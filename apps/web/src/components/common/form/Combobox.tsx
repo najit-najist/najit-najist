@@ -78,7 +78,7 @@ export function Combobox<I extends Item>({
         </ComboboxDefault.Button>
 
         {!!isLoading === false ? (
-          <ComboboxDefault.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project bg-white p-2 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+          <ComboboxDefault.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project bg-white p-2 text-base shadow-lg ring-1 ring-gray-200 ring-opacity-5 focus:outline-none sm:text-sm">
             {items.length ? (
               <>
                 {items.map((item) => (

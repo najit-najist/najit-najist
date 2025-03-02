@@ -98,9 +98,7 @@ export function CouponInfo({
           rootClassName="w-full"
           disabled={isReloading || !!selectedCoupon}
           error={
-            formState.errors.root ||
-            formState.errors.name?.message ||
-            formState.errors.couponId?.message
+            formState.errors.name?.message || formState.errors.couponId?.message
               ? {
                   message:
                     formState.errors.root?.message ??

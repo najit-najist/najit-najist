@@ -14,7 +14,7 @@ import { ErrorMessage } from './ErrorMessage';
 import { labelStyles } from './Label';
 
 const selectButtonStyles = cva(
-  'relative w-full cursor-default rounded-project-input bg-white disabled:bg-gray-100 text-left shadow-sm ring-1 ring-inset focus:outline-none focus:ring-2',
+  'relative w-full cursor-default rounded-project-input bg-white disabled:bg-gray-100 text-left ring-1 ring-inset focus:outline-none focus:ring-2',
   {
     variants: {
       size: {

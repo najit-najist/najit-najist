@@ -219,6 +219,17 @@ export const doCheckoutAction = createActionWithValidation(
         };
       }
 
+      if (process.env.NODE_ENV === 'development') {
+        return {
+          errors: {
+            root: {
+              type: 'validate',
+              message: 'Pouze vývoj!',
+            } satisfies FieldError,
+          },
+        };
+      }
+
       if (!cart.products.length) {
         throw new Error('Žádné produkty v košíku');
       }

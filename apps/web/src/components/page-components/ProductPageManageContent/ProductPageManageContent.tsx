@@ -199,7 +199,7 @@ export const ProductPageManageContent: FC<
               {star}
             </div>
             <div className="w-0.5 h-5 relative mx-2">
-              <span className="w-full left-0 h-3/4 bg-gray-200 absolute top-1/2 -translate-y-1/2"></span>
+              <span className="w-full left-0 h-3/4 bg-gray-100 absolute top-1/2 -translate-y-1/2"></span>
             </div>
             <div>0 recenzí</div>
           </div>

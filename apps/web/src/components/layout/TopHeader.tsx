@@ -115,7 +115,7 @@ const AdministrationMenu = () => {
             className="absolute top-10 md:top-12 right-0 w-screen h-svh"
           >
             <TransitionChild>
-              <div className="duration-200 fixed top-0 left-0 h-screen w-screen bg-gray-800 bg-opacity-25 data-[closed]:bg-opacity-0 backdrop-blur-md data-[closed]:backdrop-blur-0" />
+              <div className="duration-200 fixed top-0 left-0 h-screen w-screen bg-gray-800/25 data-[closed]:bg-opacity-0 backdrop-blur-md data-[closed]:backdrop-blur-0" />
             </TransitionChild>
             <div className="container">
               <TransitionChild>
@@ -277,7 +277,7 @@ const MobileMenu: FC<TopHeaderProps> = ({ loggedInUser }) => {
             className="absolute top-10 md:top-12 right-0 w-screen h-svh"
           >
             <TransitionChild>
-              <div className="duration-200 fixed top-0 left-0 h-screen w-screen bg-gray-800 bg-opacity-25 data-[closed]:bg-opacity-0 backdrop-blur-md data-[closed]:backdrop-blur-0" />
+              <div className="duration-200 fixed top-0 left-0 h-screen w-screen bg-gray-800/25 data-[closed]:bg-opacity-0 backdrop-blur-md data-[closed]:backdrop-blur-0" />
             </TransitionChild>
             <div className="container">
               <TransitionChild>

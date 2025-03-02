@@ -140,10 +140,12 @@ export const Content: FC = () => {
                   <span
                     className={inputPrefixSuffixStyles({
                       type: 'prefix',
-                      className: 'px-2 flex items-center justify-center',
+                      className: 'px-2',
                     })}
                   >
-                    +420
+                    <span className="inline-flex items-center justify-center h-full">
+                      +420
+                    </span>
                   </span>
                 }
                 inputMode="numeric"

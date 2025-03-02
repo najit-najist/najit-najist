@@ -449,7 +449,7 @@ export default function ThankYouOrder({
             />
           ))}
           {/* footer */}
-          <Hr className="!border-none bg-gray-200 w-full mt-5 h-[1px] mb-0" />
+          <Hr className="!border-none bg-gray-100 w-full mt-5 h-[1px] mb-0" />
           <ItemListItem key="subtotal" className="text-gray-700">
             <Column>Mezisoučet</Column>
             <Column className="text-right">
@@ -488,7 +488,7 @@ export default function ThankYouOrder({
               <Price size={'sm'} value={order.paymentMethodPrice ?? 0} />
             </Column>
           </ItemListItem>
-          <Hr className="!border-none bg-gray-200 w-full mt-5 h-[1px] mb-0" />
+          <Hr className="!border-none bg-gray-100 w-full mt-5 h-[1px] mb-0" />
           <ItemListItem>
             <Column className="font-semibold">Celkově</Column>
             <Column className="text-right font-semibold">

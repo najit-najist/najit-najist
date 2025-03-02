@@ -58,7 +58,7 @@ export const inputStyles = cva(
   {
     variants: {
       appearance: {
-        normal: '',
+        normal: 'bg-white',
         checkbox: '',
         standalone: 'border-b-2',
       },
@@ -84,7 +84,7 @@ export const inputStyles = cva(
       },
       readOnly: {
         true: '!border-gray-200 !focus:border-gray-200 !ring-0 !shadow-none cursor-default',
-        false: 'shadow-sm',
+        false: '',
       },
       // withLeftIcon: {
       //   true: 'pl-10',
@@ -180,7 +180,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
 
       <div
         className={cx([
-          'flex rounded-project-input shadow-sm overflow-hidden',
+          'flex rounded-project-input overflow-hidden',
           label ? 'mt-1' : '',
           wrapperClassName,
         ])}

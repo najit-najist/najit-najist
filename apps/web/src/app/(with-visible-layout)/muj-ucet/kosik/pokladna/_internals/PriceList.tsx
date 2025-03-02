@@ -11,7 +11,7 @@ import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import { orderGetTotalPrice } from '@utils/orderGetTotalPrice';
 import clsx from 'clsx';
 import { FC } from 'react';
-import { useWatch } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 
 export const PriceList: FC<{
   subtotal: number;
@@ -24,6 +24,7 @@ export const PriceList: FC<{
   paymentMethodsPrices,
   deliveryMethodsPrices,
 }) => {
+  const { formState } = useFormContext();
   const { isActive: transitionIsHappening } = useReactTransitionContext();
   const [deliveryMethod, paymentMethod] = useWatch<
     {
@@ -48,8 +49,8 @@ export const PriceList: FC<{
 
   return (
     <>
-      <div className="border-y-2 border-dashed text-gray-500">
-        <div className="container divide-y">
+      <div className="border-y-2 border-dashed text-gray-500 border-gray-200">
+        <div className="container divide-y divide-gray-200">
           <div className="flex items-center justify-between py-5">
             <span className="text-sm">Mezisoučet</span>
             <span
@@ -139,6 +140,13 @@ export const PriceList: FC<{
           </span>
         </div>
       </div>
+      {formState.errors.root ? (
+        <div className="container mb-5">
+          <Alert color="error" heading="Stala se obecná chyba">
+            {formState.errors.root.message}
+          </Alert>
+        </div>
+      ) : null}
     </>
   );
 };
