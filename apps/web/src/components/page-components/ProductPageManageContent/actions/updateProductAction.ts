@@ -84,12 +84,15 @@ export const updateProductAction = createActionWithValidation(
             .delete(productsToDeliveryMethods)
             .where(eq(productsToDeliveryMethods.productId, updated.id));
 
-          await tx.insert(productsToDeliveryMethods).values(
-            Object.entries(toDeliveryMethods).map(([slug]) => ({
-              deliveryMethodSlug: slug,
-              productId: updated.id,
-            })),
-          );
+          const asEntries = Object.entries(toDeliveryMethods);
+          if (asEntries.length) {
+            await tx.insert(productsToDeliveryMethods).values(
+              asEntries.map(([slug]) => ({
+                deliveryMethodSlug: slug,
+                productId: updated.id,
+              })),
+            );
+          }
         }
 
         if (composedOf) {

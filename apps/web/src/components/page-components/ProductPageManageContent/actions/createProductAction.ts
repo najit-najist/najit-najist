@@ -69,12 +69,15 @@ export const createProductAction = createActionWithValidation(
         }
 
         if (toDeliveryMethods) {
-          await tx.insert(productsToDeliveryMethods).values(
-            Object.entries(toDeliveryMethods).map(([slug]) => ({
-              deliveryMethodSlug: slug,
-              productId: createdProduct.id,
-            })),
-          );
+          const asEntries = Object.entries(toDeliveryMethods);
+          if (asEntries.length) {
+            await tx.insert(productsToDeliveryMethods).values(
+              asEntries.map(([slug]) => ({
+                deliveryMethodSlug: slug,
+                productId: createdProduct.id,
+              })),
+            );
+          }
         }
 
         if (alergens.length) {
