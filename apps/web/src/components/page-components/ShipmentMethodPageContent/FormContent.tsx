@@ -52,7 +52,6 @@ export function FormContent({
           {...register('description')}
         />
         <Textarea
-          required
           label="Poznámky pro uživatele"
           autoComplete="off"
           error={formState.errors.notes}
