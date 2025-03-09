@@ -8,16 +8,23 @@ import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
-import { useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { trpc } from '@trpc/web';
 import { handlePromiseForToast } from '@utils/handleActionForToast';
 import clsx from 'clsx';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FC, ReactElement, ReactNode, useCallback } from 'react';
+import {
+  FC,
+  ReactElement,
+  ReactNode,
+  useActionState,
+  useCallback,
+} from 'react';
 import { toast } from 'sonner';
 
 import { CustomImage } from './CustomImage';
+import { addProductToCartAction } from './actions/addProductToCartAction';
 
 export type AddToCartButtonProps = {
   productId: ProductWithRelationsLocal['id'];
@@ -84,8 +91,11 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   productMetadata,
 }) => {
   const queryClient = useQueryClient();
-  const { mutateAsync: addToCart, isPending: isLoading } =
-    trpc.profile.cart.products.add.useMutation();
+  const { mutateAsync: addToCart, isPending: isLoading } = useMutation({
+    mutationKey: ['cart'],
+    mutationFn: addProductToCartAction,
+  });
+
   const router = useRouter();
   let buttonText: ReactNode = null;
   let contentBeforeText: ReactElement | null = null;

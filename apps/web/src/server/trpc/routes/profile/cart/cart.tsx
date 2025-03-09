@@ -4,77 +4,14 @@ import { userCartProducts } from '@najit-najist/database/models';
 import { entityLinkSchema } from '@najit-najist/schemas';
 import { t } from '@server/trpc/instance';
 import { publicProcedure } from '@server/trpc/procedures/publicProcedure';
-import { TRPCError } from '@trpc/server';
-import { createUserCart } from '@utils/createUserCart';
 import { getUserCart } from '@utils/getUserCart';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 
-import { userCartAddItemInputSchema } from '../../../../schemas/userCartAddItemInputSchema';
 import { userCartUpdateInputSchema } from '../../../../schemas/userCartUpdateInputSchema';
 
 export const userCartRoutes = t.router({
   products: t.router({
-    add: publicProcedure
-      .input(userCartAddItemInputSchema)
-      // TODO: improve, all those calls to db can be merged into one bigger query
-      .mutation(async ({ input, ctx }) => {
-        const productStock = await database.query.productStock.findFirst({
-          where: (schema, { eq }) => eq(schema.productId, input.product.id),
-        });
-
-        if (productStock?.value === 0) {
-          throw new TRPCError({
-            code: 'BAD_REQUEST',
-            message: 'Produkt není na skladě',
-          });
-        }
-
-        let currentCart = await getUserCart({
-          type: ctx.sessionData.cartId ? 'cart' : 'user',
-          value: Number(
-            ctx.sessionData.user?.id ?? ctx.sessionData.cartId ?? '0',
-          ),
-        });
-
-        if (!currentCart) {
-          const isAnonymous = !ctx.sessionData.user;
-          currentCart = await createUserCart(
-            isAnonymous ? {} : { userId: ctx.sessionData.user?.id },
-          );
-
-          if (isAnonymous) {
-            await ctx.updateSessionDataValue('cartId', currentCart.id);
-          }
-        }
-
-        const existingProductInCart = currentCart.products.find(
-          ({ product }) => product.id === input.product.id,
-        );
-
-        if (existingProductInCart) {
-          await database
-            .update(userCartProducts)
-            .set({
-              count: input.count + existingProductInCart.count,
-            })
-            .where(
-              and(
-                eq(userCartProducts.cartId, currentCart.id),
-                eq(userCartProducts.productId, input.product.id),
-              ),
-            );
-        } else {
-          await database.insert(userCartProducts).values({
-            productId: input.product.id,
-            cartId: currentCart.id,
-            count: input.count,
-          });
-        }
-
-        revalidatePath('/muj-ucet/kosik');
-      }),
-
     update: publicProcedure
       .input(userCartUpdateInputSchema)
       .mutation(async ({ input, ctx }) => {
