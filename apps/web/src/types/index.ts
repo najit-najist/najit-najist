@@ -22,7 +22,8 @@ export type PLAUSIBLE_EVENTS =
   | 'User order'
   | 'Product ordered'
   | 'User logged in'
-  | 'User login invalid credentials';
+  | 'User login invalid credentials'
+  | 'AddToCart';
 
 export interface LayoutProps {
   children: ReactNode;

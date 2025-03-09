@@ -5,6 +5,7 @@ import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Tooltip } from '@components/common/Tooltip';
 import { ProductWithRelationsLocal } from '@custom-types';
 import { PlusIcon, ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { usePlausible } from '@hooks/usePlausible';
 import { useUserCartQueryKey } from '@hooks/useUserCart';
 import { products } from '@najit-najist/database/models';
 import { getFileUrl } from '@server/utils/getFileUrl';
@@ -90,6 +91,7 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
   withIcon,
   productMetadata,
 }) => {
+  const plausible = usePlausible();
   const queryClient = useQueryClient();
   const { mutateAsync: addToCart, isPending: isLoading } = useMutation({
     mutationKey: ['cart'],
@@ -124,8 +126,14 @@ export const AddToCartButton: FC<AddToCartButtonProps> = ({
       ),
     });
 
-    await addToCartPromise;
-  }, [addToCart, productId, productMetadata, queryClient, router]);
+    await addToCartPromise.then(() => {
+      plausible.trackEvent('AddToCart', {
+        props: {
+          produktId: String(productId),
+        },
+      });
+    });
+  }, [addToCart, productId, productMetadata, queryClient, router, plausible]);
 
   if (!withoutText) {
     buttonText = disabled ? 'Dočasně nedostupné' : 'Přidat do košíku';
