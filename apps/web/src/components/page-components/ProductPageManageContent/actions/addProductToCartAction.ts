@@ -16,9 +16,9 @@ import { cookies } from 'next/headers';
 
 export const addProductToCartAction = createActionWithValidation(
   userCartAddItemInputSchema,
-  async ({ count, product }) => {
+  async (input) => {
     const productStock = await database.query.productStock.findFirst({
-      where: (schema, { eq }) => eq(schema.productId, product.id),
+      where: (schema, { eq }) => eq(schema.productId, input.product.id),
     });
 
     if (productStock?.value === 0) {
@@ -53,26 +53,26 @@ export const addProductToCartAction = createActionWithValidation(
     }
 
     const existingProductInCart = currentCart.products.find(
-      ({ product }) => product.id === product.id,
+      ({ product }) => product.id === input.product.id,
     );
 
     if (existingProductInCart) {
       await database
         .update(userCartProducts)
         .set({
-          count: count + existingProductInCart.count,
+          count: input.count + existingProductInCart.count,
         })
         .where(
           and(
             eq(userCartProducts.cartId, currentCart.id),
-            eq(userCartProducts.productId, product.id),
+            eq(userCartProducts.productId, input.product.id),
           ),
         );
     } else {
       await database.insert(userCartProducts).values({
-        productId: product.id,
+        productId: input.product.id,
         cartId: currentCart.id,
-        count: count,
+        count: input.count,
       });
     }
 
