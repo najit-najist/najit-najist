@@ -20,7 +20,9 @@ import { UserActions, canUser } from '../../../utils/canUser';
 
 const isLocalPickup = (
   delivery: Pick<OrderDeliveryMethod, 'id' | 'name' | 'slug'>,
-) => delivery?.slug === 'local-pickup';
+) =>
+  delivery?.slug === 'local-pickup' ||
+  delivery?.slug === 'local-pickup-event-1';
 
 const paymentMethodRoutes = t.router({
   get: t.router({

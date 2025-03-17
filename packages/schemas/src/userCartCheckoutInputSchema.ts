@@ -1,7 +1,4 @@
-import {
-  OrderDeliveryMethod,
-  OrderDeliveryMethodsSlug,
-} from '@najit-najist/database/models';
+import { OrderDeliveryMethodsSlug } from '@najit-najist/database/models';
 import { z } from 'zod';
 
 import { entityLinkSchema } from './entityLinkSchema';
@@ -31,6 +28,9 @@ export const deliveryMethodSchema = z.discriminatedUnion('slug', [
   }),
   z.object({
     slug: z.literal(OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE),
+  }),
+  z.object({
+    slug: z.literal(OrderDeliveryMethodsSlug.LOCAL_PICKUP_EVENT_1),
   }),
 ]);
 

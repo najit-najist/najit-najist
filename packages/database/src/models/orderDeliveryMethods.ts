@@ -7,6 +7,7 @@ export enum OrderDeliveryMethodsSlug {
   BALIKOVNA = 'send-balikovna',
   LOCAL_PICKUP = 'local-pickup',
   DELIVERY_HRADEC_KRALOVE = 'delivery-hradec-kralove',
+  LOCAL_PICKUP_EVENT_1 = 'local-pickup-event-1',
 }
 
 export const orderDeliveryMethods = pgTable(
@@ -20,6 +21,7 @@ export const orderDeliveryMethods = pgTable(
         OrderDeliveryMethodsSlug.BALIKOVNA,
         OrderDeliveryMethodsSlug.LOCAL_PICKUP,
         OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE,
+        OrderDeliveryMethodsSlug.LOCAL_PICKUP_EVENT_1,
       ],
     }).notNull(),
     description: text('description').notNull(),

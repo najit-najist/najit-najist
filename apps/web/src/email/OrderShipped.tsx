@@ -35,7 +35,9 @@ const localPickupInformation = {
 export const isLocalPickup = (
   // delivery: Pick<DeliveryMethod, 'id' | 'name' | 'slug'>
   delivery: any,
-) => delivery?.slug === 'local-pickup';
+) =>
+  delivery?.slug === 'local-pickup' ||
+  delivery?.slug === 'local-pickup-event-1';
 
 export default function OrderShipped({
   order,
