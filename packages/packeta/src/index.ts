@@ -19,6 +19,7 @@ declare global {
     interface ProcessEnv {
       NEXT_PUBLIC_PACKETA_KEY?: string;
       PACKETA_SECRET?: string;
+      POSTMARK_TOKEN?: string;
     }
   }
 }

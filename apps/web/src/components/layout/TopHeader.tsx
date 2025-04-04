@@ -58,6 +58,10 @@ const adminLinks: Array<{ label: string; href: string }> = [
     href: '/produkty',
   },
   {
+    label: 'Kategorie produktů',
+    href: '/administrace/kategorie-produktu',
+  },
+  {
     label: 'Uživatelé',
     href: '/administrace/uzivatele',
   },

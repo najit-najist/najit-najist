@@ -1,24 +1,11 @@
 import { ADMIN_EMAIL } from '@constants';
 import { logger } from '@logger/server';
-import nodemailer from 'nodemailer';
+import * as postmark from 'postmark';
 
-const mailUser = String(process.env.MAIL_USERNAME);
-const mailBaseEmail = String(process.env.MAIL_BASE_EMAIL ?? mailUser);
-const mailPass = String(process.env.MAIL_PASSWORD);
-const mailHost = process.env.MAIL_HOST;
-const mailPort = Number(process.env.MAIL_PORT);
+const POSTMARK_TOKEN = String(process.env.POSTMARK_TOKEN);
 
 export class MailService {
-  private static transport = nodemailer.createTransport({
-    host: mailHost,
-    port: mailPort,
-    secure: mailPort === 465,
-    auth: {
-      user: mailUser,
-      pass: mailPass,
-    },
-    from: `"Najít&Najist pošťák" <${ADMIN_EMAIL}>`,
-  });
+  private static transport = new postmark.ServerClient(POSTMARK_TOKEN);
 
   static async send({
     subject,
@@ -26,22 +13,28 @@ export class MailService {
     body,
   }: {
     body: string;
-    subject?: string;
+    subject: string;
     to: string | string[];
   }) {
     let result;
     try {
-      result = await this.transport.sendMail({
-        from: ADMIN_EMAIL,
-        to,
-        subject: subject,
-        html: body,
-        replyTo: ADMIN_EMAIL,
-      });
+      const toAsArray = Array.isArray(to) ? to : [to];
+
+      const response = await this.transport.sendEmailBatch(
+        toAsArray.map(
+          (toItem): postmark.Message => ({
+            From: `"Najít&Najist pošťák" <${ADMIN_EMAIL}>`,
+            To: toItem,
+            Subject: subject,
+            HtmlBody: body,
+            ReplyTo: ADMIN_EMAIL,
+            MessageStream: 'outbound',
+          }),
+        ),
+      );
 
       logger.info(`[EMAIL] Success`, {
-        rejected: result?.rejected,
-        response: result?.response,
+        response,
         payload: { bodyLength: body.length, subject, to },
       });
     } catch (error) {
