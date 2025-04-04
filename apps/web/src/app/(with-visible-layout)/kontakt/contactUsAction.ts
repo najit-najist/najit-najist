@@ -63,6 +63,7 @@ export const contactUsAction = createActionWithValidation(
           siteOrigin: APP_ORIGIN,
         }),
       ),
+      db: database,
     }).catch((error) => {
       logger.error(
         `[CONTACT_US] Failed to send email with contact form, but should be created in database`,
@@ -82,6 +83,7 @@ export const contactUsAction = createActionWithValidation(
           siteOrigin: APP_ORIGIN,
         }),
       ),
+      db: database,
     }).catch((error) => {
       logger.error(`[CONTACT_US] email sending to user failed`, {
         error,

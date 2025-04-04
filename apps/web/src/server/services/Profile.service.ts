@@ -71,6 +71,7 @@ export class ProfileService {
           to: this.forUser.email,
           subject: `Obnova hesla na najitnajist.cz`,
           body: emailContent,
+          db: tx,
         });
       })
       .catch((error) => {
@@ -172,6 +173,7 @@ export class ProfileService {
         to: user.email,
         subject: `Dokončení registrace na najitnajist.cz`,
         body: emailContent,
+        db: database,
       });
 
       return user;

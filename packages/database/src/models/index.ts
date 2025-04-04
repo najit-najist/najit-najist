@@ -17,6 +17,8 @@ export * from './orderPaymentMethods';
 export * from './orders';
 export * from './packetaParcels';
 
+export * from './outgoingEmailMessages';
+
 export * from './postCategories';
 export * from './posts';
 

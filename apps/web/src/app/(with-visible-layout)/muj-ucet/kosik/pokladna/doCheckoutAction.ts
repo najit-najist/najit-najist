@@ -86,27 +86,25 @@ const sendEmails = (orderId: Order['id']) => {
     renderHtmlPerf.stop();
 
     const sendAdminPerf = perf.track('send-admin');
-    await Promise.all(
-      ORDER_NOTIFICATION_EMAILS.map((notificationEmailAddress) =>
-        MailService.send({
-          to: notificationEmailAddress,
-          subject: `Nová objednávka #${order.id} na najitnajist.cz`,
-          body: adminNoticeHtml,
-        }).catch((error) => {
-          logger.error(`[CHECKOUT] admin notification failed to be sent`, {
-            error,
-            order,
-          });
-        }),
-      ),
-    );
-    sendAdminPerf.stop();
+    await MailService.send({
+      to: ORDER_NOTIFICATION_EMAILS,
+      subject: `Nová objednávka #${order.id} na najitnajist.cz`,
+      body: adminNoticeHtml,
+      db: database,
+    }).catch((error) => {
+      logger.error(`[CHECKOUT] admin notification failed to be sent`, {
+        error,
+        order,
+      });
+    }),
+      sendAdminPerf.stop();
 
     const sendUserPerf = perf.track('send-user');
     await MailService.send({
       to: order.email,
       subject: `Objednávka #${order.id} na najitnajist.cz`,
       body: userNoticeHtml,
+      db: database,
     }).catch((error) => {
       logger.error(`[CHECKOUT] user notification failed to be sent`, {
         error,

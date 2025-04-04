@@ -59,6 +59,7 @@ const onOrderConfirmed: OrderStateListener = async (
         siteOrigin: APP_ORIGIN,
       }),
     ),
+    db: database,
   });
 };
 const onOrderShipped: OrderStateListener = async (
@@ -92,6 +93,7 @@ const onOrderShipped: OrderStateListener = async (
         siteOrigin: APP_ORIGIN,
       }),
     ),
+    db: database,
   });
 };
 const onOrderDropped: OrderStateListener = async (order) => {
