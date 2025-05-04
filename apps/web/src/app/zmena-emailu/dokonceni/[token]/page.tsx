@@ -13,7 +13,7 @@ import { z } from 'zod';
 import { BottomLinks } from './_components/BottomLinks';
 import { Title } from './_components/Title';
 
-type FormValues = z.infer<typeof userRegisterInputSchema> & {
+type FormValues = z.input<typeof userRegisterInputSchema> & {
   passwordAgain: string;
 };
 

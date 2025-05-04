@@ -16,10 +16,7 @@ const queryClient = new QueryClient({});
 
 const transformer = getSuperJson();
 
-export const ContextProviders: FC<PropsWithChildren & { cookies?: string }> = ({
-  children,
-  cookies,
-}) => {
+export const ContextProviders: FC<PropsWithChildren> = ({ children }) => {
   // const pathname = usePathname();
   // const { track } = useGtag();
   const [trpcClient] = useState(() =>

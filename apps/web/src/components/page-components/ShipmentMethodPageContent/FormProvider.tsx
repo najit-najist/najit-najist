@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useForm, FormProvider as HookformProvider } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -29,7 +29,7 @@ export function FormProvider({
 
   return (
     <HookformProvider {...formMethods}>
-      {children as JSX.Element}
+      {children as React.JSX.Element}
     </HookformProvider>
   );
 }

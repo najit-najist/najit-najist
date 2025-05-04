@@ -4,7 +4,7 @@ import {
   RadioGroup,
   RadioGroupVariants,
 } from '@components/common/form/RadioGroup';
-import debounce from 'lodash.debounce';
+import { debounce } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect } from 'react';
 import { FormProvider, useController, useForm } from 'react-hook-form';

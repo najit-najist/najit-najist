@@ -8,7 +8,7 @@ import { UserService, UserWithRelations } from '@server/services/UserService';
 import { t } from '@server/trpc';
 import { passwordResetRequest } from '@server/utils/passwordResetRequest';
 import { TRPCError } from '@trpc/server';
-import omit from 'lodash/omit';
+import { omit } from 'es-toolkit';
 import { DatabaseError } from 'pg';
 import { z } from 'zod';
 

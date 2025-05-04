@@ -30,7 +30,9 @@ export const Form: FC<
       numberOfPortions: recipe?.numberOfPortions ?? 1,
     },
     resolver: zodResolver(
-      viewType === 'edit' ? recipeUpdateInputSchema : recipeCreateInputSchema,
+      (viewType === 'edit'
+        ? recipeUpdateInputSchema
+        : recipeCreateInputSchema) as any,
     ),
   });
   const { handleSubmit } = formMethods;

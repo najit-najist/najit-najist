@@ -6,7 +6,7 @@ import { UserRoles } from '@najit-najist/database/models';
 import { ProfileService } from '@server/services/Profile.service';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
-import omit from 'lodash/omit';
+import { omit } from 'es-toolkit';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 

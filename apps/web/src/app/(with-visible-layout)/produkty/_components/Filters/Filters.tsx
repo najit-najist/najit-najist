@@ -10,7 +10,7 @@ import {
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { ProductCategory } from '@najit-najist/database/models';
-import debounce from 'lodash.debounce';
+import { debounce } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
 import { FormProvider, useController, useForm } from 'react-hook-form';

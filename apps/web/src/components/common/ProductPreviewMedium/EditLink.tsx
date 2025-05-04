@@ -1,8 +1,8 @@
 'use client';
 
 import { buttonStyles } from '@components/common/Button/buttonStyles';
+import { useLoggedInUser } from '@contexts/LoggedInUserProvider';
 import { PencilIcon } from '@heroicons/react/24/solid';
-import { useCurrentUser } from '@hooks/useCurrentUser';
 import { recipes } from '@najit-najist/database/models';
 import { canUser, UserActions } from '@server/utils/canUser';
 import { RouteType } from 'next/dist/lib/load-custom-routes';
@@ -12,13 +12,7 @@ import { FC } from 'react';
 export const EditLink: FC<{ href: LinkProps<RouteType>['href'] }> = ({
   href,
 }) => {
-  const { data: loggedInUser } = useCurrentUser({
-    suspense: true,
-    retry: false,
-    trpc: {
-      ssr: false,
-    },
-  });
+  const loggedInUser = useLoggedInUser();
 
   if (!loggedInUser) {
     return null;

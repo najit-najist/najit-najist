@@ -3,7 +3,7 @@
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import debounce from 'lodash.debounce';
+import { debounce } from 'es-toolkit';
 import { usePathname, useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useTransition } from 'react';
 import { useForm } from 'react-hook-form';

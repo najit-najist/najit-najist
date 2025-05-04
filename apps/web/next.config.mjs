@@ -55,6 +55,10 @@ let nextConfig = {
       new webpack.IgnorePlugin({
         resourceRegExp: /^pg-native$|^cloudflare:sockets$/,
       }),
+      new webpack.NormalModuleReplacementPlugin(/node:/, (resource) => {
+        const mod = resource.request.replace(/^node:/, '');
+        resource.request = mod;
+      }),
     );
 
     if (nextRuntime === 'edge') {

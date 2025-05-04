@@ -1,11 +1,12 @@
 import { CookieBanner } from '@components/common/CookieBanner';
 import { Toaster } from '@components/common/toast';
 import { ContextProviders } from '@contexts/ContextProviders';
+import { LoggedInUserProvider } from '@contexts/LoggedInUserProvider';
 import { LayoutComponent } from '@custom-types';
+import { getLoggedInUser } from '@server/utils/server';
 import clsx from 'clsx';
 import 'keen-slider/keen-slider.min.css';
 import { Suez_One, Montserrat, DM_Serif_Display } from 'next/font/google';
-import { headers } from 'next/headers';
 import Script from 'next/script';
 import 'react-color-palette/dist/css/rcp.css';
 
@@ -43,7 +44,7 @@ export const viewport = {
 };
 
 const RootLayout: LayoutComponent = async ({ children }) => {
-  const headersStore = await headers();
+  const loggedInUser = await getLoggedInUser().catch(() => undefined);
 
   return (
     <html lang="cs">
@@ -60,19 +61,19 @@ const RootLayout: LayoutComponent = async ({ children }) => {
       <body
         className={clsx(
           'bg-project-background data-scroll-container min-h-screen flex text-project-text',
-          // inter.className,
-          // dmSerifDisplay.className,
           montserrat.className,
           inter.variable,
           dmSerifDisplay.variable,
           montserrat.variable,
         )}
       >
-        <ContextProviders cookies={headersStore.get('cookie') ?? undefined}>
-          {children}
-          <CookieBanner />
-          <Toaster />
-        </ContextProviders>
+        <LoggedInUserProvider value={loggedInUser}>
+          <ContextProviders>
+            {children}
+            <CookieBanner />
+            <Toaster />
+          </ContextProviders>
+        </LoggedInUserProvider>
       </body>
     </html>
   );

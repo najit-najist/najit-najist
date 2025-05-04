@@ -24,28 +24,27 @@ export const PostPreviewMedium: FC<PostWithRelations> = async ({
 
   return (
     <article className="relative isolate w-full">
-      <Link
-        href={link}
-        className="relative aspect-square w-full lg:shrink-0 block"
-      >
-        {importedImage ? (
-          <Image
-            width={300}
-            height={300}
-            unoptimized
-            src={importedImage}
-            alt=""
-            className="absolute inset-0 h-full w-full bg-gray-50 object-cover hover:shadow-xl duration-200 rounded-project"
-          />
-        ) : (
-          <div className="flex w-full h-full bg-white hover:shadow-xl duration-200 ring-1 ring-inset ring-gray-900/10 rounded-project">
-            <PhotoIcon className="w-20 h-20 m-auto" />
-          </div>
-        )}
+      <div className="relative aspect-square w-full lg:shrink-0 block">
+        <Link href={link}>
+          {importedImage ? (
+            <Image
+              width={300}
+              height={300}
+              unoptimized
+              src={importedImage}
+              alt=""
+              className="absolute inset-0 h-full w-full bg-gray-50 object-cover hover:shadow-xl duration-200 rounded-project"
+            />
+          ) : (
+            <div className="flex w-full h-full bg-white hover:shadow-xl duration-200 ring-1 ring-inset ring-gray-900/10 rounded-project">
+              <PhotoIcon className="w-20 h-20 m-auto" />
+            </div>
+          )}
+        </Link>
         <div className="absolute bottom-0 left-0 m-2">
           <EditLink href={`/administrace/${link}`} />
         </div>
-      </Link>
+      </div>
       <div className="px-2">
         <div className="group relative max-w-xl mt-2">
           <h3 className="font-title mt-4 text-lg sm:text-xl font-semibold leading-6 text-gray-900 group-hover:text-gray-600">

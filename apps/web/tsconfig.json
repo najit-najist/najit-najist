@@ -1,9 +1,11 @@
 {
-  "extends": "@najit-najist/tsconfig/base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+    "declaration": true,
     "module": "ESNext",
+    "noEmit": true,
     "removeComments": true,
-    "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "target": "ESNext",
     "baseUrl": "./src",
@@ -20,6 +22,7 @@
       "@components/*": ["./components/*"],
       "@server/*": ["./server/*"],
       "@logger/*": ["./logger/*"],
+      "@schemas/*": ["./schemas/*"],
       "@trpc/web": ["./trpc/web"],
       "@email/*": ["./email/*"],
       "@email": ["./email"],
@@ -34,13 +37,17 @@
     ],
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "emitDeclarationOnly": false,
-    "noEmit": true,
     "resolveJsonModule": true,
     "jsx": "preserve"
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["out", "build", "node_modules"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "tailwind.config.mjs"
+  ],
+  "tsBuildInfoFile": ".next/.tsconfig/lib.tsbuildinfo",
   "references": [
     {
       "path": "../../packages/comgate"
@@ -54,5 +61,6 @@
     {
       "path": "../../packages/database"
     }
-  ]
+  ],
+  "exclude": ["node_modules"]
 }

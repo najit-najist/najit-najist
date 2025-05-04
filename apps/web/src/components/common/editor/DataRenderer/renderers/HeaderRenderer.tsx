@@ -1,6 +1,6 @@
 import { cva } from 'class-variance-authority';
 import HTMLReactParser from 'html-react-parser';
-import { FC } from 'react';
+import React, { FC } from 'react';
 
 export interface HeaderBlockData {
   text: string;
@@ -26,7 +26,7 @@ const styles = cva('font-semibold mb-5 mt-10 font-title', {
 
 export const HeaderRenderer: FC<{ data: HeaderBlockData }> = ({ data }) => {
   const level = (data?.level || DEFAULT_LEVEL) as AvailableLevel;
-  const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  const Tag = `h${level}` as keyof React.JSX.IntrinsicElements;
 
   return (
     <Tag className={styles({ level })}>

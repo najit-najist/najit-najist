@@ -5,7 +5,6 @@ import { cookies } from 'next/headers';
 
 const { BUILD_TIMESTAMP } = process.env;
 const buildTimestamp = BUILD_TIMESTAMP ? Number(BUILD_TIMESTAMP) : undefined;
-console.log({ buildTimestamp });
 
 const todayAsString = dayjs(buildTimestamp).toDate();
 

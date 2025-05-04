@@ -118,7 +118,7 @@ export const Tooltip: FC<
   const triggerWithListeners = cloneElement(trigger, {
     ref: refs.setReference,
     ...getReferenceProps(),
-  });
+  } as any);
 
   return (
     <>

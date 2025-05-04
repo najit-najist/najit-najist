@@ -26,7 +26,7 @@ export const Form: FC<
     defaultValues: post,
     resolver: zodResolver(
       viewType === 'create' ? postCreateInputSchema : postUpdateInputSchema,
-    ),
+    ) as any,
   });
   const { handleSubmit } = formMethods;
   const { mutateAsync: updatePost } = trpc.posts.update.useMutation();

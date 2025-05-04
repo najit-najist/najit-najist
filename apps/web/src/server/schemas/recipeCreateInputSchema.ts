@@ -12,9 +12,7 @@ export const recipeCreateInputSchema = z.object({
   title: nonEmptyStringSchema,
   images: z.array(encodedImageSchema).min(1, 'Toto pole je povinné'),
   numberOfPortions: z.number({ required_error: 'Toto pole je povinné' }).min(1),
-  description: z
-    .string({ required_error: 'Toto pole je povinné' })
-    .describe('A html description'),
+  description: z.string({ required_error: 'Toto pole je povinné' }),
   category: entityLinkSchema,
   difficulty: entityLinkSchema,
   resources: z

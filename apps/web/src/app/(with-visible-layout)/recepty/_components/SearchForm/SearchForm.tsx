@@ -10,7 +10,7 @@ import {
   RecipeCategory,
   RecipeDifficulty,
 } from '@najit-najist/database/models';
-import debounce from 'lodash.debounce';
+import { debounce } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback, useEffect, useMemo, useTransition } from 'react';
 import { Controller, FormProvider, useForm } from 'react-hook-form';

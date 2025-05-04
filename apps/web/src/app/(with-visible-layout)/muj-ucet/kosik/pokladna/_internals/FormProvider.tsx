@@ -63,8 +63,8 @@ export const FormProvider: FC<
   const router = useRouter();
   const plausible = usePlausible();
   const formMethods = useForm({
-    defaultValues: defaultFormValues,
-    resolver: resolver,
+    defaultValues: defaultFormValues as any,
+    resolver,
   });
   const { handleSubmit, setError } = formMethods;
 

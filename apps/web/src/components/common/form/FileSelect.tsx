@@ -19,7 +19,7 @@ export interface FileSelectProps extends VariantProps<typeof rootStyles> {
 export const FileSelect = forwardRef<HTMLInputElement, FileSelectProps>(
   function FileSelect({ wrapperClassName, label, error, name }, ref) {
     const inputId = useId();
-    const inputRef = useRef<HTMLInputElement>();
+    const inputRef = useRef<HTMLInputElement>(null);
     const onDrop = useCallback(() => {
       // Do something with the files
     }, []);

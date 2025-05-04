@@ -31,12 +31,12 @@
     "@najit-najist/database": "workspace:*",
     "@najit-najist/packeta": "workspace:*",
     "dayjs": "^1.11.13",
-    "drizzle-zod": "^0.5.1",
+    "drizzle-zod": "^0.7.1",
     "js-base64": "^3.7.7",
-    "zod": "^3.23.8"
+    "zod": "^3.24.3"
   },
   "devDependencies": {
-    "@najit-najist/tsconfig": "workspace:*",
-    "vitest": "^2.1.5"
+    "@swc/cli": "^0.7.3",
+    "vitest": "^3.1.2"
   }
 }

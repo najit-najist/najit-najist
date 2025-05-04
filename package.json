@@ -19,25 +19,25 @@
     "uninstall": "rm -rf ./**/node_modules ./package-lock.json"
   },
   "devDependencies": {
-    "@swc/cli": "^0.5.0",
-    "@swc/core": "^1.9.2",
-    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
-    "chokidar": "^4.0.1",
-    "prettier": "^3.3.3",
-    "prettier-plugin-astro": "^0.14.1",
-    "prettier-plugin-packagejson": "^2.5.3",
+    "@next/eslint-plugin-next": "^15.3.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.2",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.2",
+    "eslint-plugin-react": "^7.37.5",
+    "prettier": "^3.5.3",
+    "prettier-plugin-packagejson": "^2.5.10",
     "rimraf": "^6.0.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.3"
   },
-  "packageManager": "pnpm@9.13.2",
+  "packageManager": "pnpm@9.15.4",
   "engines": {
     "node": ">=20.0.0",
-    "pnpm": ">=9.1.1"
+    "pnpm": ">=9.15.4"
   },
   "pnpm": {
     "overrides": {
-      "@types/react": "^18.3.12",
-      "drizzle-orm": "^0.36.3"
+      "@types/react": "^19.1.2",
+      "drizzle-orm": "^0.43.1"
     }
   }
 }

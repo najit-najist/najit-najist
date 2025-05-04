@@ -27,14 +27,14 @@
     "dev:package:types": "pnpm build:types --watch"
   },
   "dependencies": {
-    "zod": "^3.23.8",
+    "zod": "^3.24.3",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "@najit-najist/tsconfig": "workspace:*",
-    "@swc/core": "^1.9.2",
-    "@types/node": "^22.9.0",
+    "@swc/cli": "^0.7.3",
+    "@swc/core": "^1.11.24",
+    "@types/node": "^22.15.3",
     "@types/zxcvbn": "^4.4.5",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.3"
   }
 }

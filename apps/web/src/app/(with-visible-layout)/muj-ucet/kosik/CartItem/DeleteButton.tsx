@@ -9,7 +9,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { trpc } from '@trpc/web';
 import { useRouter } from 'next/navigation';
 import { FC, useCallback } from 'react';
-import { useFormState } from 'react-hook-form';
 
 export const DeleteButton: FC<{
   productId: Product['id'];

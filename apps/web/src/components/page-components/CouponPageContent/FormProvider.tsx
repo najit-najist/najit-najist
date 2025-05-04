@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PropsWithChildren } from 'react';
+import React, { PropsWithChildren } from 'react';
 import { useForm, FormProvider as HookformProvider } from 'react-hook-form';
 import { z } from 'zod';
 
@@ -18,7 +18,8 @@ const defaultFormValues: FormValues = {
   minimalProductCount: 0,
 };
 
-export type FormValues = z.input<typeof createCouponSchema>;
+export type FormValues = z.input<typeof createCouponSchema> &
+  z.input<typeof updateCouponSchema>;
 
 export function FormProvider({
   children,
@@ -26,12 +27,12 @@ export function FormProvider({
 }: PropsWithChildren<{ initialFormData?: FormValues }>) {
   const formMethods = useForm<FormValues>({
     defaultValues: initialFormData ?? defaultFormValues,
-    resolver: initialFormData ? updateResolver : createResolver,
+    resolver: (initialFormData ? updateResolver : createResolver) as any,
   });
 
   return (
     <HookformProvider {...formMethods}>
-      {children as JSX.Element}
+      {children as React.JSX.Element}
     </HookformProvider>
   );
 }

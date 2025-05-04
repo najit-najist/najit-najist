@@ -1,11 +1,15 @@
 {
-  "extends": "@najit-najist/tsconfig/base.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
+    "emitDeclarationOnly": true,
+    "baseUrl": "./",
+    "declaration": true,
     "target": "ESNext",
     "jsx": "preserve",
     "rootDir": "./src",
+    "tsBuildInfoFile": "dist/.tsconfig/lib.tsbuildinfo",
     "outDir": "./dist"
   },
   "include": ["src"],

@@ -2,7 +2,6 @@
 
 import { EditUserUnderPage } from '@components/page-components/EditUserUnderpage';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User } from '@najit-najist/database/models';
 import { FC, useCallback } from 'react';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -10,34 +9,33 @@ import { z } from 'zod';
 import { createUserAction } from '../createUserAction';
 import { createUserValidationSchema } from '../validationSchema';
 
+const schema = createUserValidationSchema.extend({
+  passwordAgain: z.string(),
+});
 const resolver = zodResolver(
-  createUserValidationSchema
-    .extend({
-      passwordAgain: z.string(),
-    })
-    .superRefine(({ passwordAgain, password }, ctx) => {
-      if (password !== passwordAgain) {
-        const errorMessageBase = {
-          code: 'custom',
-          fatal: true,
-          message: 'Hesla se musí shodovat',
-        } as const;
+  schema.superRefine(({ passwordAgain, password }, ctx) => {
+    if (password !== passwordAgain) {
+      const errorMessageBase = {
+        code: 'custom',
+        fatal: true,
+        message: 'Hesla se musí shodovat',
+      } as const;
 
-        ctx.addIssue({
-          ...errorMessageBase,
-          path: ['password'],
-        });
+      ctx.addIssue({
+        ...errorMessageBase,
+        path: ['password'],
+      });
 
-        ctx.addIssue({
-          ...errorMessageBase,
-          path: ['passwordAgain'],
-        });
-      }
-    }),
+      ctx.addIssue({
+        ...errorMessageBase,
+        path: ['passwordAgain'],
+      });
+    }
+  }),
 );
 
 export const Content: FC = () => {
-  const formMethods = useForm<z.infer<typeof createUserValidationSchema>>({
+  const formMethods = useForm<z.infer<typeof schema>>({
     resolver,
     defaultValues: {
       password: '',

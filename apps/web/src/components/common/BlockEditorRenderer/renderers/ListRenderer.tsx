@@ -1,6 +1,6 @@
 import { cx } from 'class-variance-authority';
 import HTMLReactParser from 'html-react-parser';
-import { FC, PropsWithChildren } from 'react';
+import React, { FC, PropsWithChildren } from 'react';
 
 export interface ListBlockData {
   style: 'ordered' | 'unordered';
@@ -17,7 +17,7 @@ export type NestedListItem =
 const Bullet: FC<PropsWithChildren> = ({ children }) => <li>{children}</li>;
 
 const Group: FC<{
-  Tag: keyof JSX.IntrinsicElements;
+  Tag: keyof React.JSX.IntrinsicElements;
   items: NestedListItem[];
   className?: string;
 }> = ({ Tag, items, ...props }) => (
@@ -45,7 +45,7 @@ const Group: FC<{
 
 export const ListRenderer: FC<{ data: ListBlockData }> = ({ data }) => {
   const isOrdered = data?.style === 'ordered';
-  const Tag = (isOrdered ? `ol` : `ul`) as keyof JSX.IntrinsicElements;
+  const Tag = (isOrdered ? `ol` : `ul`) as keyof React.JSX.IntrinsicElements;
 
   return (
     data && (

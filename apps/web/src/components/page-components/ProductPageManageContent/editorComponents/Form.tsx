@@ -40,7 +40,7 @@ export const Form: FC<
     },
     resolver: zodResolver(
       viewType === 'edit' ? productUpdateInputSchema : productCreateInputSchema,
-    ),
+    ) as any,
   });
   const { handleSubmit } = formMethods;
 
