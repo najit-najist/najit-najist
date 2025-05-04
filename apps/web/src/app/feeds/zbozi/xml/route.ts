@@ -17,6 +17,15 @@ const builder = new XMLBuilder({
 
 // https://napoveda.zbozi.cz/xml-feed/specifikace/
 
+const categorySlugToCategoryText: Record<string, string> = {
+  'balene-pecivo': 'Potraviny a nápoje | Potraviny | Pečivo | Trvanlivé pečivo',
+  caje: 'Potraviny a nápoje | Nápoje | Nealkoholické nápoje | Horké nápoje | Čaje',
+  cerealie: 'Potraviny a nápoje | Potraviny | Cereálie a müsli',
+  'granola-musli': 'Potraviny a nápoje | Potraviny | Cereálie a müsli',
+  'darkove-kose': 'Potraviny a nápoje | Potraviny | Dárkové potravinové koše',
+  susenky: 'Potraviny a nápoje | Potraviny | Cukrovinky | Sušenky a oplatky',
+};
+
 const exceptDeliveryMethods = [
   OrderDeliveryMethodsSlug.DELIVERY_HRADEC_KRALOVE,
   OrderDeliveryMethodsSlug.LOCAL_PICKUP_EVENT_1,
@@ -94,6 +103,10 @@ export const GET = async (request: NextRequest): Promise<Response> => {
       ...(product.manufacturer && {
         MANUFACTURER: product.manufacturer,
       }),
+      ...(!!product.category &&
+        categorySlugToCategoryText[product.category.slug] && {
+          CATEGORYTEXT: categorySlugToCategoryText[product.category.slug],
+        }),
       DELIVERY: deliveryMethods.map((method) => ({
         DELIVERY_ID:
           deliveryMethodToXmlName[
