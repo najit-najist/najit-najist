@@ -1,4 +1,11 @@
-import { integer, pgTable, text, unique, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  integer,
+  pgTable,
+  text,
+  unique,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { withDefaultFields } from '../internal/withDefaultFields';
 
@@ -27,6 +34,7 @@ export const orderDeliveryMethods = pgTable(
     description: text('description').notNull(),
     notes: text('notes'),
     price: integer('price').default(0),
+    disabled: boolean('disabled').default(false),
   }),
   (schema) => [unique().on(schema.slug)],
 );

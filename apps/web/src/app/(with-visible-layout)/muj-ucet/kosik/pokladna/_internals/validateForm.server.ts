@@ -16,7 +16,8 @@ export const checkoutCartSchemaServer = userCartCheckoutInputSchema
     deliveryMethod: deliveryMethodSchema.transform(async (original) => ({
       original,
       fetched: await database.query.orderDeliveryMethods.findFirst({
-        where: (s, { eq }) => eq(s.slug, original.slug),
+        where: (s, { eq, and, not }) =>
+          and(eq(s.slug, original.slug), not(eq(s.disabled, true))),
       }),
     })),
     paymentMethod: z.object({ slug: z.string() }).transform(({ slug }) =>

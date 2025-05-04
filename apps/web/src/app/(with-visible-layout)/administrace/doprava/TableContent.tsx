@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 export async function TableContent() {
   const items = await database.query.orderDeliveryMethods.findMany({
+    where: (schema, { not, eq }) => not(eq(schema.disabled, true)),
     orderBy: (schema, { desc }) => desc(schema.createdAt),
   });
 

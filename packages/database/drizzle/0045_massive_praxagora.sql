@@ -1,0 +1,1 @@
+ALTER TABLE "order_delivery_methods" ADD COLUMN "disabled" boolean DEFAULT false;
