@@ -149,6 +149,7 @@ export const testOrder = {
     price: 200,
     slug: OrderDeliveryMethodsSlug.BALIKOVNA,
     notes: '',
+    disabled: false,
   },
   invoiceAddressId: null,
 } satisfies OrderWithRelations & {

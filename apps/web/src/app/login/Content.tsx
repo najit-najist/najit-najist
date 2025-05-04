@@ -25,7 +25,7 @@ export const Content: FC<{ redirectTo: string }> = ({ redirectTo }) => {
   const { trackEvent } = usePlausible();
   const searchParams = useSearchParams();
   const formMethods = useForm<FormValues>({
-    resolver: zodResolver(userProfileLogInInputSchema),
+    resolver: zodResolver(userProfileLogInInputSchema) as any,
   });
   const {
     register,
