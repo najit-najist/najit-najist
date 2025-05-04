@@ -4,6 +4,7 @@
     "composite": true,
     "emitDeclarationOnly": true,
     "module": "ESNext",
+    "declarationMap": true,
     "baseUrl": "./",
     "declaration": true,
     "tsBuildInfoFile": "dist/.tsconfig/lib.tsbuildinfo",

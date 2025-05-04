@@ -1,8 +1,11 @@
 import queryString from 'query-string';
 
+import { ComgateError } from './ComgateError';
+import { ComgateErrorResponseCode } from './ComgateErrorResponseCode';
 import { ComgateGetStatusSuccessResponse } from './ComgateGetStatusSuccessResponse';
-import { ComgateRequestError } from './ComgateRequestError';
+import { ComgateNetworkError } from './ComgateNetworkError';
 import { ComgateResponseCode } from './ComgateResponseCode';
+import { ComgateSuccessResponseCode } from './ComgateSuccessResponseCode';
 import { TransactionId } from './TransactionId';
 
 export type CreatePaymentOptions = {
@@ -10,6 +13,12 @@ export type CreatePaymentOptions = {
   refId: string;
   amount: number;
   email: string;
+  /**
+   * If this is true then new payment is first authorized from comgate and then is moved into AUTHORIZED state.
+   * After that there is a need for capturing this authorized transaction with 'doPaymentPreauthCapture' method or 'doPaymentPreauthCancel' for canceling the transaction.
+   * If this is omitted the verification is done automatically
+   */
+  preauth?: boolean;
 };
 
 export type ComgateLikeResponse<T extends Record<string, any>> = T & {
@@ -41,10 +50,10 @@ export class ComgateClient {
     this.configuration = configuration;
   }
 
-  private async doRequest<T extends Record<string, any>>(
-    path: string,
-    options?: RequestInit,
-  ) {
+  private async doRequest<
+    T extends Record<string, any>,
+    TErrorCode extends ComgateErrorResponseCode = ComgateErrorResponseCode,
+  >(path: string, options?: RequestInit) {
     if (options?.body instanceof URLSearchParams) {
       options.body.set('merchant', this.configuration.merchant.id);
       options.body.set('secret', this.configuration.secret);
@@ -65,36 +74,36 @@ export class ComgateClient {
     );
 
     if (response.status !== 200) {
-      throw new ComgateRequestError('http-failed', path, response);
+      throw new ComgateNetworkError({
+        path,
+        response,
+      });
     }
 
     const bodyAsString = await response.text();
     const data = queryString.parse(bodyAsString, {
       parseBooleans: true,
       parseNumbers: true,
-    }) as ComgateLikeResponse<T>;
+    }) as T;
 
-    if (data.code !== ComgateResponseCode.OK) {
-      throw new ComgateRequestError('payload-not-ok', path, response, data);
+    if (data.code !== ComgateSuccessResponseCode.OK) {
+      return new ComgateError(data.code as TErrorCode, {
+        path,
+        response,
+        body: data,
+      }) as ComgateError<TErrorCode, T>;
     }
 
     return {
       ...response,
-      ...(data.code !== ComgateResponseCode.OK ? { status: 400 } : {}),
       data,
     };
   }
 
-  public async getStatus(options: { transId: TransactionId }) {
+  public async getPaymentStatus(options: { transId: TransactionId }) {
     const transId = String(options.transId);
 
-    return await this.doRequest<
-      | ComgateGetStatusSuccessResponse
-      | {
-          code: ComgateResponseCode;
-          message: string;
-        }
-    >('/status', {
+    return await this.doRequest<ComgateGetStatusSuccessResponse>('/status', {
       method: 'POST',
       body: new URLSearchParams({
         transId: transId,
@@ -102,11 +111,13 @@ export class ComgateClient {
     });
   }
 
-  public async cancelPayment(transactionId: TransactionId) {
-    return await this.doRequest<{
-      code: ComgateResponseCode.OK | ComgateResponseCode.INVALID_REQUEST;
-      message: string;
-    }>('/cancel', {
+  public async doPaymentCancel(transactionId: TransactionId) {
+    return await this.doRequest<
+      {
+        message: string;
+      },
+      ComgateErrorResponseCode.INVALID_REQUEST
+    >('/cancel', {
       method: 'POST',
       body: new URLSearchParams({
         transId: transactionId,
@@ -114,21 +125,21 @@ export class ComgateClient {
     });
   }
 
-  public async refundPayment(
+  public async doPaymentRefund(
     transactionId: TransactionId,
     refundAmount: number,
   ) {
-    return await this.doRequest<{
-      code:
-        | ComgateResponseCode.OK
-        | ComgateResponseCode.UNKNOWN_ERROR
-        | ComgateResponseCode.DB_ERROR
-        | ComgateResponseCode.INVALID_REQUEST
-        | ComgateResponseCode.PAYMENT_ALREADY_CANCELED
-        | ComgateResponseCode.REFUND_TOO_LARGE
-        | ComgateResponseCode.UNKNOWN_ERROR;
-      message: string;
-    }>('/refund', {
+    return await this.doRequest<
+      {
+        message: string;
+      },
+      | ComgateErrorResponseCode.UNKNOWN_ERROR
+      | ComgateErrorResponseCode.DB_ERROR
+      | ComgateErrorResponseCode.INVALID_REQUEST
+      | ComgateErrorResponseCode.PAYMENT_ALREADY_CANCELED
+      | ComgateErrorResponseCode.REFUND_TOO_LARGE
+      | ComgateErrorResponseCode.UNKNOWN_ERROR
+    >('/refund', {
       method: 'POST',
       body: new URLSearchParams({
         transId: transactionId,
@@ -137,16 +148,16 @@ export class ComgateClient {
     });
   }
 
-  public async createPayment(options: CreatePaymentOptions) {
+  public async doPaymentCreate(options: CreatePaymentOptions) {
     const { refId, amount, email } = options;
 
     return await this.doRequest<{
       message: string;
-      transId?: TransactionId;
+      transId: TransactionId;
       /**
        * Redirect url that should be sent back to client
        */
-      redirect?: string;
+      redirect: string;
     }>('/create', {
       method: 'POST',
       body: new URLSearchParams({
@@ -161,6 +172,22 @@ export class ComgateClient {
         url_paid: this.configuration.returnUrls.paid({ refId }),
         url_cancelled: this.configuration.returnUrls.cancelled({ refId }),
         url_pending: this.configuration.returnUrls.pending({ refId }),
+      }),
+    });
+  }
+
+  public async doPaymentPreauthCapture(options: {
+    transId: string;
+    amount: number;
+  }) {
+    const { transId, amount } = options;
+
+    return await this.doRequest<{
+      message: string;
+    }>(`/preauth/transId/${transId}.json`, {
+      method: 'PUT',
+      body: new URLSearchParams({
+        amount: String(amount),
       }),
     });
   }
