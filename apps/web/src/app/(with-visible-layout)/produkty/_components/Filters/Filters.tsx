@@ -77,7 +77,7 @@ export const Filters: FC<{
         router.push(route);
       });
     },
-    [router],
+    [],
   );
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export const Filters: FC<{
     const subscription = watch(debouncedSubmit);
 
     return () => subscription.unsubscribe();
-  }, [handleSubmit, onSubmit, watch]);
+  }, [onSubmit]);
 
   return (
     <aside className="flex-none w-full mx-auto my-5 container">
