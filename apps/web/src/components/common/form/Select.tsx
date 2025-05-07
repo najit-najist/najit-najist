@@ -47,6 +47,7 @@ export type SelectProps<T extends ItemBase> = {
   onAddNewItem?: () => void;
   addNewItemLabel?: string;
   fallbackButtonContents?: ReactNode;
+  defaultValue?: T | null | undefined;
 };
 
 export function Select<T extends ItemBase>({
@@ -63,15 +64,8 @@ export function Select<T extends ItemBase>({
   onAddNewItem,
   addNewItemLabel = 'Přidat nový',
   fallbackButtonContents = 'Vyberte',
+  defaultValue,
 }: SelectProps<T>): ReactElement {
-  const labelValue = (
-    multiple && Array.isArray(selected) ? selected?.length : selected
-  )
-    ? Array.isArray(selected)
-      ? selected.map(formatter).join(', ')
-      : (formatter(selected!) ?? '')
-    : fallbackButtonContents;
-
   return (
     <Listbox
       value={selected}
@@ -81,8 +75,9 @@ export function Select<T extends ItemBase>({
       name={name}
       as="div"
       className={className}
+      defaultValue={defaultValue}
     >
-      {({ open }) => (
+      {({ open, value }) => (
         <>
           {label ? (
             <Listbox.Label className={labelStyles()}>{label}</Listbox.Label>
@@ -92,7 +87,13 @@ export function Select<T extends ItemBase>({
               aria-disabled={disabled}
               className={selectButtonStyles()}
             >
-              <span className="block truncate">{labelValue}</span>
+              <span className="block truncate">
+                {(multiple && Array.isArray(value) ? value?.length : value)
+                  ? Array.isArray(value)
+                    ? value.map(formatter).join(', ')
+                    : (formatter(value!) ?? '')
+                  : fallbackButtonContents}
+              </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
                 <ChevronUpDownIcon
                   className="h-5 w-5 text-gray-400"
@@ -108,7 +109,7 @@ export function Select<T extends ItemBase>({
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project-input bg-white p-2 text-base shadow-lg ring-1 ring-gray-400 ring-opacity-5 focus:outline-none sm:text-sm">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-project-input bg-white p-1 text-base shadow-lg ring-1 ring-gray-400 ring-opacity-5 focus:outline-none sm:text-sm">
                 {items.map((item) => (
                   <Listbox.Option
                     key={item.id}
@@ -117,7 +118,7 @@ export function Select<T extends ItemBase>({
                         active
                           ? 'bg-project-primary text-white'
                           : 'text-gray-900',
-                        'relative cursor-default select-none py-2 pl-3 pr-9',
+                        'relative cursor-default select-none py-2 pl-3 pr-9 rounded-xl duration-100',
                       )
                     }
                     value={item}

@@ -27,14 +27,14 @@ const CustomButton: FC<
 }) => (
   <Button
     className={clsx(
-      'group p-1 pb-1.5 rounded-project bg-white shadow-sm',
+      'group p-1.5 pb-2.5 rounded-project bg-white shadow-sm cursor-pointer',
       className,
     )}
     {...rest}
   >
     <div
       className={clsx(
-        'w-8 h-8 relative -mb-1 group-active:scale-75 duration-500',
+        'w-6 h-6 relative -mb-1 group-active:scale-75 duration-500',
         isSubmitting ? 'animate-bounce-z' : '',
       )}
     >

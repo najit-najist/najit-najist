@@ -15,6 +15,7 @@ export const HeaderLogo = () => {
       className={clsx('flex-none py-2 duration-200', isMainPage ? '-mb-7' : '')}
     >
       <Logo
+        priority
         className={clsx('w-auto duration-200', isMainPage ? 'h-24' : 'h-16')}
       />
     </Link>

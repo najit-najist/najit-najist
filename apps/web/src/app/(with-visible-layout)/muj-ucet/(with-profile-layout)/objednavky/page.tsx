@@ -43,7 +43,7 @@ const List: FC = async () => {
 export default function Page() {
   return (
     <Section>
-      <div className="px-5 flex justify-between items-center mt-3">
+      <div className="px-5 flex justify-between items-center mt-3 pb-3 !mb-0">
         <h1 className="text-2xl font-title tracking-wide">{metadata.title}</h1>
       </div>
       {/* <SearchForm

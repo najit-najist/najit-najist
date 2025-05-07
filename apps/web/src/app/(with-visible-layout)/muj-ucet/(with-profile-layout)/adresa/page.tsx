@@ -19,7 +19,7 @@ export default async function MyProfileAddressPage() {
       }}
     >
       <Section>
-        <div className="px-5 flex items-center justify-between mt-3">
+        <div className="px-5 flex items-center justify-between mt-3 pb-3 !mb-0">
           <h1 className="text-3xl font-title tracking-wide">Moje adresa</h1>
           <SaveButton />
         </div>

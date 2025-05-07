@@ -110,8 +110,8 @@ const Form: FC<Params> = async ({ searchParams }) => {
       difficulties={[fallbackDifficulty, ...recipeDifficulties]}
       initialValues={{
         query,
-        difficultySlug: difficultySlugFromUrl ?? '',
-        typeSlug: typeSlugFromUrl ?? '',
+        "difficulty[slug]": difficultySlugFromUrl ?? '',
+        "type[slug]": typeSlugFromUrl ?? '',
       }}
     />
   );

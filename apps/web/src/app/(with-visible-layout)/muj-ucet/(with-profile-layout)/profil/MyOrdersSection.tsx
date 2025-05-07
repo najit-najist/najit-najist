@@ -41,7 +41,7 @@ const Orders: FC<{ user: UserWithRelations }> = async ({ user }) => {
 export const MyOrdersSection: FC<{ user: UserWithRelations }> = ({ user }) => {
   return (
     <Section>
-      <div className="px-5 flex items-center mt-3">
+      <div className="px-5 flex items-center mt-3 pb-3 !mb-0">
         <h1 className="text-2xl font-title tracking-wide">Moje objednávky</h1>
 
         <Link

@@ -350,7 +350,7 @@ export const TopHeader: FC<TopHeaderProps> = ({ loggedInUser }) => {
     <div className="bg-transparent relative z-30">
       <div className="container flex items-center mt-3 md:mt-0">
         <Link href="/" className="top-1 md:hidden flex-none relative">
-          <Logo className="h-10 w-auto" />
+          <Logo className="h-10 w-auto" priority />
         </Link>
 
         <div className="ml-auto flex gap-2 items-center md:pt-2 md:pt-3">

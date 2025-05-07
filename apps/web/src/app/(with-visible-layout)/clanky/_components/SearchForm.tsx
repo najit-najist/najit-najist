@@ -1,69 +1,76 @@
 'use client';
 
 import { Input, inputPrefixSuffixStyles } from '@components/common/form/Input';
+import { useForm } from '@conform-to/react';
+import { parseWithZod } from '@conform-to/zod';
 import { ArrowPathIcon } from '@heroicons/react/24/outline';
 import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import { debounce } from 'es-toolkit';
-import { usePathname, useRouter } from 'next/navigation';
-import { FC, useCallback, useEffect, useTransition } from 'react';
-import { useForm } from 'react-hook-form';
+import {  useRouter } from 'next/navigation';
+import { FC, useRef, useTransition } from 'react';
+import { searchPostSchema } from '../searchPostSchema';
+import { useDebounceCallback } from 'usehooks-ts';
 
 type FormData = { query?: string };
 
 export const SearchForm: FC<{ initialData?: Partial<FormData> }> = ({
   initialData,
 }) => {
-  const formMethods = useForm<FormData>({
-    defaultValues: initialData,
-  });
-  const { handleSubmit, register, watch } = formMethods;
-  const [isLoading, activateIsLoading] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
-  const pathName = usePathname();
+  const [isRefreshing, startRefreshing] = useTransition();
 
-  const onSubmit = useCallback<Parameters<typeof handleSubmit>['0']>(
-    ({ query }) => {
-      let route = pathName;
+  const [form, fields] = useForm({
+    defaultValue: initialData,
+    onSubmit(event, { submission }) {
+      event.preventDefault()
 
-      if (query) {
-        const searchParams = new URLSearchParams({
-          query,
+      if (submission?.status === 'success') {
+        const queryParams = new URLSearchParams(window.location.search);
+
+        const params = Object.entries({
+          query: submission?.value?.query,
         });
 
-        route += `?${searchParams.toString()}`;
+        for (const [key, value] of params) {
+          if (!value) {
+            queryParams.delete(key);
+          } else {
+            queryParams.set(key, value);
+          }
+        }
+
+        startRefreshing(() => {
+          // @ts-ignore
+          router.push(`?${queryParams.toString()}`);
+        });
       }
-
-      activateIsLoading(() => {
-        // @ts-ignore
-        router.replace(route);
-      });
     },
-    [pathName, router],
-  );
+    onValidate: ({ formData }) =>
+      parseWithZod(formData, { schema: searchPostSchema }),
+  });
 
-  useEffect(() => {
-    const debouncedSubmit = debounce(() => handleSubmit(onSubmit)(), 300);
-    const subscription = watch(debouncedSubmit);
-
-    return () => subscription.unsubscribe();
-  }, [handleSubmit, onSubmit, watch]);
+  const debouncedSubmit = useDebounceCallback(() => {
+    formRef.current?.requestSubmit();
+  }, 300);
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form id={form.id} onSubmit={form.onSubmit} noValidate ref={formRef}>
       <Input
         placeholder="Vyhledávání..."
         rootClassName="max-w-sm"
         size="normal"
         suffix={
           <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
-            {formMethods.formState.isSubmitting || isLoading ? (
+            {isRefreshing ? (
               <ArrowPathIcon className="w-6 h-6 mx-5 my-2 animate-spin" />
             ) : (
               <MagnifyingGlassIcon className="w-6 h-6 mx-5 my-2" />
             )}
           </div>
         }
-        {...register('query')}
+        onChange={debouncedSubmit}
+        name={fields.query.name}
+        defaultValue={form.initialValue?.query}
       />
     </form>
   );
