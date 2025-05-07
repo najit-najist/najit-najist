@@ -5,22 +5,20 @@ import {
   RadioGroup,
   RadioGroupVariants,
 } from '@components/common/form/RadioGroup';
+import { useForm } from '@conform-to/react';
+import { parseWithZod } from '@conform-to/zod';
 import {
   ArrowPathIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
 import { ProductCategory } from '@najit-najist/database/models';
-import { debounce } from 'es-toolkit';
 import { useRouter } from 'next/navigation';
-import { FC, useCallback, useEffect, useTransition } from 'react';
-import { FormProvider, useController, useForm } from 'react-hook-form';
+import { FC,  useRef, useTransition } from 'react';
+import { useDebounceCallback } from 'usehooks-ts';
+import { z } from 'zod';
 
 import { ProductsPageSortBy } from '../../_types';
-
-type FormValues = {
-  query?: string;
-  sort?: ProductsPageSortBy;
-};
+import { searchProductSchema } from '../../searchProductSchema';
 
 const sortFieldItems = [
   {
@@ -38,92 +36,88 @@ const sortFieldItems = [
 ];
 
 export const Filters: FC<{
-  initialValues?: FormValues;
+  initialValues?: z.input<typeof searchProductSchema>;
   categories: ProductCategory[];
 }> = ({ initialValues }) => {
+  const formRef = useRef<HTMLFormElement>(null);
   const router = useRouter();
   const [isRefreshing, startRefreshing] = useTransition();
-  const formMethods = useForm<FormValues>({
-    defaultValues: initialValues,
-  });
-  const { handleSubmit, register, watch, control } = formMethods;
-  const { field: sortField } = useController({
-    name: 'sort',
-    control,
-  });
 
-  const onSubmit = useCallback<Parameters<typeof handleSubmit>[0]>(
-    ({ query, sort = ProductsPageSortBy.RECOMMENDED }) => {
-      let route = '/produkty';
-      const queryParams = new URLSearchParams(window.location.search);
+  const [form, fields] = useForm({
+    defaultValue: initialValues,
+    onSubmit(event, { submission }) {
+      event.preventDefault()
 
-      const params = Object.entries({
-        query,
-        sort: sort !== ProductsPageSortBy.RECOMMENDED ? sort : undefined,
-      });
+      if (submission?.status === 'success') {
+        const queryParams = new URLSearchParams(window.location.search);
 
-      for (const [key, value] of params) {
-        if (!value) {
-          queryParams.delete(key);
-        } else {
-          queryParams.set(key, value);
+        const params = Object.entries({
+          query: submission?.value?.query,
+          sort:
+            submission.value.sort !== ProductsPageSortBy.RECOMMENDED
+              ? submission.value.sort
+              : undefined,
+        });
+
+        for (const [key, value] of params) {
+          if (!value) {
+            queryParams.delete(key);
+          } else {
+            queryParams.set(key, value);
+          }
         }
+
+        startRefreshing(() => {
+          // @ts-ignore
+          router.push(`?${queryParams.toString()}`);
+        });
       }
-
-      route += `?${queryParams.toString()}`;
-
-      startRefreshing(() => {
-        // @ts-ignore
-        router.push(route);
-      });
     },
-    [],
-  );
+    onValidate: ({ formData }) =>
+      parseWithZod(formData, { schema: searchProductSchema }),
+  });
 
-  useEffect(() => {
-    const debouncedSubmit = debounce(() => handleSubmit(onSubmit)(), 300);
-    const subscription = watch(debouncedSubmit);
-
-    return () => subscription.unsubscribe();
-  }, [onSubmit]);
+  const debouncedSubmit = useDebounceCallback(() => {
+    formRef.current?.requestSubmit();
+  }, 300);
 
   return (
     <aside className="flex-none w-full mx-auto my-5 container">
-      <FormProvider {...formMethods}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="flex flex-wrap gap-2">
-            <Input
-              placeholder="Vyhledávání..."
-              rootClassName="w-full max-w-lg"
-              suffix={
-                <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
-                  {formMethods.formState.isSubmitting || isRefreshing ? (
-                    <ArrowPathIcon className="w-6 h-6 mx-3 sm:mx-5 my-2 animate-spin" />
-                  ) : (
-                    <MagnifyingGlassIcon className="w-6 h-6 mx-3 sm:mx-5 my-2" />
-                  )}
-                </div>
-              }
-              {...register('query')}
-            />
-          </div>
-          <div className="mt-3">
-            <RadioGroup<(typeof sortFieldItems)[number]>
-              accessKey="id"
-              valueAs="key"
-              keyName="id"
-              value={sortField.value as any}
-              name={sortField.name}
-              disabled={sortField.disabled}
-              onBlur={sortField.onBlur}
-              onChange={sortField.onChange}
-              variant={RadioGroupVariants.Radios}
-              itemsWrapperClassName="flex flex-wrap gap-x-6 !space-y-0"
-              items={sortFieldItems}
-            />
-          </div>
-        </form>
-      </FormProvider>
+      <form id={form.id} onSubmit={form.onSubmit} noValidate ref={formRef}>
+        <div className="flex flex-wrap gap-2">
+          <Input
+            placeholder="Vyhledávání..."
+            rootClassName="w-full max-w-lg"
+            name={fields.query.name}
+            onChange={debouncedSubmit}
+            defaultValue={fields.query.initialValue}
+            suffix={
+              <div className={inputPrefixSuffixStyles({ type: 'suffix' })}>
+                {isRefreshing ? (
+                  <ArrowPathIcon className="w-6 h-6 mx-3 sm:mx-5 my-2 animate-spin" />
+                ) : (
+                  <MagnifyingGlassIcon className="w-6 h-6 mx-3 sm:mx-5 my-2" />
+                )}
+              </div>
+            }
+          />
+        </div>
+        <div className="mt-3">
+          <RadioGroup<(typeof sortFieldItems)[number]>
+            accessKey="id"
+            valueAs="key"
+            keyName="id"
+            name={fields.sort.name}
+            disabled={isRefreshing}
+            onChange={debouncedSubmit}
+            // @ts-expect-error -- must be a string
+            defaultValue={fields.sort.initialValue}
+            variant={RadioGroupVariants.Radios}
+            itemsWrapperClassName="flex flex-wrap gap-x-6 !space-y-0"
+            items={sortFieldItems}
+          />
+        </div>
+      </form>
     </aside>
   );
 };
