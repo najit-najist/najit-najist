@@ -1,9 +1,8 @@
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Logo } from '@components/common/Logo';
-import { ADMIN_EMAIL } from '@constants';
+import { ADMIN_EMAIL, COMPANY_INFO } from '@constants';
 import { TvIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 import { PhoneIcon } from '@heroicons/react/24/solid';
-import { DEFAULT_BRANDED_SHOP } from '@najit-najist/database/models';
 import Link from 'next/link';
 import { FC, PropsWithChildren } from 'react';
 
@@ -98,11 +97,11 @@ export const Footer: FC<PropsWithChildren> = () => {
             <Logo className="h-28 w-auto flex-none" />
             <div className="lg:mt-6">
               <address className="text-base text-gray-500 not-italic">
-                {DEFAULT_BRANDED_SHOP.address.street}
+                {COMPANY_INFO.address.street}
                 <br />
-                {DEFAULT_BRANDED_SHOP.address.city}
+                {COMPANY_INFO.address.city}
                 <br />
-                {DEFAULT_BRANDED_SHOP.address.postCode}
+                {COMPANY_INFO.address.postCode}
               </address>
               <div className="flex space-x-6 mt-4">
                 {footerNavigationItems.social.map((item) => (

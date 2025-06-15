@@ -7,7 +7,6 @@ const {
   OrderState,
   UserRoles,
   UserStates,
-  DEFAULT_BRANDED_SHOP,
   OrderDeliveryMethodsSlug,
   OrderPaymentMethodsSlugs,
   ...actualSchema

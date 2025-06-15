@@ -342,6 +342,10 @@ importers:
         specifier: ^5.8.3
         version: 5.8.3
 
+  packages/comgate/dist: {}
+
+  packages/comgate/dist/cjs: {}
+
   packages/database:
     dependencies:
       '@najit-najist/packeta':

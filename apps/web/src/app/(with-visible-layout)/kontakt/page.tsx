@@ -1,6 +1,6 @@
+import { COMPANY_INFO } from '@constants';
 import { AtSymbolIcon } from '@heroicons/react/24/outline';
 import { PhoneIcon } from '@heroicons/react/24/solid';
-import { brandedShops } from '@najit-najist/database/models';
 import { getLoggedInUser } from '@server/utils/server';
 import { StaticImageData } from 'next/image';
 import { FC } from 'react';
@@ -8,9 +8,7 @@ import { FC } from 'react';
 import { ContactForm } from './_components/ContactForm';
 import { imagePosition, UserHead } from './_components/UserHead';
 import arnostZizkaUrl from '/public/images/team/arnost-zizka.jpg';
-import kristynaZizkovaUrl from '/public/images/team/kristyna-zizkova.jpg';
 import lenkaCernouskovaUrl from '/public/images/team/lenka-cernouskova.jpg';
-import martinStaryUrl from '/public/images/team/martin-stary.jpg';
 import ondrejLangrUrl from '/public/images/team/ondrej-langr.jpg';
 import terezaZizkovaUrl from '/public/images/team/tereza-zizkova.jpg';
 import vojtechZizkaUrl from '/public/images/team/vojtech-zizka.jpg';
@@ -29,11 +27,6 @@ const teamMembers: {
     name: 'Arnošt Žižka',
     title: 'Jednatel',
     imageUrl: arnostZizkaUrl,
-  },
-  {
-    name: 'Martin Starý',
-    title: 'Marketing',
-    imageUrl: martinStaryUrl,
   },
   {
     name: 'Lenka Černoušková',
@@ -56,15 +49,7 @@ const teamMembers: {
     title: 'Programátor',
     imageUrl: ondrejLangrUrl,
   },
-  {
-    name: 'Kristýna Žižková',
-    title: 'Prodejna Hradec Králové',
-    imageUrl: kristynaZizkovaUrl,
-    imagePosition: 'center',
-  },
 ];
-
-const locations = brandedShops;
 
 const ContactPage: FC = async () => {
   const loggedInUser = await getLoggedInUser().catch(() => undefined);
@@ -94,58 +79,54 @@ const ContactPage: FC = async () => {
       <div className="container" id="prodejny">
         <div className="mx-auto">
           <h2 className="text-4xl font-bold mt-20 mb-7 font-title tracking-wide">
-            Naše prodejny
+            Sídlo
           </h2>
         </div>
         <div className="grid grid-cols-1 gap-4">
-          {locations.map((item) => (
-            <div
-              key={item.name}
-              className="rounded-project flex gap-x-4 gap-y-3 flex-col sm:justify-end sm:flex-row-reverse"
-            >
-              <iframe
-                className="w-full sm:w-1/2 top-0 left-0 rounded-project shadow-white bg-white shadow-lg flex-none h-56"
-                scrolling="no"
-                frameBorder={0}
-                src={item.map.location}
-              ></iframe>
+          <div className="rounded-project flex gap-x-4 gap-y-3 flex-col sm:justify-end sm:flex-row-reverse">
+            <iframe
+              className="w-full sm:w-1/2 top-0 left-0 rounded-project shadow-white bg-white shadow-lg flex-none h-56"
+              scrolling="no"
+              frameBorder={0}
+              src={COMPANY_INFO.map.location}
+            ></iframe>
 
-              <div className="w-full sm:w-1/2">
-                <p className="text-project-primary text-3xl font-semibold mt-4 font-title">
-                  {item.name}
-                </p>
+            <div className="w-full sm:w-1/2">
+              <p className="text-project-primary text-3xl font-semibold mt-4 font-title">
+                {COMPANY_INFO.name}
+              </p>
 
-                <address className="block mt-2 font-normal not-italic text-xl ">
-                  {item.address.street} <br />
-                  {item.address.city}
-                  <br />
-                  {item.address.postCode}
-                </address>
+              <address className="block mt-2 font-normal not-italic text-xl ">
+                {COMPANY_INFO.address.street} <br />
+                {COMPANY_INFO.address.city}
+                <br />
+                {COMPANY_INFO.address.postCode}
+              </address>
 
-                {item.emailAddress ? (
-                  <a
-                    href={`mailto:${item.emailAddress}`}
-                    className="mt-2 block hover:underline text-project-accent"
-                  >
-                    <AtSymbolIcon className="w-4 h-4 inline-block mr-2" />{' '}
-                    {item.emailAddress.replace('@', '(at)')}
-                  </a>
-                ) : null}
+              {COMPANY_INFO.emailAddress ? (
+                <a
+                  href={`mailto:${COMPANY_INFO.emailAddress}`}
+                  className="mt-2 block hover:underline text-project-accent"
+                >
+                  <AtSymbolIcon className="w-4 h-4 inline-block mr-2" />{' '}
+                  {COMPANY_INFO.emailAddress.replace('@', '(at)')}
+                </a>
+              ) : null}
 
-                {item.telephoneNumbers.length
-                  ? item.telephoneNumbers.map(({ code, telephone }) => (
-                      <a
-                        href={`tel:${code.replaceAll(' ', '')}${telephone.replaceAll(' ', '')}`}
-                        className="mt-2 block hover:underline text-project-accent"
-                      >
-                        <PhoneIcon className="w-4 h-4 inline-block mr-2" /> +
-                        {code} {telephone}
-                      </a>
-                    ))
-                  : null}
-              </div>
+              {COMPANY_INFO.telephoneNumbers.length
+                ? COMPANY_INFO.telephoneNumbers.map(({ code, telephone }) => (
+                    <a
+                      key={code + telephone}
+                      href={`tel:${code.replaceAll(' ', '')}${telephone.replaceAll(' ', '')}`}
+                      className="mt-2 block hover:underline text-project-accent"
+                    >
+                      <PhoneIcon className="w-4 h-4 inline-block mr-2" /> +
+                      {code} {telephone}
+                    </a>
+                  ))
+                : null}
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
@@ -155,7 +136,7 @@ const ContactPage: FC = async () => {
             Náš tým
           </h2>
         </div>
-        <div className="mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+        <div className="mx-auto grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           {teamMembers.map((memberInfo) => (
             <UserHead
               key={memberInfo.name}

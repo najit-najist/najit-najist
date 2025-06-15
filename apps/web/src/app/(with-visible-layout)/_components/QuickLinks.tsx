@@ -23,12 +23,6 @@ const items: Item[] = [
     enabled: true,
     isNew: true,
   },
-  {
-    title: 'Naše prodejny',
-    href: '/kontakt#prodejny',
-    imageSrc: bakeryImage,
-    enabled: true,
-  },
   { title: 'Restaurace', href: '/', imageSrc: waitressImage },
   { title: 'Akce', href: '/', imageSrc: eventsImage },
 ];
@@ -36,11 +30,11 @@ const items: Item[] = [
 const LinkItem: FC<Item> = ({ href, imageSrc, title, enabled, isNew }) => (
   <a
     href={href}
-    className="w-[calc(50%-0.4rem)] aspect-[3/2.5] sm:aspect-[3/3.5] sm:w-[calc(50%-1.25rem)] --hover:scale-[1.02] duration-100 --hover:shadow-2xl lg:w-full relative"
+    className="w-full aspect-[2/0.6] sm:aspect-[3/1.5] duration-100 --hover:shadow-2xl lg:w-full relative group"
   >
-    <div className="rounded-project overflow-hidden relative w-full h-full --hover:ring-2 ring-project-primary">
+    <div className="rounded-project overflow-hidden relative w-full h-full ring-project-primary">
       <Image
-        className="absolute top-0 left-0 w-full h-full object-cover content-center"
+        className="absolute top-0 left-0 w-full h-full object-cover object-top group-hover:scale-105 duration-200"
         src={imageSrc}
         alt={`Obrázek pro ${title}`}
       />
@@ -56,8 +50,8 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title, enabled, isNew }) => (
       </Badge>
     ) : null}
     {!enabled ? (
-      <div className="absolute top-0 inset-0 backdrop-blur-sm flex items-center justify-center font-bold text-4xl uppercase text-red-500 rounded-project overflow-hidden">
-        Brzy
+      <div className="absolute top-0 inset-0 backdrop-blur-sm flex items-center justify-center font-bold text-xl lg:text-4xl uppercase text-red-500 rounded-project overflow-hidden">
+        Již brzy
       </div>
     ) : null}
   </a>
@@ -65,8 +59,8 @@ const LinkItem: FC<Item> = ({ href, imageSrc, title, enabled, isNew }) => (
 
 export const QuickLinks: FC = () => {
   return (
-    <section className="container w-full mx-auto -mt-32">
-      <div className="relative w-full flex-wrap lg:flex-nowrap flex gap-3 sm:gap-5">
+    <section className="container w-full mx-auto -mt-20 sm:-mt-20 lg:-mt-32">
+      <div className="relative w-full flex-wrap sm:flex-nowrap flex gap-3 sm:gap-5">
         {items.map((data) => (
           <LinkItem key={data.title} {...data} />
         ))}

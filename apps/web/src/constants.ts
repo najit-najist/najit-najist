@@ -68,3 +68,45 @@ export const customTrpcLink: TRPCLink<AppRouter> = () => {
     });
   };
 };
+
+export const COMPANY_INFO = {
+  name: 'Sídlo v Šanově',
+  openingHours: [
+    {
+      from: '10:00',
+      to: '18:00',
+    },
+    {
+      from: '10:00',
+      to: '18:00',
+    },
+    {
+      from: '10:00',
+      to: '18:00',
+    },
+    {
+      from: '10:00',
+      to: '18:00',
+    },
+    {
+      from: '10:00',
+      to: '18:00',
+    },
+  ],
+  address: {
+    city: 'Šanov',
+    postCode: '671 68',
+    street: 'Nová 428',
+  },
+  telephoneNumbers: [
+    {
+      code: '420',
+      telephone: '792651408',
+    },
+  ] as { telephone: string; code: string }[],
+  emailAddress: 'info@najitnajist.cz',
+  map: {
+    location:
+      'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2464.8326713378074!2d16.382580535493283!3d48.80223028803676!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x476d4a5508559e9d%3A0x5cb14cc51fd1a37!2zTm92w6EgNDI4LCA2NzEgNjggxaBhbm92LUhyYWLEm3RpY2U!5e0!3m2!1sen!2scz!4v1750015642146!5m2!1sen!2scz',
+  },
+};

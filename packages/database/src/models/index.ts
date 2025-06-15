@@ -1,4 +1,3 @@
-export * from './brandedShops';
 export * from './comgatePayments';
 export * from './contactFormReplies';
 export * from './couponPatches';
