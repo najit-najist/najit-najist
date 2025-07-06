@@ -1,11 +1,18 @@
 import {
   defineMiddlewares,
+  validateAndTransformBody,
   validateAndTransformQuery,
 } from '@medusajs/framework/http';
-import { createFindParams } from '@medusajs/medusa/api/utils/validators';
+import {
+  createFindParams,
+  createSelectParams,
+} from '@medusajs/medusa/api/utils/validators';
 
-export const GetProductBrandsSchema = createFindParams();
-export const GetRecipesSchema = createFindParams();
+import { postCreateProductBrandSchema } from './product_brands/validators';
+
+export const getProductBrandsSchema = createFindParams();
+export const getProductBrandSchema = createSelectParams();
+export const getRecipesSchema = createFindParams();
 
 export default defineMiddlewares({
   routes: [
@@ -13,17 +20,32 @@ export default defineMiddlewares({
       matcher: '/product_brands',
       method: 'GET',
       middlewares: [
-        validateAndTransformQuery(GetProductBrandsSchema, {
+        validateAndTransformQuery(getProductBrandsSchema, {
           defaults: ['id', 'name', 'products.*'],
           isList: true,
         }),
       ],
     },
     {
+      matcher: '/product_brands/[id]',
+      method: 'GET',
+      middlewares: [
+        validateAndTransformQuery(getProductBrandSchema, {
+          defaults: ['id', 'name', 'products.*'],
+          isList: false,
+        }),
+      ],
+    },
+    {
+      matcher: '/product_brands',
+      method: 'POST',
+      middlewares: [validateAndTransformBody(postCreateProductBrandSchema)],
+    },
+    {
       matcher: '/recipes',
       method: 'GET',
       middlewares: [
-        validateAndTransformQuery(GetRecipesSchema, {
+        validateAndTransformQuery(getRecipesSchema, {
           defaults: ['id', 'name'],
           isList: true,
         }),
