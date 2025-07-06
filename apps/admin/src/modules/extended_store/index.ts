@@ -4,6 +4,8 @@ import { ExtendedStoreService } from './service';
 
 export const EXTENDED_STORE_MODULE = 'extended_store';
 
-export default Module(EXTENDED_STORE_MODULE, {
+const ExtendedStoreModule = Module(EXTENDED_STORE_MODULE, {
   service: ExtendedStoreService,
 });
+
+export default ExtendedStoreModule;
