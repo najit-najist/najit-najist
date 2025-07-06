@@ -40,6 +40,25 @@ module.exports = defineConfig({
       resolve: './src/modules/cooking',
     },
     {
+         resolve: "@medusajs/medusa/fulfillment",
+         options: {
+           providers: [
+             {
+                        resolve: "@medusajs/medusa/fulfillment-manual",
+                        id: "manual",
+                      },
+
+             {
+               resolve: "./src/modules/zasilkovna_fulfillment",
+               id: "zasilkovna-fulfillment",
+               options: {
+                 // provider options...
+               },
+             },
+           ],
+         },
+       },
+    {
       resolve: './src/modules/extended_store',
       definition: {
         isQueryable: true,
