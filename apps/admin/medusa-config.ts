@@ -37,6 +37,29 @@ module.exports = defineConfig({
       },
     },
     {
+      resolve: '@medusajs/medusa/file',
+      options: {
+        providers: [
+          {
+            resolve: '@medusajs/medusa/file-s3',
+            id: 's3',
+            options: {
+              file_url: process.env.DO_SPACES_URL,
+              access_key_id: process.env.DO_SPACE_ACCESS_KEY_ID,
+              secret_access_key: process.env.DO_SPACE_SECRET_ACCESS_KEY,
+              prefix:
+                process.env.NODE_ENV === 'production'
+                  ? 'najit-najist-'
+                  : 'najit-najist-dev-',
+              region: process.env.DO_SPACE_REGION,
+              bucket: process.env.DO_SPACE_BUCKET,
+              endpoint: `https://${process.env.DO_SPACE_REGION}.digitaloceanspaces.com`,
+            },
+          },
+        ],
+      },
+    },
+    {
       resolve: './src/modules/cooking',
     },
     {
