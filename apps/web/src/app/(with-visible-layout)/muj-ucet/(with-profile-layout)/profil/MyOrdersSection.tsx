@@ -14,7 +14,7 @@ const MAX_NUMBER_OF_ORDERS = 6;
 
 const Orders: FC<{ user: UserWithRelations }> = async ({ user }) => {
   const latestOrders = await getCachedOrders({
-    user: { id: [user.id] },
+    user: { email: [user.email] },
     perPage: MAX_NUMBER_OF_ORDERS + 1,
   });
 

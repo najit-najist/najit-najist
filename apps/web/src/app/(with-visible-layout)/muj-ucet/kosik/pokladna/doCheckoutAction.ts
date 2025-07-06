@@ -25,8 +25,9 @@ import {
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import { MailService } from '@server/services/Mail.service';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
+import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { sendPlausibleEvent } from '@server/utils/sendPlausibleEvent';
-import { getLoggedInUserId, getOrderById } from '@server/utils/server';
+import { getOrderById } from '@server/utils/server';
 import { formatDeliveryMethodPrice } from '@utils/formatDeliveryMethodPrice';
 import { getCartItemPrice } from '@utils/getCartItemPrice';
 import { getPerfTracker } from '@utils/getPerfTracker';
@@ -189,12 +190,14 @@ export const doCheckoutAction = createActionWithValidation(
     const perf = getPerfTracker();
 
     try {
-      const userId = await getLoggedInUserId();
+      const session = await getSessionFromCookies();
       const deliveryMethod = input.deliveryMethod.fetched!;
       const paymentMethod = input.paymentMethod!;
 
       const cartPerf = perf.track('get-cart');
-      const cart = await getUserCart({ type: 'user', value: userId });
+      const cart = session.cartId
+        ? await getUserCart({ type: 'cart', value: session.cartId })
+        : null;
       cartPerf.stop();
 
       if (!cart) {
@@ -318,7 +321,7 @@ export const doCheckoutAction = createActionWithValidation(
             state: paymentMethod.paymentOnCheckout
               ? OrderState.UNPAID
               : OrderState.UNCONFIRMED,
-            userId: userId,
+            userId: session.authContent?.userId,
             paymentMethodPrice: paymentMethod.price,
             deliveryMethodPrice: formatDeliveryMethodPrice(
               deliveryMethod.price ?? 0,
@@ -440,10 +443,8 @@ export const doCheckoutAction = createActionWithValidation(
       });
       createOrderPerf.stop();
 
-      if (process.env.NODE_ENV !== 'development') {
-        sendEmails(newOrderId);
-        trackEvent(newOrderId);
-      }
+      sendEmails(newOrderId);
+      trackEvent(newOrderId);
 
       revalidatePath('/muj-ucet/kosik');
       revalidatePath('/produkty');

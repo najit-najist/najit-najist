@@ -4,7 +4,7 @@ import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
 import { eq } from '@najit-najist/database/drizzle';
 import { userCarts } from '@najit-najist/database/models';
-import { getLoggedInUserId } from '@server/utils/server';
+import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { getUserCart } from '@utils/getUserCart';
 import { isCouponExpired } from '@utils/isCouponExpired';
 import { zodErrorToFormErrors } from '@utils/zodErrorToFormErrors';
@@ -35,13 +35,15 @@ const schema = z
   );
 
 export const toggleCouponAction = async (input: { name?: string }) => {
-  const loggedInUserId = await getLoggedInUserId();
-  const cart = await getUserCart({ type: 'user', value: loggedInUserId });
+  const session = await getSessionFromCookies();
+  const cart = session.cartId
+    ? await getUserCart({ type: 'cart', value: session.cartId })
+    : null;
 
   if (!cart) {
     logger.warn(
       '[PRECHECKOUT] User tried to pick coupon, but has no items in cart. This is probably bug',
-      { loggedInUserId },
+      { session },
     );
 
     throw new Error('Žádné produkty v košíku');
@@ -61,7 +63,7 @@ export const toggleCouponAction = async (input: { name?: string }) => {
       logger.warn('[PRECHECKOUT] User tried to pick invalid coupon', {
         errors,
         input,
-        loggedInUserId,
+        session,
       });
 
       return {

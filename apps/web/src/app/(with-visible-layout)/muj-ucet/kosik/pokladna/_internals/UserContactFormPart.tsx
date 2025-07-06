@@ -11,7 +11,9 @@ import { useFormContext, useWatch } from 'react-hook-form';
 
 import { FormValues } from './types';
 
-export const UserContactFormPart: FC = () => {
+export const UserContactFormPart: FC<{ isUserLoggedIn: boolean }> = ({
+  isUserLoggedIn,
+}) => {
   const { isActive } = useReactTransitionContext();
   const { formState, register, control, setValue } =
     useFormContext<FormValues>();
@@ -53,7 +55,7 @@ export const UserContactFormPart: FC = () => {
       </div>
 
       <Input
-        disabled
+        disabled={isUserLoggedIn}
         required
         label="Emailová adresa"
         id="email"

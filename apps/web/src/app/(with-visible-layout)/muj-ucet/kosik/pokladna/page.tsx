@@ -1,8 +1,10 @@
 import { Alert } from '@components/common/Alert';
+import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { FormBreak } from '@components/common/form/FormBreak';
+import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
 import { ExclamationTriangleIcon } from '@heroicons/react/20/solid';
 import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
@@ -14,6 +16,7 @@ import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { formatPrice } from '@utils';
 import { getUserCart } from '@utils/getUserCart';
 import { cookies as getCookies } from 'next/headers';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { ComponentProps } from 'react';
 
@@ -49,7 +52,7 @@ export default async function Page() {
     value: Number(loggedInUser?.id ?? session.cartId ?? '0'),
   });
 
-  if (!cart?.products.length || !loggedInUser) {
+  if (!cart?.products.length) {
     return redirect('/muj-ucet/kosik');
   }
 
@@ -75,25 +78,27 @@ export default async function Page() {
         return d;
       }),
     ),
-    database.query.orders.findFirst({
-      where: (schema, { eq }) => eq(schema.userId, loggedInUser.id),
-      orderBy: (schema, { desc }) => desc(schema.createdAt),
-      with: {
-        telephone: true,
-        address: {
+    loggedInUser
+      ? database.query.orders.findFirst({
+          where: (schema, { eq }) => eq(schema.userId, loggedInUser.id),
+          orderBy: (schema, { desc }) => desc(schema.createdAt),
           with: {
-            municipality: true,
+            telephone: true,
+            address: {
+              with: {
+                municipality: true,
+              },
+            },
+            deliveryMethod: true,
+            paymentMethod: true,
+            invoiceAddress: {
+              with: {
+                municipality: true,
+              },
+            },
           },
-        },
-        deliveryMethod: true,
-        paymentMethod: true,
-        invoiceAddress: {
-          with: {
-            municipality: true,
-          },
-        },
-      },
-    }),
+        })
+      : null,
   ]);
 
   // Sometimes user can have product in cart which limits their choices of delivery methods
@@ -235,12 +240,38 @@ export default async function Page() {
           <PageTitle>{metadata.title}</PageTitle>
         </div>
       </PageHeader>
+      <div className="container -mt-5 mb-10">
+        {!loggedInUser ? (
+          <Alert
+            outlined
+            color="warning"
+            icon={ExclamationTriangleIcon}
+            heading="Máte u nás již účet? Přihlašte se a nebo registrujte pro rychlejší objednávku!"
+            className="mt-3"
+          >
+            <div className="flex gap-2 mt-2">
+              <Link
+                className={buttonStyles()}
+                href={`/login?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+              >
+                Přihlásit se
+              </Link>
+              <Link
+                className={buttonStyles()}
+                href={`/registrace?${LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER}=%2Fmuj-ucet%2Fkosik%2Fpokladna`}
+              >
+                Registrovat se
+              </Link>
+            </div>
+          </Alert>
+        ) : null}
+      </div>
       <FormProvider defaultFormValues={defaultFormValues}>
         <section className="container">
-          {loggedInUser && defaultDeliveryMethod ? (
+          {defaultDeliveryMethod ? (
             <>
               <FormBreak label="Kontaktní informace" className="mb-6" />
-              <UserContactFormPart />
+              <UserContactFormPart isUserLoggedIn={!!loggedInUser} />
 
               <DeliveryMethodFormPart
                 paymentMethods={paymentMethods}

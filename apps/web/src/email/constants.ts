@@ -139,7 +139,7 @@ export const testOrder = {
   ],
   state: OrderState.UNPAID,
   subtotal: 800,
-  telephoneNumber: {
+  telephone: {
     telephone: '12323434',
     code: '420',
   },

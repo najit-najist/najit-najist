@@ -31,7 +31,7 @@ export const Orders: FC<{
                   {order.user.firstName} {order.user.lastName}
                 </Link>
               ) : (
-                'Neznámý uživatel'
+                `${order.firstName} ${order.lastName}`
               )}
             </td>
             <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

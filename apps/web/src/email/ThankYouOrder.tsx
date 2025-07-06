@@ -186,16 +186,18 @@ export default function ThankYouOrder({
                 <EnvelopeIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" />{' '}
                 {order.email}
               </Text>
-              <Text
-                className={cx(
-                  'hover:underline !mt-0',
-                  icoAndDic && !hasInvoiceAddress ? '!mb-0' : '',
-                )}
-                spacing={false}
-              >
-                <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
-                {order.telephoneNumber?.code} {order.telephoneNumber?.telephone}
-              </Text>
+              {order.telephone ? (
+                <Text
+                  className={cx(
+                    'hover:underline !mt-0',
+                    icoAndDic && !hasInvoiceAddress ? '!mb-0' : '',
+                  )}
+                  spacing={false}
+                >
+                  <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
+                  {order.telephone?.code} {order.telephone?.telephone}
+                </Text>
+              ) : null}
               {hasInvoiceAddress ? null : icoAndDic}
             </Column>
           </Row>
@@ -235,8 +237,7 @@ export default function ThankYouOrder({
                   spacing={false}
                 >
                   <PhoneIcon className="w-3 h-3 inline-block mr-2 -mt-0.5" /> +
-                  {order.telephoneNumber?.code}{' '}
-                  {order.telephoneNumber?.telephone}
+                  {order.telephone?.code} {order.telephone?.telephone}
                 </Text>
                 {icoAndDic}
               </Column>
@@ -385,7 +386,7 @@ export default function ThankYouOrder({
           <Text spacing={false} style={{ margin: 0 }}>
             O dalších krocích vás budeme zanedlouho informovat. <br /> Mezitím
             si můžete Vaši objednávku sledovat na stránkách{' '}
-            <Link href={siteOrigin}>najitnajist.cz</Link> ve vašem účtě.
+            <Link href={siteOrigin}>najitnajist.cz</Link>.
           </Text>
         </CenteredRow>
         <Spacing size="lg" />

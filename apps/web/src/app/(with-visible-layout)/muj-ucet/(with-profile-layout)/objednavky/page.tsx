@@ -25,7 +25,9 @@ const Th: FC<PropsWithChildren> = ({ children }) => (
 
 const List: FC = async () => {
   const loggedInUser = await getCachedAuthenticatedUser();
-  const orders = await getCachedOrders({ user: { id: [loggedInUser.id] } });
+  const orders = await getCachedOrders({
+    user: { email: [loggedInUser.email] },
+  });
 
   return (
     <div>

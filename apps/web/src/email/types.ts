@@ -70,7 +70,7 @@ export type OrderWithRelations = Order & {
         municipality: Pick<Municipality, 'name' | 'slug'>;
       })
     | null;
-  telephoneNumber?: UnsignedModel<TelephoneNumber> | null;
+  telephone?: UnsignedModel<TelephoneNumber> | null;
   couponPatch:
     | (CouponPatch & {
         coupon: Coupon;

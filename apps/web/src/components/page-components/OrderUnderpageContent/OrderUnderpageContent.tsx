@@ -71,7 +71,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               ) : (
                 <>
                   Objednávka uživatele{' '}
-                  <Tooltip
+                  {order.user ? <Tooltip
                     trigger={
                       <Link
                         className="text-project-secondary underline"
@@ -82,7 +82,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
                     }
                   >
                     Přejít na uživatele
-                  </Tooltip>
+                  </Tooltip> : <span>{order.firstName} {order.lastName}</span>}
                 </>
               )}
             </h1>

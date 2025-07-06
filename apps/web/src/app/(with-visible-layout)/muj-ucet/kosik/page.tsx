@@ -1,11 +1,8 @@
-import { Alert } from '@components/common/Alert';
 import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { GoBackButton } from '@components/common/GoBackButton';
 import { PageHeader } from '@components/common/PageHeader';
 import { PageTitle } from '@components/common/PageTitle';
 import { Price } from '@components/common/Price';
-import { LOGIN_THEN_REDIRECT_SILENT_TO_PARAMETER } from '@constants';
-import { ExclamationTriangleIcon } from '@heroicons/react/24/solid';
 import { UserService } from '@server/services/UserService';
 import { getSessionFromCookies } from '@server/utils/getSessionFromCookies';
 import { getUserCart } from '@utils/getUserCart';
@@ -85,7 +82,7 @@ export default async function Page() {
                 />
               </WithBlurOnTransition>
             </div>
-            {!loggedInUser ? (
+            {/* {!loggedInUser ? (
               <Alert
                 outlined
                 color="warning"
@@ -108,17 +105,15 @@ export default async function Page() {
                   </Link>
                 </div>
               </Alert>
-            ) : null}
-            {loggedInUser ? (
-              <Link
-                className={buttonStyles({
-                  className: 'ml-auto sm:w-48 text-center mt-3',
-                })}
-                href="/muj-ucet/kosik/pokladna"
-              >
-                Objednat
-              </Link>
-            ) : null}
+            ) : null} */}
+            <Link
+              className={buttonStyles({
+                className: 'ml-auto sm:w-48 text-center mt-3',
+              })}
+              href="/muj-ucet/kosik/pokladna"
+            >
+              Objednat
+            </Link>
           </div>
         </div>
       </section>

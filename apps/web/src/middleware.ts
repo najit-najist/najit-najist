@@ -66,6 +66,12 @@ export async function middleware(request: NextRequest) {
       const url = requestUrl.clone();
       url.pathname = '/login';
 
+      if (requestUrl.pathname.startsWith('/muj-ucet/objednavky/')) {
+        url.pathname = requestUrl.pathname.replace('/muj-ucet/', '');
+
+        return NextResponse.redirect(url);
+      }
+
       url.searchParams.set(
         LOGIN_THEN_REDIRECT_TO_PARAMETER,
         requestUrl.pathname,

@@ -46,8 +46,7 @@ export const orders = pgTable(
     subtotal: real('subtotal').notNull(),
     discount: real('discount').notNull().default(0),
     userId: integer('user_id')
-      .references(() => users.id, { onDelete: 'cascade' })
-      .notNull(),
+      .references(() => users.id, { onDelete: 'cascade' }),
     email: varchar('email', { length: 256 }).notNull(),
     telephoneId: integer('telephone_id')
       .references(() => telephoneNumbers.id)

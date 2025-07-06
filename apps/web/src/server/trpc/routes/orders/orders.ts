@@ -5,6 +5,7 @@ import {
   eq,
   getTableName,
   inArray,
+  or,
   sql,
 } from '@najit-najist/database/drizzle';
 import { OrderDeliveryMethod, orders } from '@najit-najist/database/models';
@@ -87,7 +88,12 @@ export const orderRoutes = t.router({
       .input(
         defaultGetManyPagedSchema
           .extend({
-            user: z.object({ id: z.array(z.number()) }).optional(),
+            user: z
+              .object({
+                id: z.array(z.number()).optional(),
+                email: z.array(z.string()).optional(),
+              })
+              .optional(),
           })
           .omit({ search: true })
           .default({}),
@@ -104,11 +110,18 @@ export const orderRoutes = t.router({
             onModel: orders,
           })
         ) {
-          conditions.push(eq(orders.userId, ctx.sessionData.userId));
+          conditions.push(
+            or(
+              eq(orders.userId, ctx.sessionData.userId),
+              eq(orders.email, ctx.sessionData.user.email),
+            )!,
+          );
         }
 
-        if (input.user?.id.length) {
+        if (input.user?.id?.length) {
           conditions.push(inArray(orders.userId, input.user.id ?? []));
+        } else if (input.user?.email?.length) {
+          conditions.push(inArray(orders.email, input.user.email ?? []));
         }
 
         const [items, [{ count }]] = await Promise.all([
