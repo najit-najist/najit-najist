@@ -1,2 +1,4 @@
+import { REDIRECT_ERROR_CODE } from 'next/dist/client/components/redirect-error';
+
 export const isNextRedirect = (error: any) =>
-  error.message !== 'NEXT_NOT_FOUND';
+  error.message === REDIRECT_ERROR_CODE;

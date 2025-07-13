@@ -188,9 +188,9 @@ export const doCheckoutAction = createActionWithValidation(
   async (input) => {
     let orderRedirectTo = '/';
     const perf = getPerfTracker();
+    const session = await getSessionFromCookies();
 
     try {
-      const session = await getSessionFromCookies();
       const deliveryMethod = input.deliveryMethod.fetched!;
       const paymentMethod = input.paymentMethod!;
 
@@ -206,7 +206,7 @@ export const doCheckoutAction = createActionWithValidation(
           session,
         });
         throw new Error(
-          'User has no cart during checkout, this is probably bug',
+          'Nemáté vytvořený žádný košík. Opravdu máte produkty v košíku? Při přetrvávání chyby nás neváhejte kontaktovat',
         );
       }
 
@@ -462,6 +462,7 @@ export const doCheckoutAction = createActionWithValidation(
       logger.error('Failed to create order', {
         error,
         performance: perf.summarize(),
+        session,
       });
       throw error;
     }
