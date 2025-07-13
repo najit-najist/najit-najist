@@ -201,6 +201,10 @@ export const doCheckoutAction = createActionWithValidation(
       cartPerf.stop();
 
       if (!cart) {
+        logger.error('Failed to create order due to missing cart', {
+          cart,
+          session,
+        });
         throw new Error(
           'User has no cart during checkout, this is probably bug',
         );
