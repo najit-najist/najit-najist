@@ -196,7 +196,11 @@ export const doCheckoutAction = createActionWithValidation(
 
       const cartPerf = perf.track('get-cart');
       const cart = session.cartId
-        ? await getUserCart({ type: 'cart', value: Number(session.cartId) })
+        ? await getUserCart(
+            session.authContent
+              ? { type: 'user', value: session.authContent?.userId }
+              : { type: 'cart', value: Number(session.cartId) },
+          )
         : null;
       cartPerf.stop();
 
