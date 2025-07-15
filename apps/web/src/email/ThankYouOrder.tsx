@@ -409,7 +409,7 @@ export default function ThankYouOrder({
                 <span className="text-gray-900">Datum a čas objednávky</span>
                 <br />
                 <span className="mt-2 text-project-primary text-lg">
-                  {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
+                  {dayjs.tz(order.createdAt).format(DEFAULT_DATE_FORMAT)}
                 </span>
               </Text>
             </Column>

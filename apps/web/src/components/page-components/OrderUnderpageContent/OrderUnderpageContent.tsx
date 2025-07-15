@@ -71,18 +71,24 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               ) : (
                 <>
                   Objednávka uživatele{' '}
-                  {order.user ? <Tooltip
-                    trigger={
-                      <Link
-                        className="text-project-secondary underline"
-                        href={`/administrace/uzivatele/${order.user?.id}`}
-                      >
-                        {order.user?.firstName} {order.user?.lastName}
-                      </Link>
-                    }
-                  >
-                    Přejít na uživatele
-                  </Tooltip> : <span>{order.firstName} {order.lastName}</span>}
+                  {order.user ? (
+                    <Tooltip
+                      trigger={
+                        <Link
+                          className="text-project-secondary underline"
+                          href={`/administrace/uzivatele/${order.user?.id}`}
+                        >
+                          {order.user?.firstName} {order.user?.lastName}
+                        </Link>
+                      }
+                    >
+                      Přejít na uživatele
+                    </Tooltip>
+                  ) : (
+                    <span>
+                      {order.firstName} {order.lastName}
+                    </span>
+                  )}
                 </>
               )}
             </h1>
@@ -106,7 +112,7 @@ export const OrderUnderpageContent: FC<OrderUnderpageProps> = async (props) => {
               <dl className="text-sm font-medium">
                 <dt className="text-gray-900">Datum a čas objednávky</dt>
                 <dd className="mt-2 text-project-primary text-lg">
-                  {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
+                  {dayjs.tz(order.createdAt).format(DEFAULT_DATE_FORMAT)}
                 </dd>
               </dl>
             </div>

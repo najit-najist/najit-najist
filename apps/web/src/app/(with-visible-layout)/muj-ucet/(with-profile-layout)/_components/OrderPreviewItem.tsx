@@ -36,11 +36,11 @@ export const OrderPreviewItem: FC<{
           <time
             dateTime={
               order.createdAt
-                ? dayjs(order.createdAt).format(DATABASE_TIME_FORMAT)
+                ? dayjs.tz(order.createdAt).format(DATABASE_TIME_FORMAT)
                 : undefined
             }
           >
-            {dayjs(order.createdAt).format(DEFAULT_DATE_FORMAT)}
+            {dayjs.tz(order.createdAt).format(DEFAULT_DATE_FORMAT)}
           </time>
         </p>
         {/* <svg viewBox="0 0 2 2" className="size-0.5 fill-current">

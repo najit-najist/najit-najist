@@ -2,12 +2,12 @@ import { buttonStyles } from '@components/common/Button/buttonStyles';
 import { Paper } from '@components/common/Paper';
 import { Tooltip } from '@components/common/Tooltip';
 import { DEFAULT_DATE_FORMAT } from '@constants';
+import { dayjs } from '@dayjs';
 import { database } from '@najit-najist/database';
 import { Order } from '@najit-najist/database/models';
 import { PacketaPacketStatusCode } from '@najit-najist/packeta';
 import { PacketaSoapClient } from '@najit-najist/packeta/soap-client';
 import clsx from 'clsx';
-import dayjs from 'dayjs';
 import Link from 'next/link';
 import { FC } from 'react';
 

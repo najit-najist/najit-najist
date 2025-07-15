@@ -25,7 +25,7 @@ const Item: FC<{
     <>
       {createdAt ? (
         <span className="text-xs block text-gray-500">
-          Vytvořeno {dayjs(createdAt).fromNow()}
+          Vytvořeno {dayjs.tz(createdAt).fromNow()}
         </span>
       ) : null}
       <span

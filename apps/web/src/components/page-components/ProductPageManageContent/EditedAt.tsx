@@ -12,14 +12,15 @@ export function EditedAt({
   createdAt: Date | null;
 }) {
   const [updatedAtAsText, setUpdatedAtAsText] = useState(
-    updatedAt ? dayjs(updatedAt).fromNow() : undefined,
+    updatedAt ? dayjs.tz(updatedAt).fromNow() : undefined,
   );
 
   useEffect(() => {
     let timer: ReturnType<typeof setTimeout> | undefined = undefined;
 
     if (updatedAt) {
-      const updateText = () => setUpdatedAtAsText(dayjs(updatedAt).fromNow());
+      const updateText = () =>
+        setUpdatedAtAsText(dayjs.tz(updatedAt).fromNow());
 
       updateText();
       timer = setTimeout(updateText, 30 * 1000);
@@ -35,7 +36,7 @@ export function EditedAt({
       {updatedAtAsText ? (
         <>Upraveno: {updatedAtAsText}</>
       ) : (
-        <>Vytvořeno: {dayjs(createdAt).format(DEFAULT_DATE_FORMAT)}</>
+        <>Vytvořeno: {dayjs.tz(createdAt).format(DEFAULT_DATE_FORMAT)}</>
       )}
     </div>
   );

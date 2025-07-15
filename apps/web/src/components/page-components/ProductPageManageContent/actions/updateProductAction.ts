@@ -65,7 +65,7 @@ export const updateProductAction = createActionWithValidation(
               ? { slug: slugifyString(updatePayload.name) }
               : {}),
             ...(category?.id ? { categoryId: category.id } : {}),
-            updatedAt: dayjs().toDate(),
+            updatedAt: dayjs.tz().toDate(),
           })
           .where(eq(products.id, existing.id))
           .returning();

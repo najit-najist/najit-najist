@@ -39,11 +39,13 @@ export async function TableContent() {
 
               if (item.validFrom) {
                 validity.push(
-                  `Od ${dayjs(item.validFrom).format(DATE_FORMAT)}`,
+                  `Od ${dayjs.tz(item.validFrom).format(DATE_FORMAT)}`,
                 );
               }
               if (item.validTo) {
-                validity.push(`Do ${dayjs(item.validTo).format(DATE_FORMAT)}`);
+                validity.push(
+                  `Do ${dayjs.tz(item.validTo).format(DATE_FORMAT)}`,
+                );
               }
 
               const isExpired = isCouponExpired(item);
@@ -75,7 +77,7 @@ export async function TableContent() {
                   </td>
                   <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                     <div className="text-gray-500">
-                      {dayjs(item.createdAt).format(DATE_FORMAT)}
+                      {dayjs.tz(item.createdAt).format(DATE_FORMAT)}
                     </div>
                   </td>
                   <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
