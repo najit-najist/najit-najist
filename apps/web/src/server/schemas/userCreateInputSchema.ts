@@ -10,7 +10,7 @@ import { z } from 'zod';
 import { userAddressCreateInputSchema } from './userAddressCreateInputSchema';
 
 export const userCreateInputSchema = z.object({
-  email: nonEmptyStringSchema.email(),
+  email: nonEmptyStringSchema.email().toLowerCase(),
   firstName: nonEmptyStringSchema.max(256),
   lastName: nonEmptyStringSchema.max(256),
   avatar: encodedImageSchema.nullable().optional(),

@@ -317,7 +317,7 @@ export const doCheckoutAction = createActionWithValidation(
           .insert(orders)
           .values({
             deliveryMethodId: deliveryMethod.id,
-            email: input.email,
+            email: input.email.toLowerCase(),
             telephoneId: telephone.id,
             firstName: input.firstName,
             lastName: input.lastName,
@@ -382,7 +382,7 @@ export const doCheckoutAction = createActionWithValidation(
           const comgatePerf = perf.track('contact-comgate');
           const comgatePayment = await comgateClient.createPayment({
             amount: orderGetTotalPrice(order),
-            email: order.email,
+            email: order.email.toLowerCase(),
             refId: orderCreateComgateRefId(order),
           });
           comgatePerf.stop();
@@ -407,7 +407,7 @@ export const doCheckoutAction = createActionWithValidation(
             number: String(order.id),
             name: input.firstName,
             surname: input.lastName,
-            email: input.email,
+            email: input.email.toLowerCase(),
             phone: `+${telephone.code}${telephone.telephone}`,
             addressId: packetaMeta.id,
             // TODO: this should be calculated from items

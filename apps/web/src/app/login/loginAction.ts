@@ -2,7 +2,7 @@
 
 import { logger } from '@logger/server';
 import { database } from '@najit-najist/database';
-import { eq, inArray } from '@najit-najist/database/drizzle';
+import { eq, inArray, sql } from '@najit-najist/database/drizzle';
 import {
   UserCartProduct,
   userCartProducts,
@@ -22,7 +22,7 @@ import { z } from 'zod';
 const inputValidation = userProfileLogInInputSchema.superRefine(
   async (input, ctx) => {
     const userForInput = await database.query.users.findFirst({
-      where: (s, { eq }) => eq(s.email, input.email),
+      where: (s, { eq }) => eq(sql`lower(${s.email})`, input.email),
     });
     const validPassword = userForInput
       ? await PasswordService.validate(userForInput._password, input.password)

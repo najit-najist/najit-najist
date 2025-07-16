@@ -34,7 +34,10 @@ export default async function Page({ params }: PageProps) {
     .where(
       and(
         eq(orders.id, orderId),
-        or(eq(orders.userId, user.id), eq(orders.email, user.email)),
+        or(
+          eq(orders.userId, user.id),
+          eq(sql`lower(${orders.email})`, user.email.toLowerCase()),
+        ),
       ),
     );
 

@@ -4,7 +4,7 @@ import { database } from '@najit-najist/database';
 import { userNewsletters } from '@najit-najist/database/models';
 import { createActionWithValidation } from '@server/utils/createActionWithValidation';
 import { getLoggedInUser } from '@server/utils/server';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 const schema = z.object({
@@ -20,7 +20,7 @@ const schema = z.object({
         return value || loggedInUser.email;
       }
 
-      return value;
+      return value?.toLowerCase();
     })
     .refine(
       (value): value is string => !!value,
@@ -40,7 +40,8 @@ export const toggleNewsletterSubscriptionAction = async (
 ) =>
   createActionWithValidation(schema, async ({ email, nextValue }) => {
     const existing = await database.query.userNewsletters.findFirst({
-      where: (schema, { eq }) => eq(schema.email, email),
+      where: (schema, { eq }) =>
+        eq(sql`lower(${schema.email})`, email.toLowerCase()),
     });
 
     let subscribed = true;

@@ -91,7 +91,7 @@ export const orderRoutes = t.router({
             user: z
               .object({
                 id: z.array(z.number()).optional(),
-                email: z.array(z.string()).optional(),
+                email: z.array(z.string().toLowerCase()).optional(),
               })
               .optional(),
           })

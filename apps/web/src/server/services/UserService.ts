@@ -1,6 +1,6 @@
 import { ToCreateSchema } from '@custom-types/ToCreateSchema';
 import { database } from '@najit-najist/database';
-import { eq, getTableName } from '@najit-najist/database/drizzle';
+import { eq, getTableName, sql } from '@najit-najist/database/drizzle';
 import {
   Municipality,
   TelephoneNumber,
@@ -281,7 +281,9 @@ export class UserService {
     value: User[V],
   ): Promise<UserWithRelations> {
     const item = await this.queryOneBy((schema, { eq }) =>
-      eq(schema[by], value as any),
+      by === 'email'
+        ? eq(sql`lower(${schema.email})`, value?.toString().toLowerCase())
+        : eq(schema[by], value as any),
     );
 
     if (!item) {

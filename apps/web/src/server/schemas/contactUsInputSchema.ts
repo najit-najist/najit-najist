@@ -17,7 +17,8 @@ export const contactUsInputSchema = z.object({
   telephone: z.string().optional().nullable(),
   email: z
     .string({ required_error: ERROR_MESSAGES.MISSING_MAIL })
-    .email({ message: 'Zadaný email není správný' }),
+    .email({ message: 'Zadaný email není správný' })
+    .toLowerCase(),
   message: z
     .string({ required_error: ERROR_MESSAGES.MISSING_MESSAGE })
     .min(1, ERROR_MESSAGES.MISSING_MESSAGE),

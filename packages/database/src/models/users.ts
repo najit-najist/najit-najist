@@ -1,10 +1,11 @@
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
 import {
   index,
   integer,
   pgEnum,
   pgTable,
   timestamp,
+  uniqueIndex,
   varchar,
 } from 'drizzle-orm/pg-core';
 
@@ -55,7 +56,7 @@ export const userStateEnum = pgEnum('user_state', [
 export const users = pgTable(
   'users',
   withDefaultFields({
-    email: varchar('email', { length: 256 }).unique().notNull(),
+    email: varchar('email', { length: 256 }).notNull(),
     firstName: varchar('firstname', { length: 256 }).notNull(),
     lastName: varchar('lastname', { length: 256 }).notNull(),
     avatar: fileFieldType('avatar_filepath'),
@@ -79,7 +80,7 @@ export const users = pgTable(
   (users) => {
     return {
       nameIndex: index('name_idx').on(users.firstName, users.lastName),
-      email: index('user_email_idx').on(users.email),
+      email: uniqueIndex('user_email_idx').on(sql`lower(${users.email})`),
     };
   },
 );

@@ -330,6 +330,20 @@
       "when": 1751786258346,
       "tag": "0046_robust_supreme_intelligence",
       "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1752665264843,
+      "tag": "0047_harsh_warbound",
+      "breakpoints": true
+    },
+    {
+      "idx": 48,
+      "version": "7",
+      "when": 1752666302496,
+      "tag": "0048_spooky_chronomancer",
+      "breakpoints": true
     }
   ]
 }

@@ -15,7 +15,7 @@ import { createUserValidationSchema } from './validationSchema';
 export const createUserAction = createActionWithValidation(
   createUserValidationSchema.superRefine(async (values, ctx) => {
     const existingUser = await database.query.users.findFirst({
-      where: (s, { eq }) => eq(s.email, values.email),
+      where: (s, { eq }) => eq(s.email, values.email.toLowerCase()),
     });
 
     if (existingUser) {

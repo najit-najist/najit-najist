@@ -55,7 +55,7 @@ const orderAddressSchema = z.object({
 });
 
 export const userCartCheckoutInputSchema = z.object({
-  email: z.string().email(),
+  email: z.string().email().toLowerCase(),
   firstName: nonEmptyStringSchema,
   lastName: nonEmptyStringSchema,
   telephoneNumber: telephoneNumberInputSchema.refine(
