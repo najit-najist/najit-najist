@@ -24,7 +24,7 @@
     "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.0.1",
-    "@logtail/js": "^0.5.4",
+    "@logtail/js": "^0.5.5",
     "@najit-najist/comgate": "workspace:*",
     "@najit-najist/database": "workspace:*",
     "@najit-najist/packeta": "workspace:*",
