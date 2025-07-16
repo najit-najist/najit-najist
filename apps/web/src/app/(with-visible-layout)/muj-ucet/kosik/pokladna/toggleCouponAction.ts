@@ -36,9 +36,10 @@ const schema = z
 
 export const toggleCouponAction = async (input: { name?: string }) => {
   const session = await getSessionFromCookies();
-  const cart = session.cartId
-    ? await getUserCart({ type: 'cart', value: session.cartId })
-    : null;
+  const cart = await getUserCart({
+    type: session.authContent?.userId ? 'user' : 'cart',
+    value: Number(session.authContent?.userId ?? session.cartId ?? '0'),
+  });
 
   if (!cart) {
     logger.warn(
