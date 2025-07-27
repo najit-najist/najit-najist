@@ -229,6 +229,30 @@ export const doCheckoutAction = createActionWithValidation(
         };
       }
 
+      const deliveryMethodPrice = formatDeliveryMethodPrice(
+        deliveryMethod.price ?? 0,
+        { subtotal: cart.subtotal },
+      );
+
+      if (
+        orderGetTotalPrice({
+          deliveryMethodPrice: deliveryMethodPrice.formatted,
+          paymentMethodPrice: paymentMethod.price,
+          subtotal: cart.subtotal,
+          discount: cart.discount,
+        }) < 0
+      ) {
+        return {
+          errors: {
+            couponId: {
+              type: 'validate',
+              message:
+                'Vybraný kupón nejde použít, jelikož sleva přesahuje celkovou cenu. Přidejte další položky do košíku nebo změňte či odeberte kupon',
+            } satisfies FieldError,
+          },
+        };
+      }
+
       const hasProductsWithLimitedDelivery = cart.products.some(
         ({ product }) => product.limitedToDeliveryMethods.length,
       );

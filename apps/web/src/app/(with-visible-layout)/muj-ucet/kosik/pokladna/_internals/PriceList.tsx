@@ -47,6 +47,13 @@ export const PriceList: FC<{
   const selectedPaymentMethodPrice: number | undefined =
     paymentMethodsPrices[paymentMethod.slug];
 
+  const total = orderGetTotalPrice({
+    deliveryMethodPrice: deliveryMethodPrice.formatted,
+    paymentMethodPrice: selectedPaymentMethodPrice,
+    subtotal: subtotal,
+    discount: totalDiscount,
+  });
+
   return (
     <>
       <div className="border-y-2 border-dashed text-gray-500 border-gray-200">
@@ -129,14 +136,7 @@ export const PriceList: FC<{
         <div className="flex items-center justify-between py-5 font-semibold text-gray-900">
           <span>Celkově</span>
           <span className={clsx(transitionIsHappening ? 'blur-sm' : '')}>
-            {formatPrice(
-              orderGetTotalPrice({
-                deliveryMethodPrice: deliveryMethodPrice.formatted,
-                paymentMethodPrice: selectedPaymentMethodPrice,
-                subtotal: subtotal,
-                discount: totalDiscount,
-              }),
-            )}
+            {formatPrice(total)}
           </span>
         </div>
       </div>
@@ -147,6 +147,16 @@ export const PriceList: FC<{
           </Alert>
         </div>
       ) : null}
+
+      {total < 0 && (
+        <div className="container mb-5">
+          <Alert color="error" heading="Nedostatečný obnos">
+            Vaše objednávka obsahuje kupon jehož hodnota je větší než celková
+            cena objednávky. Prosím odeberte kupon nebo přidejte další položky
+            do objednávky.
+          </Alert>
+        </div>
+      )}
     </>
   );
 };
