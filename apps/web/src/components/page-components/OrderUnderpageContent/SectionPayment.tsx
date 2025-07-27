@@ -1,7 +1,12 @@
+import { comgateClient } from '@comgate-client';
 import { Alert } from '@components/common/Alert';
 import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { database } from '@najit-najist/database';
-import { Order, OrderState } from '@najit-najist/database/models';
+import {
+  Order,
+  OrderPaymentMethodsSlugs,
+  OrderState,
+} from '@najit-najist/database/models';
 import { FC } from 'react';
 
 import type { OrderUnderpageViewType } from './OrderUnderpageContent';
@@ -13,6 +18,26 @@ export const SectionPayment: FC<{
   const paymentMethod = await database.query.orderPaymentMethods.findFirst({
     where: (s, { eq }) => eq(s.id, order.paymentMethodId),
   });
+
+  const comgatePayment =
+    paymentMethod?.slug === OrderPaymentMethodsSlugs.BY_CARD
+      ? await database.query.comgatePayments
+          .findFirst({
+            where: (s, { eq }) => eq(s.orderId, order.id),
+          })
+          .then((payment) =>
+            payment
+              ? comgateClient
+                  .getStatus({ transId: payment?.transactionId })
+                  .then(
+                    ({ data }) =>
+                      data as unknown as {
+                        status: 'PENDING' | 'PAID' | 'CANCELLED' | 'AUTHORIZED';
+                      },
+                  )
+              : null,
+          )
+      : null;
 
   // if (packetaPackage) {
   //   console.log({ packetaPackage });
@@ -46,10 +71,20 @@ export const SectionPayment: FC<{
             ></div>
           </Alert>
         ) : null}
-        {order.state !== OrderState.UNPAID &&
-        paymentMethod?.slug === 'comgate' ? (
+        {comgatePayment?.status.toLowerCase() === 'paid' ||
+        comgatePayment?.status.toLowerCase() === 'authorized' ? (
           <Alert color="success" heading="🤗 Zaplaceno">
             Děkujeme za provedení platby přes COMGATE.
+          </Alert>
+        ) : null}
+        {comgatePayment?.status.toLowerCase() === 'cancelled' ? (
+          <Alert color="warning" heading="🥲 Zrušeno">
+            Nákup byl při platbě zrušen.
+          </Alert>
+        ) : null}
+        {comgatePayment?.status.toLowerCase() === 'pending' ? (
+          <Alert color="warning" heading="🤔 Čekáme na dokončení">
+            Platba byla založena, ale nebyla dokočena.
           </Alert>
         ) : null}
         {/* <p>Mastercard</p>
